@@ -1,5 +1,7 @@
 # VR Stage Lighting
 
+![alt text](https://i.imgur.com/XJtiP9f.png)
+
 ## A collection of HLSL shaders, UdonSharp scripts, 3D models, prefabs, and assets designed to emulate the real control, quality, and complexity of professional stage lighting into VRChat in as many ways as possible.
 
 VR Stage Lighting is a year-long project that started out as a means to research and develop a performant/reliable way to send DMX512 (Digital Multiplex with 512 pieces of information) data to VRChat to control spot lights and other lighting effects. It has evolved into creating a package of assets that can bring quality lighting effects in all manner of ways performantly. Those ways include:
