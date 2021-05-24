@@ -14,20 +14,20 @@ VR Stage Lighting is a year-long project that started out as a means to research
 
 The majority of the overhead is powered through a standardized set of custom shaders that are designed to emulate different types lighting as well as input methods. This is provide performance by avoiding things such as real-time unity lights and using cost saving measures such as GPU-instancing and batching. The different light types that are included:
 
--Mover Spotlights
--Static Par Lights
--Static Blinder Lights
--Generic Static Lights
--Disco Ball
--Lazers (Coming Soon!)
+- Mover Spotlights
+- Static Par Lights
+- Static Blinder Lights
+- Generic Static Lights
+- Disco Ball
+- Lazers (Coming Soon!)
 
 ## SEE ALL THESE SYSTEMS LIVE IN VRCHAT @ CLUB ORION (https://vrchat.com/home/launch?worldId=wrld_b2d9f284-3a77-4a8a-a58e-f8427f87ba79)
 
 ## IMPORTANT
--These systems are designed for world building on VRChat for PC. While some of the shaders in theory could be used on avatars, they are primarily designed to be placed in a PC world.
--This system is still a work in progress and is planned for long-term support as more VRChat features are released. Planned features include OSC support, lazers, and Quest-Ready alternatives.
--For a propert documentation, please refer to the PDF documents provided on the release page.
--These lights and shaders are open source while the VR Stage Lighting Grid Node is not. While the VR Stage Lighting Grid Node is not required for the Non-DMX versions of the stage lights, purchasing a copy of the VR Stage Lighting Grid Node will help in the development of both the node grid and the VR Stage Lighting kit as well as give you full access to the DMX capabilities of the shaders! You can purchase a copy here, and your support will be greatly appreciated! <3
+- These systems are designed for world building on VRChat for PC. While some of the shaders in theory could be used on avatars, they are primarily designed to be placed in a PC world.
+- This system is still a work in progress and is planned for long-term support as more VRChat features are released. Planned features include OSC support, lazers, and Quest-Ready alternatives.
+- For a propert documentation, please refer to the PDF documents provided on the release page.
+- These lights and shaders are open source while the VR Stage Lighting Grid Node is not. While the VR Stage Lighting Grid Node is not required for the Non-DMX versions of the stage lights, purchasing a copy of the VR Stage Lighting Grid Node will help in the development of both the node grid and the VR Stage Lighting kit as well as give you full access to the DMX capabilities of the shaders! You can purchase a copy here, and your support will be greatly appreciated! <3
 
 ## Setup
 
@@ -98,9 +98,9 @@ The majority of the overhead is powered through a standardized set of custom sha
 ## Shaders
 The shaders themselves are hand-written vertex-frag shaders designed to loosely emulate real-time stage lighting without having the performance cost. The only real-time light needed is the default directional light (with optimal settings applied, examples are included) for use of the depth texture. There are 3 types of shaders that are seperated into Mover and Static categories.
 
--Fixture (The stage light's housing)
--Volumetric (The volumetric beam that the light would produce in a foggy/smoky setting)
--Projection (The actual light being projected on to other objects. This does not use the standard Unity Projector Component despite it's name.)
+- Fixture (The stage light's housing)
+- Volumetric (The volumetric beam that the light would produce in a foggy/smoky setting)
+- Projection (The actual light being projected on to other objects. This does not use the standard Unity Projector Component despite it's name.)
 
 More information on them can be found in the Shaders folder as well the tooltips on the shader properties in the inspector.
 
@@ -112,16 +112,16 @@ The main system this project was based on. This system can convert signals it re
 
 Summary for the pipeline:
 
--The grid sits in the bottom right corner of a stream/video that has a 16:9 aspect ratio (I.E 1920x1080, 1280x720, etc.).
--The grid runs in the background and is discoverable Artnet device, which allows Artnet compatible software to send it DMX data via local Ethernet.
--When the grid gets the DMX data, it displays its value as a black/white range with 0/1 representing the values respectively.
--A camera picks ups the grid in the bottom right corner of the screen and converts it into a render texture.
--The render texture is converted into two custom render textures, one to add realtime smoothing to compensate for compression, and another to add phase compensation for the strobe channel.
--The custom render textures are then sent to the lighting fixtures, where the signals are to be read and converted into actions.
+- The grid sits in the bottom right corner of a stream/video that has a 16:9 aspect ratio (I.E 1920x1080, 1280x720, etc.).
+- The grid runs in the background and is discoverable Artnet device, which allows Artnet compatible software to send it DMX data via local Ethernet.
+- When the grid gets the DMX data, it displays its value as a black/white range with 0/1 representing the values respectively.
+- A camera picks ups the grid in the bottom right corner of the screen and converts it into a render texture.
+- The render texture is converted into two custom render textures, one to add realtime smoothing to compensate for compression, and another to add phase compensation for the strobe channel.
+- The custom render textures are then sent to the lighting fixtures, where the signals are to be read and converted into actions.
 -The channels of the grid start from the bottom left corner (channel 1) counting up as you move right, starting a new row every 26 channels. Every 13 channels is considered a "Sector" and is the maximum number of channels any fixture here can use. 
--Every fixture is assigned a Sector and will only read the channels from that respective sector. The fixture may or may not use every channel depending on the type, but this will allow multiple fixtures to read from the same Sector.
--The current channel types are Pan (Regular + Fine), Tilt (Regular + Fine), Brightness/Intensity, Red, Green, Blue, Strobe, SpotLight Radius, GOBO (Cookie) and GOBO Spin Speed (Coming Soon!). More Channel types will be added as more fixture types are created.
--Some special channels are also created by default including a dedicated Disco Ball channel and a "Mover Speed Channel" (which controls the smoothing strength of all mover lights).
+- Every fixture is assigned a Sector and will only read the channels from that respective sector. The fixture may or may not use every channel depending on the type, but this will allow multiple fixtures to read from the same Sector.
+- The current channel types are Pan (Regular + Fine), Tilt (Regular + Fine), Brightness/Intensity, Red, Green, Blue, Strobe, SpotLight Radius, GOBO (Cookie) and GOBO Spin Speed (Coming Soon!). More Channel types will be added as more fixture types are created.
+- Some special channels are also created by default including a dedicated Disco Ball channel and a "Mover Speed Channel" (which controls the smoothing strength of all mover lights).
 
 
 The appeal of this system is that this allows any software or hardware that supports Artnet to be able to control these lights in VRChat in real time through a stream or a recorded video. This repository comes with an example recorded video in an example scene of the lights in action as well as the grid system they're reacting to. The video is placed in an example scene where the same lights are set-up to re-react to the video in real time, mimicing the actions of the lights shown in the example video.
@@ -129,15 +129,15 @@ The appeal of this system is that this allows any software or hardware that supp
 
 
 ### Limitations 
--This system requires a video/stream panel, meaning there will be some unavoidable latency for realtime setups.
--Compression artifacting can cause movement data to be scrambled a bit. Linear Interpolated CRTs are applied to compensate for the scrambling, but does make the movement much slower. A dedicated sector has been set to control the intensity of the smoothing/interpolation, but it is recommended to keep the smoothing at maximum (Which is 0 for that channel) for most situations. 
--If quicker movement is needed, it is recommended to do it in small bursts, quickly returning the smoothing back to maximum when you can. This channel controls the movement for all lights. It is currently not possible to control the speed of individual light/sectors with this system.
--The system currently supports a little over 35 unique fixtures (sectors). Support for more is planned for the future.
+- This system requires a video/stream panel, meaning there will be some unavoidable latency for realtime setups.
+- Compression artifacting can cause movement data to be scrambled a bit. Linear Interpolated CRTs are applied to compensate for the scrambling, but does make the movement much slower. A dedicated sector has been set to control the intensity of the smoothing/interpolation, but it is recommended to keep the smoothing at maximum (Which is 0 for that channel) for most situations. 
+- If quicker movement is needed, it is recommended to do it in small bursts, quickly returning the smoothing back to maximum when you can. This channel controls the movement for all lights. It is currently not possible to control the speed of individual light/sectors with this system.
+- The system currently supports a little over 35 unique fixtures (sectors). Support for more is planned for the future.
 
 ### Software
--Recommended software to use this system with is SoundSwitch, which allows a DJ to play pre-created sync'd light shows in realtime with whatever track is playing as well as other DJ friendly light show options. You can get SoundSwitch here! (https://www.soundswitch.com/)
+- Recommended software to use this system with is SoundSwitch, which allows a DJ to play pre-created sync'd light shows in realtime with whatever track is playing as well as other DJ friendly light show options. You can get SoundSwitch here! (https://www.soundswitch.com/)
 
--The grid itself can be purhcased at my patreon, which will also help directly support the development of this project <3! Which can be purchased here! () OSC output is also included with this grid system for when VRChat officially supports it via Udon.
+- The grid itself can be purhcased at my patreon, which will also help directly support the development of this project <3! Which can be purchased here! () OSC output is also included with this grid system for when VRChat officially supports it via Udon.
 
 ### Channel List Per Sector (1-13)
 Here are the channels and what they represent for each Sector (set of 13):
@@ -158,10 +158,10 @@ Here are the channels and what they represent for each Sector (set of 13):
 
 
 ### Tips
--There are a limited number of available sectors, so try to be effecient with the number of unique fixtures you set up. You can have an unlimted number of fixtures reading from the same sector!
--Movers can have their pan/tilt inverted! This allows for mirrored movement between multiple movers that share the same sector!
+- There are a limited number of available sectors, so try to be effecient with the number of unique fixtures you set up. You can have an unlimted number of fixtures reading from the same sector!
+- Movers can have their pan/tilt inverted! This allows for mirrored movement between multiple movers that share the same sector!
 - Video Tutorials/tips for this system will be released soon, including how to integrate with SoundSwitch!
--Use uDesktopDuplication (by hecomi) to see your screen appear in realtime in your unity editor! You can use this to test your lights in realtime with the grid as well as create stage lighting scenes and shows! Get it here!: https://github.com/hecomi/uDesktopDuplication/releases/tag/v1.6.0
+- Use uDesktopDuplication (by hecomi) to see your screen appear in realtime in your unity editor! You can use this to test your lights in realtime with the grid as well as create stage lighting scenes and shows! Get it here!: https://github.com/hecomi/uDesktopDuplication/releases/tag/v1.6.0
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -189,15 +189,15 @@ A custom stage lighting system that is designed around controlling the lights wi
 ### Cards
 The card based system uses positionally synced orbs with cards in them to control groups of lights at a time by putting the orbs in special "Lighting Zones". These "Lighting Zones" will read information from the card and tell whatever lights it has control over what corresponding animations to play. There are 4 types of cards, with each type controlling a different aspect of the lights.
 
--Pan/Tilt Cards (Movers Only)
--GOBO Cards (SpotLights Only)
--Color Cards
--Intensity Cards
+- Pan/Tilt Cards (Movers Only)
+- GOBO Cards (SpotLights Only)
+- Color Cards
+- Intensity Cards
 
--Pan/Tilt Cards control how mover fixtures move around. They are yellow and only "Mover" type fixtures will respond to them.
--GOBO Cards control what GOBO/Cookie is being projected by the spotlight. They are green and only "Spotlight" type fixtures will respond to them.
--Color Cards control what colors the lights are displaying. They are blue and all lights support them.
--Intensity Cards control the intenisty/flashing of the lights. They are red and all lights support them.
+- Pan/Tilt Cards control how mover fixtures move around. They are yellow and only "Mover" type fixtures will respond to them.
+- GOBO Cards control what GOBO/Cookie is being projected by the spotlight. They are green and only "Spotlight" type fixtures will respond to them.
+- Color Cards control what colors the lights are displaying. They are blue and all lights support them.
+- Intensity Cards control the intenisty/flashing of the lights. They are red and all lights support them.
 
 The cards contain the title of animation, an icon describing what it does, and the number of measures/bars the animation will last.
 There are plans for more card types and animations in the future.
@@ -219,9 +219,9 @@ An example scene is included with 4 "Lighting Zones" and a handful of cards. Fur
 This is the bare bones setup for these shaders. They contain a light weight version of the shaders that are GPU instanced through a compatible Udon Script. This setup is for people who want to create their own methods of controlling the lights via Udon and serves as the basis for the 3 other systems.
 The basic features it comes with include:
 
--GPU instanced properties/variables and methods to update them.
--Target Following for movers.
--Custom Inspectors.
+- GPU instanced properties/variables and methods to update them.
+- Target Following for movers.
+- Custom Inspectors.
 
 Future systems will also derive from this set of scripts.
 
