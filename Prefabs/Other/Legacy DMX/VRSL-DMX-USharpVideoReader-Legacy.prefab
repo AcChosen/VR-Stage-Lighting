@@ -42,7 +42,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3746589729777985305}
   m_Layer: 0
-  m_Name: VRSL-DMX-USharpVideoReader
+  m_Name: VRSL-DMX-USharpVideoReader-Legacy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7724,7 +7724,7 @@ Transform:
   m_GameObject: {fileID: 9065237416972015963}
   m_LocalRotation: {x: 1, y: 0.00000061459644, z: -0.000000119209275, w: 0.00000004334677}
   m_LocalPosition: {x: 0.02, y: 0.25, z: 0}
-  m_LocalScale: {x: -5, y: 5, z: 5}
+  m_LocalScale: {x: -5, y: -5, z: 5}
   m_Children: []
   m_Father: {fileID: 765752937045687002}
   m_RootOrder: 1

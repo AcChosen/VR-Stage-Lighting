@@ -36,8 +36,8 @@ uint _UseRawGrid;
 half _Saturation, _SaturationLength, _LensMaxBrightness, _UniversalIntensity;
 uint _EnableCompatibilityMode;
 
-const half compatSampleYAxis = 0.019231;
-const half standardSampleYAxis = 0.00762;
+uniform const half compatSampleYAxis = 0.019231;
+uniform const half standardSampleYAxis = 0.00762;
 //float _FixtureRotationX;
 //float _FixtureBaseRotationY;
 float4 _FixtureRotationOrigin;

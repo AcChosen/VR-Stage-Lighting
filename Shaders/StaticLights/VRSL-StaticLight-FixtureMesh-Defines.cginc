@@ -46,8 +46,8 @@ float _ProjectionRange;
 float4 _ProjectionRangeOrigin;
 float _ProjectionFade, _ProjectionFadeCurve, _ProjectionDistanceFallOff;
 
-const half compatSampleYAxis = 0.019231;
-const half standardSampleYAxis = 0.00762;
+uniform const half compatSampleYAxis = 0.019231;
+uniform const half standardSampleYAxis = 0.00762;
 
 //float _FinalStrobeFreq, _NewTimer;
 

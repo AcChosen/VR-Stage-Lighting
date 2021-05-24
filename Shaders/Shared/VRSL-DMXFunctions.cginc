@@ -1,6 +1,6 @@
 #define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
 
-// float blockCenter = compatSampleYAxis;
+// float blockCenter = 0.019231;
 // float blockTraversal = 0.03846;
 uint getChannelSectorX()
 {
@@ -80,8 +80,8 @@ float getValueAtCoords(float x, float y, uint sector, sampler2D _Tex)
 uint getOSCGoboSelection(uint sector)
 {
     uint value = IF(_EnableCompatibilityMode == 1,
-    round(((getValueAtCoords(0.442291,compatSampleYAxis, sector, _OSCGridRenderTextureRAW))*255)/42.5),
-    round(((getValueAtCoords(0.883659,compatSampleYAxis, sector, _OSCGridRenderTextureRAW))*255)/42.5));
+    round(((getValueAtCoords(0.442291,0.019231, sector, _OSCGridRenderTextureRAW))*255)/42.5),
+    round(((getValueAtCoords(0.883659,0.019231, sector, _OSCGridRenderTextureRAW))*255)/42.5));
     return value;
 }
 
@@ -149,7 +149,7 @@ float getFinalIntensity()
 float GetFinePanValue(uint sector)
 {
     float rawValue = IF(_EnableCompatibilityMode == 1, 
-    clamp(getValueAtCoords(0.057691, compatSampleYAxis, sector, _OSCGridRenderTexture),0.0,0.9999), 
+    clamp(getValueAtCoords(0.057691, 0.019231, sector, _OSCGridRenderTexture),0.0,0.9999), 
     clamp(getValueAtCoords(0.115183, standardSampleYAxis, sector, _OSCGridRenderTexture),0.0,0.9999));
     float result = IF(isOSC() == 1, rawValue/1000, 0.0);
     return result;
@@ -160,7 +160,7 @@ float GetFinePanValue(uint sector)
 float GetFineTiltValue(uint sector)
 {
     float rawValue = IF(_EnableCompatibilityMode == 1,
-    clamp(getValueAtCoords(0.134611, compatSampleYAxis, sector, _OSCGridRenderTexture),0.0,0.9999),
+    clamp(getValueAtCoords(0.134611, 0.019231, sector, _OSCGridRenderTexture),0.0,0.9999),
     clamp(getValueAtCoords(0.268205, standardSampleYAxis, sector, _OSCGridRenderTexture),0.0,0.9999));
     float result = IF(isOSC() == 1, rawValue/1000, 0.0);
     return result;
@@ -181,12 +181,12 @@ float GetStrobeValue(uint sector)
 float GetStrobeOutput(uint sector)
 {
     float2 recoords = IF(_EnableCompatibilityMode == 1, 
-    getSectorCoordinates(compatSampleYAxis + (6.0 * 0.03846), compatSampleYAxis, sector),
+    getSectorCoordinates(0.019231 + (6.0 * 0.03846), 0.019231, sector),
     getSectorCoordinates(0.498959, standardSampleYAxis, sector)); // this is important i think: 0.498959
     float4 uvcoords = float4(recoords.x, recoords.y, 0,0);
     float4 c = tex2Dlod(_OSCGridStrobeTimer, uvcoords);
     half freq = c.r;
-    half multiplier = 4.0;
+    half multiplier = 8.0;
     half strobe = IF(sin(freq*multiplier) > 0.0, 1, 0);
     strobe = IF(freq <= 000.1, 1, strobe);
     //half output = IF(freq < 370000.0, 1.0, strobe);
@@ -201,8 +201,8 @@ float getGoboSpinSpeed (uint sector)
     //return getValueAtCoords(0.478864,0.023718, sector, _OSCGridRenderTextureRAW);
 
     float2 recoords = IF(_EnableCompatibilityMode == 1,
-    getSectorCoordinates(0.480751, compatSampleYAxis, sector),
-    getSectorCoordinates(0.960572, compatSampleYAxis, sector));
+    getSectorCoordinates(0.480751, 0.019231, sector),
+    getSectorCoordinates(0.960572, 0.019231, sector));
     float4 uvcoords = float4(recoords.x, recoords.y, 0,0);
     //float4 c = tex2Dlod(_OSCGridRenderTexture, uvcoords);
     //float4 c = _OSCGridStrobeTimer.SampleLevel(sampler_point_repeat, uvcoords, 0);
@@ -240,7 +240,7 @@ float GetOSCIntensity(uint sector, float multiplier)
     if(_EnableCompatibilityMode == 1)
     {
         value = IF(_UseRawGrid == 1, //compatible mode
-        getValueAtCoords(0.211531, compatSampleYAxis, sector, _OSCGridRenderTextureRAW), 
+        getValueAtCoords(0.211531, 0.019231, sector, _OSCGridRenderTextureRAW), 
         getValueAtCoords(0.208301, 0.02471, sector, _OSCGridRenderTexture))
     }
     else
@@ -258,7 +258,7 @@ float GetPanValue(uint sector)
 {
     //float rawValue = getValueAtCoords(0.898, 0.004, sector);
     float inputValue = IF(_EnableCompatibilityMode == 1, 
-    getValueAtCoords(compatSampleYAxis, compatSampleYAxis, sector, _OSCGridRenderTexture), 
+    getValueAtCoords(0.019231, 0.019231, sector, _OSCGridRenderTexture), 
     getValueAtCoords(0.038017, standardSampleYAxis, sector, _OSCGridRenderTexture));
     inputValue += GetFinePanValue(sector);
     return IF(isOSC() == 1, ((_MaxMinPanAngle * 2) * (inputValue)) - _MaxMinPanAngle, 0.0);
@@ -273,7 +273,7 @@ float GetTiltValue(uint sector)
     // float xmod = 1 * blockTraversal;
     // float xDestination = blockCenter + xmod;
     float inputValue =  IF(_EnableCompatibilityMode == 1,
-    getValueAtCoords(0.096151, compatSampleYAxis, sector, _OSCGridRenderTexture),
+    getValueAtCoords(0.096151, 0.019231, sector, _OSCGridRenderTexture),
     getValueAtCoords(0.189936, standardSampleYAxis, sector, _OSCGridRenderTexture));
     inputValue += GetFineTiltValue(sector);
     return IF(isOSC() == 1, ((_MaxMinTiltAngle * 2) * (inputValue)) - _MaxMinTiltAngle, 0.0);
@@ -295,11 +295,11 @@ float4 GetOSCColor(uint sector)
     float bluechannel = 0.0;
     if(_EnableCompatibilityMode == 1)
     {
-        redchannel = IF(_UseRawGrid == 1, getValueAtCoords(0.296911,compatSampleYAxis,sector, _OSCGridRenderTextureRAW), getValueAtCoords(0.288911,0.023718,sector, _OSCGridRenderTexture));
+        redchannel = IF(_UseRawGrid == 1, getValueAtCoords(0.296911,0.019231,sector, _OSCGridRenderTextureRAW), getValueAtCoords(0.288911,0.023718,sector, _OSCGridRenderTexture));
 
-        greenchannel = IF(_UseRawGrid == 1, getValueAtCoords(0.326911,compatSampleYAxis,sector, _OSCGridRenderTextureRAW), getValueAtCoords(0.326116,0.023718,sector, _OSCGridRenderTexture));
+        greenchannel = IF(_UseRawGrid == 1, getValueAtCoords(0.326911,0.019231,sector, _OSCGridRenderTextureRAW), getValueAtCoords(0.326116,0.023718,sector, _OSCGridRenderTexture));
 
-        bluechannel = IF(_UseRawGrid == 1, getValueAtCoords(0.365371,compatSampleYAxis,sector, _OSCGridRenderTextureRAW), getValueAtCoords(0.362577,0.023718,sector, _OSCGridRenderTexture));
+        bluechannel = IF(_UseRawGrid == 1, getValueAtCoords(0.365371,0.019231,sector, _OSCGridRenderTextureRAW), getValueAtCoords(0.362577,0.023718,sector, _OSCGridRenderTexture));
 
     }
     else
@@ -337,7 +337,7 @@ float4 GetOSCColor(uint sector)
 float getOSCConeWidth(uint sector) //Motor Speed Channel// CHANNEL 5
 {
     float inputvalue = IF(_EnableCompatibilityMode == 1, 
-    getValueAtCoords(0.173071,compatSampleYAxis,sector, _OSCGridRenderTexture),
+    getValueAtCoords(0.173071,0.019231,sector, _OSCGridRenderTexture),
     getValueAtCoords(0.344893,standardSampleYAxis,sector, _OSCGridRenderTexture));
     float OSCWidth = lerp(0, 5.5, inputvalue) - 1.5;
     return IF(isOSC() == 1, OSCWidth, getConeWidth());

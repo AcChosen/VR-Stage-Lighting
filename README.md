@@ -24,6 +24,8 @@ The majority of the overhead is powered through a standardized set of custom sha
 ## IMPORTANT
 -These systems are designed for world building on VRChat for PC. While some of the shaders in theory could be used on avatars, they are primarily designed to be placed in a PC world.
 -This system is still a work in progress and is planned for long-term support as more VRChat features are released. Planned features include OSC support, lazers, and Quest-Ready alternatives.
+-For a propert documentation, please refer to the PDF documents provided on the release page.
+-These lights and shaders are open source while the VR Stage Lighting Grid Node is not. While the VR Stage Lighting Grid Node is not required for the Non-DMX versions of the stage lights, purchasing a copy of the VR Stage Lighting Grid Node will help in the development of both the node grid and the VR Stage Lighting kit as well as give you full access to the DMX capabilities of the shaders! You can purchase a copy here, and your support will be greatly appreciated! <3
 
 ## Setup
 
@@ -68,7 +70,7 @@ The majority of the overhead is powered through a standardized set of custom sha
 3. Assign Sectors to them through their Udon Scripts. (0 to 35)
 4. Hide the child object named "DMXReaderScreen" somewhere away where visitors can't see.
 5. Place the "USharpVideo" child object where you want on your map
-6. Upload and test in VRchat. This test video in the playlsit will load automatically: https://www.youtube.com/watch?v=pIIov9xNFNg&ab_channel=AirConditioning
+6. Upload and test in VRchat. This test video in the playlsit will load automatically: https://www.youtube.com/watch?v=wS5JWNP9dGE&ab_channel=AirConditioning
 
 
 ### Getting Started (Audio React via Audio Link)
