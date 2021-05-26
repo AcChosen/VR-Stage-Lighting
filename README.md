@@ -34,7 +34,7 @@ The majority of the overhead is powered through a standardized set of custom sha
 - These systems are designed for world building on VRChat for PC. While some of the shaders in theory could be used on avatars, they are primarily designed to be placed in a PC world.
 - This system is still a work in progress and is planned for long-term support as more VRChat features are released. Planned features include OSC support, lazers, and Quest-Ready alternatives.
 - For a propert documentation, please refer to the PDF documents provided on the release page.
-- These lights and shaders are open source while the VR Stage Lighting Grid Node is not. While the VR Stage Lighting Grid Node is not required for the Non-DMX versions of the stage lights, purchasing a copy of the VR Stage Lighting Grid Node will help in the development of both the node grid and the VR Stage Lighting kit as well as give you full access to the DMX capabilities of the shaders! You can purchase a copy here, and your support will be greatly appreciated! <3
+- ### These lights and shaders are open source while the VR Stage Lighting Grid Node is not. While the VR Stage Lighting Grid Node is not required for the Non-DMX versions of the stage lights, purchasing a copy of the VR Stage Lighting Grid Node will help in the development of both the node grid and the VR Stage Lighting kit as well as give you full access to the DMX capabilities of the shaders! You can purchase a copy here: https://gumroad.com/l/xYaPu, and your support will be greatly appreciated! <3
 
 
 
@@ -49,7 +49,7 @@ The majority of the overhead is powered through a standardized set of custom sha
 - uDesktopDuplication 1.6.0 (https://github.com/hecomi/uDesktopDuplication/releases/tag/v1.6.0) (for working with in-Editor; must be 1.60, Unity 2018.4 causes 1.70 to break for some reason)
 - AudioLink (https://github.com/llealloo/vrc-udon-audio-link)
 - Open BroadCast Software (or streaming software of your choice)
-- VR Stage Lighting Grid Node (For DMX control, more info below)
+- VR Stage Lighting Grid Node (For DMX control, more info below. Purchase it here: https://gumroad.com/l/xYaPu)
 - Atleast one extra screen that can support 16:9 resolutions.
 - The latest release: 
 
@@ -67,7 +67,7 @@ The majority of the overhead is powered through a standardized set of custom sha
 2. Add some DMX Compatible Light Fixture Prefabs (VRStageLighting-Exporter\Prefabs\DMX).
 3. Assign Sectors to them through their Udon Scripts. (0 to 35)
 4. Open your Artnet compatible software of choice. (Recommendation: SoundSwitch)
-5. Open "VRStageLightingGridNode.exe" (Get it here: )
+5. Open "VRStageLightingGridNode.exe" (Get it here: https://gumroad.com/l/xYaPu)
 6. Ensure VRStageLightingGridNode is a visible Artnet device and ensure its getting Universes 1 and 2.
 6. Open OBS.
 7. Set "VRStageLightingGridNode.exe" as a window source. Place perfectly in the bottom right corner of your screen.
