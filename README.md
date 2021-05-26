@@ -11,11 +11,11 @@
 
 VR Stage Lighting is a year-long project that started out as a means to research and develop a performant/reliable way to send DMX512 (Digital Multiplex with 512 pieces of information) data to VRChat to control spot lights and other lighting effects. It has evolved into creating a package of assets that can bring quality lighting effects in all manner of ways performantly. Those ways include:
 
--DMX512/ArtNet via Video/Stream Panel.
--Audio Reaction via AudioLink.
--A special "VR Card-Based System" powered by UdonSharp and Animations.
--Raw Udon input via UdonSharp.
--DMX512/ArtNet via OSC (Coming Soon!).
+- DMX512/ArtNet via Video/Stream Panel.
+- Audio Reaction via AudioLink.
+- A special "VR Card-Based System" powered by UdonSharp and Animations.
+- Raw Udon input via UdonSharp.
+- DMX512/ArtNet via OSC (Coming Soon!).
 
 The majority of the overhead is powered through a standardized set of custom shaders that are designed to emulate different types lighting as well as input methods. This is provide performance by avoiding things such as real-time unity lights and using cost saving measures such as GPU-instancing and batching. The different light types that are included:
 
