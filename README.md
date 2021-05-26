@@ -33,7 +33,7 @@ The majority of the overhead is powered through a standardized set of custom sha
 ## IMPORTANT
 - These systems are designed for world building on VRChat for PC. While some of the shaders in theory could be used on avatars, they are primarily designed to be placed in a PC world.
 - This system is still a work in progress and is planned for long-term support as more VRChat features are released. Planned features include OSC support, lazers, and Quest-Ready alternatives.
-- For a propert documentation, please refer to the PDF documents provided on the release page.
+- For proper documentation, please refer to the PDF documents provided on the release page.
 - ### These lights and shaders are open source while the VR Stage Lighting Grid Node is not. While the VR Stage Lighting Grid Node is not required for the Non-DMX versions of the stage lights, purchasing a copy of the VR Stage Lighting Grid Node will help in the development of both the node grid and the VR Stage Lighting kit as well as give you full access to the DMX capabilities of the shaders! You can purchase a copy here: https://gumroad.com/l/xYaPu, and your support will be greatly appreciated! <3
 
 
@@ -89,7 +89,7 @@ The majority of the overhead is powered through a standardized set of custom sha
 
 
 ### Getting Started (Audio React via Audio Link)
-1. Follow the "Getting Started" instructions proviDed with the Audio Link package.
+1. Follow the "Getting Started" instructions provided with the Audio Link package.
 2. Add the desired AudioLink compatible VRSL Fixtures when ready.
 
 
