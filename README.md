@@ -58,6 +58,10 @@ The majority of the overhead is powered through a standardized set of custom sha
 1. Install VRChat SDK3, UdonSharp, Usharp Video Player, PostProcessing Stack V2, uDesktopDuplication 1.6.0, and Audio Link. Finally, install the latest release of VR Stage Lighting.
 2. Have a look at any of the available example scenes. The inspectors of the shaders and scripts will have ToolTips about what they do. Proper documentation for each system will also be included in the same folder.
 
+<p align="center">
+  <img width="497" height="480" src="Doc/VRSL-LightDemonstration.gif">
+</p>
+
 ### Getting started (DMX VIA Stream Panel through Editor)
 1. Drag "VRSL-DMX-uDesktopDuplicationReader" prefab into the scene.
 2. Add some DMX Compatible Light Fixture Prefabs (VRStageLighting-Exporter\Prefabs\DMX).
@@ -116,6 +120,10 @@ More information on them can be found in the Shaders folder as well the tooltips
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ## DMX512/ArtNet Via Video/Stream Panel
+
+<p align="center">
+  <img src="Doc/NewNodeGridSample-SectorExample.png">
+</p>
 
 The main system this project was based on. This system can convert signals it reads from a VRChat stream/video panel into actions that the lights can perform, mainly a special black/white grid that coverts DMX signals into something the lighting system can read. This system is powered 95% by shaders, including the actual method of reading the pixels from the screen. The other 5% is to enable GPU instancing for the shaders and certain properties. There is also basic "RAW" Udon support for when DMX Support is disabled for these shaders.
 
@@ -236,10 +244,6 @@ Future systems will also derive from this set of scripts.
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 ## Local UI Panel
 
 A UI panel that can control the intensity of the different lighting shaders is also included. Plop this panel in you world to allow users to locally control the brightness of each aspect of the lights, or all lights at once. It also includes a slider for bloom intensity and a pre-made post processing volume for it. This panel is included as a prefab and is also featured in each example scene.
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
