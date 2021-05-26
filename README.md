@@ -154,7 +154,7 @@ The appeal of this system is that this allows any software or hardware that supp
 ### Software
 - Recommended software to use this system with is SoundSwitch, which allows a DJ to play pre-created sync'd light shows in realtime with whatever track is playing as well as other DJ friendly light show options. You can get SoundSwitch here! (https://www.soundswitch.com/)
 
-- The grid itself can be purhcased at my patreon, which will also help directly support the development of this project <3! Which can be purchased here! () OSC output is also included with this grid system for when VRChat officially supports it via Udon.
+- The grid itself can be purhcased at my gumroad, which will also help directly support the development of this project <3! Which can be purchased here! () OSC output is also included with this grid system for when VRChat officially supports it via Udon. You can get it here!: https://gumroad.com/l/xYaPu
 
 ### Channel List Per Sector (1-13)
 Here are the channels and what they represent for each Sector (set of 13):
