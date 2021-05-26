@@ -51,6 +51,7 @@ MonoBehaviour:
   proximity: 2
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
+  Reliable: 0
   serializedProgramAsset: {fileID: 11400000, guid: 0843220dba52e2a428661f122f27d478,
     type: 2}
   programSource: {fileID: 11400000, guid: 5bcf934d818f1d44f9cfcbee1b32a27b, type: 2}
@@ -98,7 +99,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2755397597338974830}
-  m_Mesh: {fileID: 4300000, guid: 12f1f4bd0807f3c4c9cc6e8ab35e98bc, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 309a75935cf0e8c40bb6d640f50f60e3, type: 3}
 --- !u!23 &7175761721101454706
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -175,7 +176,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6706788395349367602}
-  m_Mesh: {fileID: 4300002, guid: 12f1f4bd0807f3c4c9cc6e8ab35e98bc, type: 3}
+  m_Mesh: {fileID: 4300002, guid: 309a75935cf0e8c40bb6d640f50f60e3, type: 3}
 --- !u!23 &8729808691374807097
 MeshRenderer:
   m_ObjectHideFlags: 0

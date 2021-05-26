@@ -39,7 +39,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4735127522904774504}
-  m_Mesh: {fileID: 4300000, guid: a8fda89fc01472748adc4350afc3b980, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 91e82d75b40bd784395949c8f0d4068b, type: 3}
 --- !u!23 &7017469996716337603
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 3428615312471709509}
   - component: {fileID: 7632925756241299575}
   m_Layer: 24
-  m_Name: VRSL-Static-Lightbar (4)
+  m_Name: VRSL-DMX-Static-Lightbar
   m_TagString: Stage Lighting
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -127,6 +127,7 @@ MonoBehaviour:
   proximity: 2
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
+  Reliable: 0
   serializedProgramAsset: {fileID: 11400000, guid: 623993101e5b66c4b97267b1cbad9f1a,
     type: 2}
   programSource: {fileID: 11400000, guid: a9b0898b5af3f2144ab883e347ecd019, type: 2}

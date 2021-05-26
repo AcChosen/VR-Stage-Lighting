@@ -39,7 +39,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1129656274333657116}
-  m_Mesh: {fileID: 4300002, guid: 12f1f4bd0807f3c4c9cc6e8ab35e98bc, type: 3}
+  m_Mesh: {fileID: 4300002, guid: 309a75935cf0e8c40bb6d640f50f60e3, type: 3}
 --- !u!23 &2269533408334511238
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 4031306945900393843}
   - component: {fileID: 8057012675187484072}
   m_Layer: 24
-  m_Name: VRSL-Static-Blinder (1)
+  m_Name: VRSL-RAW-Static-Blinder
   m_TagString: Stage Lighting
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -128,6 +128,7 @@ MonoBehaviour:
   proximity: 2
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
+  Reliable: 0
   serializedProgramAsset: {fileID: 11400000, guid: 06f4fbd97f76ba84ba624ead04b89342,
     type: 2}
   programSource: {fileID: 11400000, guid: 0433c83e2c173364cb437031a24bad06, type: 2}
@@ -175,7 +176,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3506495867884697250}
-  m_Mesh: {fileID: 4300000, guid: 27edd1337ddc9c648a82fb6e8564c5b1, type: 3}
+  m_Mesh: {fileID: 4300000, guid: bff95ffce743dae4c93585ea731f890c, type: 3}
 --- !u!23 &344891479845897466
 MeshRenderer:
   m_ObjectHideFlags: 0

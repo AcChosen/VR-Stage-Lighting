@@ -39,7 +39,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3313226100215509392}
-  m_Mesh: {fileID: 4300002, guid: 12f1f4bd0807f3c4c9cc6e8ab35e98bc, type: 3}
+  m_Mesh: {fileID: 4300002, guid: 309a75935cf0e8c40bb6d640f50f60e3, type: 3}
 --- !u!23 &2774636958443619487
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -116,7 +116,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6564018449632127146}
-  m_Mesh: {fileID: 4300000, guid: 12f1f4bd0807f3c4c9cc6e8ab35e98bc, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 309a75935cf0e8c40bb6d640f50f60e3, type: 3}
 --- !u!23 &5755360373896410284
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -165,7 +165,7 @@ GameObject:
   - component: {fileID: 5783827721167270998}
   - component: {fileID: 3822606749183405606}
   m_Layer: 24
-  m_Name: VRSL-Static-ParLight (3)
+  m_Name: VRSL-RAW-Static-ParLight
   m_TagString: Stage Lighting
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -205,6 +205,7 @@ MonoBehaviour:
   proximity: 2
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
+  Reliable: 0
   serializedProgramAsset: {fileID: 11400000, guid: 06f4fbd97f76ba84ba624ead04b89342,
     type: 2}
   programSource: {fileID: 11400000, guid: 0433c83e2c173364cb437031a24bad06, type: 2}
