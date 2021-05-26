@@ -215,8 +215,11 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
                 foreach(VRStageLighting_Animated stagelight in stageLightsList)
                 {
                     stagelight._colorAnimation = colorAnim; 
+
                   //  stagelight._UpdateColorAnims();
                 }
+                string colorString = colorAnim.ToString("D3");
+                animSync = colorString + animSync.Substring(3, 9);
                 //lastColorCard = card;
                 break;
 
@@ -224,9 +227,12 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
                 foreach(VRStageLighting_Animated stagelight in stageLightsList)
                 {
                     stagelight._intensityAnimation = intensityAnim;
+
                    // stagelight._UpdateIntensityAnims();
                     
                 }
+                string intensitystring = intensityAnim.ToString("D3");
+                animSync = animSync.Substring(0,3) + intensitystring + animSync.Substring(6,6);
                // lastIntensityCard = card;
                 break;
 
@@ -234,9 +240,10 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
                 foreach(VRStageLighting_Animated stagelight in stageLightsList)
                 {
                     stagelight._goboAnimation = gOBOAnim;
-                   // stagelight._UpdateGoboAnims();
                 }
                 //lastGoboCard = card;
+                string gobostring = gOBOAnim.ToString("D3");
+                animSync = animSync.Substring(0,6) + gobostring + animSync.Substring(9,3);
                 break;
 
             case 4:
@@ -299,10 +306,13 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
                         break;
 
                     default:
-                        Debug.Log("Measure Count unrecogniable, aboting...");
+                        Debug.Log("Measure Count unrecogniable, aborting...");
                         break;
                         
+                        
                 }
+                string pantiltstring = panTiltAnim.ToString("D3");
+                animSync = animSync.Substring(0,9) + pantiltstring;
                 break;
 
             default:
@@ -310,10 +320,12 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
                 break;
 
         }
-        if(Networking.GetOwner(gameObject) == Networking.LocalPlayer)
-        {
-            animSync = colorAnim.ToString("D3") + intensityAnim.ToString("D3") + gOBOAnim.ToString("D3") + panTiltAnim.ToString("D3");
-        }
+        // if(Networking.GetOwner(gameObject) == Networking.LocalPlayer)
+        // {
+
+           // string currentAnims = colorAnim.ToString("D3") + intensityAnim.ToString("D3") + gOBOAnim.ToString("D3") + panTiltAnim.ToString("D3");
+            //animSync = colorAnim.ToString("D3") + intensityAnim.ToString("D3") + gOBOAnim.ToString("D3") + panTiltAnim.ToString("D3");
+        // }
         
     }
 }

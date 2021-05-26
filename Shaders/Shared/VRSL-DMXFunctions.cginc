@@ -81,7 +81,7 @@ uint getOSCGoboSelection(uint sector)
 {
     uint value = IF(_EnableCompatibilityMode == 1,
     round(((getValueAtCoords(0.442291,0.019231, sector, _OSCGridRenderTextureRAW))*255)/42.5),
-    round(((getValueAtCoords(0.883659,0.019231, sector, _OSCGridRenderTextureRAW))*255)/42.5));
+    round(((getValueAtCoords(0.883659,standardSampleYAxis, sector, _OSCGridRenderTextureRAW))*255)/42.5));
     return value;
 }
 

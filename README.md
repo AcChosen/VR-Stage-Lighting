@@ -72,7 +72,7 @@ The majority of the overhead is powered through a standardized set of custom sha
 3. Assign Sectors to them through their Udon Scripts. (0 to 35)
 4. Hide the child object named "DMXReaderScreen" somewhere away where visitors can't see.
 5. Place the "USharpVideo" child object where you want on your map
-6. Upload and test in VRchat. This test video in the playlsit will load automatically: https://www.youtube.com/watch?v=wS5JWNP9dGE&ab_channel=AirConditioning
+6. Upload and test in VRchat. This test video in the playlsit will load automatically: https://www.youtube.com/watch?v=YrIOvLbHPgo&ab_channel=AirConditioning
 
 
 ### Getting Started (Audio React via Audio Link)
