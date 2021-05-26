@@ -3,6 +3,11 @@
 ![alt text](https://i.imgur.com/XJtiP9f.png)
 
 ## A collection of HLSL shaders, UdonSharp scripts, 3D models, prefabs, and assets designed to emulate the real control, quality, and complexity of professional stage lighting into VRChat in as many ways as possible.
+<a href="https://youtu.be/3yaEsIQVaHA">
+<p align="center">
+  <img src="Doc/VRSL-GitHubTrailer-Short.gif">
+</p>
+  </a>
 
 VR Stage Lighting is a year-long project that started out as a means to research and develop a performant/reliable way to send DMX512 (Digital Multiplex with 512 pieces of information) data to VRChat to control spot lights and other lighting effects. It has evolved into creating a package of assets that can bring quality lighting effects in all manner of ways performantly. Those ways include:
 
@@ -21,6 +26,8 @@ The majority of the overhead is powered through a standardized set of custom sha
 - Disco Ball
 - Lazers (Coming Soon!)
 
+
+
 ## SEE ALL THESE SYSTEMS LIVE IN VRCHAT @ CLUB ORION (https://vrchat.com/home/launch?worldId=wrld_b2d9f284-3a77-4a8a-a58e-f8427f87ba79)
 
 ## IMPORTANT
@@ -28,6 +35,8 @@ The majority of the overhead is powered through a standardized set of custom sha
 - This system is still a work in progress and is planned for long-term support as more VRChat features are released. Planned features include OSC support, lazers, and Quest-Ready alternatives.
 - For a propert documentation, please refer to the PDF documents provided on the release page.
 - These lights and shaders are open source while the VR Stage Lighting Grid Node is not. While the VR Stage Lighting Grid Node is not required for the Non-DMX versions of the stage lights, purchasing a copy of the VR Stage Lighting Grid Node will help in the development of both the node grid and the VR Stage Lighting kit as well as give you full access to the DMX capabilities of the shaders! You can purchase a copy here, and your support will be greatly appreciated! <3
+
+
 
 ## Setup
 
