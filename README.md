@@ -200,6 +200,10 @@ You can get Audiolink as well as learn more about it here!: (https://github.com/
 
 ## VRSL Card-Based System (UdonSharp + Animations)
 
+<p align="center">
+  <img src="Doc/VRSL-CardSystemShowcase.gif">
+</p>
+  </a>
 A custom stage lighting system that is designed around controlling the lights within VR itself in a manner that combines elements of a real stage lighting hardware and card games. The standard "RAW" perks such as batching and GPU instancing are used here as well.
 
 
