@@ -38,6 +38,12 @@
 		_ConeSync ("Cone Scale Sync", Range(0,1)) = 0.2
 		_FixutreIntensityMultiplier ("Intensity Multipler (For Bloom Scaling)", Range(1,10)) = 1
 
+		//Color Texture Sampling Properties
+		 [Toggle] _EnableColorTextureSample ("Enable Color Texture Sampling", Int) = 0
+		 _SamplingTexture ("Texture To Sample From for Color", 2D) = "white" {}
+		 _TextureColorSampleX ("X coordinate to sample the texture from", Range(0,1)) = 0.5
+		 _TextureColorSampleY ("Y coordinate to sample the texture from", Range(0,1)) = 0.5
+
 		// _BlockLengthX("OSC Block Base Distance X", Float) = 0.019231
 		// _BlockLengthY("OSC Block Base Distance Y", Float) = 0
 

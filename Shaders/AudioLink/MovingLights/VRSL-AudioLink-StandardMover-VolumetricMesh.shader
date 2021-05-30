@@ -43,6 +43,12 @@
 
 		//[Header(MOVER CONTROLS)]
 
+		//Color Texture Sampling Properties
+		 [Toggle] _EnableColorTextureSample ("Enable Color Texture Sampling", Int) = 0
+		 _SamplingTexture ("Texture To Sample From for Color", 2D) = "white" {}
+		 _TextureColorSampleX ("X coordinate to sample the texture from", Range(0,1)) = 0.5
+		 _TextureColorSampleY ("Y coordinate to sample the texture from", Range(0,1)) = 0.5
+
 
 		_FixtureRotationOrigin("Fixture Pivot Origin", Float) = (0, 0.014709, -1.02868, 0)
 		_MaxMinPanAngle("Max/Min Pan Angle (-x, x)", Float) = 180

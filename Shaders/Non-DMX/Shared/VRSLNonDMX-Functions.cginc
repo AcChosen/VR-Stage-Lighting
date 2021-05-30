@@ -15,6 +15,11 @@ uint checkTiltInvertZ()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+float4 GetTextureSampleColor()
+{
+    return tex2Dlod(_SamplingTexture, float4(UNITY_ACCESS_INSTANCED_PROP(Props,_TextureColorSampleX), UNITY_ACCESS_INSTANCED_PROP(Props,_TextureColorSampleY), 0, 0));
+}
+
 uint isStrobe()
 {
     return UNITY_ACCESS_INSTANCED_PROP(Props,_EnableStrobe);
@@ -42,7 +47,8 @@ float getStrobeFreq()
 }
 float4 getEmissionColor()
 {
-    return UNITY_ACCESS_INSTANCED_PROP(Props,_Emission);
+    float4 emissiveColor = UNITY_ACCESS_INSTANCED_PROP(Props,_Emission);
+    return IF(UNITY_ACCESS_INSTANCED_PROP(Props,_EnableColorTextureSample) > 0,((emissiveColor.r + emissiveColor.g + emissiveColor.b)/3.0) * GetTextureSampleColor(),emissiveColor);
 }
 
 float getConeWidth()
@@ -69,6 +75,8 @@ float getFinalIntensity()
 {
     return UNITY_ACCESS_INSTANCED_PROP(Props, _FinalIntensity);
 }
+
+
 
 // //function for getting the Strobe Value (Channel 7)
 // float GetStrobeValue(uint sector)

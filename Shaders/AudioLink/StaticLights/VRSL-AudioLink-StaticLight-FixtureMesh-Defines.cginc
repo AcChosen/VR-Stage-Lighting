@@ -5,6 +5,7 @@ sampler2D _MainTex;
 
 //Audio link
 uniform sampler2D _AudioSpectrum;
+sampler2D _SamplingTexture;
 
 int _IsEven;
 sampler2D _MetallicGlossMap;
@@ -93,5 +94,8 @@ UNITY_INSTANCING_BUFFER_START(Props)
     UNITY_DEFINE_INSTANCED_PROP(float, _ConeLength)
     UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
     UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
+    UNITY_DEFINE_INSTANCED_PROP(uint, _EnableColorTextureSample)
+    UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleX)
+    UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleY)
 UNITY_INSTANCING_BUFFER_END(Props)
 

@@ -6,6 +6,12 @@
 		 [HideInInspector][Toggle] _PanInvert ("Invert Mover Pan", Int) = 0
 		 [HideInInspector][Toggle] _TiltInvert ("Invert Mover Tilt", Int) = 0
 
+		 //Color Texture Sampling Properties
+		 [Toggle] _EnableColorTextureSample ("Enable Color Texture Sampling", Int) = 0
+		 _SamplingTexture ("Texture To Sample From for Color", 2D) = "white" {}
+		 _TextureColorSampleX ("X coordinate to sample the texture from", Range(0,1)) = 0.5
+		 _TextureColorSampleY ("Y coordinate to sample the texture from", Range(0,1)) = 0.5
+
 
 		 //[HideInInspector]_FinalStrobeFreq ("Final Strobe Frequency", Float) = 0
 		 //[HideInInspector]_NewTimer("New Timer From Udon For Strobe", Float) = 0

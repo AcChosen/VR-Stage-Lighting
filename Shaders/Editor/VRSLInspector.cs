@@ -121,8 +121,14 @@ public class VRSLInspector : ShaderGUI
 
     //Interpolation Render Texture
     MaterialProperty _SmoothValue = null;
-     MaterialProperty _MinimumSmoothnessOSC = null;
-      MaterialProperty _MaximumSmoothnessOSC = null;
+    MaterialProperty _MinimumSmoothnessOSC = null;
+    MaterialProperty _MaximumSmoothnessOSC = null;
+
+    //Texture Color Sampling Stuff
+    MaterialProperty _TextureColorSampleX = null;
+    MaterialProperty _TextureColorSampleY = null;
+    MaterialProperty _SamplingTexture = null;
+    MaterialProperty _EnableColorTextureSample = null;
 
 
 
@@ -314,6 +320,8 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             GUILayout.Space(10);
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
+            ColorTextureSamplingGUI(matEditor, props);
+
             //matEditor.ShaderProperty(_CurveMod, new GUIContent("Light Intensity Curve Modifier", "Curve modifier for light intensity."));
             matEditor.ShaderProperty(_FixtureMaxIntensity, new GUIContent("Lens Max Brightness", "General slider for adjusting the max brightness of the lens"));
            // matEditor.ShaderProperty(_FixutreIntensityMultiplier, new GUIContent ("Intensity Multiplier", "Multiplier for the lens brightness. Good for adjusting to increase bloom"));
@@ -409,6 +417,7 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
+            ColorTextureSamplingGUI(matEditor, props);
             matEditor.ShaderProperty(_CurveMod, new GUIContent("Light Intensity Curve Modifier", "Curve modifier for light intensity."));
             matEditor.ShaderProperty(_FixtureMaxIntensity, new GUIContent("Lens Max Brightness", "General slider for adjusting the max brightness of the lens"));
             matEditor.ShaderProperty(_FixutreIntensityMultiplier, new GUIContent ("Intensity Multiplier", "Multiplier for the lens brightness. Good for adjusting to increase bloom"));
@@ -483,6 +492,7 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
+            ColorTextureSamplingGUI(matEditor, props);
             //matEditor.ShaderProperty(_, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
             //matEditor.ShaderProperty(_FixutreIntensityMultiplier, new GUIContent ("Intensity Multiplier", "Multiplier for the brightness. Good for adjusting to increase bloom"));
             matEditor.EnableInstancingField();
@@ -606,6 +616,7 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
+            ColorTextureSamplingGUI(matEditor, props);
             matEditor.ShaderProperty(_Saturation, new GUIContent("Saturation", "Saturation modifier for light color."));
             matEditor.ShaderProperty(_SaturationLength, new GUIContent("Saturation Length", "Har far from the source does the saturation slider affect the shader."));
             matEditor.ShaderProperty(_LensMaxBrightness, new GUIContent("Lens Max Brightness", "General slider for adjusting the max brightness of the lens"));
@@ -716,6 +727,7 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
+            ColorTextureSamplingGUI(matEditor, props);
             matEditor.ShaderProperty(_Saturation, new GUIContent("Saturation", "Saturation modifier for light color."));
             matEditor.ShaderProperty(_LensMaxBrightness, new GUIContent("Lens Max Brightness", "General slider for adjusting the max brightness of the lens"));
             matEditor.ShaderProperty(_FixutreIntensityMultiplier, new GUIContent ("Intensity Multiplier", "Multiplier for the lens brightness. Good for adjusting to increase bloom"));
@@ -763,6 +775,22 @@ public class VRSLInspector : ShaderGUI
         GUILayout.Space(15);
         // matEditor.EnableInstancingField();
         // matEditor.RenderQueueField();
+    }
+
+    public void ColorTextureSamplingGUI(MaterialEditor matEditor, MaterialProperty[] props)
+    {
+        if(isDMXCompatible || isRTShader || isDiscoBall) return;
+        matEditor.ShaderProperty(_EnableColorTextureSample, new GUIContent("Enable Color Texture Sampling", "Check this box if you wish to sample seperate texture for the color. The color will be influenced by the intensity of the original emission color!"));
+        if(_EnableColorTextureSample.floatValue > 0)
+        {
+            EditorGUI.indentLevel++;
+            matEditor.TexturePropertySingleLine(new GUIContent("Color Sampling Texture", "The texture to sample the color from when ''Enable Color Texture Sampling'' is enabled"),_SamplingTexture);
+            matEditor.ShaderProperty(_TextureColorSampleX, new GUIContent("X UV Coordinate", "The x uv coordinate for where on the texture to sample from (0 to 1)."));
+            matEditor.ShaderProperty(_TextureColorSampleY, new GUIContent("Y UV Coordinate", "The y uv coordinate for where on the texture to sample from (0 to 1)."));
+            EditorGUI.indentLevel--;
+            GUILayout.Space(5);
+        }
+        
     }
 
 

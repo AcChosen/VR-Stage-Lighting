@@ -3,6 +3,11 @@ sampler2D _MainTex;
 // sampler2D _OSCGridRenderTexture, _OSCGridRenderTextureRAW, _OSCGridStrobeTimer;
 //SamplerState sampler_point_repeat;
 int _IsEven;
+
+
+//float _TextureColorSampleX, _TextureColorSampleY;
+sampler _SamplingTexture;
+
 sampler2D _MetallicGlossMap;
 sampler2D _BumpMap, _InsideConeNormalMap, _SceneAlbedo;
 float4 _Color;
@@ -69,6 +74,7 @@ float _InnerFadeStrength, _InnerIntensityCurve;
 
 UNITY_INSTANCING_BUFFER_START(Props)
     // UNITY_DEFINE_INSTANCED_PROP(uint, _Sector)
+    UNITY_DEFINE_INSTANCED_PROP(uint, _EnableColorTextureSample)
     UNITY_DEFINE_INSTANCED_PROP(uint, _PanInvert)
     UNITY_DEFINE_INSTANCED_PROP(uint, _TiltInvert)
     // UNITY_DEFINE_INSTANCED_PROP(uint, _EnableOSC)
@@ -83,5 +89,8 @@ UNITY_INSTANCING_BUFFER_START(Props)
     UNITY_DEFINE_INSTANCED_PROP(float, _ConeLength)
     UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
     UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
+    UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleX)
+    UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleY)
+
 UNITY_INSTANCING_BUFFER_END(Props)
 

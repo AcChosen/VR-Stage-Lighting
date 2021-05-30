@@ -43,6 +43,10 @@ public class VRStageLighting_AudioLink : UdonSharpBehaviour
     [Tooltip ("The main color of the light.")]
     [ColorUsage(false,true)]
     public Color lightColorTint = Color.white * 2.0f;
+    [Tooltip ("Check this box if you wish to sample seperate texture for the color. The color will be influenced by the intensity of the original emission color! The texture is set in the shader itself.")]
+    public bool enableColorTextureSampling;
+    [Tooltip ("The UV coordinates to sample the color from on the texture.")]
+    public Vector2 textureSamplingCoordinates = new Vector2(0.5f, 0.5f);
     [Space(5)]
     [Header("Movement Settings")]
     [Tooltip ("Invert the pan values (Left/Right Movement) for movers.")]
@@ -142,17 +146,25 @@ public class VRStageLighting_AudioLink : UdonSharpBehaviour
     }
     public void _UpdateInstancedProperties()
     {   
+        //Color Texture Sampling
+        props.SetFloat("_TextureColorSampleX", textureSamplingCoordinates.x);
+        props.SetFloat("_TextureColorSampleY", textureSamplingCoordinates.y);
+        props.SetInt("_EnableColorTextureSample", enableColorTextureSampling == true ? 1 : 0);
+
+        //AudioLink Stuff
         props.SetFloat("_EnableAudioLink", enableAudioLink == true ? 1.0f : 0.0f);
         //props.SetFloat("_NumBands", spectrumBands.Length);
         props.SetFloat("_Delay", delay);
         props.SetFloat("_BandMultiplier", bandMultiplier);
         props.SetFloat("_Band", band);
+        //Movement Stuff
         props.SetInt("_PanInvert", invertPan == true ? 1 : 0);
         props.SetInt("_TiltInvert", invertTilt == true ? 1 : 0);
         props.SetInt("_EnableSpin", enableAutoSpin == true ? 1 : 0);
-        props.SetInt("_ProjectionSelection", selectGOBO);
         props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
         props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
+        //Other Stuff
+        props.SetInt("_ProjectionSelection", selectGOBO);
         props.SetColor("_Emission", lightColorTint);
         props.SetFloat("_ConeWidth", coneWidth);
         props.SetFloat("_GlobalIntensity", globalIntensity);

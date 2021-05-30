@@ -10,6 +10,12 @@
 		 [HideInInspector]_StrobeFreq("Strobe Frequency", Range(0,25)) = 1
 		 [HideInInspector][Toggle] _EnableSpin("Enable Auto Spinning", Float) = 0
 
+        //Color Texture Sampling Properties
+		 [Toggle] _EnableColorTextureSample ("Enable Color Texture Sampling", Int) = 0
+		 _SamplingTexture ("Texture To Sample From for Color", 2D) = "white" {}
+		 _TextureColorSampleX ("X coordinate to sample the texture from", Range(0,1)) = 0.5
+		 _TextureColorSampleY ("Y coordinate to sample the texture from", Range(0,1)) = 0.5
+
 
         [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
         _FixutreIntensityMultiplier ("Intensity Multipler (For Bloom Scaling)", Range(1,5)) = 1

@@ -27,7 +27,11 @@
 		_FixtureMaxIntensity ("Maximum Light Intensity",Range (0,6)) = 1
 		//[NoScaleOffset] _SceneAlbedo ("Scene Albedo Render Texture", 2D) = "white" {}
 
-
+		//Color Texture Sampling Properties
+		 [Toggle] _EnableColorTextureSample ("Enable Color Texture Sampling", Int) = 0
+		 _SamplingTexture ("Texture To Sample From for Color", 2D) = "white" {}
+		 _TextureColorSampleX ("X coordinate to sample the texture from", Range(0,1)) = 0.5
+		 _TextureColorSampleY ("Y coordinate to sample the texture from", Range(0,1)) = 0.5
 
 		//[Header(PROJECTION SETTINGS)]
 

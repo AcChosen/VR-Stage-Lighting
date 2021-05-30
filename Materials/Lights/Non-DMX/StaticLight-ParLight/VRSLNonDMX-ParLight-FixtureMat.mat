@@ -103,6 +103,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SamplingTexture:
+        m_Texture: {fileID: 2800000, guid: ba9a307ceadf5564683f0e0af8af748c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SceneAlbedo:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -126,6 +130,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DistFade: 0.7
     - _DstBlend: 0
+    - _EnableColorTextureSample: 0
     - _EnableOSC: 0
     - _EnableSpin: 0
     - _EnableStrobe: 0
@@ -178,6 +183,8 @@ Material:
     - _SpinSpeed: 0
     - _SrcBlend: 1
     - _StrobeFreq: 12.76
+    - _TextureColorSampleX: 0.5
+    - _TextureColorSampleY: 0.5
     - _TextureSampleMode: 0
     - _TiltInvert: 0
     - _TriplanarFalloff: 1

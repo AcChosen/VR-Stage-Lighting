@@ -95,6 +95,10 @@ Material:
         m_Texture: {fileID: 8600000, guid: 94af0f81352065847b397e161587be3d, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SamplingTexture:
+        m_Texture: {fileID: 2800000, guid: ba9a307ceadf5564683f0e0af8af748c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SceneNormals:
         m_Texture: {fileID: 8400000, guid: 97a6cc22a32ae15489c972f5447a21c0, type: 2}
         m_Scale: {x: 1, y: 1}
@@ -118,6 +122,7 @@ Material:
     - _DividePower: 0.079
     - _EnableAudioLink: 0
     - _EnableAudioReact: 0
+    - _EnableColorTextureSample: 0
     - _EnableOSC: 0
     - _EnableSpin: 1
     - _EnableStaticEmissionColor: 0
@@ -174,6 +179,8 @@ Material:
     - _SpecularLMOcclusion: 0
     - _SpinSpeed: 4.62
     - _StrobeFreq: 16.61
+    - _TextureColorSampleX: 0.5
+    - _TextureColorSampleY: 0.5
     - _TextureSampleMode: 0
     - _TiltInvert: 0
     - _TriplanarFalloff: 1
