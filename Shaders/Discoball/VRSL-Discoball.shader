@@ -108,7 +108,7 @@
                 // pack correction factor into direction w component to save space
                 o.worldDirection.w = dot(o.vertex, CalculateFrustumCorrection());
                 uint sector = getChannelSectorX();
-                o.sectorIntensity = IF(_EnableCompatibilityMode == 1, float2(sector, getValueAtCoords(compatSampleYAxis, compatSampleYAxis, sector, _OSCGridRenderTextureRAW)), float2(sector, getValueAtCoords(0.038017, standardSampleYAxis, sector, _OSCGridRenderTextureRAW)));
+                o.sectorIntensity = IF(_EnableCompatibilityMode == 1, float2(sector, getValueAtCoords(0.019231, 0.019231, sector, _OSCGridRenderTextureRAW)), float2(sector, getValueAtCoords(0.038017, standardSampleYAxis, sector, _OSCGridRenderTextureRAW)));
                 if(o.sectorIntensity.y <= 0.05 && _EnableOSC == 1)
                 {
                     v.vertex = float4(0,0,0,0);
