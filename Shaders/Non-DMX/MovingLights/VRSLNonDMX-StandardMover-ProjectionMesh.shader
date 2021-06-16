@@ -182,9 +182,10 @@
                  float2 uv : TEXCOORD0;
                  float3 ray : TEXCOORD2;
                  float4 screenPos : TEXCOORD4;
+				 float2 globalFinalIntensity : TEXCOORD1;
 				 float4 color : COLOR;
 				 float3 normal : TEXCOORD3;	
-				 //float2 sector: TEXCOORD10;
+				 float4 emissionColor : TEXCOORD9;
 				 float4 projectionorigin : TEXCOORD5;
 				 float4 worldDirection : TEXCOORD6;
 				 float4 worldPos : TEXCOORD7;

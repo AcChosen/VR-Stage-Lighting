@@ -10,6 +10,23 @@ inline float CorrectedLinearEyeDepth(float z, float B)
 	return 1.0 / (z/UNITY_MATRIX_P._34 + B);
 }
 
+float3 RGB2HSV(float3 c)
+{
+    float4 K = float4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+	float4 p = lerp(float4(c.bg, K.wz), float4(c.gb, K.xy), step(c.b, c.g));
+	float4 q = lerp(float4(p.xyw, c.r), float4(c.r, p.yzx), step(p.x, c.r));
+
+	float d = q.x - min(q.w, q.y);
+	float e = 1.0e-10;
+	return float3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+}
+
+float3 hsb2rgb( float3 c ){
+    float3 rgb = clamp( abs(fmod(c.x*6.0+float3(0.0,4.0,2.0),6)-3.0)-1.0, 0, 1);
+    rgb = rgb*rgb*(3.0-2.0*rgb);
+    return c.z * lerp( float3(1,1,1), rgb, c.y);
+}
+
 float4 VolumetricLightingBRDF(v2f i)
 {
 
@@ -18,9 +35,11 @@ float4 VolumetricLightingBRDF(v2f i)
 	
 	// if((ceil(i.color.r) != 0 && (ceil(i.color.g) != 1) && ceil(i.color.b) != 0 && (ceil(i.uv.x != 0.9)) && (ceil(i.uv.y != 0.9)) ))
 	// {
-		float globalintensity = getGlobalIntensity();
-		float finalintensity = getFinalIntensity();
-		if(globalintensity <= 0.01 || finalintensity <= 0.01)
+		float audioReact = i.audioGlobalFinalIntensity.x;
+		float globalintensity = i.audioGlobalFinalIntensity.y;
+		float finalintensity = i.audioGlobalFinalIntensity.z;
+		float4 emissionTint = i.emissionColor;
+		if(globalintensity <= 0.005 || finalintensity <= 0.005 || audioReact <= 0.005 || all(emissionTint<= float4(0.005, 0.005, 0.005, 1.0)))
 		{
 			return half4(0,0,0,0);
 		}
@@ -115,21 +134,24 @@ float4 VolumetricLightingBRDF(v2f i)
 			i.uv2.x = i.uv2.x + (_Time * -0.5);
 			i.uv2.y = i.uv2.y + (_Time * -0.1);
 		}
-		
-		fixed4 col = tex2D(_LightMainTex, uvMap) * ((sin(_Time.y * _PulseSpeed) * 0.5 + 1));
+		fixed4 gradientTexture = tex2D(_LightMainTex, uvMap);
+
+		fixed4 col = gradientTexture * ((sin(_Time.y * _PulseSpeed) * 0.5 + 1));
 		col = ((((col*fade) * altFade) * depthFade) * distFade) * _FixtureMaxIntensity;
-		// col *= fade;
-		// col *= altFade;
-		// col *= depthFade;
-		// col *= distFade;
-		// col *= _FixtureMaxIntensity;
 
 
 		//UNITY_APPLY_FOG_COLOR(i.fogCoord, col, fixed4(0,0,0,0));
 
 
 //		float strobe = IF(isStrobe() == 1, i.intensityStrobeGOBOSpinSpeed.y, 1);
-		col = col * getEmissionColor();
+		col = col * emissionTint;
+		col*= i.blindingEffect;
+
+		float3 newCol = RGB2HSV(col.rgb);
+		newCol = float3(newCol.x, clamp(newCol.y,0.0, 1.0)-.1, newCol.z);
+		col.xyz = lerp(col.xyz,hsb2rgb(newCol), gradientTexture.r);
+
+
 		col = lerp(col, fixed4(0,0,0,0), pow(i.uv.x,.5));
 		//Beam Splitter and spin
 		const float pi = 3.14159265;
@@ -149,20 +171,25 @@ float4 VolumetricLightingBRDF(v2f i)
 		col *= divide;
 
 		float4 result = col;
+		float lm = length(wpos - i.worldPos);
+		lm = clamp(lm * 0.3, 0.0, 1.0) - 0.0;
+		col *= float4(lm, lm, lm, 1.0);
+
+		//float4 result = col;
 		//result = IF(isOSC() == 1,lerp(half4(0,0,0,result.w), result, i.intensityStrobeGOBOSpinSpeed.x), result);
 		//result = IF(i.intensityStrobeGOBOSpinSpeed.x <= _IntensityCutoff && isOSC() == 1, half4(0,0,0,result.w), result);
 		// result.xyz = rgb2hsv(result.xyz);
-		result = clamp(0,3, result);
-		float resultAvg = ((result.x + result.y + result.z)/3)*1.5;
-		float4 resultAvgStrength = lerp(result, float4(resultAvg,resultAvg,resultAvg,result.a), _Saturation);
-		result = lerp(resultAvgStrength, result, pow(uvMap.x, _SaturationLength));
+		// result = clamp(0,3, result);
+		// float resultAvg = ((result.x + result.y + result.z)/3)*1.5;
+		// float4 resultAvgStrength = lerp(result, float4(resultAvg,resultAvg,resultAvg,result.a), _Saturation);
+		// result = lerp(resultAvgStrength, result, pow(uvMap.x, _SaturationLength));
 		// result.xyz = hsv2rgb(result.xyz);
 
 		if(i.color.r >= 0.9)
 		{
 			result = result * 4;
 		}
-		result = result * GetAudioReactAmplitude();
+		result = result * audioReact;
 		result = lerp(half4(0,0,0,result.w), result, globalintensity);
 		result = lerp(half4(0,0,0,result.w), result, finalintensity);
 		result = result * _UniversalIntensity;

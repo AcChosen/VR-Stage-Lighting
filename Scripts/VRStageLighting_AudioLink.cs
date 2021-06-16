@@ -32,6 +32,9 @@ public class VRStageLighting_AudioLink : UdonSharpBehaviour
     [Tooltip("Multiplier for the sensativity of the reaction.")]
     [Range(1.0f, 15.0f)]
     public float bandMultiplier = 1.0f;
+    [Tooltip ("Enable Color Chord tinting of the light emission.")]
+    public bool enableColorChord;
+    
 
     [Header("General Settings")]
     [Range(0,1)]
@@ -153,6 +156,7 @@ public class VRStageLighting_AudioLink : UdonSharpBehaviour
 
         //AudioLink Stuff
         props.SetFloat("_EnableAudioLink", enableAudioLink == true ? 1.0f : 0.0f);
+        props.SetInt("_EnableColorChord", enableColorChord == true ? 1 : 0);
         //props.SetFloat("_NumBands", spectrumBands.Length);
         props.SetFloat("_Delay", delay);
         props.SetFloat("_BandMultiplier", bandMultiplier);

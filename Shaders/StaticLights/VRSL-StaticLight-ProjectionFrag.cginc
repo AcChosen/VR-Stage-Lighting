@@ -29,7 +29,10 @@
         fixed4 ProjectionFrag(v2f i) : SV_Target
         {
             UNITY_SETUP_INSTANCE_ID(i);
-            if((all(i.rgbColor <= float4(0.05,0.05,0.05,1)) || i.intensityStrobe.x <= 0.05) && isOSC() == 1)
+            float gi = i.globalFinalIntensity.x;
+            float fi = i.globalFinalIntensity.y;
+            float4 emissionTint = i.emissionColor;
+            if(((all(i.rgbColor <= float4(0.05,0.05,0.05,1)) || i.intensityStrobe.x <= 0.05) && isOSC() == 1) || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1.0)))
             {
                 return (0,0,0,0);
             }
@@ -112,9 +115,9 @@
                 col = IF(isOSC() == 1, OSCcol, col);
 
                 
-                float4 result = ((col * UVscale  * _ProjectionMaxIntensity) * getEmissionColor()) * strobe;
+                float4 result = ((col * UVscale  * _ProjectionMaxIntensity) * emissionTint) * strobe;
                 float fadeRange = (saturate(1-(pow(10, distanceFromOrigin - 2))));
-                return (((lerp(result,float4(0,0,0,0), smoothstep(distanceFromOrigin, 0, _Fade))) * getGlobalIntensity()) * getFinalIntensity()) * _UniversalIntensity;
+                return (((lerp(result,float4(0,0,0,0), smoothstep(distanceFromOrigin, 0, _Fade))) * gi) * fi) * _UniversalIntensity;
             }
             else
             {

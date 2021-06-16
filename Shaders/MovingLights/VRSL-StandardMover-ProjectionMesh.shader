@@ -190,6 +190,7 @@
 				 float3 intensityStrobeWidth : TEXCOORD9;
 				 float4 goboPlusSpinPanTilt : TEXCOORD11;
 				 float4 rgbColor : TEXCOORD12;
+				 float4 emissionColor : TEXCOORD13;
 				 UNITY_VERTEX_INPUT_INSTANCE_ID
              };
 			#include "../Shared/VRSL-DMXFunctions.cginc" //Custom Functions

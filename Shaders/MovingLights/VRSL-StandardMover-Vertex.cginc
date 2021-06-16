@@ -82,6 +82,55 @@ float4 calculateRotations(appdata v, float4 input, int normalsCheck, float pan, 
 	return input;
 }
 
+float4 InvertVolumetricRotations (float4 input)
+{
+	float sX, cX, sY, cY;
+	float angleY = radians(getOffsetY());
+	sY = sin(angleY);
+	cY = cos(angleY);
+	float4x4 rotateYMatrix = float4x4(cY, sY, 0, 0,
+		-sY, cY, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1);
+	float4 BaseAndFixturePos = input;
+
+		//INVERSION CHECK
+	rotateYMatrix = IF(checkPanInvertY() == 1, transpose(rotateYMatrix), rotateYMatrix);
+
+	//float4 localRotY = mul(rotateYMatrix, BaseAndFixturePos);
+	//LOCALROTY IS NEW ROTATION
+
+
+	float tiltOffset = 90.0;
+	tiltOffset = IF(checkTiltInvertZ() == 1, -tiltOffset, tiltOffset);
+	//set new origin to do transform
+	float4 newOrigin = input.w * _FixtureRotationOrigin;
+	input.xyz -= newOrigin;
+
+
+	float angleX = radians(getOffsetX() + (tiltOffset));
+	sX = sin((angleX));
+	cX = cos((angleX));
+
+	float4x4 rotateXMatrix = float4x4(1, 0, 0, 0,
+		0, cX, sX, 0,
+		0, -sX, cX, 0,
+		0, 0, 0, 1);
+
+	//float4 fixtureVertexPos = input;
+
+		//INVERSION CHECK
+	rotateXMatrix = IF(checkTiltInvertZ() == 1, transpose(rotateXMatrix), rotateXMatrix);
+	//float4 localRotX = mul(rotateXMatrix, fixtureVertexPos);
+
+	float4x4 rotateXYMatrix = mul(rotateXMatrix, rotateYMatrix);
+	float4 localRotXY = mul(rotateXYMatrix, input);
+
+	input.xyz = localRotXY;
+	input.xyz += newOrigin;
+	return input;
+}
+
 float4 CalculateProjectionScaleRange(appdata v, float4 input, float scalar)
 {
 	float4 oldinput = input;
@@ -220,6 +269,16 @@ v2f vert (appdata v)
 	#if defined(PROJECTION_YES)
 		o.projectionorigin = calculateRotations(v, _ProjectionRangeOrigin, 0, oscPanValue, oscTiltValue);
 	#endif
+	#if defined(VOLUMETRIC_YES)
+		float3 worldCam;
+		worldCam.x = unity_CameraToWorld[0][3];
+		worldCam.y = unity_CameraToWorld[1][3];
+		worldCam.z = unity_CameraToWorld[2][3];
+		float3 objCamPos = mul(unity_WorldToObject, float4(worldCam, 1)).xyz;
+		objCamPos = InvertVolumetricRotations(float4(objCamPos,1)).xyz;
+		float len = length(objCamPos.xy);
+		o.blindingEffect = clamp(0.6/len,1.0,16.0);
+	#endif
 
 	//calculate rotations for normals, cast to float4 first with 0 as w
 	float4 newNormals = float4(v.normal.x, v.normal.y, v.normal.z, 0);
@@ -248,6 +307,7 @@ v2f vert (appdata v)
 		UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 		//move verts to clip space
 		o.pos = UnityObjectToClipPos(v.vertex);
+		o.emissionColor = getEmissionColor();
 		//o.uv = TRANSFORM_TEX(v.uv, _ProjectionMainTex);
 		//get screen space position of verts
 		o.screenPos = ComputeScreenPos(o.pos);
@@ -272,7 +332,7 @@ v2f vert (appdata v)
 		o.intensityStrobeWidth = float3(GetOSCIntensity(sector, 1.0), GetStrobeOutput(sector), oscConeWidth);
 		o.goboPlusSpinPanTilt = float4(getOSCGoboSelection(sector), getGoboSpinSpeed(sector), oscPanValue, oscTiltValue);
 		o.rgbColor = GetOSCColor(sector);
-		if((all(o.rgbColor <= float4(0.01,0.01,0.01,1)) || o.intensityStrobeWidth.x <= 0.01) && isOSC() == 1)
+		if(((all(o.rgbColor <= float4(0.01,0.01,0.01,1)) || o.intensityStrobeWidth.x <= 0.01) && isOSC() == 1) || getGlobalIntensity() <= 0.005 || getFinalIntensity() <= 0.005 || all(o.emissionColor <= float4(0.005, 0.005, 0.005, 1.0)))
 		{
 			v.vertex = float4(0,0,0,0);
 			o.pos = UnityObjectToClipPos(v.vertex);
@@ -316,7 +376,7 @@ v2f vert (appdata v)
 		//GETTING DATA FROM OSC TEXTURE
 		o.intensityStrobeGOBOSpinSpeed = float3(GetOSCIntensity(sector, 1.0),GetStrobeOutput(sector), getGoboSpinSpeed(sector));
 		o.rgbColor = GetOSCColor(sector);
-		if((all(o.rgbColor <= float4(0.01,0.01,0.01,1)) || o.intensityStrobeGOBOSpinSpeed.x <= 0.01) && isOSC() == 1)
+		if(((all(o.rgbColor <= float4(0.01,0.01,0.01,1)) || o.intensityStrobeGOBOSpinSpeed.x <= 0.01) && isOSC() == 1) || getGlobalIntensity() <= 0.005 || getFinalIntensity() <= 0.005)
 		{
 			v.vertex = float4(0,0,0,0);
 			o.pos = UnityObjectToClipPos(v.vertex);

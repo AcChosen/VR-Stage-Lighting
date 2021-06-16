@@ -19,6 +19,7 @@
 
 		[Header(Audio Section)]
          [Toggle]_EnableAudioLink("Enable Audio Link", Float) = 0
+		 [Toggle] _EnableColorChord ("Enable Color Chord Tinting", Int) = 0
          _Band("Band", Float) = 0
          _BandMultiplier("Band Multiplier", Range(1, 15)) = 1
          _Delay("Delay", Float) = 0

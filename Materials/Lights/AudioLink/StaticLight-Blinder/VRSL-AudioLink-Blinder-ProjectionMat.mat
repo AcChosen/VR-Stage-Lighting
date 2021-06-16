@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _AudioSpectrum:
-        m_Texture: {fileID: 8600000, guid: f51fa799ef0abde489235f40fc0328ef, type: 2}
+        m_Texture: {fileID: 8600000, guid: a4ea854836fbd3747b614c334c0182d8, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -75,6 +75,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SamplingTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SceneAlbedo:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -98,6 +102,8 @@ Material:
     - _DistFade: 0.7
     - _EnableAudioLink: 0
     - _EnableAudioReact: 0
+    - _EnableColorChord: 0
+    - _EnableColorTextureSample: 0
     - _EnableOSC: 0
     - _EnableSpin: 0
     - _EnableStrobe: 0
@@ -143,6 +149,8 @@ Material:
     - _SpecularLMOcclusion: 0
     - _SpinSpeed: 0
     - _StrobeFreq: 12.76
+    - _TextureColorSampleX: 0.5
+    - _TextureColorSampleY: 0.5
     - _TextureSampleMode: 0
     - _TriplanarFalloff: 1
     - _UniversalIntensity: 1

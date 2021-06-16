@@ -63,6 +63,7 @@
 		//_IntensityCutoff("Intensity Minimum Cut Off", Range (0, 1)) = 0.2
 		_StripeSplit ("Stripe Split", Range(0, 30)) = 0
 		_StripeSplitStrength ("Stripe Split Strength", Range(0, 1)) = 0
+		//_FixtureLensOrigin("Center Of Fixture Lens (For Blinding Effect)", Float) = (0,-0.068819, 0.123191, 0)
 
 
 
@@ -120,8 +121,10 @@
 			struct v2f
 			{
 				centroid float2 uv : TEXCOORD0;
+				float blindingEffect : TEXCOORD1;
 				float4 worldPos : TEXCOORD2;
 				float4 color : TEXCOORD3;
+				float2 globalFinalIntensity : TEXCOORD4;
 				float3 viewDir : TEXCOORD5;
 				float4 screenPos : TEXCOORD6;
 				float4 pos : SV_POSITION;
@@ -132,6 +135,8 @@
 				float3 norm : TEXCOORD11;
 				float2 uv2 : TEXCOORD13;
 				float4 worldDirection : TEXCOORD14;
+				float4 emissionColor : TEXCOORD15;
+
 				//float3 intensityStrobeGOBOSpinSpeed : TEXCOORD15;
 				//float4 rgbColor : TEXCOORD16;
 

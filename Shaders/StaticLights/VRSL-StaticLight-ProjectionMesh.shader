@@ -156,6 +156,8 @@
 				 float4 worldPos : TEXCOORD7;
 				 float2 intensityStrobe : TEXCOORD11;
 				 float4 rgbColor : TEXCOORD12;
+				 float4 emissionColor : TEXCOORD13;
+				 float2 globalFinalIntensity : TEXCOORD14;
 				 UNITY_VERTEX_INPUT_INSTANCE_ID
              };
 			#include "../Shared/VRSL-Defines.cginc"
@@ -202,8 +204,9 @@
 		uint sector = getChannelSectorX();
 		o.intensityStrobe = float2(GetOSCIntensity(sector, 1.0),GetStrobeOutput(sector));
 		o.rgbColor = GetOSCColor(sector);
-
-
+		o.emissionColor = getEmissionColor();
+		o.globalFinalIntensity.x = getGlobalIntensity();
+		o.globalFinalIntensity.y = getFinalIntensity();
 
 		v.vertex = CalculateProjectionScaleRange(v, v.vertex, _ProjectionRange);
 		o.projectionorigin = CalculateProjectionScaleRange(v, _ProjectionRangeOrigin, _ProjectionRange);
@@ -223,7 +226,7 @@
 		o.worldDirection.xyz = o.worldPos.xyz - _WorldSpaceCameraPos;
 		// pack correction factor into direction w component to save space
 		o.worldDirection.w = dot(o.pos, CalculateFrustumCorrection());
-		if((all(o.rgbColor <= float4(0.05,0.05,0.05,1)) || o.intensityStrobe.x <= 0.05) && isOSC() == 1)
+		if(((all(o.rgbColor <= float4(0.05,0.05,0.05,1)) || o.intensityStrobe.x <= 0.05) && isOSC() == 1) || o.globalFinalIntensity.x <= 0.005 || o.globalFinalIntensity.y <= 0.005 || all(o.emissionColor <= float4(0.005, 0.005, 0.005, 1.0)))
 		{
 			v.vertex = float4(0,0,0,0);
 			o.pos = UnityObjectToClipPos(v.vertex);

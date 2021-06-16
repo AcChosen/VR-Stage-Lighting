@@ -35,6 +35,7 @@ public class VRSLInspector : ShaderGUI
 
     //Mover Housing Specific
     MaterialProperty _FixtureRotationOrigin = null;
+    //MaterialProperty _FixtureLensOrigin = null;
     MaterialProperty _MaxMinPanAngle = null;
     MaterialProperty _MaxMinTiltAngle = null;
     MaterialProperty _LightProbeMethod = null;
@@ -106,6 +107,7 @@ public class VRSLInspector : ShaderGUI
 
     //Audio Link Stuff
     MaterialProperty _EnableAudioLink = null;
+    MaterialProperty _EnableColorChord = null;
 
     MaterialProperty _NumBands = null;
 
@@ -272,6 +274,8 @@ public class VRSLInspector : ShaderGUI
                 matEditor.ShaderProperty(_NumBands, new GUIContent("Number of Bands", "The number of frequency bands the texture supports."));
                 matEditor.ShaderProperty(_Delay, new GUIContent("Delay", "How much delay between each sample"));
                 matEditor.ShaderProperty(_BandMultiplier, new GUIContent("Band Multiplier", "The frequency band to sample from"));
+                if(!isDiscoBall)
+                    matEditor.ShaderProperty(_EnableColorChord, new GUIContent("Enable Color Chord", "Enables or disables Color Chord tinting. \nThis will tint the final color of the light after texture tinting."));
                 EditorGUI.indentLevel--;
                 GUILayout.Space(5);
             }
@@ -652,6 +656,7 @@ public class VRSLInspector : ShaderGUI
         {
             GUILayout.Space(5);
             EditorGUI.indentLevel++;
+         //   matEditor.ShaderProperty(_FixtureLensOrigin, new GUIContent("Center Of Fixture Lens (For Blinding Effect)", "This value sets where the brightest spot in the fixture should be. This helps with the blinding effect."));
             matEditor.ShaderProperty(_FixtureMaxIntensity, new GUIContent("Max Cone Intensity", "Maximum light intensity for the volumetric cone."));            
             matEditor.ShaderProperty(_FadeStrength, new GUIContent("Edge Fade Amount", "Outer and Inner edge fade strength."));
             matEditor.ShaderProperty(_InnerFadeStrength, new GUIContent("Inner Edge Fade Amount", "Inner edge fade only."));

@@ -129,14 +129,16 @@ inline float CorrectedLinearEyeDepth(float z, float B)
             UNITY_SETUP_INSTANCE_ID(i);
             if(i.color.g > 0.5)
             {
-                float globalintensity = getGlobalIntensity();
-                float finalintensity = getFinalIntensity();
-                float coneWidth = getConeWidth();
+                float audioReaction = i.audioGlobalFinalConeIntensity.x;
+                float globalintensity = i.audioGlobalFinalConeIntensity.y;
+                float finalintensity = i.audioGlobalFinalConeIntensity.z;
+                float coneWidth = i.audioGlobalFinalConeIntensity.w;
+                float4 emissionTint = i.emissionColor;
                 // if((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobeWidth.x <= 0.01) && isOSC() == 1)
                 // {
                 //     return (0,0,0,0);
                 // }
-                if(globalintensity <= 0.01 || finalintensity <= 0.01)
+                if(audioReaction <= 0.005 || globalintensity <= 0.005 || finalintensity <= 0.005 || all(emissionTint<= float4(0.005, 0.005, 0.005, 1.0)))
                 {
                     return half4(0,0,0,0);
                 }
@@ -237,9 +239,9 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 
 
                 // project plane on to the world normals in object space in the z direction of the object origin.
-                col = ((col * getEmissionColor() * UVscale * _ProjectionIntensity)); 
+                col = ((col * emissionTint * UVscale * _ProjectionIntensity)); 
                 col = col * (1/(_ProjectionDistanceFallOff * (distanceFromOrigin * distanceFromOrigin)));
-                col = col * GetAudioReactAmplitude();
+                col = col * audioReaction;
                 col = lerp(half4(0,0,0,col.w), col, globalintensity);
                 col = lerp(half4(0,0,0,col.w), col, finalintensity);
                 //float saturation = saturate(RGB2HSV(col)).y;  

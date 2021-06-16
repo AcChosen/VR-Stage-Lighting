@@ -122,6 +122,7 @@
 			struct v2f
 			{
 				centroid float2 uv : TEXCOORD0;
+				float blindingEffect : TEXCOORD1;
 				float4 worldPos : TEXCOORD2;
 				float4 color : TEXCOORD3;
 				float3 viewDir : TEXCOORD5;

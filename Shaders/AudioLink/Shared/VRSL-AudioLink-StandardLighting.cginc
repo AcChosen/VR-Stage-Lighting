@@ -139,7 +139,7 @@ float4 CustomStandardLightingBRDF(
             lighting = emission;
             
             float lightingAVG = (lighting.x + lighting.y + lighting.z)/3;
-            lighting = lerp(lighting,float3(lightingAVG, lightingAVG, lightingAVG), pow(_Saturation,2));
+            lighting = lerp(lighting,float3(lightingAVG, lightingAVG, lightingAVG), pow(_Saturation,1));
             
 
             //lighting = clamp(lighting,0, _LensMaxBrightness*100);

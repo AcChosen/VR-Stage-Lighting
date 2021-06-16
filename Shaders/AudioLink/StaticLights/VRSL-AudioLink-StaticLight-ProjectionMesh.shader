@@ -13,6 +13,7 @@
 
 		[Header(Audio Section)]
          [Toggle]_EnableAudioLink("Enable Audio Link", Float) = 0
+		 [Toggle] _EnableColorChord ("Enable Color Chord Tinting", Int) = 0
          _Band("Band", Float) = 0
          _BandMultiplier("Band Multiplier", Range(1, 15)) = 1
          _Delay("Delay", Float) = 0
@@ -153,6 +154,8 @@
 				 float4 projectionorigin : TEXCOORD5;
 				 float4 worldDirection : TEXCOORD6;
 				 float4 worldPos : TEXCOORD7;
+				 float4 emissionColor : TEXCOORD8;
+				 float3 audioGlobalFinalIntensity: TEXCOORD1;
 				 UNITY_VERTEX_INPUT_INSTANCE_ID
              };
 			#include "../Shared/VRSL-AudioLink-Defines.cginc"
@@ -196,9 +199,10 @@
 		UNITY_SETUP_INSTANCE_ID(v);
 		//
 		UNITY_TRANSFER_INSTANCE_ID(v, o);
-
-
-
+		o.audioGlobalFinalIntensity.x = GetAudioReactAmplitude();
+		o.audioGlobalFinalIntensity.y = getGlobalIntensity();
+		o.audioGlobalFinalIntensity.z = getFinalIntensity();
+		o.emissionColor = getEmissionColor();
 		v.vertex = CalculateProjectionScaleRange(v, v.vertex, _ProjectionRange);
 		o.projectionorigin = CalculateProjectionScaleRange(v, _ProjectionRangeOrigin, _ProjectionRange);
 		//move verts to clip space
@@ -217,7 +221,11 @@
 		o.worldDirection.xyz = o.worldPos.xyz - _WorldSpaceCameraPos;
 		// pack correction factor into direction w component to save space
 		o.worldDirection.w = dot(o.pos, CalculateFrustumCorrection());
-
+		if(o.audioGlobalFinalIntensity.x <= 0.005 || o.audioGlobalFinalIntensity.y <= 0.005 || o.audioGlobalFinalIntensity.z <= 0.005 || all(o.emissionColor.xyz <= float4(0.005, 0.005, 0.005, 1.0)))
+		{
+			v.vertex = float4(0,0,0,0);
+			o.pos = UnityObjectToClipPos(v.vertex);
+		}
 		return o;
 	}
 				

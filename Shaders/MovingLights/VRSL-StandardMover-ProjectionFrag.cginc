@@ -127,7 +127,10 @@ inline float CorrectedLinearEyeDepth(float z, float B)
             UNITY_SETUP_INSTANCE_ID(i);
             if(i.color.g > 0.5)
             {
-                if((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobeWidth.x <= 0.01) && isOSC() == 1)
+                float gi = getGlobalIntensity();
+                float fi = getFinalIntensity();
+                float4 emissionTint = i.emissionColor;
+                if(((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobeWidth.x <= 0.01) && isOSC() == 1) || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1)))
                 {
                     return half4(0,0,0,0);
                 }
@@ -228,10 +231,10 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 
 
                 // project plane on to the world normals in object space in the z direction of the object origin.
-                col = ((col * getEmissionColor() * UVscale * _ProjectionIntensity)) * strobe; 
+                col = ((col * emissionTint * UVscale * _ProjectionIntensity)) * strobe; 
                 col = col * (1/(_ProjectionDistanceFallOff * (distanceFromOrigin * distanceFromOrigin)));
-                col = lerp(half4(0,0,0,col.w), col, getGlobalIntensity());
-                col = lerp(half4(0,0,0,col.w), col, getFinalIntensity());
+                col = lerp(half4(0,0,0,col.w), col, gi);
+                col = lerp(half4(0,0,0,col.w), col, fi);
                 //float saturation = saturate(RGB2HSV(col)).y;  
                 //col = IF(_EnableStaticEmissionColor == 1, lerp(float4(0,0,0,0), col, saturation), col);
                 col = IF( _EnableStaticEmissionColor == 1, float4(col.r * _RedMultiplier, col.g * _GreenMultiplier, col.b * _BlueMultiplier, col.a), col);

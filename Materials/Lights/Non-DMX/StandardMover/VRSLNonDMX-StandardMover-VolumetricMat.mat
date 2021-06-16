@@ -108,7 +108,7 @@ Material:
     - _BumpScale: 1
     - _ConeLength: 2.13
     - _ConeSync: 0.2
-    - _ConeWidth: 3.65
+    - _ConeWidth: 3.37
     - _DNEnabler: 0
     - _DistFade: 1.165
     - _Divide: 11.6
@@ -127,7 +127,7 @@ Material:
     - _FixtureBaseRotationY: 0
     - _FixtureMaxIntensity: 0.15
     - _FixtureRotationX: 180
-    - _GlobalIntensity: 1
+    - _GlobalIntensity: 0.511
     - _Glossiness: 1
     - _GreenMultiplier: 1
     - _InnerFadeStrength: -0.08
@@ -185,6 +185,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 7.8000345, g: 7.8000345, b: 7.8000345, a: 1}
     - _EmissionColor: {r: 9.363626, g: 9.363626, b: 9.363626, a: 3}
+    - _FixtureLensOrigin: {r: 0, g: -0.7, b: 0.123191, a: 1}
     - _FixtureRotationOrigin: {r: 0, g: 0, b: 0.1235, a: 0}
     - _LightColor: {r: 23.968628, g: 23.968628, b: 23.968628, a: 1}
     - _ProjectionRangeOrigin: {r: 0, g: -0.075354, b: 0.123875, a: 0}

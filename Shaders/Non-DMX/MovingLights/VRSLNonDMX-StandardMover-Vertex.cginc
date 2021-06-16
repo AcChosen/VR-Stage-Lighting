@@ -82,6 +82,55 @@ float4 calculateRotations(appdata v, float4 input, int normalsCheck)
 	return input;
 }
 
+float4 InvertVolumetricRotations (float4 input)
+{
+	float sX, cX, sY, cY;
+	float angleY = radians(getOffsetY());
+	sY = sin(angleY);
+	cY = cos(angleY);
+	float4x4 rotateYMatrix = float4x4(cY, sY, 0, 0,
+		-sY, cY, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1);
+	float4 BaseAndFixturePos = input;
+
+		//INVERSION CHECK
+	rotateYMatrix = IF(checkPanInvertY() == 1, transpose(rotateYMatrix), rotateYMatrix);
+
+	//float4 localRotY = mul(rotateYMatrix, BaseAndFixturePos);
+	//LOCALROTY IS NEW ROTATION
+
+
+	float tiltOffset = 90.0;
+	tiltOffset = IF(checkTiltInvertZ() == 1, -tiltOffset, tiltOffset);
+	//set new origin to do transform
+	float4 newOrigin = input.w * _FixtureRotationOrigin;
+	input.xyz -= newOrigin;
+
+
+	float angleX = radians(getOffsetX() + (tiltOffset));
+	sX = sin((angleX));
+	cX = cos((angleX));
+
+	float4x4 rotateXMatrix = float4x4(1, 0, 0, 0,
+		0, cX, sX, 0,
+		0, -sX, cX, 0,
+		0, 0, 0, 1);
+
+	//float4 fixtureVertexPos = input;
+
+		//INVERSION CHECK
+	rotateXMatrix = IF(checkTiltInvertZ() == 1, transpose(rotateXMatrix), rotateXMatrix);
+	//float4 localRotX = mul(rotateXMatrix, fixtureVertexPos);
+
+	float4x4 rotateXYMatrix = mul(rotateXMatrix, rotateYMatrix);
+	float4 localRotXY = mul(rotateXYMatrix, input);
+
+	input.xyz = localRotXY;
+	input.xyz += newOrigin;
+	return input;
+}
+
 float4 CalculateProjectionScaleRange(appdata v, float4 input, float scalar)
 {
 	float4 oldinput = input;
@@ -217,7 +266,23 @@ v2f vert (appdata v)
 	//calculate rotations for verts
 	v.vertex = calculateRotations(v, v.vertex, 0);
 	#if defined(PROJECTION_YES)
+		o.globalFinalIntensity.x = getGlobalIntensity();
+		o.globalFinalIntensity.y = getFinalIntensity();
+		o.emissionColor = getEmissionColor();
 		o.projectionorigin = calculateRotations(v, _ProjectionRangeOrigin, 0);
+	#endif
+	#if defined(VOLUMETRIC_YES)
+		o.globalFinalIntensity.x = getGlobalIntensity();
+		o.globalFinalIntensity.y = getFinalIntensity();
+		o.emissionColor = getEmissionColor();
+		float3 worldCam;
+		worldCam.x = unity_CameraToWorld[0][3];
+		worldCam.y = unity_CameraToWorld[1][3];
+		worldCam.z = unity_CameraToWorld[2][3];
+		float3 objCamPos = mul(unity_WorldToObject, float4(worldCam, 1)).xyz;
+		objCamPos = InvertVolumetricRotations(float4(objCamPos,1)).xyz;
+		float len = length(objCamPos.xy);
+		o.blindingEffect = clamp(0.6/len,1.0,16.0);
 	#endif
 
 	//calculate rotations for normals, cast to float4 first with 0 as w
@@ -276,6 +341,11 @@ v2f vert (appdata v)
 		// 	v.vertex = float4(0,0,0,0);
 		// 	o.pos = UnityObjectToClipPos(v.vertex);
 		// } 
+		if(o.globalFinalIntensity.x <= 0.005 || o.globalFinalIntensity.y <= 0.005 || all(o.emissionColor.xyz <= float4(0.005, 0.005, 0.005, 1.0)))
+		{
+			v.vertex = float4(0,0,0,0);
+			o.pos = UnityObjectToClipPos(v.vertex);
+		}
 
 		//o.normal = v.normal;
 	#endif
@@ -320,6 +390,12 @@ v2f vert (appdata v)
 		// 	v.vertex = float4(0,0,0,0);
 		// 	o.pos = UnityObjectToClipPos(v.vertex);
 		// } 
+		if(o.globalFinalIntensity.x <= 0.005 || o.globalFinalIntensity.y <= 0.005 || all(o.emissionColor.xyz <= float4(0.005, 0.005, 0.005, 1.0)))
+		{
+			v.vertex = float4(0,0,0,0);
+			o.pos = UnityObjectToClipPos(v.vertex);
+		}
+
 	#endif
 
 	//Projection Part - Vertex Shader

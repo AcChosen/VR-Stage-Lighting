@@ -17,6 +17,7 @@
 
 		[Header(Audio Section)]
          [Toggle]_EnableAudioLink("Enable Audio Link", Float) = 0
+		 [Toggle] _EnableColorChord ("Enable Color Chord Tinting", Int) = 0
          _Band("Band", Float) = 0
          _BandMultiplier("Band Multiplier", Range(1, 15)) = 1
          _Delay("Delay", Float) = 0
@@ -187,6 +188,7 @@
              {
                  float4 pos : SV_POSITION;
                  float2 uv : TEXCOORD0;
+				 float4 audioGlobalFinalConeIntensity : TEXCOORD1;
                  float3 ray : TEXCOORD2;
                  float4 screenPos : TEXCOORD4;
 				 float4 color : COLOR;
@@ -196,6 +198,7 @@
 				 float4 worldDirection : TEXCOORD6;
 				 float4 worldPos : TEXCOORD7;
 				 float3 viewDir : TEXCOORD8;
+				 float4 emissionColor : TEXCOORD9;
 				 //float3 intensityStrobeWidth : TEXCOORD9;
 				 //float4 goboPlusSpinPanTilt : TEXCOORD11;
 				 //float4 rgbColor : TEXCOORD12;

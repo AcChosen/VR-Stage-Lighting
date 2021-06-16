@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _AudioSpectrum:
-        m_Texture: {fileID: 8600000, guid: f51fa799ef0abde489235f40fc0328ef, type: 2}
+        m_Texture: {fileID: 8600000, guid: a4ea854836fbd3747b614c334c0182d8, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -120,6 +120,7 @@ Material:
     - _Divide: 11.6
     - _DividePower: 0.079
     - _EnableAudioLink: 0
+    - _EnableColorChord: 0
     - _EnableColorTextureSample: 0
     - _EnableOSC: 1
     - _EnableSpin: 1
@@ -133,7 +134,7 @@ Material:
     - _FixtureBaseRotationY: 0
     - _FixtureMaxIntensity: 0.228
     - _FixtureRotationX: 180
-    - _FixutreIntensityMultiplier: 8.61
+    - _FixutreIntensityMultiplier: 0.5
     - _GlobalIntensity: 1
     - _Glossiness: 0.877
     - _InnerFadeStrength: 0.58
@@ -168,7 +169,7 @@ Material:
     - _ProjectionUVMod6: 0.159
     - _PulseSpeed: 0
     - _RTLMStrength: 1
-    - _Saturation: 0.686
+    - _Saturation: 0.581
     - _SaturationLength: 0.1
     - _Sector: 0
     - _SpecLMOcclusionAdjust: 0.2

@@ -17,6 +17,7 @@
 
 		[Header(Audio Section)]
          [Toggle]_EnableAudioLink("Enable Audio Link", Float) = 0
+		 [Toggle] _EnableColorChord ("Enable Color Chord Tinting", Int) = 0
          _Band("Band", Float) = 0
          _BandMultiplier("Band Multiplier", Range(1, 15)) = 1
          _Delay("Delay", Float) = 0
@@ -128,8 +129,10 @@
 			struct v2f
 			{
 				centroid float2 uv : TEXCOORD0;
+				float blindingEffect : TEXCOORD1;
 				float4 worldPos : TEXCOORD2;
 				float4 color : TEXCOORD3;
+				float3 audioGlobalFinalIntensity : TEXCOORD4;
 				float3 viewDir : TEXCOORD5;
 				float4 screenPos : TEXCOORD6;
 				float4 pos : SV_POSITION;
@@ -138,6 +141,7 @@
 				float3 bitan : TEXCOORD9;
 				float3 tan : TEXCOORD10;
 				float3 norm : TEXCOORD11;
+				float4 emissionColor : TEXCOORD12;
 				float2 uv2 : TEXCOORD13;
 				float4 worldDirection : TEXCOORD14;
 				//float3 intensityStrobeGOBOSpinSpeed : TEXCOORD15;

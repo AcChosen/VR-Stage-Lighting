@@ -4,6 +4,7 @@ sampler2D _MainTex; float4 _MainTex_ST;
 //SamplerState sampler_point_repeat;
 
 //Audio link
+uniform float4 _AudioSpectrum_TexelSize; 
 uniform sampler2D _AudioSpectrum;
 sampler2D _SamplingTexture;
 
@@ -80,6 +81,7 @@ float4 _StaticEmission;
 
 UNITY_INSTANCING_BUFFER_START(Props)
     UNITY_DEFINE_INSTANCED_PROP(float, _EnableAudioLink)
+    UNITY_DEFINE_INSTANCED_PROP(float, _EnableColorChord)
     UNITY_DEFINE_INSTANCED_PROP(float, _NumBands)
     UNITY_DEFINE_INSTANCED_PROP(float, _Band)
     UNITY_DEFINE_INSTANCED_PROP(float, _BandMultiplier)

@@ -139,6 +139,7 @@
              {
                  float4 pos : SV_POSITION;
                  float2 uv : TEXCOORD0;
+				 float2 globalFinalIntensity : TEXCOORD1;
                  float3 ray : TEXCOORD2;
                  float4 screenPos : TEXCOORD4;
 				 float4 color : COLOR;
@@ -146,6 +147,7 @@
 				 float4 projectionorigin : TEXCOORD5;
 				 float4 worldDirection : TEXCOORD6;
 				 float4 worldPos : TEXCOORD7;
+				 float4 emissionColor : TEXCOORD8;
 				 UNITY_VERTEX_INPUT_INSTANCE_ID
              };
 			#include "../Shared/VRSLNonDMX-Defines.cginc"
@@ -210,6 +212,14 @@
 		o.worldDirection.xyz = o.worldPos.xyz - _WorldSpaceCameraPos;
 		// pack correction factor into direction w component to save space
 		o.worldDirection.w = dot(o.pos, CalculateFrustumCorrection());
+		o.globalFinalIntensity.x = getGlobalIntensity();
+		o.globalFinalIntensity.y = getFinalIntensity();
+		o.emissionColor = getEmissionColor();
+		if(o.globalFinalIntensity.x <= 0.005 || o.globalFinalIntensity.y <= 0.005 || all(o.emissionColor.xyz <= float4(0.005, 0.005, 0.005, 1.0)))
+		{
+			v.vertex = float4(0,0,0,0);
+			o.pos = UnityObjectToClipPos(v.vertex);
+		}
 
 		return o;
 	}

@@ -29,9 +29,10 @@
         fixed4 ProjectionFrag(v2f i) : SV_Target
         {
             UNITY_SETUP_INSTANCE_ID(i);
-            float globalintensity = getGlobalIntensity();
-            float finalintensity = getFinalIntensity();
-            if(globalintensity <= 0.05 || finalintensity <= 0.0f)
+            float globalintensity = i.globalFinalIntensity.x;
+            float finalintensity = i.globalFinalIntensity.y;
+            float4 emissionTint = i.emissionColor;
+            if(globalintensity <= 0.005 || finalintensity <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1.0)))
             {
                 return half4(0,0,0,0);
             }
@@ -114,7 +115,7 @@
 
 
                 
-                float4 result = ((col * UVscale  * _ProjectionMaxIntensity) * getEmissionColor());
+                float4 result = ((col * UVscale  * _ProjectionMaxIntensity) * emissionTint);
                 float fadeRange = (saturate(1-(pow(10, distanceFromOrigin - 2))));
                 return (((lerp(result,float4(0,0,0,0), smoothstep(distanceFromOrigin, 0, _Fade))) * getGlobalIntensity()) * getFinalIntensity()) * _UniversalIntensity;
             }

@@ -21,6 +21,7 @@ float _RealtimeGIStrength;
 float _StripeSplit;
 float _StripeSplitScroll;
 float _StripeSplitStrength;
+float4 _FixtureLensOrigin;
 //float _ProjectionNormalBlur;
 
 float4x4 _viewToWorld;
