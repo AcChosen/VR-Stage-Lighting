@@ -143,7 +143,7 @@ MonoBehaviour:
       Data: 10|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: AudioLink, Assembly-CSharp
+      Data: VRCAudioLink.AudioLink, Assembly-CSharp
     - Name: 
       Entry: 8
       Data: 

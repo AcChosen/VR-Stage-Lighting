@@ -5,6 +5,7 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 using UnityEngine.UI;
+using VRCAudioLink;
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UnityEditor;
