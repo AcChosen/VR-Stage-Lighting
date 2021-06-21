@@ -11,7 +11,7 @@ public class VRSL_BPMCounter : UdonSharpBehaviour
     [HideInInspector]
     public bool resetCounter = false;
     public bool manualStartBeat;
-    public bool _customBeatEnabled;
+    public bool _customBeatEnabled = true;
     private float _beatInterval, _beatTimer, _beatIntervalDivide8, _beatTimerDivide8;
     public bool _beatFull, _beatDivide8;
     public int _beatCountFull, _beatCountDivide8;
@@ -27,7 +27,7 @@ public class VRSL_BPMCounter : UdonSharpBehaviour
     // private double lastDownbeatTimeSynced;
 
     [UdonSynced]
-    public float _bpm;
+    public float _bpm = 60;
     
     private float unsyncbpm;
     void Start()
