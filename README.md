@@ -256,3 +256,12 @@ Future systems will also derive from this set of scripts.
 ## Local UI Panel
 
 A UI panel that can control the intensity of the different lighting shaders is also included. Plop this panel in you world to allow users to locally control the brightness of each aspect of the lights, or all lights at once. It also includes a slider for bloom intensity and a pre-made post processing volume for it. This panel is included as a prefab and is also featured in each example scene.
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+## Support <3
+
+If you'd like to support the project, you can do so via patreon, where you can also get some VRSL exclusives!~
+https://www.patreon.com/ac_chosen
+You can also join the official VRSL discord here!: 
+https://discord.gg/zPktZAe48r
