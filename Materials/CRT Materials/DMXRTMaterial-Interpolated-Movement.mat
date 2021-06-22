@@ -69,6 +69,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EnableCompatibilityMode: 0
+    - _EnableLegacyGlobalMovementSpeedChannel: 0
     - _EnableOSC: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5

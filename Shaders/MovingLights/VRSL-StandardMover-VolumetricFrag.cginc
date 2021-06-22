@@ -37,7 +37,7 @@ float4 VolumetricLightingBRDF(v2f i)
 	// {
 		float gi = getGlobalIntensity();
 		float fi = getFinalIntensity();
-		if(((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobeGOBOSpinSpeed.x <= 0.01) && isOSC() == 1) || gi <= 0.005 || fi <= 0.005)
+		if(((all(i.rgbColor <= float4(0.005,0.005,0.005,1)) || i.intensityStrobeGOBOSpinSpeed.x <= 0.005) && isOSC() == 1) || gi <= 0.005 || fi <= 0.005)
 		{
 			return half4(0,0,0,0);
 		} 
@@ -142,17 +142,13 @@ float4 VolumetricLightingBRDF(v2f i)
 		// col *= distFade;
 		// col *= _FixtureMaxIntensity;
 
-
+		col *= i.blindingEffect;
 		//UNITY_APPLY_FOG_COLOR(i.fogCoord, col, fixed4(0,0,0,0));
-
-
 		float strobe = IF(isStrobe() == 1, i.intensityStrobeGOBOSpinSpeed.y, 1);
 		col = col * getEmissionColor();
 		//col*= i.blindingEffect;
 
-		float3 newCol = RGB2HSV(col.rgb);
-		newCol = float3(newCol.x, clamp(newCol.y,0.0, 1.0)-.1, newCol.z);
-		col.xyz = lerp(col.xyz,hsb2rgb(newCol), gradientTexture.r);
+
 
 
 		col = lerp(col, fixed4(0,0,0,0), pow(i.uv.x,.5));
@@ -174,9 +170,14 @@ float4 VolumetricLightingBRDF(v2f i)
 		col *= divide;
 
 		float4 result = IF(isOSC() == 1, lerp(fixed4(0,0,0,col.w),(((col) * i.rgbColor) * strobe),i.intensityStrobeGOBOSpinSpeed.x * _FixtureMaxIntensity), (col) * strobe);
-		result = IF(isOSC() == 1,lerp(half4(0,0,0,result.w), result, i.intensityStrobeGOBOSpinSpeed.x), result);
+		result = IF(isOSC() == 1,lerp(half4(0,0,0,result.w), result, i.intensityStrobeGOBOSpinSpeed.x * i.intensityStrobeGOBOSpinSpeed.x), result);
 		result = IF(i.intensityStrobeGOBOSpinSpeed.x <= _IntensityCutoff && isOSC() == 1, half4(0,0,0,result.w), result);
-		result *= i.blindingEffect;
+
+		float3 newCol = RGB2HSV(result.rgb);
+		newCol = float3(newCol.x, clamp(newCol.y,0.0, 1.0)-.1, newCol.z);
+		result.xyz = lerp(result.xyz,hsb2rgb(newCol), gradientTexture.r);
+
+		//result *= i.blindingEffect;
 		// result.xyz = rgb2hsv(result.xyz);
 		//result = clamp(0,3, result);
 		//float resultAvg = ((result.x + result.y + result.z)/3)*1.5;
@@ -189,8 +190,8 @@ float4 VolumetricLightingBRDF(v2f i)
 			result = result * 4;
 		}
 
-		result = lerp(half4(0,0,0,result.w), result, gi);
-		result = lerp(half4(0,0,0,result.w), result, fi);
+		result = lerp(half4(0,0,0,result.w), result, gi * gi);
+		result = lerp(half4(0,0,0,result.w), result, fi * fi);
 		result = result * _UniversalIntensity;
 		return result;
 	// }

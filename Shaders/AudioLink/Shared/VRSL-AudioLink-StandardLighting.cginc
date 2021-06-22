@@ -128,7 +128,8 @@ float4 CustomStandardLightingBRDF(
             //     }
             // }
             //emission *= _FixutreIntensityMultiplier;
-            emission = emission * GetAudioReactAmplitude();
+
+            emission = lerp((half4(0,0,0,emission.w)), emission, GetAudioReactAmplitude());
             emission = lerp((half4(0,0,0,emission.w)), emission, getGlobalIntensity());
             emission = lerp((half4(0,0,0,emission.w)), emission, getFinalIntensity());
             emission = emission * _UniversalIntensity;

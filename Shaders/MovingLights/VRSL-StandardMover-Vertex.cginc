@@ -82,10 +82,10 @@ float4 calculateRotations(appdata v, float4 input, int normalsCheck, float pan, 
 	return input;
 }
 
-float4 InvertVolumetricRotations (float4 input)
+float4 InvertVolumetricRotations (float4 input, float pan, float tilt)
 {
 	float sX, cX, sY, cY;
-	float angleY = radians(getOffsetY());
+	float angleY = radians(getOffsetY() + pan);
 	sY = sin(angleY);
 	cY = cos(angleY);
 	float4x4 rotateYMatrix = float4x4(cY, sY, 0, 0,
@@ -108,7 +108,7 @@ float4 InvertVolumetricRotations (float4 input)
 	input.xyz -= newOrigin;
 
 
-	float angleX = radians(getOffsetX() + (tiltOffset));
+	float angleX = radians(getOffsetX() + (tiltOffset) + tilt);
 	sX = sin((angleX));
 	cX = cos((angleX));
 
@@ -275,7 +275,7 @@ v2f vert (appdata v)
 		worldCam.y = unity_CameraToWorld[1][3];
 		worldCam.z = unity_CameraToWorld[2][3];
 		float3 objCamPos = mul(unity_WorldToObject, float4(worldCam, 1)).xyz;
-		objCamPos = InvertVolumetricRotations(float4(objCamPos,1)).xyz;
+		objCamPos = InvertVolumetricRotations(float4(objCamPos,1), oscPanValue, oscTiltValue).xyz;
 		float len = length(objCamPos.xy);
 		o.blindingEffect = clamp(0.6/len,1.0,16.0);
 	#endif
@@ -376,7 +376,7 @@ v2f vert (appdata v)
 		//GETTING DATA FROM OSC TEXTURE
 		o.intensityStrobeGOBOSpinSpeed = float3(GetOSCIntensity(sector, 1.0),GetStrobeOutput(sector), getGoboSpinSpeed(sector));
 		o.rgbColor = GetOSCColor(sector);
-		if(((all(o.rgbColor <= float4(0.01,0.01,0.01,1)) || o.intensityStrobeGOBOSpinSpeed.x <= 0.01) && isOSC() == 1) || getGlobalIntensity() <= 0.005 || getFinalIntensity() <= 0.005)
+		if(((all(o.rgbColor <= float4(0.005,0.005,0.005,1)) || o.intensityStrobeGOBOSpinSpeed.x <= 0.005) && isOSC() == 1) || getGlobalIntensity() <= 0.005 || getFinalIntensity() <= 0.005)
 		{
 			v.vertex = float4(0,0,0,0);
 			o.pos = UnityObjectToClipPos(v.vertex);

@@ -19,6 +19,7 @@ public class VRSLInspector : ShaderGUI
     MaterialProperty _OSCGridStrobeTimer = null;
     MaterialProperty _UseRawGrid = null;
     MaterialProperty _EnableCompatibilityMode = null;
+    MaterialProperty _EnableLegacyGlobalMovementSpeedChannel = null;
 
     MaterialProperty _GlobalIntensity = null;
     MaterialProperty _FinalIntensity = null;
@@ -858,6 +859,7 @@ public class VRSLInspector : ShaderGUI
     {
         GUILayout.Space(5);
         EditorGUI.indentLevel++;
+        matEditor.ShaderProperty(_EnableLegacyGlobalMovementSpeedChannel, new GUIContent("Enable Legacy Global Movement Speed", "Enables the use of the old Global Movement Speed Channel (DMX Channel 511) instead of having each sector have its own movement speed control. /nThis will always be true when compatibility mode is enabled"));
         matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
         matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
         matEditor.ShaderProperty(_Sector, new GUIContent("Sector","Chooses the DMX Address to start this fixture at. A Sector in this context is every 13 Channels. I.E Sector 0 is channels 1-13, Sector 1 is channels 14-26, etc."));

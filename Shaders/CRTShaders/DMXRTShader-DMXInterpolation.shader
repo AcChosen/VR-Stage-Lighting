@@ -2,7 +2,8 @@ Shader "VRSL/DMX CRTs/Interpolation"
 {
     Properties
     {
-        _Sector ("Sector (Per 13 Channels)", Int) = 0
+        _Sector ("Sector (for legacy global movement speed)", Int) = 0
+        [Toggle] _EnableLegacyGlobalMovementSpeedChannel ("Enable Legacy Global Movement Speed Channel (disables individiual movement speed per sector)", Int) = 0
         [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
         [Toggle] _EnableCompatibilityMode ("Enable Stream OSC/DMX Control", Int) = 0
         [NoScaleOffset]_OSCGridRenderTexture("OSC Grid Render Texture (To Control Lights)", 2D) = "white" {}
@@ -28,7 +29,7 @@ Shader "VRSL/DMX CRTs/Interpolation"
             sampler2D   _Tex;
             sampler2D _OSCGridRenderTexture;
             SamplerState sampler_point_repeat;
-            int _IsEven, _Sector, _EnableOSC;
+            int _IsEven, _Sector, _EnableOSC, _EnableLegacyGlobalMovementSpeedChannel;
             uint _EnableCompatibilityMode;
             float oscSmoothnessRAW;
             #define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
@@ -78,9 +79,31 @@ Shader "VRSL/DMX CRTs/Interpolation"
 
             return value;
             }
-            float getSmoothnessValue()
+
+            float getValueAtUV(float2 uv)
             {
-                oscSmoothnessRAW = IF(_EnableCompatibilityMode == 1, getValueAtCoords(0.096151, 0.019231, _Sector), getValueAtCoords(0.189936, 0.00762, _Sector));
+                float4 c = tex2D(_OSCGridRenderTexture, uv);
+                float3 cRGB = float3(c.r, c.g, c.b);
+                float value = LinearRgbToLuminance(cRGB);
+                value = LinearToGammaSpaceExact(value);
+
+                return value;
+            }
+
+            float2 getCh13coords(float2 uv)
+            {
+                return float2(0.911, uv.y);
+            }
+            float getSmoothnessValue(float2 uv)
+            {
+                if(_EnableLegacyGlobalMovementSpeedChannel == 1)
+                {
+                    oscSmoothnessRAW = IF(_EnableCompatibilityMode == 1, getValueAtCoords(0.096151, 0.019231, _Sector), getValueAtCoords(0.189936, 0.00762, _Sector));
+                }
+                else
+                {
+                    oscSmoothnessRAW = IF(_EnableCompatibilityMode == 1, getValueAtCoords(0.096151, 0.019231, _Sector), getValueAtUV(float2(0.960, uv.y)));
+                }
                 float oscSmoothness = lerp(_MinimumSmoothnessOSC, _MaximumSmoothnessOSC, oscSmoothnessRAW);
                 return IF(_EnableOSC == 1, oscSmoothness, _SmoothValue);  
             }
@@ -97,7 +120,7 @@ Shader "VRSL/DMX CRTs/Interpolation"
                     //     oscSmoothnessRAW = IF(_EnableCompatibilityMode == 1, getValueAtCoords(0.096151, 0.019231, _Sector), getValueAtCoords(0.189936, 0.00762, _Sector));
                     //     return oscSmoothnessRAW;
                     // }
-                    return clamp(lerp(previousFrame, currentFrame, (getSmoothnessValue() * 100) * clamp(unity_DeltaTime.z,0.0,2.0)), 0.0, 400.0);
+                    return clamp(lerp(previousFrame, currentFrame, (getSmoothnessValue(IN.localTexcoord.xy) * 100) * clamp(unity_DeltaTime.z,0.0,2.0)), 0.0, 400.0);
                 }
                 else
                 {

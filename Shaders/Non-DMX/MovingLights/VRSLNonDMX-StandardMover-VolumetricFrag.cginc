@@ -192,8 +192,8 @@ float4 VolumetricLightingBRDF(v2f i)
 			result = result * 4;
 		}
 
-		result = lerp(half4(0,0,0,result.w), result, globalintensity);
-		result = lerp(half4(0,0,0,result.w), result, finalintensity);
+		result = lerp(half4(0,0,0,result.w), result, globalintensity * globalintensity);
+		result = lerp(half4(0,0,0,result.w), result, finalintensity * finalintensity);
 		result = result * _UniversalIntensity;
 		return result;
 	// }
