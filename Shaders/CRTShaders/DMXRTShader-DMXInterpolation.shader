@@ -120,7 +120,7 @@ Shader "VRSL/DMX CRTs/Interpolation"
                     //     oscSmoothnessRAW = IF(_EnableCompatibilityMode == 1, getValueAtCoords(0.096151, 0.019231, _Sector), getValueAtCoords(0.189936, 0.00762, _Sector));
                     //     return oscSmoothnessRAW;
                     // }
-                    return clamp(lerp(previousFrame, currentFrame, (getSmoothnessValue(IN.localTexcoord.xy) * 100) * clamp(unity_DeltaTime.z,0.0,2.0)), 0.0, 400.0);
+                    return lerp(clamp(lerp(previousFrame, currentFrame, clamp(unity_DeltaTime.z,0.0,2.0)), 0.0, 400.0), currentFrame, (getSmoothnessValue(IN.localTexcoord.xy)));
                 }
                 else
                 {

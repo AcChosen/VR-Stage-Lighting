@@ -168,8 +168,8 @@ Material:
     - _SpecLMOcclusionAdjust: 0.2
     - _SpecularLMOcclusion: 0
     - _SpinSpeed: 4.62
-    - _StripeSplit: 0
-    - _StripeSplitStrength: 0
+    - _StripeSplit: 7.87
+    - _StripeSplitStrength: 0.228
     - _StrobeFreq: 16.61
     - _TextureColorSampleX: 0.5
     - _TextureColorSampleY: 0.5

@@ -763,6 +763,18 @@ MonoBehaviour:
   - {fileID: 4319347766241326459}
   - {fileID: 766664644}
   publicVariablesSerializationDataFormat: 0
+--- !u!114 &755553205 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9171281168439380104, guid: 7156b82dc87d72144bdec0dc4f32a78a,
+    type: 3}
+  m_PrefabInstance: {fileID: 2669825548773707558}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &766664644 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3140046493186794889, guid: 8c1f201f848804f42aa401d0647f8902,
@@ -3329,6 +3341,11 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9171281168439380117, guid: 7156b82dc87d72144bdec0dc4f32a78a,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 755553205}
     - target: {fileID: 9171281168979767866, guid: 7156b82dc87d72144bdec0dc4f32a78a,
         type: 3}
       propertyPath: m_AnchorMin.x

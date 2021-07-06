@@ -68,8 +68,8 @@
 
             float4 frag(v2f_customrendertexture IN) : COLOR
             {
-               // if (_Time.y > 25.0)
-                // {
+                if (_Time.y > 2.0)
+                 {
                     float smoothness = _Band0Smoothness;
                     float2 sampleCoords = float2(IN.localTexcoord.x, 0.0);
 
@@ -90,12 +90,17 @@
                     if(IN.localTexcoord.y >= 0.066373)
                     {
 
-                        return IF(IN.localTexcoord.y > 0.408014 && IN.localTexcoord.y < 0.419178, clamp(lerp(previousFrame, currentFrame, (smoothness * 100) * clamp(unity_DeltaTime.z,0.0,2.0)), 0.0, 400.0), tex2D(_MainTex, IN.localTexcoord.xy));
+                        return IF(IN.localTexcoord.y > 0.408014 && IN.localTexcoord.y < 0.419178, lerp(clamp(lerp(previousFrame, currentFrame, clamp(unity_DeltaTime.z,0.0,1.0)), 0.0, 400.0), currentFrame, smoothness), tex2D(_MainTex, IN.localTexcoord.xy));
                     }
                     else
                     {
-                        return clamp(lerp(previousFrame, currentFrame, (smoothness * 100) * clamp(unity_DeltaTime.z,0.0,2.0)), 0.0, 400.0);
+                        return lerp(clamp(lerp(previousFrame, currentFrame,clamp(unity_DeltaTime.z,0.0,1.0)), 0.0, 400.0), currentFrame, smoothness);
                     }
+                 }
+                 else
+                 {
+                     return tex2D(_MainTex, IN.localTexcoord.xy);
+                 }
             }
 
             ENDCG
