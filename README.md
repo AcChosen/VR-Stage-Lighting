@@ -154,7 +154,7 @@ The appeal of this system is that this allows any software or hardware that supp
 ### Software
 - Recommended software to use this system with is SoundSwitch, which allows a DJ to play pre-created sync'd light shows in realtime with whatever track is playing as well as other DJ friendly light show options. You can get SoundSwitch here! (https://www.soundswitch.com/)
 
-- The grid itself can be purhcased at my gumroad, which will also help directly support the development of this project <3! Which can be purchased here! () OSC output is also included with this grid system for when VRChat officially supports it via Udon. You can get it here!: https://gumroad.com/l/xYaPu
+- The grid itself can be purchased at my gumroad, which will also help directly support the development of this project <3! Which can be purchased here! () OSC output is also included with this grid system for when VRChat officially supports it via Udon. You can get it here!: https://gumroad.com/l/xYaPu
 
 <p align="center">
   <img src="Doc/VRSl-Kradt-ComeWithMe-RecDemo-Short.gif">
