@@ -61,6 +61,7 @@ float4 VolumetricLightingBRDF(v2f i)
 
 		_SpinSpeed = IF(checkPanInvertY() == 1, -_SpinSpeed, _SpinSpeed);
         _SpinSpeed = IF(isOSC() == 1, _SpinSpeed * i.intensityStrobeGOBOSpinSpeed.z, _SpinSpeed);
+		float fadeStrength = _FadeStrength + lerp(2.0, 0.0, clamp(0,1,getConeWidth()));
 		float spinSpeed = 0.0;
 		//Inside Faces
 		if(i.color.r < 0.90000)
@@ -93,8 +94,10 @@ float4 VolumetricLightingBRDF(v2f i)
 
 			//viewDir = normalize(mul(unity_WorldToObject,float4(viewDir,0.0)));
 			//viewDir = float3(viewDir.x,viewDir.y,viewDir.z);
-			fade = pow(saturate(dot(normalize(calcedNormal), normalize(viewDir))), _FadeStrength);
-			altFade = pow(saturate(dot(normalize(i.norm), viewDir)),pow(_FadeStrength,_InnerFadeStrength));
+			fade = pow(saturate(dot(normalize(calcedNormal), normalize(viewDir))), fadeStrength);
+			altFade = pow(saturate(dot(normalize(i.norm), viewDir)),pow(fadeStrength,_InnerFadeStrength));
+			float fixtureBrightness = pow(saturate(dot(normalize(i.norm), (viewDir))),pow(fadeStrength,0.0));
+			altFade = lerp(altFade, fixtureBrightness, i.uv.x);
 			uvMap = half2((i.uv.x * getConeLength()), i.uv.y);
 			spinSpeed = (-_SpinSpeed) * UNITY_ACCESS_INSTANCED_PROP(Props,_EnableSpin);
 			i.uv2.x = i.uv2.x + _Time * 0.5;
@@ -121,7 +124,7 @@ float4 VolumetricLightingBRDF(v2f i)
 			distFade = saturate(distance(i.worldPos.rgb, wpos) * _DistFade) ;
     		float3 viewDir = normalize(wpos - i.worldPos);
 			//viewDir = normalize(mul(unity_WorldToObject,float4(viewDir,0.0)));
-			fade = pow(saturate(dot(normalize(i.norm), viewDir)), _FadeStrength);
+			fade = pow(saturate(dot(normalize(i.norm), viewDir)), fadeStrength);
 			uvMap = half2(i.uv.x * getConeLength(), i.uv.y);
 			//fade = (pow(max(0, dot(i.norm, -viewDir)), _FadeStrength));
 			spinSpeed = (-_SpinSpeed) * UNITY_ACCESS_INSTANCED_PROP(Props,_EnableSpin);
@@ -142,7 +145,7 @@ float4 VolumetricLightingBRDF(v2f i)
 		// col *= distFade;
 		// col *= _FixtureMaxIntensity;
 
-		col *= i.blindingEffect;
+		col *= (i.blindingEffect *3);
 		//UNITY_APPLY_FOG_COLOR(i.fogCoord, col, fixed4(0,0,0,0));
 		float strobe = IF(isStrobe() == 1, i.intensityStrobeGOBOSpinSpeed.y, 1);
 		col = col * getEmissionColor();
@@ -170,8 +173,7 @@ float4 VolumetricLightingBRDF(v2f i)
 		col *= divide;
 
 		float4 result = IF(isOSC() == 1, lerp(fixed4(0,0,0,col.w),(((col) * i.rgbColor) * strobe),i.intensityStrobeGOBOSpinSpeed.x * _FixtureMaxIntensity), (col) * strobe);
-		result = IF(isOSC() == 1,lerp(half4(0,0,0,result.w), result, i.intensityStrobeGOBOSpinSpeed.x * i.intensityStrobeGOBOSpinSpeed.x), result);
-		result = IF(i.intensityStrobeGOBOSpinSpeed.x <= _IntensityCutoff && isOSC() == 1, half4(0,0,0,result.w), result);
+	
 
 		float3 newCol = RGB2HSV(result.rgb);
 		newCol = float3(newCol.x, clamp(newCol.y,0.0, 1.0)-.1, newCol.z);
@@ -189,9 +191,10 @@ float4 VolumetricLightingBRDF(v2f i)
 		{
 			result = result * 4;
 		}
-
+		result = IF(isOSC() == 1,lerp(half4(0,0,0,result.w), result, i.intensityStrobeGOBOSpinSpeed.x * i.intensityStrobeGOBOSpinSpeed.x * 2), result);
+		result = IF(i.intensityStrobeGOBOSpinSpeed.x <= _IntensityCutoff && isOSC() == 1, half4(0,0,0,result.w), result);
 		result = lerp(half4(0,0,0,result.w), result, gi * gi);
-		result = lerp(half4(0,0,0,result.w), result, fi * fi);
+		result = lerp(half4(0,0,0,result.w), result, (fi-0.5) * fi);
 		result = result * _UniversalIntensity;
 		return result;
 	// }

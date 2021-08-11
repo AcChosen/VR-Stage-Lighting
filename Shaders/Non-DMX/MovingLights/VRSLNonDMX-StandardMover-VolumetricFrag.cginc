@@ -67,6 +67,7 @@ float4 VolumetricLightingBRDF(v2f i)
 
 		_SpinSpeed = IF(checkPanInvertY() == 1, -_SpinSpeed, _SpinSpeed);
         //_SpinSpeed = IF(isOSC() == 1, _SpinSpeed * i.intensityStrobeGOBOSpinSpeed.z, _SpinSpeed);
+		float fadeStrength = _FadeStrength + lerp(2.0, 0.0, clamp(0,1,getConeWidth()));
 		float spinSpeed = 0.0;
 		//Inside Faces
 		if(i.color.r < 0.90000)
@@ -99,8 +100,10 @@ float4 VolumetricLightingBRDF(v2f i)
 
 			//viewDir = normalize(mul(unity_WorldToObject,float4(viewDir,0.0)));
 			//viewDir = float3(viewDir.x,viewDir.y,viewDir.z);
-			fade = pow(saturate(dot(normalize(calcedNormal), normalize(viewDir))), _FadeStrength);
-			altFade = pow(saturate(dot(normalize(i.norm), viewDir)),pow(_FadeStrength,_InnerFadeStrength));
+			fade = pow(saturate(dot(normalize(calcedNormal), normalize(viewDir))), fadeStrength);
+			altFade = pow(saturate(dot(normalize(i.norm), viewDir)),pow(fadeStrength,_InnerFadeStrength));
+			float fixtureBrightness = pow(saturate(dot(normalize(i.norm), (viewDir))),pow(fadeStrength,0.0));
+			altFade = lerp(altFade, fixtureBrightness, i.uv.x);
 			uvMap = half2((i.uv.x * getConeLength()), i.uv.y);
 			spinSpeed = (-_SpinSpeed) * UNITY_ACCESS_INSTANCED_PROP(Props,_EnableSpin);
 			i.uv2.x = i.uv2.x + _Time * 0.5;
@@ -128,7 +131,7 @@ float4 VolumetricLightingBRDF(v2f i)
 			distFade = saturate(distance(i.worldPos.rgb, wpos) * _DistFade) ;
     		float3 viewDir = normalize(wpos - i.worldPos);
 			//viewDir = normalize(mul(unity_WorldToObject,float4(viewDir,0.0)));
-			fade = pow(saturate(dot(normalize(i.norm), viewDir)), _FadeStrength);
+			fade = pow(saturate(dot(normalize(i.norm), viewDir)), fadeStrength);
 			uvMap = half2(i.uv.x * getConeLength(), i.uv.y);
 			//fade = (pow(max(0, dot(i.norm, -viewDir)), _FadeStrength));
 			spinSpeed = (-_SpinSpeed) * UNITY_ACCESS_INSTANCED_PROP(Props,_EnableSpin);
@@ -136,7 +139,8 @@ float4 VolumetricLightingBRDF(v2f i)
 			i.uv2.y = i.uv2.y + (_Time * -0.1);
 		}
 		fixed4 gradientTexture = tex2D(_LightMainTex, uvMap);
-		
+		//float volumetricLength = clamp(0,1,sin(clamp(0,1.25,uvMap.x) + 0.25));
+		//fixed4 gradientTexture = lerp(fixed4(1,1,1,1), fixed4(0,0,0,0), volumetricLength);
 		fixed4 col = gradientTexture.r * ((sin(_Time.y * _PulseSpeed) * 0.5 + 1));
 		col = ((((col*fade) * altFade) * depthFade) * distFade) * _FixtureMaxIntensity;
 
@@ -145,7 +149,7 @@ float4 VolumetricLightingBRDF(v2f i)
 		//blinder = 1.0;
 
 		col = col * emissionTint;
-		col*= i.blindingEffect;
+		col*= (i.blindingEffect * 3.0);
 
 		float3 newCol = RGB2HSV(col.rgb);
 		newCol = float3(newCol.x, clamp(newCol.y,0.0, 1.0)-.1, newCol.z);
@@ -193,7 +197,7 @@ float4 VolumetricLightingBRDF(v2f i)
 		}
 
 		result = lerp(half4(0,0,0,result.w), result, globalintensity * globalintensity);
-		result = lerp(half4(0,0,0,result.w), result, finalintensity * finalintensity);
+		result = lerp(half4(0,0,0,result.w), result, (finalintensity-0.5) * finalintensity);
 		result = result * _UniversalIntensity;
 		return result;
 	// }

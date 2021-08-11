@@ -122,7 +122,7 @@ float4 getEmissionColor()
 
 float getConeWidth()
 {
-    return UNITY_ACCESS_INSTANCED_PROP(Props,_ConeWidth) - 1.5;
+    return UNITY_ACCESS_INSTANCED_PROP(Props,_ConeWidth) - 1.0;
 }
 
 uint isGOBOSpin()

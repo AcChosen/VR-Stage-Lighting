@@ -16,7 +16,7 @@ using System.Collections.Immutable;
 public class VRSL_UdonEditor : Editor
 {
     public static Texture logo;
-    public static string ver = "VR Stage Lighting ver:" + "<color=#9b34ebff> 1.0</color>";
+    public static string ver = "VR Stage Lighting ver:" + "<color=#9b34ebff> 1.10</color>";
     public void OnEnable() 
     {
         logo = Resources.Load("VRStageLighting-Logo") as Texture;
@@ -71,12 +71,39 @@ public class VRStageLighting_DMX_Editor : VRSL_UdonEditor
         ShurikenHeaderCentered(ver);
         EditorGUILayout.Space();
         EditorGUILayout.Space();
-        VRStageLighting_DMX dmxTarget = (VRStageLighting_DMX) target;
-        if (GUILayout.Button(new GUIContent("Update Instanced Properties", "Updates all the settings of this fixture to their respective shaders during Runtime"))) { dmxTarget._UpdateInstancedProperties(); }
+        VRStageLighting_DMX fixture = (VRStageLighting_DMX) target;
         //EditorGUILayout.Space();
         EditorGUILayout.Space();
         EditorGUILayout.Space();
         base.OnInspectorGUI();
+        if(GUI.changed && Application.isPlaying)
+        {
+            fixture._UpdateInstancedProperties();
+        }
+    }
+}
+#endif
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+[CustomEditor(typeof(VRStageLighting_DMX_Static))]
+public class VRStageLighting_DMX_Static_Editor : VRSL_UdonEditor
+{
+    public override void OnInspectorGUI()
+    {
+        if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
+        DrawLogo();
+        ShurikenHeaderCentered(ver);
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        VRStageLighting_DMX_Static fixture = (VRStageLighting_DMX_Static) target;
+        //EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        base.OnInspectorGUI();
+        if(GUI.changed && Application.isPlaying)
+        {
+            fixture._UpdateInstancedProperties();
+        }
     }
 }
 #endif
@@ -95,6 +122,34 @@ public class VRStageLighting_RAW_Editor : VRSL_UdonEditor
         
         //EditorGUILayout.Space();
         base.OnInspectorGUI();
+        VRStageLighting_RAW fixture = (VRStageLighting_RAW)target;
+        if(GUI.changed && Application.isPlaying)
+        {
+            fixture._UpdateInstancedProperties();
+        }
+    }
+}
+#endif
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+[CustomEditor(typeof(VRStageLighting_RAW_Static))]
+public class VRStageLighting_RAW_Static_Editor : VRSL_UdonEditor
+{
+    public override void OnInspectorGUI()
+    {
+        if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
+        DrawLogo();
+        ShurikenHeaderCentered(ver);
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        
+        //EditorGUILayout.Space();
+        base.OnInspectorGUI();
+        VRStageLighting_RAW_Static fixture = (VRStageLighting_RAW_Static)target;
+        if(GUI.changed && Application.isPlaying)
+        {
+            fixture._UpdateInstancedProperties();
+        }
     }
 }
 #endif
@@ -110,12 +165,54 @@ public class VRStageLighting_AudioLink_Editor : VRSL_UdonEditor
         ShurikenHeaderCentered(ver);
         EditorGUILayout.Space();
         EditorGUILayout.Space();
-        
-        //EditorGUILayout.Space();
         base.OnInspectorGUI();
+        VRStageLighting_AudioLink fixture = (VRStageLighting_AudioLink)target;
+        if(GUI.changed && Application.isPlaying)
+        {
+            fixture._UpdateInstancedProperties();
+        }
+
+        // serializedObject.Update();
+        // if(previousColor != lightColor.colorValue)
+        // {
+        //     fixture.LightColorTint = fixture.LightColorTint;
+        // }
+        // serializedObject.ApplyModifiedProperties();
     }
 }
 #endif
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+[InitializeOnLoad]
+[CustomEditor(typeof(VRStageLighting_AudioLink_Static))]
+
+public class VRStageLighting_AudioLink_Static_Editor : VRSL_UdonEditor
+{
+    public override void OnInspectorGUI()
+    {
+        if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
+        DrawLogo();
+        ShurikenHeaderCentered(ver);
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        base.OnInspectorGUI();
+        VRStageLighting_AudioLink_Static fixture = (VRStageLighting_AudioLink_Static)target;
+
+        if(GUI.changed && Application.isPlaying)
+        {
+            fixture._UpdateInstancedProperties();
+        }
+
+        //serializedObject.Update();
+        // if(previousColor != lightColor.colorValue)
+        // {
+        //     fixture.LightColorTint = fixture.LightColorTint;
+        // }
+        // serializedObject.ApplyModifiedProperties();
+    }
+}
+#endif
+
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 [CustomEditor(typeof(VRStageLighting_Animated))]
@@ -130,6 +227,33 @@ public class VRStageLighting_Animated_Editor : VRSL_UdonEditor
         EditorGUILayout.Space();
         //EditorGUILayout.Space();
         base.OnInspectorGUI();
+        VRStageLighting_Animated fixture = (VRStageLighting_Animated)target;
+        if(GUI.changed && Application.isPlaying)
+        {
+            fixture._UpdateInstancedProperties();
+        }
+    }
+}
+#endif
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+[CustomEditor(typeof(VRStageLighting_Animated_Static))]
+public class VRStageLighting_Animated_Static_Editor : VRSL_UdonEditor
+{
+    public override void OnInspectorGUI()
+    {
+        if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
+        DrawLogo();
+        ShurikenHeaderCentered(ver);
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        //EditorGUILayout.Space();
+        base.OnInspectorGUI();
+        VRStageLighting_Animated_Static fixture = (VRStageLighting_Animated_Static)target;
+        if(GUI.changed && Application.isPlaying)
+        {
+            fixture._UpdateInstancedProperties();
+        }
     }
 }
 #endif

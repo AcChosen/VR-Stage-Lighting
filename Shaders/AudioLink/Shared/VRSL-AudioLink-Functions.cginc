@@ -1,35 +1,45 @@
 
 #define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
+#include "Assets/AudioLink/Shaders/AudioLink.cginc"
 
-// Map of where features in AudioLink are.
-#define ALPASS_DFT              int2(0,4)
-#define ALPASS_WAVEFORM         int2(0,6)
-#define ALPASS_AUDIOLINK        int2(0,0)
-#define ALPASS_AUDIOLINKHISTORY int2(1,0) 
-#define ALPASS_GENERALVU        int2(0,22)
+float4 RGBtoHSV(in float3 RGB)
+{
+    float3 HSV = 0;
+    HSV.z = max(RGB.r, max(RGB.g, RGB.b));
+    float M = min(RGB.r, min(RGB.g, RGB.b));
+    float C = HSV.z - M;
+    if (C != 0)
+    {
+        HSV.y = C / HSV.z;
+        float3 Delta = (HSV.z - RGB) / C;
+        Delta.rgb -= Delta.brg;
+        Delta.rg += float2(2,4);
+        if (RGB.r >= HSV.z)
+            HSV.x = Delta.b;
+        else if (RGB.g >= HSV.z)
+            HSV.x = Delta.r;
+        else
+            HSV.x = Delta.g;
+        HSV.x = frac(HSV.x / 6);
+    }
+    return float4(HSV,1);
+}
+float3 Hue(float H)
+{
+    float R = abs(H * 6 - 3) - 1;
+    float G = 2 - abs(H * 6 - 2);
+    float B = 2 - abs(H * 6 - 4);
+    return saturate(float3(R,G,B));
+}
+float4 HSVtoRGB(in float3 HSV)
+{
+    return float4(((Hue(HSV.x) - 1) * HSV.y + 1) * HSV.z,1);
+}
 
-#define ALPASS_GENERALVU_INSTANCE_TIME   int2(2,22)
-#define ALPASS_GENERALVU_LOCAL_TIME      int2(3,22)
-
-#define ALPASS_CCINTERNAL       int2(12,22)
-#define ALPASS_CCSTRIP          int2(0,24)
-#define ALPASS_CCLIGHTS         int2(0,25)
-#define ALPASS_AUTOCORRELATOR   int2(0,27)
-
-// Some basic constants to use (Note, these should be compatible with
-// future version of AudioLink, but may change.
-#define CCMAXNOTES 10
-#define SAMPHIST 3069 //Internal use for algos, do not change.
-#define SAMPLEDATA24 2046
-#define EXPBINS 24
-#define EXPOCT 10
-#define ETOTALBINS ((EXPBINS)*(EXPOCT))
-#define AUDIOLINK_WIDTH  128
-#define _SamplesPerSecond 48000
-#define _RootNote 0
-
-#define AudioLinkData(xycoord) tex2Dlod( _AudioSpectrum, float4( uint2(xycoord) * _AudioSpectrum_TexelSize.xy, 0, 0 ) )
-
+inline float AudioLinkLerp3_g5( int Band, float Delay )
+{
+    return AudioLinkLerp( ALPASS_AUDIOLINK + float2( Delay, Band ) ).r;
+}
 uint checkPanInvertY()
 {
     return (uint) UNITY_ACCESS_INSTANCED_PROP(Props, _PanInvert);
@@ -44,7 +54,10 @@ uint checkTiltInvertZ()
 
 float4 GetTextureSampleColor()
 {
-    return tex2Dlod(_SamplingTexture, float4(UNITY_ACCESS_INSTANCED_PROP(Props,_TextureColorSampleX), UNITY_ACCESS_INSTANCED_PROP(Props,_TextureColorSampleY), 0, 0));
+    float4 rawColor = tex2Dlod(_SamplingTexture, float4(UNITY_ACCESS_INSTANCED_PROP(Props,_TextureColorSampleX), UNITY_ACCESS_INSTANCED_PROP(Props,_TextureColorSampleY), 0, 0));
+    float4 h = RGBtoHSV(rawColor.rgb);
+    h.z = 1.0;
+    return(HSVtoRGB(h));
 }
 
 uint isStrobe()
@@ -76,7 +89,7 @@ float getStrobeFreq()
 
 float getConeWidth()
 {
-    return UNITY_ACCESS_INSTANCED_PROP(Props,_ConeWidth) - 1.5;
+    return UNITY_ACCESS_INSTANCED_PROP(Props,_ConeWidth) - 1.25;
 }
 
 uint isGOBOSpin()
@@ -136,27 +149,12 @@ float GetAudioReactAmplitude()
 {
     if(checkIfAudioLink() > 0)
     {
-
-            float2 break6_g1 = float2(0.5,0.5);
-			float temp_output_5_0_g1 = ( break6_g1.x - 0.5 );
-			float temp_output_3_0_g1 = 1;
-			float temp_output_8_0_g1 = 0;
-			float temp_output_20_0_g1 = 1;
-			float temp_output_7_0_g1 = ( break6_g1.y - 0.5 );
-			float2 appendResult16_g1 = (float2(( ( ( temp_output_5_0_g1 * temp_output_3_0_g1 * temp_output_20_0_g1 ) + ( temp_output_7_0_g1 * temp_output_8_0_g1 * temp_output_20_0_g1 ) ) + 0.5 ) , ( ( ( temp_output_7_0_g1 * temp_output_3_0_g1 * temp_output_20_0_g1 ) - ( temp_output_5_0_g1 * temp_output_8_0_g1 * temp_output_20_0_g1 ) ) + 0.5 )));
-			float _Pulse_Instance = 0;
-			float _Delay_Instance = getDelay();
-			float _Band_Instance = getBand();
-			float2 appendResult9_g2 = (float2(( (_Delay_Instance + (( appendResult16_g1.x * _Pulse_Instance ) - 0.0) * (1.0 - _Delay_Instance) / (1.0 - 0.0)) % 1.0 ) , ( ( ( _Band_Instance * 0.25 ) + 0.125 ) * 0.0625 )));
-			float4 tex2DNode19 = tex2Dlod( _AudioSpectrum, float4(appendResult9_g2,0,0));
-			float amplitude36 = tex2DNode19.r;
-        return amplitude36 * getBandMultiplier();
+        return AudioLinkLerp3_g5(getBand(), getDelay()) * getBandMultiplier();
     }
     else
     {
         return 1;
     }
-
 }
 
 float4 GetColorChordLight()

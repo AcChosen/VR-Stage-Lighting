@@ -3,6 +3,40 @@
 // float blockCenter = 0.019231;
 // float blockTraversal = 0.03846;
 
+float4 RGBtoHSV(in float3 RGB)
+{
+    float3 HSV = 0;
+    HSV.z = max(RGB.r, max(RGB.g, RGB.b));
+    float M = min(RGB.r, min(RGB.g, RGB.b));
+    float C = HSV.z - M;
+    if (C != 0)
+    {
+        HSV.y = C / HSV.z;
+        float3 Delta = (HSV.z - RGB) / C;
+        Delta.rgb -= Delta.brg;
+        Delta.rg += float2(2,4);
+        if (RGB.r >= HSV.z)
+            HSV.x = Delta.b;
+        else if (RGB.g >= HSV.z)
+            HSV.x = Delta.r;
+        else
+            HSV.x = Delta.g;
+        HSV.x = frac(HSV.x / 6);
+    }
+    return float4(HSV,1);
+}
+float3 Hue(float H)
+{
+    float R = abs(H * 6 - 3) - 1;
+    float G = 2 - abs(H * 6 - 2);
+    float B = 2 - abs(H * 6 - 4);
+    return saturate(float3(R,G,B));
+}
+float4 HSVtoRGB(in float3 HSV)
+{
+    return float4(((Hue(HSV.x) - 1) * HSV.y + 1) * HSV.z,1);
+}
+
 uint checkPanInvertY()
 {
     return (uint) UNITY_ACCESS_INSTANCED_PROP(Props, _PanInvert);
@@ -17,7 +51,10 @@ uint checkTiltInvertZ()
 
 float4 GetTextureSampleColor()
 {
-    return tex2Dlod(_SamplingTexture, float4(UNITY_ACCESS_INSTANCED_PROP(Props,_TextureColorSampleX), UNITY_ACCESS_INSTANCED_PROP(Props,_TextureColorSampleY), 0, 0));
+    float4 rawColor = tex2Dlod(_SamplingTexture, float4(UNITY_ACCESS_INSTANCED_PROP(Props,_TextureColorSampleX), UNITY_ACCESS_INSTANCED_PROP(Props,_TextureColorSampleY), 0, 0));
+    float4 h = RGBtoHSV(rawColor.rgb);
+    h.z = 1.0;
+    return(HSVtoRGB(h));
 }
 
 uint isStrobe()
@@ -53,7 +90,7 @@ float4 getEmissionColor()
 
 float getConeWidth()
 {
-    return UNITY_ACCESS_INSTANCED_PROP(Props,_ConeWidth) - 1.5;
+    return UNITY_ACCESS_INSTANCED_PROP(Props,_ConeWidth) - 1.25;
 }
 
 uint isGOBOSpin()

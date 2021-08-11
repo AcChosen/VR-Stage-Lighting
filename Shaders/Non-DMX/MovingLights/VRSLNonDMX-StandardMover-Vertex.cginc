@@ -4,10 +4,6 @@
 
 float4 calculateRotations(appdata v, float4 input, int normalsCheck)
 {
-//	input = IF(worldspacecheck == 1, float4(UnityObjectToWorldNormal(v.normal).x * -1.0, UnityObjectToWorldNormal(v.normal).y * -1.0, UnityObjectToWorldNormal(v.normal).z * -1.0, 1), input)
-	
-	
-	
 
 	//CALCULATE BASE ROTATION. MORE FUN MATH. THIS IS FOR PAN.
 	float angleY = radians(getOffsetY());
@@ -38,14 +34,6 @@ float4 calculateRotations(appdata v, float4 input, int normalsCheck)
 
 
 	//DO ROTATION
-
-
-	//#if defined(PROJECTION_YES)
-	//buffer[3] = GetTiltValue(sector);
-	//#endif
-
-
-
 	float angleX = radians(getOffsetX());
 	c = cos(angleX);
 	s = sin(angleX);
@@ -97,7 +85,6 @@ float4 InvertVolumetricRotations (float4 input)
 		//INVERSION CHECK
 	rotateYMatrix = IF(checkPanInvertY() == 1, transpose(rotateYMatrix), rotateYMatrix);
 
-	//float4 localRotY = mul(rotateYMatrix, BaseAndFixturePos);
 	//LOCALROTY IS NEW ROTATION
 
 
@@ -154,28 +141,16 @@ float4 CalculateConeWidth(appdata v, float4 input, float scalar)
 {
 	#if defined(VOLUMETRIC_YES)
 
-		// if((ceil(v.color.r) > 0 && ceil(v.color.g) < 1 && ceil(v.color.b) > 0 ))
-		// {
-
 			//Set New Origin
 			float4 newOrigin = input.w * _ProjectionRangeOrigin; 
 			input.xyz = input.xyz - newOrigin;
 
 			// Do Transformation
-			
-			//input.xy = input.xy + v.normal.xy * distanceFromFixture;
 
 			if(v.color.r < 0.9)
 			{
 				float distanceFromFixture = (v.uv.x) * (scalar);
-				if(v.uv.x < 0.0025)
-				{
-					distanceFromFixture = lerp(0, distanceFromFixture, v.uv.x);
-				}
-				else
-				{
-					distanceFromFixture = lerp(0, distanceFromFixture, pow(v.uv.x, _ConeSync));
-				}
+				distanceFromFixture = lerp(0, distanceFromFixture, pow(v.uv.x, _ConeSync));
 
 				input.z = (input.z) + (-v.normal.z) * (distanceFromFixture);
 				input.x = (input.x) + (-v.normal.x) * (distanceFromFixture);
@@ -195,11 +170,6 @@ float4 CalculateConeWidth(appdata v, float4 input, float scalar)
 			input.xyz = input.xyz + newOrigin;
 
 			return input;
-		// }
-		// else
-		// {
-		// 	return input;
-		// }
 	#endif
 
 	#if defined(PROJECTION_YES)
@@ -236,11 +206,6 @@ inline float4 CalculateFrustumCorrection()
 	return float4(x1, x2, 0, UNITY_MATRIX_P._33/UNITY_MATRIX_P._34 + x1*UNITY_MATRIX_P._13 + x2*UNITY_MATRIX_P._23);
 }
 
-
-
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -255,12 +220,6 @@ v2f vert (appdata v)
 	UNITY_SETUP_INSTANCE_ID(v);
     UNITY_TRANSFER_INSTANCE_ID(v, o);
 	//UNITY_INITIALIZE_OUTPUT(v2f, o); //DON'T INITIALIZE OR IT WILL BREAK PROJECTION
-
-
-
-	// float oscConeWidth = getOSCConeWidth(sector);
-	// float oscPanValue = GetPanValue(sector);
-	// float oscTiltValue = GetTiltValue(sector);
 	v.vertex = CalculateConeWidth(v, v.vertex, getConeWidth());
 	v.vertex = CalculateProjectionScaleRange(v, v.vertex, _ProjectionRange);
 	//calculate rotations for verts
@@ -312,7 +271,6 @@ v2f vert (appdata v)
 		UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 		//move verts to clip space
 		o.pos = UnityObjectToClipPos(v.vertex);
-		//o.uv = TRANSFORM_TEX(v.uv, _ProjectionMainTex);
 		//get screen space position of verts
 		o.screenPos = ComputeScreenPos(o.pos);
 		//Putting in the vertex position before the transformation seems to somewhat move the projection correctly, but is still incorrect...?
@@ -332,15 +290,6 @@ v2f vert (appdata v)
 		//o.viewDir = normalize(mul(UNITY_MATRIX_MV, v.vertex).xyz);
 		o.viewDir = normalize(UnityObjectToViewPos(v.vertex.xyz)); // get normalized view dir
 		o.viewDir /= o.viewDir.z; // rescale vector so z is 1.0
-		//GET OSC/DMX VALUES
-		//o.intensityStrobeWidth = float3(GetOSCIntensity(sector, 1.0), GetStrobeOutput(sector), oscConeWidth);
-		//o.goboPlusSpinPanTilt = float4(getOSCGoboSelection(sector), getGoboSpinSpeed(sector), oscPanValue, oscTiltValue);
-		// o.rgbColor = GetOSCColor(sector);
-		// if((all(o.rgbColor <= float4(0.01,0.01,0.01,1)) || o.intensityStrobeWidth.x <= 0.01) && isOSC() == 1)
-		// {
-		// 	v.vertex = float4(0,0,0,0);
-		// 	o.pos = UnityObjectToClipPos(v.vertex);
-		// } 
 		if(o.globalFinalIntensity.x <= 0.005 || o.globalFinalIntensity.y <= 0.005 || all(o.emissionColor.xyz <= float4(0.005, 0.005, 0.005, 1.0)))
 		{
 			v.vertex = float4(0,0,0,0);
@@ -360,8 +309,6 @@ v2f vert (appdata v)
 	//Volumetric Part - Vertex Shader
 	#if defined(VOLUMETRIC_YES)
 		o.pos = UnityObjectToClipPos(v.vertex);
-		//UNITY_INITIALIZE_OUTPUT(v2f, o);
-		//UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 		o.viewDir = ObjSpaceViewDir(v.vertex);
 		o.screenPos = ComputeScreenPos (o.pos);
 		o.uv2 = TRANSFORM_TEX(v.uv2, _NoiseTex);
@@ -382,14 +329,6 @@ v2f vert (appdata v)
 		o.bitan = bitangent;
 		o.tan = tangent;
 		o.norm = worldNormal;
-		//GETTING DATA FROM OSC TEXTURE
-		//o.intensityStrobeGOBOSpinSpeed = float3(GetOSCIntensity(sector, 1.0),GetStrobeOutput(sector), getGoboSpinSpeed(sector));
-		// o.rgbColor = GetOSCColor(sector);
-		// if((all(o.rgbColor <= float4(0.01,0.01,0.01,1)) || o.intensityStrobeGOBOSpinSpeed.x <= 0.01) && isOSC() == 1)
-		// {
-		// 	v.vertex = float4(0,0,0,0);
-		// 	o.pos = UnityObjectToClipPos(v.vertex);
-		// } 
 		if(o.globalFinalIntensity.x <= 0.005 || o.globalFinalIntensity.y <= 0.005 || all(o.emissionColor.xyz <= float4(0.005, 0.005, 0.005, 1.0)))
 		{
 			v.vertex = float4(0,0,0,0);
@@ -410,8 +349,6 @@ v2f vert (appdata v)
     o.worldPos = mul(unity_ObjectToWorld, v.vertex);
     o.objPos = v.vertex;
     o.objNormal = v.normal;
-	//o.intensityStrobe = float2(GetOSCIntensity(sector, 1.0),GetStrobeOutput(sector));
-	//o.rgbColor = GetOSCColor(sector);
 	o.btn[0] = bitangent;
     o.btn[1] = tangent;
     o.btn[2] = worldNormal;

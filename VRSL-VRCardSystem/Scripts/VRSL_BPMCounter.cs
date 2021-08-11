@@ -22,6 +22,7 @@ public class VRSL_BPMCounter : UdonSharpBehaviour
     private double lastDownbeatTimePrev;   //Used by clients to detect new sync info
 
     public float newAnimationSpeed;
+    public VRSL_LightGroupZone[] groupZones;
 
     // [UdonSynced]
     // private double lastDownbeatTimeSynced;
@@ -113,17 +114,10 @@ public class VRSL_BPMCounter : UdonSharpBehaviour
             }
             else
             {
-                setAnimSpeed();
-                DownBeat();
+               // setAnimSpeed();
+                //DownBeat();
                 SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "setAnimSpeed");
-                SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "DownBeat");
-
-                
-
- 
-
-
-                
+                SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "DownBeat"); 
             }
 
             // If this is a downbeat, save the server time when this occured (only the master uses this value)
@@ -132,12 +126,6 @@ public class VRSL_BPMCounter : UdonSharpBehaviour
                 captureNextDownbeat = false;
                 // lastDownbeatTimeSynced = Networking.GetServerTimeInSeconds();
             }
-
-            // foreach (UdonSharpBehaviour ub in udonbeatTargets)
-            // {
-            //     ub.SendCustomEvent("CheckBeat");
-            // }
-            //Debug.Log("Beat: " + _quarterNoteCount);
 
         }
 
@@ -185,11 +173,21 @@ public class VRSL_BPMCounter : UdonSharpBehaviour
     void setAnimSpeed()
     {
         newAnimationSpeed = _bpm/ 60;
+        foreach(VRSL_LightGroupZone groupZone in groupZones)
+        {
+            groupZone._ResetBPM();
+        }
+
     }
 
-    void DownBeat()
+    public void DownBeat()
     {
         _quarterNoteCount = 1;
+        foreach(VRSL_LightGroupZone groupZone in groupZones)
+        {
+            groupZone._CallDownBeat();
+        }
+
         if(_measureCount != 4)
         {
             _measureCount++;

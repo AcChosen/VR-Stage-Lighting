@@ -164,7 +164,7 @@ Material:
     - _ProjectionRotation: -180
     - _ProjectionSelection: 0
     - _ProjectionShadowHarshness: 0.9
-    - _ProjectionUVMod: 0.219
+    - _ProjectionUVMod: 0.2
     - _ProjectionUVMod2: 0.15
     - _ProjectionUVMod3: 0.15
     - _ProjectionUVMod4: 0.15

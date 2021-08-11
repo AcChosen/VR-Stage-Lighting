@@ -202,7 +202,8 @@ public class VRSLInspector : ShaderGUI
             VRSLStyles.DrawLogo();
             VRSLStyles.ShurikenHeaderCentered(VRSLStyles.ver);
             VRSLStyles.ShurikenHeaderCentered(GetShaderType());
-            VRSLStyles.PartingLine();  
+            VRSLStyles.PartingLine();
+            VRSLStyles.DepthPassWarning();
             GUILayout.Space(5);
             if(isDiscoBall)
             {
@@ -270,7 +271,7 @@ public class VRSLInspector : ShaderGUI
                 EditorGUI.indentLevel++;
                 EditorGUILayout.HelpBox("Here you can find your AudioLink settings. \nThe band muliplier is instanced and controled by Udon", MessageType.Info,true);
                 matEditor.ShaderProperty(_EnableAudioLink, new GUIContent("Enable Audio Link", "Enables or disables the audio link feature. \nTurn this on to go back to normal Udon mode."));
-                matEditor.TexturePropertySingleLine(new GUIContent("Audio Spectrum", "The AudioLink Audio Spectrum to sample from."),_AudioSpectrum);
+                //matEditor.TexturePropertySingleLine(new GUIContent("Audio Spectrum", "The AudioLink Audio Spectrum to sample from."),_AudioSpectrum);
                 matEditor.ShaderProperty(_Band, new GUIContent("Band", "The frequency band to sample from"));
                 matEditor.ShaderProperty(_NumBands, new GUIContent("Number of Bands", "The number of frequency bands the texture supports."));
                 matEditor.ShaderProperty(_Delay, new GUIContent("Delay", "How much delay between each sample"));

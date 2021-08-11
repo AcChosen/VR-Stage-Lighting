@@ -87,14 +87,15 @@
 
                     float4 previousFrame = tex2D(_SelfTexture2D, IN.localTexcoord.xy);
                     float4 currentFrame = tex2D(_MainTex, sampleCoords);
+                    float currentFrameTime = unity_DeltaTime.z; // in seconds
                     if(IN.localTexcoord.y >= 0.066373)
                     {
 
-                        return IF(IN.localTexcoord.y > 0.408014 && IN.localTexcoord.y < 0.419178, lerp(clamp(lerp(previousFrame, currentFrame, clamp(unity_DeltaTime.z,0.0,1.0)), 0.0, 400.0), currentFrame, smoothness), tex2D(_MainTex, IN.localTexcoord.xy));
+                        return IF(IN.localTexcoord.y > 0.408014 && IN.localTexcoord.y < 0.419178, lerp(clamp(lerp(previousFrame, currentFrame, clamp(currentFrameTime,0.0,1.0)), 0.0, 400.0), currentFrame, smoothness), tex2D(_MainTex, IN.localTexcoord.xy));
                     }
                     else
                     {
-                        return lerp(clamp(lerp(previousFrame, currentFrame,clamp(unity_DeltaTime.z,0.0,1.0)), 0.0, 400.0), currentFrame, smoothness);
+                        return lerp(clamp(lerp(previousFrame, currentFrame,clamp(currentFrameTime,0.0,1.0)), 0.0, 400.0), currentFrame, smoothness);
                     }
                  }
                  else

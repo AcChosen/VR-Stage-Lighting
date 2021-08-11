@@ -68,6 +68,7 @@ float4 VolumetricLightingBRDF(v2f i)
 		_SpinSpeed = IF(checkPanInvertY() == 1, -_SpinSpeed, _SpinSpeed);
         //_SpinSpeed = IF(isOSC() == 1, _SpinSpeed * i.intensityStrobeGOBOSpinSpeed.z, _SpinSpeed);
 		float spinSpeed = 0.0;
+		float fadeStrength = _FadeStrength + lerp(2.0, 0.0, clamp(0,1,getConeWidth()));
 		//Inside Faces
 		if(i.color.r < 0.90000)
 		{
@@ -95,12 +96,14 @@ float4 VolumetricLightingBRDF(v2f i)
 			depthFade = saturate(fadeAmt * (sceneZ - i.screenPos.z));
 
 			distFade = saturate(distance(i.worldPos.rgb, wpos) * _DistFade) ;
-			float3 viewDir = normalize(wpos - i.worldPos);
-
+			float4 fixturepos = mul(unity_ObjectToWorld, (_FixtureRotationOrigin));
+			float3 viewDir = normalize((wpos) - (i.worldPos + fixturepos));
 			//viewDir = normalize(mul(unity_WorldToObject,float4(viewDir,0.0)));
 			//viewDir = float3(viewDir.x,viewDir.y,viewDir.z);
-			fade = pow(saturate(dot(normalize(calcedNormal), normalize(viewDir))), _FadeStrength);
-			altFade = pow(saturate(dot(normalize(i.norm), viewDir)),pow(_FadeStrength,_InnerFadeStrength));
+			fade = pow(saturate(dot(normalize(calcedNormal), normalize(viewDir))), fadeStrength);
+			altFade = pow(saturate(dot(normalize(i.norm), (viewDir))),pow(fadeStrength,_InnerFadeStrength));
+			float fixtureBrightness = pow(saturate(dot(normalize(i.norm), (viewDir))),pow(fadeStrength,0.0));
+			altFade = lerp(altFade, fixtureBrightness, i.uv.x);
 			uvMap = half2((i.uv.x * getConeLength()), i.uv.y);
 			spinSpeed = (-_SpinSpeed) * UNITY_ACCESS_INSTANCED_PROP(Props,_EnableSpin);
 			i.uv2.x = i.uv2.x + _Time * 0.5;
@@ -127,7 +130,7 @@ float4 VolumetricLightingBRDF(v2f i)
 			distFade = saturate(distance(i.worldPos.rgb, wpos) * _DistFade) ;
     		float3 viewDir = normalize(wpos - i.worldPos);
 			//viewDir = normalize(mul(unity_WorldToObject,float4(viewDir,0.0)));
-			fade = pow(saturate(dot(normalize(i.norm), viewDir)), _FadeStrength);
+			fade = pow(saturate(dot(normalize(i.norm), viewDir)), fadeStrength);
 			uvMap = half2(i.uv.x * getConeLength(), i.uv.y);
 			//fade = (pow(max(0, dot(i.norm, -viewDir)), _FadeStrength));
 			spinSpeed = (-_SpinSpeed) * UNITY_ACCESS_INSTANCED_PROP(Props,_EnableSpin);
@@ -135,7 +138,7 @@ float4 VolumetricLightingBRDF(v2f i)
 			i.uv2.y = i.uv2.y + (_Time * -0.1);
 		}
 		fixed4 gradientTexture = tex2D(_LightMainTex, uvMap);
-
+		//float4 gradientTexture = lerp(float4(1,1,1,1), float4(0,0,0,0), pow(clamp(0,1,uvMap.x),0.5));
 		fixed4 col = gradientTexture * ((sin(_Time.y * _PulseSpeed) * 0.5 + 1));
 		col = ((((col*fade) * altFade) * depthFade) * distFade) * _FixtureMaxIntensity;
 
@@ -145,7 +148,7 @@ float4 VolumetricLightingBRDF(v2f i)
 
 //		float strobe = IF(isStrobe() == 1, i.intensityStrobeGOBOSpinSpeed.y, 1);
 		col = col * emissionTint;
-		col*= i.blindingEffect;
+		col*= (i.blindingEffect * 3.0);
 
 		float3 newCol = RGB2HSV(col.rgb);
 		newCol = float3(newCol.x, clamp(newCol.y,0.0, 1.0)-.1, newCol.z);
@@ -175,23 +178,13 @@ float4 VolumetricLightingBRDF(v2f i)
 		lm = clamp(lm * 0.3, 0.0, 1.0) - 0.0;
 		col *= float4(lm, lm, lm, 1.0);
 
-		//float4 result = col;
-		//result = IF(isOSC() == 1,lerp(half4(0,0,0,result.w), result, i.intensityStrobeGOBOSpinSpeed.x), result);
-		//result = IF(i.intensityStrobeGOBOSpinSpeed.x <= _IntensityCutoff && isOSC() == 1, half4(0,0,0,result.w), result);
-		// result.xyz = rgb2hsv(result.xyz);
-		// result = clamp(0,3, result);
-		// float resultAvg = ((result.x + result.y + result.z)/3)*1.5;
-		// float4 resultAvgStrength = lerp(result, float4(resultAvg,resultAvg,resultAvg,result.a), _Saturation);
-		// result = lerp(resultAvgStrength, result, pow(uvMap.x, _SaturationLength));
-		// result.xyz = hsv2rgb(result.xyz);
-
 		if(i.color.r >= 0.9)
 		{
 			result = result * 4;
 		}
 		result = lerp(half4(0,0,0,result.w), result, audioReact * audioReact);
-		result = lerp(half4(0,0,0,result.w), result, globalintensity * globalintensity);
-		result = lerp(half4(0,0,0,result.w), result, finalintensity * finalintensity);
+		result = lerp(half4(0,0,0,result.w), result, ((globalintensity) * globalintensity));
+		result = lerp(half4(0,0,0,result.w), result, ((finalintensity-0.5) * finalintensity));
 		result = result * _UniversalIntensity;
 		return result;
 	// }

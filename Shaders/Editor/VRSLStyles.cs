@@ -9,7 +9,12 @@ public class VRSLStyles : MonoBehaviour
 {
     public static Texture logo = Resources.Load("VRStageLighting-Logo") as Texture;
 
-    public static string ver = "VR Stage Lighting ver:" + "<color=#9b34ebff> 1.0</color>";
+    public static string ver = "VR Stage Lighting ver:" + "<color=#9b34ebff> 1.10</color>";
+
+    public static void DepthPassWarning()
+    {
+        EditorGUILayout.HelpBox("Shader looking weird? \nPlease ensure that the depth texture is enabled by having the included 'Directional Light' prefab somewhere in your scene, located in \nAssets/VRStageLighting/VR-Stage-Lighting/Other", MessageType.Info);
+    }
 
     public static void DrawLogo()
     {

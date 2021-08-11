@@ -18,6 +18,29 @@ using System.Collections.Immutable;
 public class VRStageLighting_Animated : UdonSharpBehaviour
 {
      //////////////////Public Variables////////////////////
+    [Header("Audio Link Settings")]
+    [Tooltip("Enable or disable Audio Link Reaction for this fixture.")]
+    public bool enableAudioLink;
+
+
+    //[Tooltip("The Audio Link Script to react to.")]
+    //public AudioLink audioLink;
+
+
+    [Tooltip("The frequency band of the spectrum to react to.")]
+    public int band;
+
+
+    [Range(0, 31)]
+    [Tooltip("The level of delay to add to the reaction.")]
+    public int delay;
+
+
+    [Tooltip("Multiplier for the sensativity of the reaction.")]
+    [Range(1.0f, 15.0f)]
+    public float bandMultiplier = 1.0f;
+
+
     [Header("Animation Settings")]
     [Tooltip("Enable or disable the use of the animator on this fixture.")]
     public bool enableAnimation;
@@ -50,6 +73,13 @@ public class VRStageLighting_Animated : UdonSharpBehaviour
     [Tooltip ("The main color of the light.")]
     [ColorUsage(false,true)]
     public Color lightColorTint = Color.white * 2.0f;
+
+    [Tooltip ("Check this box if you wish to sample seperate texture for the color. The color will be influenced by the intensity of the original emission color! The texture is set in the shader itself.")]
+    public bool enableColorTextureSampling;
+
+
+    [Tooltip ("The UV coordinates to sample the color from on the texture.")]
+    public Vector2 textureSamplingCoordinates = new Vector2(0.5f, 0.5f);
     [Space(5)]
 
 
@@ -108,6 +138,7 @@ public class VRStageLighting_Animated : UdonSharpBehaviour
     //bool enableInstancing;
     float targetPanAngle, targetTiltAngle;
     private Vector3 targetToFollowLast;
+    private bool wasChanged;
 
     void Start()
     {
@@ -135,16 +166,6 @@ public class VRStageLighting_Animated : UdonSharpBehaviour
     {
         if(bPMCounter)
         {
-            if(enableAnimation)
-            {
-                animator.enabled = true;
-            }
-            else
-            {
-                animator.enabled = false;
-            }
-            //anim.speed = animationSpeed;
-
             if(bPMCounter._quarterNoteCount == 1 && bPMCounter._beatFull || bPMCounter.resetCounter)
             {
                 animationSpeed = bPMCounter.newAnimationSpeed;
@@ -162,14 +183,6 @@ public class VRStageLighting_Animated : UdonSharpBehaviour
     {
         if(bPMCounter)
         {
-            if(enableAnimation)
-            {
-                animator.enabled = true;
-            }
-            else
-            {
-                animator.enabled = false;
-            }
             //animator.speed = animationSpeed;
 
             if(bPMCounter._quarterNoteCount == 1 && bPMCounter._beatFull || bPMCounter.resetCounter)
@@ -178,8 +191,26 @@ public class VRStageLighting_Animated : UdonSharpBehaviour
                 animator.speed = animationSpeed;
                 RestartAnimation();
             }
-            _UpdateAnimations();
+            _UpdateIntensityAnims();
+            _UpdateGoboAnims();
+            _UpdateColorAnims();
+            _UpdatePanTiltAnims();
         }
+    }
+
+    public void _DownBeat()
+    {
+        if(!bPMCounter)
+        {
+            return;
+        }
+        if(bPMCounter._quarterNoteCount == 1 && bPMCounter._beatFull || bPMCounter.resetCounter)
+        {
+            animationSpeed = bPMCounter.newAnimationSpeed;
+            animator.speed = animationSpeed;
+            RestartAnimation();
+        }
+        _UpdateAnimations();
     }
 
     public void RestartAnimation()
@@ -190,6 +221,25 @@ public class VRStageLighting_Animated : UdonSharpBehaviour
         if(_panTiltMeasureCount == 1)
         {
             animator.Play(animator.GetCurrentAnimatorStateInfo(3).shortNameHash,3,0.0f);
+            return;
+        }
+        if(_panTiltMeasureCount == 2)
+        {
+            if(bPMCounter._measureCount == 1 || bPMCounter._measureCount == 3)
+            {
+                animator.Play(animator.GetCurrentAnimatorStateInfo(3).shortNameHash,3,0.0f);
+                return;
+            }
+            else
+            {
+                animator.Play(animator.GetCurrentAnimatorStateInfo(3).shortNameHash,3,0.5f);
+                return;
+            }
+        }
+        if(_panTiltMeasureCount == 4 && bPMCounter._measureCount > 3)
+        {
+                animator.Play(animator.GetCurrentAnimatorStateInfo(3).shortNameHash,3,0.0f);
+                return;
         }
         //animator.CrossFade(animator.GetCurrentAnimatorStateInfo(0).shortNameHash, 0.0f, 0, 0.0f, 0.0f);
     }
@@ -216,7 +266,34 @@ public class VRStageLighting_Animated : UdonSharpBehaviour
     }
     public void _UpdateIntensityAnims()
     {
-        animator.SetFloat("IntensitySelection",_intensityAnimation);
+        switch(_intensityAnimation)
+        {
+            case 8:
+                animator.SetLayerWeight(1,0.0f);
+                animator.SetFloat("IntensitySelection",0);
+                _AudioLinkOn(0);
+                break;
+            case 9:
+                animator.SetLayerWeight(1,0.0f);
+                animator.SetFloat("IntensitySelection",0);
+                _AudioLinkOn(1);
+                break;
+            case 10:
+                animator.SetLayerWeight(1,0.0f);
+                animator.SetFloat("IntensitySelection",0);
+                _AudioLinkOn(2);
+                break;
+            case 11:
+                animator.SetLayerWeight(1,0.0f);
+                animator.SetFloat("IntensitySelection",0);
+                _AudioLinkOn(3);
+                break;
+            default:
+                animator.SetLayerWeight(1,1.0f);
+                animator.SetFloat("IntensitySelection",_intensityAnimation);
+                _AudioLinkOff();
+                break;
+        }
     }
     public void _UpdatePanTiltAnims()
     {
@@ -225,30 +302,125 @@ public class VRStageLighting_Animated : UdonSharpBehaviour
         animator.SetFloat("PanTilt-2Measures", _panTiltDualMeasureAnim);
         animator.SetFloat("PanTilt-4Measures", _panTiltQuadMeasureAnim);
     }
+    void ChangeCheckPosition()
+    {
+        GetTargetAngles();
+        if((targetToFollow.position != targetToFollowLast) || (panOffsetBlueGreen != targetPanAngle || tiltOffsetBlue != targetTiltAngle))
+        {
+            LerpToDefaultTarget();
+            targetToFollowLast = targetToFollow.position;
+        }
+        
+        targetToFollow.transform.hasChanged = false;
+        wasChanged = true;
+        return;
+    }
 
 
     void Update() 
     {
         //_UpdateInstancedProperties();   
-        if(animator)
+        // if(!animator)
+        // {
+        //     return;   
+        // }
+        // CheckAnimator();
+        if(!(followTarget && targetToFollow != null))
         {
-            CheckAnimator();
-        }       
-        if(followTarget && targetToFollow != null)
+            return;
+        }
+        if(targetToFollow.transform.hasChanged)
         {
-            GetTargetAngles();
-            if((targetToFollow.position != targetToFollowLast) || (panOffsetBlueGreen != targetPanAngle || tiltOffsetBlue != targetTiltAngle))
+            wasChanged = false;
+            //Check if target has moved.
+            ChangeCheckPosition();
+            //Check if other properties has changed.
+            //If something has changed, push an update to the shaders.
+            if(wasChanged)
             {
-                LerpToDefaultTarget();
-                //_UpdateInstancedProperties();
-                targetToFollowLast = targetToFollow.position;        
+                _UpdateInstancedPropertiesPanTilt();
+                return;
             }
         }
-        _UpdateInstancedProperties();
-        // else
-        // {
-        //     _UpdateInstancedProperties();   
-        // }
+    }
+
+    void _AudioLinkOn(int inputBand)
+    {
+        enableAudioLink = true;
+        band = inputBand;
+        props.SetFloat("_EnableAudioLink", enableAudioLink == true ? 1.0f : 0.0f);
+        props.SetFloat("_Band", band);
+        switch(objRenderers.Length)
+        {
+            case 1:
+                objRenderers[0].SetPropertyBlock(props);
+                break;
+            case 2:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                break;
+            case 3:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                break;
+            case 4:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                break;
+            case 5:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                objRenderers[4].SetPropertyBlock(props);
+                break;
+            default:
+                Debug.Log("Too many mesh renderers for this fixture!");
+                break;  
+        }
+    }
+    void _AudioLinkOff()
+    {
+        if(!enableAudioLink)
+        {
+            return;
+        }
+        enableAudioLink = false;
+        props.SetFloat("_EnableAudioLink", enableAudioLink == true ? 1.0f : 0.0f);
+                switch(objRenderers.Length)
+        {
+            case 1:
+                objRenderers[0].SetPropertyBlock(props);
+                break;
+            case 2:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                break;
+            case 3:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                break;
+            case 4:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                break;
+            case 5:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                objRenderers[4].SetPropertyBlock(props);
+                break;
+            default:
+                Debug.Log("Too many mesh renderers for this fixture!");
+                break;  
+        }
     }
 
 
@@ -259,6 +431,16 @@ public class VRStageLighting_Animated : UdonSharpBehaviour
     }
     public void _UpdateInstancedProperties()
     {
+        //Color Texture Sampling
+        props.SetFloat("_TextureColorSampleX", textureSamplingCoordinates.x);
+        props.SetFloat("_TextureColorSampleY", textureSamplingCoordinates.y);
+        props.SetInt("_EnableColorTextureSample", enableColorTextureSampling == true ? 1 : 0);
+        //AudioLink Stuff
+        props.SetFloat("_EnableAudioLink", enableAudioLink == true ? 1.0f : 0.0f);
+        props.SetFloat("_Delay", delay);
+        props.SetFloat("_BandMultiplier", bandMultiplier);
+        props.SetFloat("_Band", band);
+        //Movement Stuff
         props.SetInt("_PanInvert", invertPan == true ? 1 : 0);
         props.SetInt("_TiltInvert", invertTilt == true ? 1 : 0);
         props.SetInt("_EnableSpin", enableAutoSpin == true ? 1 : 0);
@@ -270,10 +452,74 @@ public class VRStageLighting_Animated : UdonSharpBehaviour
         props.SetFloat("_GlobalIntensity", globalIntensity);
         props.SetFloat("_FinalIntensity", finalIntensity);
         props.SetFloat("_ConeLength", Mathf.Abs(coneLength - 10.5f));
-        for(int i = 0; i < objRenderers.Length; i++)
+        switch(objRenderers.Length)
         {
-            objRenderers[i].SetPropertyBlock(props);
-        }
+            case 1:
+                objRenderers[0].SetPropertyBlock(props);
+                break;
+            case 2:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                break;
+            case 3:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                break;
+            case 4:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                break;
+            case 5:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                objRenderers[4].SetPropertyBlock(props);
+                break;
+            default:
+                Debug.Log("Too many mesh renderers for this fixture!");
+                break;  
+        }  
+    }
+
+    void _UpdateInstancedPropertiesPanTilt()
+    {
+        props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
+        props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
+        switch(objRenderers.Length)
+        {
+            case 1:
+                objRenderers[0].SetPropertyBlock(props);
+                break;
+            case 2:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                break;
+            case 3:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                break;
+            case 4:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                break;
+            case 5:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                objRenderers[4].SetPropertyBlock(props);
+                break;
+            default:
+                Debug.Log("Too many mesh renderers for this fixture!");
+                break;  
+        } 
     }
     void GetTargetAngles()
     {
@@ -296,4 +542,16 @@ public class VRStageLighting_Animated : UdonSharpBehaviour
             tiltOffsetBlue = Mathf.Clamp(Mathf.LerpAngle(previousTiltAngle, targetTiltAngle, targetFollowLerpSpeed * Time.deltaTime),0.0f, 180.0f);
             return;
     }
+    #if !COMPILER_UDONSHARP && UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            this.UpdateProxy(ProxySerializationPolicy.RootOnly);
+            Gizmos.color = lightColorTint;
+            if(targetToFollow != null)
+            {
+                Gizmos.DrawWireSphere(targetToFollow.position, 0.25f);
+            }
+            Gizmos.DrawWireSphere(transform.position, 0.05f);
+        }
+    #endif
 }

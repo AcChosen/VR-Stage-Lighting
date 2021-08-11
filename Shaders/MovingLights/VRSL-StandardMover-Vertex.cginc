@@ -168,14 +168,7 @@ float4 CalculateConeWidth(appdata v, float4 input, float scalar)
 			if(v.color.r < 0.9)
 			{
 				float distanceFromFixture = (v.uv.x) * (scalar);
-				if(v.uv.x < 0.0025)
-				{
-					distanceFromFixture = lerp(0, distanceFromFixture, v.uv.x);
-				}
-				else
-				{
-					distanceFromFixture = lerp(0, distanceFromFixture, pow(v.uv.x, _ConeSync));
-				}
+				distanceFromFixture = lerp(0, distanceFromFixture, pow(v.uv.x, _ConeSync));
 
 				input.z = (input.z) + (-v.normal.z) * (distanceFromFixture);
 				input.x = (input.x) + (-v.normal.x) * (distanceFromFixture);

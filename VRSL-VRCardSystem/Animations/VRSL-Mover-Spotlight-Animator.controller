@@ -59,20 +59,20 @@ AnimatorController:
     m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
-    m_Name: LightIntensity
-    m_StateMachine: {fileID: 1107337089927024560}
+    m_Name: Emission Color
+    m_StateMachine: {fileID: 1107510908843475774}
     m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: -1
-    m_DefaultWeight: 0
+    m_DefaultWeight: 1
     m_IKPass: 0
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
   - serializedVersion: 5
-    m_Name: Emission Color
-    m_StateMachine: {fileID: 1107510908843475774}
+    m_Name: LightIntensity
+    m_StateMachine: {fileID: 1107337089927024560}
     m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
@@ -724,7 +724,7 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 1102090302644429642}
-    m_Position: {x: 288, y: 120, z: 0}
+    m_Position: {x: 290, y: 120, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []

@@ -86,54 +86,85 @@ public class VRStageLighting_DMX : UdonSharpBehaviour
     
 
     /////////////////Private Variables//////////////////
-    
+    private bool wasChanged;
     MaterialPropertyBlock props;
     bool enableInstancing;
     float targetPanAngle, targetTiltAngle;
     private Vector3 targetToFollowLast;
+    private Color previousColorTint;
+    private Transform previousTargetToFollowTransform;
+    
+    private float previousConeWidth, previousConeLength, previousGlobalIntensity, previousFinalIntensity;
+    private int previousGOBOSelection;
 
     void Start()
     {
-        if(objRenderers.Length > 0 && objRenderers[0] != null)
+       if(objRenderers.Length > 0 && objRenderers[0] != null)
         {
             props = new MaterialPropertyBlock();
-            enableInstancing = true;
+            if(followTarget)
+            {
+                GetTargetAngles();
+               // LerpToDefaultTarget();
+                panOffsetBlueGreen = targetPanAngle;
+                tiltOffsetBlue = targetTiltAngle;
+                targetToFollowLast = targetToFollow.position;
+            }
+            previousColorTint = lightColorTint;
+            previousConeWidth = coneWidth;
+            previousConeLength = coneLength;
+            previousGOBOSelection = selectGOBO;
+            previousGlobalIntensity = globalIntensity;
+            previousFinalIntensity = finalIntensity;
+            if(targetToFollow)
+            {
+                previousTargetToFollowTransform = targetToFollow;
+            }
             _UpdateInstancedProperties();
         }
         else
         {
             Debug.Log("Please add atleast one fixture renderer.");
-            enableInstancing = false;
+            //enableInstancing = false;
         }
-
-        
-        if(followTarget && enableInstancing && enableUdonOverride == false)
+    }
+    void ChangeCheckPosition()
+    {
+        GetTargetAngles();
+        if((targetToFollow.position != targetToFollowLast) || (panOffsetBlueGreen != targetPanAngle || tiltOffsetBlue != targetTiltAngle))
         {
-                    GetTargetAngles();
-                    LerpToDefaultTarget();
-                    targetToFollowLast = targetToFollow.position;
+            LerpToDefaultTarget();
+            targetToFollowLast = targetToFollow.position;
         }
+        
+        targetToFollow.transform.hasChanged = false;
+        wasChanged = true;
+        return;
     }
 
     void Update() 
     {
-        if(enableUdonOverride && enableInstancing)
+        if(!enableUdonOverride)
         {
-            if(followTarget && targetToFollow != null)
-            {
-                GetTargetAngles();
-                if((targetToFollow.position != targetToFollowLast) || (panOffsetBlueGreen != targetPanAngle || tiltOffsetBlue != targetTiltAngle))
-                {
-                    LerpToDefaultTarget();
-                    targetToFollowLast = targetToFollow.position;
-                }
-                _UpdateInstancedProperties();
-            }
-            else
-            {
-                 _UpdateInstancedProperties();
-            }
+            return;
         }
+        if(!(followTarget && targetToFollow != null))
+        {
+            return;
+        }
+        if(targetToFollow.transform.hasChanged)
+        {
+            wasChanged = false;
+            //Check if target has moved.
+            ChangeCheckPosition();
+            //Check if other properties has changed.
+            //If something has changed, push an update to the shaders.
+            if(wasChanged)
+            {
+                _UpdateInstancedPropertiesPanTilt();
+                return;
+            }
+        }  
     }
     public void _UpdateInstancedProperties()
     {
@@ -151,11 +182,75 @@ public class VRStageLighting_DMX : UdonSharpBehaviour
         props.SetFloat("_GlobalIntensity", globalIntensity);
         props.SetFloat("_FinalIntensity", finalIntensity);
         props.SetFloat("_ConeLength", Mathf.Abs(coneLength - 10.5f));
-        for(int i = 0; i < objRenderers.Length; i++)
+        switch(objRenderers.Length)
         {
-            objRenderers[i].SetPropertyBlock(props);
+            case 1:
+                objRenderers[0].SetPropertyBlock(props);
+                break;
+            case 2:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                break;
+            case 3:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                break;
+            case 4:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                break;
+            case 5:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                objRenderers[4].SetPropertyBlock(props);
+                break;
+            default:
+                Debug.Log("Too many mesh renderers for this fixture!");
+                break;  
         }
     }
+    void _UpdateInstancedPropertiesPanTilt()
+    {
+        props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
+        props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
+        switch(objRenderers.Length)
+        {
+            case 1:
+                objRenderers[0].SetPropertyBlock(props);
+                break;
+            case 2:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                break;
+            case 3:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                break;
+            case 4:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                break;
+            case 5:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                objRenderers[4].SetPropertyBlock(props);
+                break;
+            default:
+                Debug.Log("Too many mesh renderers for this fixture!");
+                break;  
+        } 
+    }
+
     void GetTargetAngles()
     {
             Vector3 dir = ((targetToFollow.position + targetOffset) - this.transform.position).normalized;
@@ -177,21 +272,170 @@ public class VRStageLighting_DMX : UdonSharpBehaviour
             tiltOffsetBlue = Mathf.Clamp(Mathf.LerpAngle(previousTiltAngle, targetTiltAngle, targetFollowLerpSpeed * Time.deltaTime),0.0f, 180.0f);
             return;
     }
+    /////////////////////////////////////////////////////////////////////////PROPERTIES///////////////////////////////////////////////////////////////////////////////////////////////
+    public Color LightColorTint
+    {
+        get
+        {
+            return lightColorTint;
+        }
+        set
+        {
+            previousColorTint = lightColorTint;
+            lightColorTint = value;
+            _UpdateInstancedProperties();
+        }
+    }
+    public float ConeWidth
+    {
+        get
+        {
+            return coneWidth;
+        }
+        set
+        {
+            previousConeWidth = coneWidth;
+            coneWidth = value;
+            _UpdateInstancedProperties();
+        }
+    }
+    public float ConeLength
+    {
+        get
+        {
+            return ConeLength;
+        }
+        set
+        {
+            previousConeLength = coneLength;
+            coneLength = value;
+            _UpdateInstancedProperties();
+        }
+    }
+    public float GlobalIntensity
+    {
+        get
+        {
+            return globalIntensity;
+        }
+        set
+        {
+            previousGlobalIntensity = globalIntensity;
+            globalIntensity = value;
+            _UpdateInstancedProperties();
+        }
+    }
+    public float FinalIntensity
+    {
+        get
+        {
+            return finalIntensity;
+        }
+        set
+        {
+            previousFinalIntensity = finalIntensity;
+            finalIntensity = value;
+            _UpdateInstancedProperties();
+        }
+    }
+    public int SelectGOBO
+    {
+        get
+        {
+            return selectGOBO;
+        }
+        set
+        {
+            previousGOBOSelection = selectGOBO;
+            selectGOBO = value;
+            _UpdateInstancedProperties();
+        }
+    }
+    public bool InvertPan
+    {
+        get
+        {
+            return invertPan;
+        }
+        set
+        {
+            invertPan = value;
+            _UpdateInstancedProperties();
+        }
+    }
+    public bool InvertTilt
+    {
+        get
+        {
+            return invertTilt;
+        }
+        set
+        {
+            invertTilt = value;
+            _UpdateInstancedProperties();
+        }
+    }
+    public bool IsDMX
+    {
+        get
+        {
+            return enableDMXChannels;
+        }
+        set
+        {
+            enableDMXChannels = value;
+            _UpdateInstancedProperties();
+        }
+    }
+    public bool ProjectionSpin
+    {
+        get
+        {
+            return enableAutoSpin;
+        }
+        set
+        {
+            enableAutoSpin = value;
+            _UpdateInstancedProperties();
+        }
+    }
+        public float Pan
+    {
+        get
+        {
+            return panOffsetBlueGreen;
+        }
+        set
+        {
+            panOffsetBlueGreen = value;
+            _UpdateInstancedProperties();
+        }
+    }
+    public float Tilt
+    {
+        get
+        {
+            return tiltOffsetBlue;
+        }
+        set
+        {
+            tiltOffsetBlue = value;
+            _UpdateInstancedProperties();
+        }
+    }
+
+/////////////////////////////////////////////////////////////////////////END PROPERTIES///////////////////////////////////////////////////////////////////////////////////////////////
+
+    #if !COMPILER_UDONSHARP && UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            this.UpdateProxy(ProxySerializationPolicy.RootOnly);
+            Gizmos.color = lightColorTint;
+            if(targetToFollow != null)
+            {
+                Gizmos.DrawWireSphere(targetToFollow.position, 0.25f);
+            }
+            Gizmos.DrawWireSphere(transform.position, 0.05f);
+        }
+    #endif
 }
-
-// #if !COMPILER_UDONSHARP && UNITY_EDITOR
-// [CustomEditor(typeof(VRStageLighting_DMX))]
-// public class VRStageLighting_DMX_Editor : VRSL_UdonEditor
-// {
-
-//     public override void OnInspectorGUI()
-//     {
-//         if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
-//         DrawLogo();
-//         ShurikenHeaderCentered(ver);
-//         //EditorGUILayout.Space();
-//         base.OnInspectorGUI();
-//     }
-
-// }
-// #endif

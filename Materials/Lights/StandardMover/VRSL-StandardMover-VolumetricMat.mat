@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-StandardMover-VolumetricMat
   m_Shader: {fileID: 4800000, guid: 67a0beb6b3a31dc4e8b2d2344df6a994, type: 3}
-  m_ShaderKeywords: _DNENABLER_NONE _ENABLEOSC_ON _ENABLESPIN_ON _USERAWGRID_ON
+  m_ShaderKeywords: _DNENABLER_NONE _ENABLESPIN_ON _USERAWGRID_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -103,31 +103,31 @@ Material:
     - _BlueMultiplier: 1
     - _BumpScale: 1
     - _ConeLength: 2.13
-    - _ConeSync: 0.2
+    - _ConeSync: 0.05
     - _ConeWidth: 2.5
     - _DNEnabler: 0
     - _DistFade: 1.165
     - _Divide: 11.6
     - _DividePower: 0.043
     - _EnableCompatibilityMode: 0
-    - _EnableOSC: 1
+    - _EnableOSC: 0
     - _EnableSpin: 1
     - _EnableStaticEmissionColor: 0
     - _EnableStrobe: 0
     - _Fade: 1.5
     - _FadeAmt: 0
-    - _FadeStrength: 3.94
+    - _FadeStrength: 6
     - _FeatherOffset: 0.5
     - _FinalIntensity: 1
     - _FinalStrobeFreq: 0
     - _FixtureBaseRotationY: 0
-    - _FixtureMaxIntensity: 0.27
+    - _FixtureMaxIntensity: 0.3
     - _FixtureRotationX: 180
     - _GlobalIntensity: 1
     - _Glossiness: 1
     - _GreenMultiplier: 1
-    - _InnerFadeStrength: -0.08
-    - _InnerIntensityCurve: -1.62
+    - _InnerFadeStrength: 0.25
+    - _InnerIntensityCurve: -1.9
     - _IntensityCutoff: 0
     - _IsEven: 0
     - _LMStrength: 1
@@ -164,7 +164,7 @@ Material:
     - _SpecLMOcclusionAdjust: 0.2
     - _SpecularLMOcclusion: 0
     - _SpinSpeed: 4.62
-    - _StripeSplit: 0
+    - _StripeSplit: 6
     - _StripeSplitStrength: 0
     - _StrobeFreq: 16.61
     - _TextureSampleMode: 0
