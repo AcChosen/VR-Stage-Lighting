@@ -41,7 +41,7 @@ The majority of the overhead is powered through a standardized set of custom sha
 ## Setup
 
 ### Requirements
-- Unity 2018.4
+- Unity 2019.4
 - VRChat SDK3 for worlds (Udon)
 - UdonSharp
 - Usharp Video Player (https://github.com/MerlinVR/USharpVideo)
