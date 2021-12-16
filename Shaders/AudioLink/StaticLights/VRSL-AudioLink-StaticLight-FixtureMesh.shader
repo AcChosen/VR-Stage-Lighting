@@ -19,7 +19,7 @@
 
 
         [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
-        _FixutreIntensityMultiplier ("Intensity Multipler (For Bloom Scaling)", Range(1,5)) = 1
+        _FixutreIntensityMultiplier ("Intensity Multipler (For Bloom Scaling)", Range(1,15)) = 1
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _NormalMap ("Normal Map", 2D) = "white" {}
@@ -73,6 +73,7 @@
 
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
+            //hello
             // Albedo comes from a texture tinted by color
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
             half4 e = getEmissionColor();

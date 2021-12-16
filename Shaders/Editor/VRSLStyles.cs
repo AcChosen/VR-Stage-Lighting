@@ -9,7 +9,7 @@ public class VRSLStyles : MonoBehaviour
 {
     public static Texture logo = Resources.Load("VRStageLighting-Logo") as Texture;
 
-    public static string ver = "VR Stage Lighting ver:" + "<color=#9b34ebff> 1.10</color>";
+    public static string ver = "VR Stage Lighting ver:" + "<color=#9b34ebff> 1.20</color>";
 
     public static void DepthPassWarning()
     {

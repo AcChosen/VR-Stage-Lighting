@@ -131,7 +131,7 @@ Material:
     - _FinalStrobeFreq: 0
     - _FixtureBaseRotationY: 0
     - _FixtureMaxIntensity: 0.393
-    - _FixtureRotationX: 180
+    - _FixtureRotationX: 0
     - _GlobalIntensity: 1
     - _Glossiness: 1
     - _GreenMultiplier: 1
@@ -142,8 +142,8 @@ Material:
     - _LMStrength: 1
     - _LensMaxBrightness: 5
     - _LightProbeMethod: 0
-    - _MaxMinPanAngle: 90
-    - _MaxMinTiltAngle: -90
+    - _MaxMinPanAngle: 0
+    - _MaxMinTiltAngle: 0
     - _Metallic: 0.501
     - _ModX: 0
     - _ModY: 0
@@ -172,7 +172,7 @@ Material:
     - _Sector: 0
     - _SpecLMOcclusionAdjust: 0.2
     - _SpecularLMOcclusion: 0
-    - _SpinSpeed: 4.62
+    - _SpinSpeed: 4
     - _StrobeFreq: 16.61
     - _TextureColorSampleX: 0.5
     - _TextureColorSampleY: 0.5
@@ -188,7 +188,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 7.8000345, g: 7.8000345, b: 7.8000345, a: 1}
     - _EmissionColor: {r: 9.363626, g: 9.363626, b: 9.363626, a: 3}
-    - _FixtureRotationOrigin: {r: 0, g: 0, b: 0.1235, a: 0}
+    - _FixtureRotationOrigin: {r: 0, g: 0, b: 0, a: 0}
     - _LightColor: {r: 23.968628, g: 23.968628, b: 23.968628, a: 1}
-    - _ProjectionRangeOrigin: {r: 0, g: -0.075354, b: 0.123875, a: 0}
+    - _ProjectionRangeOrigin: {r: 0, g: -0.074, b: 0, a: 0}
     - _StaticEmission: {r: 1, g: 1, b: 1, a: 1}

@@ -100,7 +100,12 @@ uint isGOBOSpin()
 
 float getConeLength()
 {
-    return UNITY_ACCESS_INSTANCED_PROP(Props, _ConeLength);
+    return UNITY_ACCESS_INSTANCED_PROP(Props, _ConeLength)+10.0f;
+}
+
+float getMaxConeLength()
+{
+    return UNITY_ACCESS_INSTANCED_PROP(Props, _MaxConeLength);
 }
 
 float getGlobalIntensity()

@@ -48,6 +48,7 @@ float4 VolumetricLightingBRDF(v2f i)
 		// } 
 		i.uv.x = saturate(i.uv.x);
 		i.uv.y = saturate(i.uv.y);
+		
 
 		float fade = 0.0;
 		float altFade = 1.0;
@@ -65,7 +66,7 @@ float4 VolumetricLightingBRDF(v2f i)
 		wpos.z = unity_CameraToWorld[2][3];
 
 
-		_SpinSpeed = IF(checkPanInvertY() == 1, -_SpinSpeed, _SpinSpeed);
+		//_SpinSpeed = IF(checkPanInvertY() == 1, -_SpinSpeed, _SpinSpeed);
         //_SpinSpeed = IF(isOSC() == 1, _SpinSpeed * i.intensityStrobeGOBOSpinSpeed.z, _SpinSpeed);
 		float fadeStrength = _FadeStrength + lerp(2.0, 0.0, clamp(0,1,getConeWidth()));
 		float spinSpeed = 0.0;
@@ -97,6 +98,7 @@ float4 VolumetricLightingBRDF(v2f i)
 
 			distFade = saturate(distance(i.worldPos.rgb, wpos) * _DistFade) ;
 			float3 viewDir = normalize(wpos - i.worldPos);
+			viewDir = viewDir * 1.05;
 
 			//viewDir = normalize(mul(unity_WorldToObject,float4(viewDir,0.0)));
 			//viewDir = float3(viewDir.x,viewDir.y,viewDir.z);
@@ -104,7 +106,7 @@ float4 VolumetricLightingBRDF(v2f i)
 			altFade = pow(saturate(dot(normalize(i.norm), viewDir)),pow(fadeStrength,_InnerFadeStrength));
 			float fixtureBrightness = pow(saturate(dot(normalize(i.norm), (viewDir))),pow(fadeStrength,0.0));
 			altFade = lerp(altFade, fixtureBrightness, i.uv.x);
-			uvMap = half2((i.uv.x * getConeLength()), i.uv.y);
+			//uvMap = half2(saturate(i.uv.x * getConeLength()), i.uv.y);
 			spinSpeed = (-_SpinSpeed) * UNITY_ACCESS_INSTANCED_PROP(Props,_EnableSpin);
 			i.uv2.x = i.uv2.x + _Time * 0.5;
 			i.uv2.y = i.uv2.y + _Time * 0.1;
@@ -130,16 +132,18 @@ float4 VolumetricLightingBRDF(v2f i)
 
 			distFade = saturate(distance(i.worldPos.rgb, wpos) * _DistFade) ;
     		float3 viewDir = normalize(wpos - i.worldPos);
+			viewDir = viewDir * 1.05;
 			//viewDir = normalize(mul(unity_WorldToObject,float4(viewDir,0.0)));
 			fade = pow(saturate(dot(normalize(i.norm), viewDir)), fadeStrength);
-			uvMap = half2(i.uv.x * getConeLength(), i.uv.y);
+		//	uvMap = half2(saturate(i.uv.x * getConeLength()), i.uv.y);
 			//fade = (pow(max(0, dot(i.norm, -viewDir)), _FadeStrength));
 			spinSpeed = (-_SpinSpeed) * UNITY_ACCESS_INSTANCED_PROP(Props,_EnableSpin);
 			i.uv2.x = i.uv2.x + (_Time * -0.5);
 			i.uv2.y = i.uv2.y + (_Time * -0.1);
 		}
+		uvMap = half2(saturate(i.uv.x * getConeLength()), i.uv.y);
 		fixed4 gradientTexture = tex2D(_LightMainTex, uvMap);
-		//float volumetricLength = clamp(0,1,sin(clamp(0,1.25,uvMap.x) + 0.25));
+		//float volumetricLength = ((clamp(0,1,sin(clamp(0,1.25,uvMap.x) + 1.0));
 		//fixed4 gradientTexture = lerp(fixed4(1,1,1,1), fixed4(0,0,0,0), volumetricLength);
 		fixed4 col = gradientTexture.r * ((sin(_Time.y * _PulseSpeed) * 0.5 + 1));
 		col = ((((col*fade) * altFade) * depthFade) * distFade) * _FixtureMaxIntensity;
@@ -149,25 +153,34 @@ float4 VolumetricLightingBRDF(v2f i)
 		//blinder = 1.0;
 
 		col = col * emissionTint;
-		col*= (i.blindingEffect * 3.0);
+		//float camAngle = length(normalize(WorldSpaceViewDir(i.pos)));
+		//float2 screenUV = i.screenPos.xy / i.screenPos.w;
+
+		// float4 originScreenPos = ComputeScreenPos(UnityObjectToClipPos(float4(0,0,0,0)));
+		// float2 originScreenUV = originScreenPos.xy / originScreenPos.w;
+		// float camAngle = saturate((1-distance(float2(0.5, 0.5), originScreenUV))-0.65);
+		//col*= lerp(1, (i.blindingEffect * i.blindingEffect), camAngle);
+		
 
 		float3 newCol = RGB2HSV(col.rgb);
 		newCol = float3(newCol.x, clamp(newCol.y,0.0, 1.0)-.1, newCol.z);
 		col.xyz = lerp(col.xyz,hsb2rgb(newCol), gradientTexture.r);
+		col*= i.blindingEffect * i.blindingEffect;
 
 
 		col = lerp(col, fixed4(0,0,0,0), pow(i.uv.x,.5));
 		//Beam Splitter and spin
 		const float pi = 3.14159265;
 		float divide = (sin(i.uv.y * pi * floor(_StripeSplit) * 2 + (_Time.w * spinSpeed)) + 1.0);
-		divide = lerp(1.0, divide, _StripeSplitStrength);
+		float splitstr = IF(_GoboBeamSplitEnable == 1 && instancedGOBOSelection() > 1, _StripeSplitStrength, 0);
+		divide = lerp(1.0, divide, splitstr);
 
 
 		//noise apply
 		float2 texUV = i.uv2;
 		
-		float randVal = frac(sin((_NoiseSeed + 1) * 10000)); // 適当なランダム値
-		texUV += float2((i.worldPos.x + (_NoiseSeed + 1) * 2.345 + randVal) * 0.2357 * 0.01, (i.worldPos.y + (_NoiseSeed + 1) * 8.345 + randVal) * 0.324643 *  0.1 + 5);
+		//float randVal = frac(sin((_NoiseSeed + 1) * 10000)); 
+		//texUV += float2((i.worldPos.x + (_NoiseSeed + 1) * 2.345 + randVal) * 0.2357 * 0.01, (i.worldPos.y + (_NoiseSeed + 1) * 8.345 + randVal) * 0.324643 *  0.1 + 5);
 		
 		float4 tex = tex2D(_NoiseTex, texUV);
 		tex = lerp(fixed4(1, 1, 1, 1), tex, _NoisePower);

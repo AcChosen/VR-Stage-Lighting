@@ -17,6 +17,34 @@ public class VRSL_BPMCounter : UdonSharpBehaviour
     public int _beatCountFull, _beatCountDivide8;
     private bool captureNextDownbeat;
     public int _quarterNoteCount; // counts 1 , 2 , 3 , 4
+    [UdonSynced, FieldChangeCallback(nameof(DownBeating))]
+    [SerializeField]
+    private bool _downbeating;
+
+    public bool DownBeating
+    {
+        set
+        {
+            _downbeating = value;
+            setAnimSpeed(BPM);
+            DownBeat();
+        }
+        get => _downbeating;
+    }
+    [UdonSynced, FieldChangeCallback(nameof(FullReset))]
+    [SerializeField]
+    private bool _fullreset;
+    public bool FullReset
+    {
+        set
+        {
+            _fullreset = value;
+            ResetTimerAndBeats();
+            ResetNoteCounters();
+        }
+        get => _fullreset;
+    }
+
     public int _measureCount = 1; //Counts every 4 measures
     private double lastDownbeatTime;
     private double lastDownbeatTimePrev;   //Used by clients to detect new sync info
@@ -24,35 +52,54 @@ public class VRSL_BPMCounter : UdonSharpBehaviour
     public float newAnimationSpeed;
     public VRSL_LightGroupZone[] groupZones;
 
+    public bool isCounting;
+
     // [UdonSynced]
     // private double lastDownbeatTimeSynced;
 
-    [UdonSynced]
-    public float _bpm = 60;
+    [UdonSynced, FieldChangeCallback(nameof(BPM))]
+    [SerializeField]
+    private float _bpm = 60;
+    
+    public float BPM
+    {
+        set
+        {
+            Debug.Log("BPM FieldChange Callback!");
+            _bpm = value;
+            captureNextDownbeat = true;
+            _quarterNoteCount = 4;
+            setAnimSpeed(_bpm);
+        }
+        get => _bpm;
+    }
     
     private float unsyncbpm;
     void Start()
     {
-        setAnimSpeed();
-        unsyncbpm = _bpm;  
+        setAnimSpeed(BPM);
+       /// unsyncbpm = _bpm;  
     }
 
-    public override void OnDeserialization()
-    {
-        if(_bpm != unsyncbpm)
-        {
-            captureNextDownbeat = true;
-            _quarterNoteCount = 4;
-            setAnimSpeed();
-            unsyncbpm = _bpm;
-        }
-    }
+    // public override void OnDeserialization()
+    // {
+    //     if(_bpm != unsyncbpm)
+    //     {
+    //         captureNextDownbeat = true;
+    //         _quarterNoteCount = 4;
+    //         setAnimSpeed();
+    //         unsyncbpm = _bpm;
+    //     }
+    // }
 
 
     void Update() 
     {
-        resetCounter = false;
-        BeatDetection();
+        if(isCounting)
+        {
+            resetCounter = false;
+            BeatDetection();
+        }
     }
 
     public void ResetTimerAndBeats()
@@ -79,14 +126,14 @@ public class VRSL_BPMCounter : UdonSharpBehaviour
 
         void BeatDetection()
     {
-        text.text = "BPM: " + _bpm.ToString();
+        text.text = "BPM: " + BPM.ToString();
         beatText.text = "Beat: " + _quarterNoteCount.ToString();
 
 
         //assume there is no beat this frame
         _beatFull = false;
         //every second there will be a beat interval if bpm 60. a beat every half second at 120, etc. This sets what consititutes what bpm is a "second". Default is 60.
-        _beatInterval = 60 / _bpm;
+        _beatInterval = 60 / BPM;
         //increment timer every frame by however many seconds have passed.
         //_beatTimer += Time.fixedDeltaTime;
         //_beatTimer += Time.fixedUnscaledDeltaTime;
@@ -99,7 +146,7 @@ public class VRSL_BPMCounter : UdonSharpBehaviour
                 
                 _quarterNoteCount = 4;
                 manualStartBeat = false;
-                _beatInterval = 60 / _bpm;
+                _beatInterval = 60 / BPM;
                 _beatTimer += Time.deltaTime;
                 //setAnimSpeed();
             }
@@ -116,8 +163,15 @@ public class VRSL_BPMCounter : UdonSharpBehaviour
             {
                // setAnimSpeed();
                 //DownBeat();
-                SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "setAnimSpeed");
-                SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "DownBeat"); 
+             //   SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "setAnimSpeed");
+               // SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "DownBeat"); 
+
+               
+                if(Networking.IsOwner(Networking.LocalPlayer, this.gameObject))
+               {   
+                   DownBeating = !DownBeating;
+                   RequestSerialization();
+               }
             }
 
             // If this is a downbeat, save the server time when this occured (only the master uses this value)
@@ -160,19 +214,22 @@ public class VRSL_BPMCounter : UdonSharpBehaviour
     {
         // if (Networking.IsMaster)
         // {
-            _bpm = value;
-            captureNextDownbeat = true;
-            _quarterNoteCount = 4;
-            setAnimSpeed();
-            unsyncbpm = _bpm;
+            BPM = value;
+            // captureNextDownbeat = true;
+            // _quarterNoteCount = 4;
+            // setAnimSpeed();
+           // unsyncbpm = _bpm;
+            RequestSerialization();
+            
             
         //}
         //bpmtapperer.UpdateText();
     }
 
-    void setAnimSpeed()
+    void setAnimSpeed(float value)
     {
-        newAnimationSpeed = _bpm/ 60;
+        newAnimationSpeed = value/ 60;
+      //  Debug.Log("New Animation Speed: " + newAnimationSpeed + " BPM: " + value);
         foreach(VRSL_LightGroupZone groupZone in groupZones)
         {
             groupZone._ResetBPM();
@@ -182,7 +239,10 @@ public class VRSL_BPMCounter : UdonSharpBehaviour
 
     public void DownBeat()
     {
+        Debug.Log("Downbeat!");
+        _beatTimer = 0.0f;
         _quarterNoteCount = 1;
+        _beatFull = true;
         foreach(VRSL_LightGroupZone groupZone in groupZones)
         {
             groupZone._CallDownBeat();

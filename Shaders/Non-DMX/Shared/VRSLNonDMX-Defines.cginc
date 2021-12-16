@@ -51,6 +51,7 @@ float _ProjectionIntensity;
 float _ProjectionRange;
 float4 _ProjectionRangeOrigin;
 float _ProjectionFade, _ProjectionFadeCurve, _ProjectionDistanceFallOff;
+uint _GoboBeamSplitEnable;
 
 //float _FinalStrobeFreq, _NewTimer;
 
@@ -91,6 +92,7 @@ UNITY_INSTANCING_BUFFER_START(Props)
     UNITY_DEFINE_INSTANCED_PROP(float4, _Emission)
     UNITY_DEFINE_INSTANCED_PROP(float, _ConeWidth)
     UNITY_DEFINE_INSTANCED_PROP(float, _ConeLength)
+    UNITY_DEFINE_INSTANCED_PROP(float, _MaxConeLength)
     UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
     UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
     UNITY_DEFINE_INSTANCED_PROP(uint, _EnableColorTextureSample)

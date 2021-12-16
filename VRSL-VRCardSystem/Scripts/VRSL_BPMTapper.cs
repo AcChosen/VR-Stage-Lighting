@@ -28,7 +28,7 @@ public class VRSL_BPMTapper : UdonSharpBehaviour
     {
         //thetext = this.GetComponentInChildren<Text>();
         //thetext.text = _bpmc.GetBPM().ToString();
-        displayBPM = _bpmCounter._bpm;
+        displayBPM = _bpmCounter.BPM;
     }
 
     public override void Interact()
@@ -37,11 +37,15 @@ public class VRSL_BPMTapper : UdonSharpBehaviour
         {
             Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
             Networking.SetOwner(Networking.LocalPlayer, _bpmCounter.gameObject);
+            Debug.Log("Setting Onwer!");
         }
+        Debug.Log("I now own  everything!");
         if (_bpmCounter._customBeatEnabled)
         {
+            Debug.Log("Attempting to Tap!");
             if(tap < 3)
             {
+
                 Debug.Log("Tap!: " + tap);
                 tapTime[tap] = Time.realtimeSinceStartup;
                 tap++;
@@ -73,7 +77,7 @@ public class VRSL_BPMTapper : UdonSharpBehaviour
             {
                 float tapTime = Time.realtimeSinceStartup;
                 float averageTime = (((tapTime - lastTapTime) + ((tap - 1) * prevAvg))) / (tap);
-                _bpmCounter.SetBPM(((Mathf.Round((60 / averageTime)*100.0f)/100.0f) + _bpmCounter._bpm)/2);
+                _bpmCounter.SetBPM(((Mathf.Round((60 / averageTime)*100.0f)/100.0f) + _bpmCounter.BPM)/2);
                 tap++;
                 lastTapTime = tapTime;
                 prevAvg = averageTime;
@@ -84,7 +88,7 @@ public class VRSL_BPMTapper : UdonSharpBehaviour
                 //UpdateText();
             }
         }
-        displayBPM = _bpmCounter._bpm;
+        displayBPM = _bpmCounter.BPM;
         
     }
     // public void UpdateText()

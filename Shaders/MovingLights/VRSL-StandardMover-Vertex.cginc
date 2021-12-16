@@ -158,12 +158,13 @@ float4 CalculateConeWidth(appdata v, float4 input, float scalar)
 		// {
 
 			//Set New Origin
-			float4 newOrigin = input.w * _ProjectionRangeOrigin; 
+			float4 newOrigin = input.w * _FixtureRotationOrigin; 
 			input.xyz = input.xyz - newOrigin;
 
 			// Do Transformation
 			
 			//input.xy = input.xy + v.normal.xy * distanceFromFixture;
+		//	v.tangent.y *= 0.1235;
 
 			if(v.color.r < 0.9)
 			{
@@ -172,6 +173,11 @@ float4 CalculateConeWidth(appdata v, float4 input, float scalar)
 
 				input.z = (input.z) + (-v.normal.z) * (distanceFromFixture);
 				input.x = (input.x) + (-v.normal.x) * (distanceFromFixture);
+				float3 originStretch = input.xyz;
+				float3 stretchedcoords = ((-v.tangent.y)*getMaxConeLength());
+				input.xyz = lerp(originStretch, (originStretch * stretchedcoords), pow(v.uv.x,lerp(1, 0.1, v.uv.x)-0.5));
+				input.xyz = IF(v.uv.x < 0.001, originStretch, input.xyz);
+				//input.xyz = (originStretch * stretchedcoords);
 			}
 			else
 			{
@@ -179,12 +185,18 @@ float4 CalculateConeWidth(appdata v, float4 input, float scalar)
 				distanceFromFixture = lerp(0, distanceFromFixture, pow(v.uv.x, _ConeSync));
 				input.z = (input.z) + (v.normal.z) * distanceFromFixture;
 				input.x = (input.x) + (v.normal.x) * distanceFromFixture;
+				float3 originStretch = input.xyz;
+				float3 stretchedcoords = (-v.tangent.y*getMaxConeLength());
+				input.xyz = lerp(originStretch, (originStretch * stretchedcoords), pow(v.uv.x,lerp(1, 0.1, v.uv.x)-0.5));
+				input.xyz = IF(v.uv.x < 0.001, originStretch, input.xyz);
+			//	input.xyz = (originStretch * stretchedcoords);
 
 			}
 
 			//input.y *= _ConeLength;
 
 			//Rest Origin
+		//	input.y += _FixtureRotationOrigin.w;
 			input.xyz = input.xyz + newOrigin;
 
 			return input;
@@ -270,7 +282,12 @@ v2f vert (appdata v)
 		float3 objCamPos = mul(unity_WorldToObject, float4(worldCam, 1)).xyz;
 		objCamPos = InvertVolumetricRotations(float4(objCamPos,1), oscPanValue, oscTiltValue).xyz;
 		float len = length(objCamPos.xy);
+		len *= len;
+		float4 originScreenPos = ComputeScreenPos(UnityObjectToClipPos(_FixtureRotationOrigin));
+		float2 originScreenUV = originScreenPos.xy / originScreenPos.w;
+		float camAngle = saturate((1-distance(float2(0.5, 0.5), originScreenUV))-0.5);
 		o.blindingEffect = clamp(0.6/len,1.0,16.0);
+		o.blindingEffect = lerp(1, o.blindingEffect, camAngle);
 	#endif
 
 	//calculate rotations for normals, cast to float4 first with 0 as w
@@ -367,7 +384,7 @@ v2f vert (appdata v)
 		o.tan = tangent;
 		o.norm = worldNormal;
 		//GETTING DATA FROM OSC TEXTURE
-		o.intensityStrobeGOBOSpinSpeed = float3(GetOSCIntensity(sector, 1.0),GetStrobeOutput(sector), getGoboSpinSpeed(sector));
+		o.intensityStrobeGOBOSpinSpeed = float4(GetOSCIntensity(sector, 1.0),GetStrobeOutput(sector), getGoboSpinSpeed(sector), getOSCGoboSelection(sector));
 		o.rgbColor = GetOSCColor(sector);
 		if(((all(o.rgbColor <= float4(0.005,0.005,0.005,1)) || o.intensityStrobeGOBOSpinSpeed.x <= 0.005) && isOSC() == 1) || getGlobalIntensity() <= 0.005 || getFinalIntensity() <= 0.005)
 		{

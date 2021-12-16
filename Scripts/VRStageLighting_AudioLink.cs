@@ -16,6 +16,7 @@ using VRC.Udon.Common.Interfaces;
 using System.Collections.Immutable;
 #endif
 
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class VRStageLighting_AudioLink : UdonSharpBehaviour
 {
      //////////////////Public Variables////////////////////
@@ -204,7 +205,7 @@ public class VRStageLighting_AudioLink : UdonSharpBehaviour
     {
         if(objRenderers.Length > 0 && objRenderers[0] != null)
         {
-            props = new MaterialPropertyBlock();
+            _SetProps();
             //enableInstancing = true;
                     
             if(followTarget)
@@ -267,6 +268,11 @@ public class VRStageLighting_AudioLink : UdonSharpBehaviour
             Debug.Log("Please add atleast one fixture renderer.");
             //enableInstancing = false;
         }
+    }
+
+        public void _SetProps()
+    {
+        props = new MaterialPropertyBlock();
     }
 /////////////////////////////////////////////////////////////////////////PROPERTIES///////////////////////////////////////////////////////////////////////////////////////////////
     public Color LightColorTint
@@ -529,6 +535,18 @@ public class VRStageLighting_AudioLink : UdonSharpBehaviour
     }
     public void _UpdateInstancedProperties()
     {   
+        if(props == null)
+        {
+            if(objRenderers.Length > 0 && objRenderers[0] != null)
+            {
+                _SetProps();
+            }
+            else
+            {
+                Debug.Log("Please add atleast one fixture renderer.");
+                return;
+            }
+        }
         //Color Texture Sampling
         props.SetFloat("_TextureColorSampleX", textureSamplingCoordinates.x);
         props.SetFloat("_TextureColorSampleY", textureSamplingCoordinates.y);
@@ -593,6 +611,18 @@ public class VRStageLighting_AudioLink : UdonSharpBehaviour
 
     void _UpdateInstancedPropertiesPanTilt()
     {
+        if(props == null)
+        {
+            if(objRenderers.Length > 0 && objRenderers[0] != null)
+            {
+                _SetProps();
+            }
+            else
+            {
+                Debug.Log("Please add atleast one fixture renderer.");
+                return;
+            }
+        }
         props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
         props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
         switch(objRenderers.Length)

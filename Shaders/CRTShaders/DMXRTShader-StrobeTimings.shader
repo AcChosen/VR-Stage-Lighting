@@ -42,7 +42,7 @@
                 float rawValue = getValueAtCoords(coords);
                 float finalValue = IF(rawValue <= 0.03515625, 0.0, rawValue);
                 uint remappedvalue = clamp(floor(finalValue * 255),10,255);
-                float frequency = clamp(remappedvalue * 0.0980392156862745, 1.0, 25.0);//hz
+                float frequency = clamp(remappedvalue * 0.0980, 1.0, 25.0);//hz
                 //frequency = IF(finalValue == 0.0, 0.0, frequency);
                 //frequency = IF(frequency <= 2.0, 0.0, frequency);
                 //float result = IF(_EnableOSC == 1, finalValue, 0.0);
@@ -73,7 +73,7 @@
                     }
                     else
                     {
-                        return clamp(output, 0.0, 300.0);
+                        return clamp(output, 0.0, 1000000.0);
                     }
 
                 }

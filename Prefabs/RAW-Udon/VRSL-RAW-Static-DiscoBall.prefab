@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2304692466611447465}
   - component: {fileID: 2304692466611447463}
   m_Layer: 24
-  m_Name: VRSL-RAW-DiscoBall
+  m_Name: VRSL-RAW-Static-DiscoBall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -100,6 +100,7 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
+  _syncMethod: 0
   serializedProgramAsset: {fileID: 11400000, guid: 397dc3ba99a0aed479bbc9c7cf1d10b7,
     type: 2}
   programSource: {fileID: 11400000, guid: 0781cabbca8a79a43ae167ec5bb2d8da, type: 2}
@@ -119,7 +120,7 @@ GameObject:
   - component: {fileID: 2304692466814385718}
   - component: {fileID: 2304692466814385713}
   m_Layer: 24
-  m_Name: MirrorBall
+  m_Name: MirrorBallMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

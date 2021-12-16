@@ -11,6 +11,7 @@
 		 //[HideInInspector]_FinalStrobeFreq ("Final Strobe Frequency", Float) = 0
 		 //[HideInInspector]_NewTimer("New Timer From Udon For Strobe", Float) = 0
 		 [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
+		 [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
 		 [Toggle] _EnableStrobe ("Enable Strobe", Int) = 0
 		 [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
 		 [HideInInspector]_FixtureBaseRotationY("Mover Pan Offset (Blue + Green)", Range(-540,540)) = 0

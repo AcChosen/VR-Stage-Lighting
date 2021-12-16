@@ -15,6 +15,8 @@ using VRC.Udon.Common.Interfaces;
 using System.Collections.Immutable;
 #endif
 
+[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
+
 public class VRStageLighting_Animated_Static : UdonSharpBehaviour
 {
      //////////////////Public Variables////////////////////
@@ -44,6 +46,9 @@ public class VRStageLighting_Animated_Static : UdonSharpBehaviour
     [Header("Animation Settings")]
     [Tooltip("Enable or disable the use of the animator on this fixture.")]
     public bool enableAnimation;
+
+    [Tooltip("Mirror the animations on this fixture.")]
+    public bool mirrorAnimations;
     [Tooltip("The animator to animate this fixture.")]
     public Animator animator;
     [Tooltip ("Set the color, intensity, and gobo animation.")]
@@ -84,35 +89,35 @@ public class VRStageLighting_Animated_Static : UdonSharpBehaviour
 
 
     [Header("Movement Settings")]
-    [Tooltip ("Invert the pan values (Left/Right Movement) for movers.")]
-    public bool invertPan;
-    [Tooltip ("Invert the tilt values (Up/Down Movement) for movers.")]
-    public bool invertTilt;
-    [Tooltip ("Enable this if the mover is hanging upside down.")]
-    public bool isUpsideDown;
-    [Tooltip ("Enable target following for a mover while in Udon mode.")]
-    public bool followTarget;
+    // [Tooltip ("Invert the pan values (Left/Right Movement) for movers.")]
+    // public bool invertPan;
+    // [Tooltip ("Invert the tilt values (Up/Down Movement) for movers.")]
+    // public bool invertTilt;
+    // [Tooltip ("Enable this if the mover is hanging upside down.")]
+    // public bool isUpsideDown;
+    // [Tooltip ("Enable target following for a mover while in Udon mode.")]
+    // public bool followTarget;
     [Tooltip ("The target for this mover to follow.")]
     public Transform targetToFollow;
-    [Tooltip ("The speed at which the target is followed, higher = slower.")]
-    public float targetFollowLerpSpeed = 20.0f;
-    [Tooltip ("An offset of where the mover will point at relative to the target.")]
-    public Vector3 targetOffset;
+    // [Tooltip ("The speed at which the target is followed, higher = slower.")]
+    // public float targetFollowLerpSpeed = 20.0f;
+    // [Tooltip ("An offset of where the mover will point at relative to the target.")]
+    // public Vector3 targetOffset;
     [Space(5)]
 
 
     [Header("Fixture Settings")]
     [Tooltip ("Enable projection spinning (Udon Override Only).")]
     public bool enableAutoSpin;
-    [Range(0,360.0f)]
-    [Tooltip ("Tilt (Up/Down) offset/movement. Directly controls tilt when in Udon Mode.")]
-    public float tiltOffsetBlue = 90.0f;
-    float startTiltOffset;
+    // [Range(0,360.0f)]
+    // [Tooltip ("Tilt (Up/Down) offset/movement. Directly controls tilt when in Udon Mode.")]
+    // public float tiltOffsetBlue = 90.0f;
+    // float startTiltOffset;
 
-    [Range(0,360.0f)]
-    [Tooltip ("Pan (Left/Right) offset/movement. Directly controls pan when in Udon Mode; is an offset when in DMX mode.")]
-    public float panOffsetBlueGreen = 0.0f;
-    float startPanOffset;
+    // [Range(0,360.0f)]
+    // [Tooltip ("Pan (Left/Right) offset/movement. Directly controls pan when in Udon Mode; is an offset when in DMX mode.")]
+    // public float panOffsetBlueGreen = 0.0f;
+    // float startPanOffset;
     [Range(1,6)]
     [Tooltip ("Use this to change what projection is selected")]
     public int selectGOBO = 1;
@@ -126,9 +131,15 @@ public class VRStageLighting_Animated_Static : UdonSharpBehaviour
     [Range(0, 5.5f)]
     public float coneWidth = 2.5f;
 
-    [Range(0.5f,10.0f)]
+    [Range(0.001f,10.0f)]
     [Tooltip ("Controls the length of the cone of a mover/spot light.")]
     public float coneLength = 8.5f; 
+
+    [Range(0.275f,10.0f)]
+    [Tooltip ("Controls the mesh length of the cone of a mover/spot light")]
+    [SerializeField]
+    private float maxConeLength = 1.0f;
+
     [ColorUsage(true, true)]
     
 
@@ -136,15 +147,16 @@ public class VRStageLighting_Animated_Static : UdonSharpBehaviour
     
     MaterialPropertyBlock props;
     //bool enableInstancing;
-    float targetPanAngle, targetTiltAngle;
-    private Vector3 targetToFollowLast;
+    // float targetPanAngle, targetTiltAngle;
+    // private Vector3 targetToFollowLast;
     private bool wasChanged;
 
     void Start()
     {
         if(objRenderers.Length > 0 && objRenderers[0] != null)
         {
-            props = new MaterialPropertyBlock();
+            _SetProps();
+            
             //enableInstancing = true;
             _UpdateInstancedProperties();
         }
@@ -153,14 +165,23 @@ public class VRStageLighting_Animated_Static : UdonSharpBehaviour
             Debug.Log("Please add atleast one fixture renderer.");
             //enableInstancing = false;
         }
-
-        
-        if(followTarget)
+        if(animator)
         {
-            GetTargetAngles();
-            LerpToDefaultTarget();
-            targetToFollowLast = targetToFollow.position;
+            animator.SetBool("Mirror", mirrorAnimations);
         }
+
+
+        // if(followTarget)
+        // {
+        //     GetTargetAngles();
+        //     LerpToDefaultTarget();
+        //     targetToFollowLast = targetToFollow.position;
+        // }
+    }
+
+    public void _SetProps()
+    {
+        props = new MaterialPropertyBlock();
     }
     void CheckAnimator()
     {
@@ -176,7 +197,60 @@ public class VRStageLighting_Animated_Static : UdonSharpBehaviour
             _UpdateGoboAnims();
             _UpdateColorAnims();
             _UpdatePanTiltAnims();
+            animator.SetBool("Mirror", mirrorAnimations);
+        }
+        else
+        {
+            Debug.Log("Please assign a BPM Counter object to this animated fixture!");
         }     
+    }
+    public void _UpdateSliders()
+    {
+        if(props == null)
+        {
+            if(objRenderers.Length > 0 && objRenderers[0] != null)
+            {
+                _SetProps();
+            }
+            else
+            {
+                Debug.Log("Please add atleast one fixture renderer.");
+                return;
+            }
+        }
+        props.SetFloat("_FinalIntensity", Mathf.Clamp01(finalIntensity));
+        props.SetFloat("_ConeWidth", coneWidth);
+        switch(objRenderers.Length)
+        {
+            case 1:
+                objRenderers[0].SetPropertyBlock(props);
+                break;
+            case 2:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                break;
+            case 3:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                break;
+            case 4:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                break;
+            case 5:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                objRenderers[4].SetPropertyBlock(props);
+                break;
+            default:
+                Debug.Log("Too many mesh renderers for this fixture!");
+                break;  
+        }
     }
 
     public void CheckBPM()
@@ -196,12 +270,17 @@ public class VRStageLighting_Animated_Static : UdonSharpBehaviour
             _UpdateColorAnims();
             _UpdatePanTiltAnims();
         }
+        else
+        {
+            Debug.Log("Please assign a BPM Counter object to this animated fixture!");
+        }
     }
 
     public void _DownBeat()
     {
         if(!bPMCounter)
         {
+            Debug.Log("Please assign a BPM Counter object to this animated fixture!");
             return;
         }
         if(bPMCounter._quarterNoteCount == 1 && bPMCounter._beatFull || bPMCounter.resetCounter)
@@ -254,6 +333,7 @@ public class VRStageLighting_Animated_Static : UdonSharpBehaviour
         animator.SetFloat("PanTilt-1Measure", _panTiltSingleMeasureAnim);
         animator.SetFloat("PanTilt-2Measures", _panTiltDualMeasureAnim);
         animator.SetFloat("PanTilt-4Measures", _panTiltQuadMeasureAnim);
+        animator.SetBool("Mirror", mirrorAnimations);
     }
     public void _UpdateColorAnims()
     {
@@ -302,22 +382,34 @@ public class VRStageLighting_Animated_Static : UdonSharpBehaviour
         animator.SetFloat("PanTilt-2Measures", _panTiltDualMeasureAnim);
         animator.SetFloat("PanTilt-4Measures", _panTiltQuadMeasureAnim);
     }
-    void ChangeCheckPosition()
-    {
-        GetTargetAngles();
-        if((targetToFollow.position != targetToFollowLast) || (panOffsetBlueGreen != targetPanAngle || tiltOffsetBlue != targetTiltAngle))
-        {
-            LerpToDefaultTarget();
-            targetToFollowLast = targetToFollow.position;
-        }
+    // void ChangeCheckPosition()
+    // {
+    //     GetTargetAngles();
+    //     if((targetToFollow.position != targetToFollowLast) || (panOffsetBlueGreen != targetPanAngle || tiltOffsetBlue != targetTiltAngle))
+    //     {
+    //         LerpToDefaultTarget();
+    //         targetToFollowLast = targetToFollow.position;
+    //     }
         
-        targetToFollow.transform.hasChanged = false;
-        wasChanged = true;
-        return;
-    }
+    //     targetToFollow.transform.hasChanged = false;
+    //     wasChanged = true;
+    //     return;
+    // }
 
     void _AudioLinkOn(int inputBand)
     {
+        if(props == null)
+        {
+            if(objRenderers.Length > 0 && objRenderers[0] != null)
+            {
+                _SetProps();
+            }
+            else
+            {
+                Debug.Log("Please add atleast one fixture renderer.");
+                return;
+            }
+        }
         enableAudioLink = true;
         band = inputBand;
         props.SetFloat("_EnableAudioLink", enableAudioLink == true ? 1.0f : 0.0f);
@@ -359,6 +451,18 @@ public class VRStageLighting_Animated_Static : UdonSharpBehaviour
         if(!enableAudioLink)
         {
             return;
+        }
+        if(props == null)
+        {
+            if(objRenderers.Length > 0 && objRenderers[0] != null)
+            {
+                _SetProps();
+            }
+            else
+            {
+                Debug.Log("Please add atleast one fixture renderer.");
+                return;
+            }
         }
         enableAudioLink = false;
         props.SetFloat("_EnableAudioLink", enableAudioLink == true ? 1.0f : 0.0f);
@@ -403,6 +507,18 @@ public class VRStageLighting_Animated_Static : UdonSharpBehaviour
     }
     public void _UpdateInstancedProperties()
     {
+        if(props == null)
+        {
+            if(objRenderers.Length > 0 && objRenderers[0] != null)
+            {
+                _SetProps();
+            }
+            else
+            {
+                Debug.Log("Please add atleast one fixture renderer.");
+                return;
+            }
+        }
         //Color Texture Sampling
         props.SetFloat("_TextureColorSampleX", textureSamplingCoordinates.x);
         props.SetFloat("_TextureColorSampleY", textureSamplingCoordinates.y);
@@ -413,17 +529,18 @@ public class VRStageLighting_Animated_Static : UdonSharpBehaviour
         props.SetFloat("_BandMultiplier", bandMultiplier);
         props.SetFloat("_Band", band);
         //Movement Stuff
-        props.SetInt("_PanInvert", invertPan == true ? 1 : 0);
-        props.SetInt("_TiltInvert", invertTilt == true ? 1 : 0);
+        // props.SetInt("_PanInvert", invertPan == true ? 1 : 0);
+        // props.SetInt("_TiltInvert", invertTilt == true ? 1 : 0);
         props.SetInt("_EnableSpin", enableAutoSpin == true ? 1 : 0);
         props.SetInt("_ProjectionSelection", selectGOBO);
-        props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
-        props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
+        // props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
+        // props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
         props.SetColor("_Emission", lightColorTint);
         props.SetFloat("_ConeWidth", coneWidth);
         props.SetFloat("_GlobalIntensity", globalIntensity);
         props.SetFloat("_FinalIntensity", finalIntensity);
         props.SetFloat("_ConeLength", Mathf.Abs(coneLength - 10.5f));
+        props.SetFloat("_MaxConeLength", maxConeLength);
         switch(objRenderers.Length)
         {
             case 1:
@@ -457,10 +574,42 @@ public class VRStageLighting_Animated_Static : UdonSharpBehaviour
         }  
     }
 
-    void _UpdateInstancedPropertiesPanTilt()
+    public void _UpdateInstancedPropertiesSansAudioLink()
     {
-        props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
-        props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
+        if(props == null)
+        {
+            if(objRenderers.Length > 0 && objRenderers[0] != null)
+            {
+                _SetProps();
+            }
+            else
+            {
+                Debug.Log("Please add atleast one fixture renderer.");
+                return;
+            }
+        }
+        //Color Texture Sampling
+        props.SetFloat("_TextureColorSampleX", textureSamplingCoordinates.x);
+        props.SetFloat("_TextureColorSampleY", textureSamplingCoordinates.y);
+        props.SetInt("_EnableColorTextureSample", enableColorTextureSampling == true ? 1 : 0);
+        //AudioLink Stuff
+        props.SetFloat("_EnableAudioLink", 0.0f);
+        props.SetFloat("_Delay", delay);
+        props.SetFloat("_BandMultiplier", bandMultiplier);
+        props.SetFloat("_Band", band);
+        //Movement Stuff
+        // props.SetInt("_PanInvert", invertPan == true ? 1 : 0);
+        // props.SetInt("_TiltInvert", invertTilt == true ? 1 : 0);
+        props.SetInt("_EnableSpin", enableAutoSpin == true ? 1 : 0);
+        props.SetInt("_ProjectionSelection", selectGOBO);
+        // props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
+        // props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
+        props.SetColor("_Emission", lightColorTint);
+        props.SetFloat("_ConeWidth", coneWidth);
+        props.SetFloat("_GlobalIntensity", globalIntensity);
+        props.SetFloat("_FinalIntensity", finalIntensity);
+        props.SetFloat("_ConeLength", Mathf.Abs(coneLength - 10.5f));
+        props.SetFloat("_MaxConeLength", maxConeLength);
         switch(objRenderers.Length)
         {
             case 1:
@@ -491,29 +640,68 @@ public class VRStageLighting_Animated_Static : UdonSharpBehaviour
             default:
                 Debug.Log("Too many mesh renderers for this fixture!");
                 break;  
-        } 
+        }  
     }
-    void GetTargetAngles()
-    {
-            Vector3 dir = ((targetToFollow.position + targetOffset) - this.transform.position).normalized;
-            float dist = Vector3.Distance(targetToFollow.position,this.transform.position);       
-            Quaternion rot = Quaternion.LookRotation(dir,Vector3.up);
-            Vector3 angles = rot.eulerAngles;
-            targetPanAngle = invertPan == true ? (1.0f-((angles.y))*-1.0f) : angles.y;
-            targetTiltAngle = invertTilt == true ? (angles.x-180.0f)*-1.0f : angles.x;
-            targetPanAngle = isUpsideDown == false ? targetPanAngle+180.0f : targetPanAngle;
-            targetTiltAngle = isUpsideDown == false ? -targetTiltAngle : targetTiltAngle;
-            targetPanAngle = targetPanAngle - this.transform.localEulerAngles.y;
-            return;
-    }
-    void LerpToDefaultTarget()
-    {
-            float previousPanAngle = panOffsetBlueGreen;
-            float previousTiltAngle = tiltOffsetBlue;
-            panOffsetBlueGreen = Mathf.LerpAngle(previousPanAngle, targetPanAngle, targetFollowLerpSpeed * Time.deltaTime);
-            tiltOffsetBlue = Mathf.Clamp(Mathf.LerpAngle(previousTiltAngle, targetTiltAngle, targetFollowLerpSpeed * Time.deltaTime),0.0f, 180.0f);
-            return;
-    }
+
+    
+
+    // void _UpdateInstancedPropertiesPanTilt()
+    // {
+    //     props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
+    //     props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
+    //     switch(objRenderers.Length)
+    //     {
+    //         case 1:
+    //             objRenderers[0].SetPropertyBlock(props);
+    //             break;
+    //         case 2:
+    //             objRenderers[0].SetPropertyBlock(props);
+    //             objRenderers[1].SetPropertyBlock(props);
+    //             break;
+    //         case 3:
+    //             objRenderers[0].SetPropertyBlock(props);
+    //             objRenderers[1].SetPropertyBlock(props);
+    //             objRenderers[2].SetPropertyBlock(props);
+    //             break;
+    //         case 4:
+    //             objRenderers[0].SetPropertyBlock(props);
+    //             objRenderers[1].SetPropertyBlock(props);
+    //             objRenderers[2].SetPropertyBlock(props);
+    //             objRenderers[3].SetPropertyBlock(props);
+    //             break;
+    //         case 5:
+    //             objRenderers[0].SetPropertyBlock(props);
+    //             objRenderers[1].SetPropertyBlock(props);
+    //             objRenderers[2].SetPropertyBlock(props);
+    //             objRenderers[3].SetPropertyBlock(props);
+    //             objRenderers[4].SetPropertyBlock(props);
+    //             break;
+    //         default:
+    //             Debug.Log("Too many mesh renderers for this fixture!");
+    //             break;  
+    //     } 
+    // }
+    // void GetTargetAngles()
+    // {
+    //         Vector3 dir = ((targetToFollow.position + targetOffset) - this.transform.position).normalized;
+    //         float dist = Vector3.Distance(targetToFollow.position,this.transform.position);       
+    //         Quaternion rot = Quaternion.LookRotation(dir,Vector3.up);
+    //         Vector3 angles = rot.eulerAngles;
+    //         targetPanAngle = invertPan == true ? (1.0f-((angles.y))*-1.0f) : angles.y;
+    //         targetTiltAngle = invertTilt == true ? (angles.x-180.0f)*-1.0f : angles.x;
+    //         targetPanAngle = isUpsideDown == false ? targetPanAngle+180.0f : targetPanAngle;
+    //         targetTiltAngle = isUpsideDown == false ? -targetTiltAngle : targetTiltAngle;
+    //         targetPanAngle = targetPanAngle - this.transform.localEulerAngles.y;
+    //         return;
+    // }
+    // void LerpToDefaultTarget()
+    // {
+    //         float previousPanAngle = panOffsetBlueGreen;
+    //         float previousTiltAngle = tiltOffsetBlue;
+    //         panOffsetBlueGreen = Mathf.LerpAngle(previousPanAngle, targetPanAngle, targetFollowLerpSpeed * Time.deltaTime);
+    //         tiltOffsetBlue = Mathf.Clamp(Mathf.LerpAngle(previousTiltAngle, targetTiltAngle, targetFollowLerpSpeed * Time.deltaTime),0.0f, 180.0f);
+    //         return;
+    // }
     #if !COMPILER_UDONSHARP && UNITY_EDITOR
         private void OnDrawGizmos()
         {

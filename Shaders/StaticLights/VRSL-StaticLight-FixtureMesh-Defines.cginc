@@ -53,7 +53,7 @@ uniform const half standardSampleYAxis = 0.00762;
 
 // int _EnableOSC;
 // int _EnableStrobe;
-uint _EnableCompatibilityMode;
+uint _EnableCompatibilityMode, _EnableVerticalMode;
 
 sampler2D _LightMainTex, _ProjectionMainTex, _CameraDepthTexture, _CameraDepthNormalsTexture, _ProjectionTex2, _ProjectionTex3, _ProjectionTex4, _ProjectionTex5, _ProjectionTex6;
 float4 _LightMainTex_ST;
@@ -87,5 +87,6 @@ UNITY_INSTANCING_BUFFER_START(Props)
     UNITY_DEFINE_INSTANCED_PROP(float, _ConeLength)
     UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
     UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
+    UNITY_DEFINE_INSTANCED_PROP(float, _MaxConeLength)
 UNITY_INSTANCING_BUFFER_END(Props)
 

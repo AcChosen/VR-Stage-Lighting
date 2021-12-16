@@ -19,6 +19,7 @@ public class VRSLInspector : ShaderGUI
     MaterialProperty _OSCGridStrobeTimer = null;
     MaterialProperty _UseRawGrid = null;
     MaterialProperty _EnableCompatibilityMode = null;
+    MaterialProperty _EnableVerticalMode = null;
     MaterialProperty _EnableLegacyGlobalMovementSpeedChannel = null;
 
     MaterialProperty _GlobalIntensity = null;
@@ -29,10 +30,16 @@ public class VRSLInspector : ShaderGUI
     MaterialProperty _Saturation = null;
     MaterialProperty _SaturationLength = null;
     MaterialProperty _LensMaxBrightness = null;
+    MaterialProperty _GoboBeamSplitEnable = null;
     MaterialProperty _ConeWidth = null;
     MaterialProperty _ConeLength = null;
+    MaterialProperty _MaxConeLength = null;
     MaterialProperty _ConeSync = null;
     MaterialProperty _FixutreIntensityMultiplier = null;
+
+    MaterialProperty _FixtureBaseRotationY = null;
+
+    MaterialProperty _FixtureRotationX = null;
 
     //Mover Housing Specific
     MaterialProperty _FixtureRotationOrigin = null;
@@ -302,6 +309,7 @@ public class VRSLInspector : ShaderGUI
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
+                matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
                 matEditor.ShaderProperty(_Sector, new GUIContent("Sector","Chooses the DMX Address to start this fixture at. A Sector in this context is every 13 Channels. I.E Sector 0 is channels 1-13, Sector 1 is channels 14-26, etc."));
                 EditorGUI.indentLevel--;   
                 VRSLStyles.PartingLine();
@@ -347,8 +355,8 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_ProjectionUVMod, new GUIContent("Projection Texture", "The scale of Projection Texture/Gobo 1"));
             matEditor.ShaderProperty(_ProjectionRotation, new GUIContent("Static Projection UV Rotation", "Changes the default angle the projected image is at."));
             GUILayout.Space(10);
-            //matEditor.ShaderProperty(_EnableSpin, new GUIContent("Enable Auto Spin", "Enable/Disable the projection's automatic spinning. Usually controlled by Udon."));
-            //matEditor.ShaderProperty(_SpinSpeed, new GUIContent("Auto Spin Speed", "The speed at which it the projection will spin when auto spin is enabled."));
+            matEditor.ShaderProperty(_EnableSpin, new GUIContent("Enable Auto Spin", "Enable/Disable the projection's automatic spinning. Usually controlled by Udon."));
+            matEditor.ShaderProperty(_SpinSpeed, new GUIContent("Auto Spin Speed", "The speed at which it the projection will spin when auto spin is enabled."));
             matEditor.ShaderProperty(_ProjectionMaxIntensity, new GUIContent("Projection Intensity", "Changes how bright the projection is"));
             matEditor.ShaderProperty(_Fade, new GUIContent("Light Range", "Changes the attenuation linearly."));
             matEditor.ShaderProperty(_FeatherOffset, new GUIContent("Attenuation Quadratic", "Changes the quadratic attenuation."));
@@ -399,6 +407,7 @@ public class VRSLInspector : ShaderGUI
                 EditorGUILayout.HelpBox("''Sector'' and ''Enable DMX'' are usually overridden by their corresponding Udon Script. \nAdjust these at your own risk.", MessageType.Info,true);
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
+                matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
                 matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
                 matEditor.ShaderProperty(_Sector, new GUIContent("Sector","Chooses the DMX Address to start this fixture at. A Sector in this context is every 13 Channels. I.E Sector 0 is channels 1-13, Sector 1 is channels 14-26, etc."));
                 EditorGUI.indentLevel--;   
@@ -472,6 +481,7 @@ public class VRSLInspector : ShaderGUI
                 EditorGUILayout.HelpBox("''Sector'' and ''Enable DMX'' are usually overridden by their corresponding Udon Script. \nAdjust these at your own risk.", MessageType.Info,true);
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
+                matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
                 matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
                 matEditor.ShaderProperty(_Sector, new GUIContent("Sector","Chooses the DMX Address to start this fixture at. A Sector in this context is every 13 Channels. I.E Sector 0 is channels 1-13, Sector 1 is channels 14-26, etc."));
                 EditorGUI.indentLevel--;   
@@ -497,6 +507,8 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_GlobalIntensity, new GUIContent("Global Intensity", "Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity."));
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
+            matEditor.ShaderProperty(_FixtureBaseRotationY, new GUIContent("Rotation Y Offset", "Offset the Y Rotation of the fixture."));
+            matEditor.ShaderProperty(_FixtureRotationX, new GUIContent("Rotation X Offset", "Offset the X Rotation of the fixture."));
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
             ColorTextureSamplingGUI(matEditor, props);
             //matEditor.ShaderProperty(_, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
@@ -525,7 +537,8 @@ public class VRSLInspector : ShaderGUI
             GUILayout.Space(5);
             EditorGUILayout.HelpBox("''Cone Width'' and ''Cone Length'' are usually overridden by their corresponding Udon Script. \nAdjust these at your own risk.", MessageType.Info,true);
             matEditor.ShaderProperty(_ConeWidth, new GUIContent("Cone Width", "Changes the radius of the cone to be larger or smaller."));
-            matEditor.ShaderProperty(_ConeLength, new GUIContent("Cone Length", "Changes how long the volumetric cone is visually."));
+            matEditor.ShaderProperty(_ConeLength, new GUIContent("Cone Length", "Changes how long the volumetric cone via the texture coordinates."));
+           // matEditor.ShaderProperty(_MaxConeLength, new GUIContent("Max Cone Length", "Changes how long the volumetric cone is via the mesh"));
             matEditor.ShaderProperty(_ConeSync, new GUIContent("Cone Scale Sync", "Changes the rate at which the cone scales from source to the end of the cone. Highly recommened to use default settings if unsure."));
             GUILayout.Space(5);
             EditorGUI.indentLevel--;
@@ -597,6 +610,7 @@ public class VRSLInspector : ShaderGUI
                 EditorGUILayout.HelpBox("''Sector'' and ''Enable DMX'' are usually overridden by their corresponding Udon Script. \nAdjust these at your own risk.", MessageType.Info,true);
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
+                matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
                 matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
                 matEditor.ShaderProperty(_Sector, new GUIContent("Sector","Chooses the DMX Address to start this fixture at. A Sector in this context is every 13 Channels. I.E Sector 0 is channels 1-13, Sector 1 is channels 14-26, etc."));
                 EditorGUI.indentLevel--;   
@@ -622,6 +636,8 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
+            matEditor.ShaderProperty(_FixtureBaseRotationY, new GUIContent("Rotation Y Offset", "Offset the Y Rotation of the fixture."));
+            matEditor.ShaderProperty(_FixtureRotationX, new GUIContent("Rotation X Offset", "Offset the X Rotation of the fixture."));
             ColorTextureSamplingGUI(matEditor, props);
             matEditor.ShaderProperty(_Saturation, new GUIContent("Saturation", "Saturation modifier for light color."));
             matEditor.ShaderProperty(_SaturationLength, new GUIContent("Saturation Length", "Har far from the source does the saturation slider affect the shader."));
@@ -665,14 +681,18 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_InnerIntensityCurve, new GUIContent("Inner Edge Fade Intensity Curve", "Inner edge fade intensity curve."));
             matEditor.ShaderProperty(_DistFade, new GUIContent("Distance Fade", "How close the camera needs to be before the cone starts fading away."));
             matEditor.ShaderProperty(_FadeAmt, new GUIContent("Blend Amount", "How much does the cone blend with what's behind it."));
+            matEditor.ShaderProperty(_GoboBeamSplitEnable, new GUIContent("Enable Gobo Beam Split", "Enable beam splitting on gobos 2-6 (Global)"));
             matEditor.ShaderProperty(_StripeSplit, new GUIContent("Stripe Count", "Number of alpha stripes to appear in the cone."));
             matEditor.ShaderProperty(_StripeSplitStrength, new GUIContent("Stripe Split Strength", "How strong the stripes appear in the cone."));
+            matEditor.ShaderProperty(_EnableSpin, new GUIContent("Enable Auto Spin", "Enable/Disable the projection's automatic spinning. Usually controlled by Udon."));
+            matEditor.ShaderProperty(_SpinSpeed, new GUIContent("Auto Spin Speed", "The speed at which it the projection will spin when auto spin is enabled."));
             GUILayout.Space(5);
             VRSLStyles.PartingLine();
             GUILayout.Space(5);
             EditorGUILayout.HelpBox("''Cone Width'' and ''Cone Length'' are usually overridden by their corresponding Udon Script. \nAdjust these at your own risk.", MessageType.Info,true);
             matEditor.ShaderProperty(_ConeWidth, new GUIContent("Cone Width", "Changes the radius of the cone to be larger or smaller."));
-            matEditor.ShaderProperty(_ConeLength, new GUIContent("Cone Length", "Changes how long the volumetric cone is visually."));
+            matEditor.ShaderProperty(_ConeLength, new GUIContent("Cone Length", "Changes how long the volumetric cone is via the texture coordinates"));
+            matEditor.ShaderProperty(_MaxConeLength, new GUIContent("Max Cone Length", "Changes how long the volumetric cone is via the mesh."));
             matEditor.ShaderProperty(_ConeSync, new GUIContent("Cone Scale Sync", "Changes the rate at which the cone scales from source to the end of the cone. Highly recommened to use default settings if unsure."));
             GUILayout.Space(5);
             EditorGUI.indentLevel--;
@@ -710,6 +730,7 @@ public class VRSLInspector : ShaderGUI
                 EditorGUILayout.HelpBox("''Sector'' and ''Enable DMX'' are usually overridden by their corresponding Udon Script. \nAdjust these at your own risk.", MessageType.Info,true);
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
+                matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
                 matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
                 matEditor.ShaderProperty(_Sector, new GUIContent("Sector","Chooses the DMX Address to start this fixture at. A Sector in this context is every 13 Channels. I.E Sector 0 is channels 1-13, Sector 1 is channels 14-26, etc."));
                 EditorGUI.indentLevel--;   
@@ -734,6 +755,8 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
+            matEditor.ShaderProperty(_FixtureBaseRotationY, new GUIContent("Rotation Y Offset", "Offset the Y Rotation of the fixture."));
+            matEditor.ShaderProperty(_FixtureRotationX, new GUIContent("Rotation X Offset", "Offset the X Rotation of the fixture."));
             ColorTextureSamplingGUI(matEditor, props);
             matEditor.ShaderProperty(_Saturation, new GUIContent("Saturation", "Saturation modifier for light color."));
             matEditor.ShaderProperty(_LensMaxBrightness, new GUIContent("Lens Max Brightness", "General slider for adjusting the max brightness of the lens"));
@@ -787,16 +810,13 @@ public class VRSLInspector : ShaderGUI
     public void ColorTextureSamplingGUI(MaterialEditor matEditor, MaterialProperty[] props)
     {
         if(isDMXCompatible || isRTShader || isDiscoBall) return;
-        matEditor.ShaderProperty(_EnableColorTextureSample, new GUIContent("Enable Color Texture Sampling", "Check this box if you wish to sample seperate texture for the color. The color will be influenced by the intensity of the original emission color!"));
-        if(_EnableColorTextureSample.floatValue > 0)
-        {
+            matEditor.ShaderProperty(_EnableColorTextureSample, new GUIContent("Enable Color Texture Sampling", "Check this box if you wish to sample seperate texture for the color. The color will be influenced by the intensity of the original emission color!"));
             EditorGUI.indentLevel++;
             matEditor.TexturePropertySingleLine(new GUIContent("Color Sampling Texture", "The texture to sample the color from when ''Enable Color Texture Sampling'' is enabled"),_SamplingTexture);
             matEditor.ShaderProperty(_TextureColorSampleX, new GUIContent("X UV Coordinate", "The x uv coordinate for where on the texture to sample from (0 to 1)."));
             matEditor.ShaderProperty(_TextureColorSampleY, new GUIContent("Y UV Coordinate", "The y uv coordinate for where on the texture to sample from (0 to 1)."));
             EditorGUI.indentLevel--;
             GUILayout.Space(5);
-        }
         
     }
 
@@ -817,6 +837,7 @@ public class VRSLInspector : ShaderGUI
                 EditorGUILayout.HelpBox("''Sector'' and ''Enable DMX'' are usually overridden by their corresponding Udon Script. \nAdjust these at your own risk.", MessageType.Info,true);
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
+                matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
                 matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
                 matEditor.ShaderProperty(_Sector, new GUIContent("Sector","Chooses the DMX Address to start this fixture at. A Sector in this context is every 13 Channels. I.E Sector 0 is channels 1-13, Sector 1 is channels 14-26, etc."));
                 VRSLStyles.PartingLine();

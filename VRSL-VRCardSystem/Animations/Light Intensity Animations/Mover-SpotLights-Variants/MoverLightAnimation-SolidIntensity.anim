@@ -42,7 +42,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: material._GlobalIntensity
-    path: MoverLightMesh-LampFixture
+    path: MoverLightMesh-Animated-FixtureMesh-Base/MoverLightMesh-Animated-FixtureMesh-Head
     classID: 23
     script: {fileID: 0}
   - curve:
@@ -70,7 +70,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: material._GlobalIntensity
-    path: MoverLightMesh-ProjectionPassMesh
+    path: MoverLightMesh-Animated-FixtureMesh-Base/MoverLightMesh-Animated-FixtureMesh-Head/MoverLightMesh-Animated-VolumetricPassMesh
     classID: 23
     script: {fileID: 0}
   - curve:
@@ -98,7 +98,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: material._GlobalIntensity
-    path: MoverLightMesh-VolumetricPassMesh
+    path: MoverLightMesh-Animated-FixtureMesh-Base/MoverLightMesh-Animated-FixtureMesh-Head/MoverLightMesh-Animated-ProjectionPassMesh
     classID: 23
     script: {fileID: 0}
   m_PPtrCurves: []
@@ -110,21 +110,21 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 552617837
+      path: 3256898382
       attribute: 2281435149
       script: {fileID: 0}
       typeID: 23
       customType: 22
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 2104622429
+      path: 1051043386
       attribute: 2281435149
       script: {fileID: 0}
       typeID: 23
       customType: 22
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 2918876899
+      path: 3996048772
       attribute: 2281435149
       script: {fileID: 0}
       typeID: 23
@@ -177,7 +177,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: material._GlobalIntensity
-    path: MoverLightMesh-LampFixture
+    path: MoverLightMesh-Animated-FixtureMesh-Base/MoverLightMesh-Animated-FixtureMesh-Head
     classID: 23
     script: {fileID: 0}
   - curve:
@@ -205,7 +205,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: material._GlobalIntensity
-    path: MoverLightMesh-ProjectionPassMesh
+    path: MoverLightMesh-Animated-FixtureMesh-Base/MoverLightMesh-Animated-FixtureMesh-Head/MoverLightMesh-Animated-VolumetricPassMesh
     classID: 23
     script: {fileID: 0}
   - curve:
@@ -233,7 +233,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: material._GlobalIntensity
-    path: MoverLightMesh-VolumetricPassMesh
+    path: MoverLightMesh-Animated-FixtureMesh-Base/MoverLightMesh-Animated-FixtureMesh-Head/MoverLightMesh-Animated-ProjectionPassMesh
     classID: 23
     script: {fileID: 0}
   m_EulerEditorCurves: []

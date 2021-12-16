@@ -17,8 +17,6 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
 
     [SerializeField]
     VRSL_CardObject colorCard, intensityCard, goboCard, panTiltCard;
-
-    public VRStageLighting_Animated[] stageLightsList;
     public VRStageLighting_Animated_Static[] staticStageLightsList;
     public VRSL_SyncedSlider finalIntensitySlider;
     public VRSL_SyncedSlider coneWidthSlider;
@@ -43,10 +41,6 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
         {
             if(colorCard.rotationMod)
             {
-                foreach(VRStageLighting_Animated light in stageLightsList)
-                {
-                    light._solidColorAnimSelction = colorCard.rotationValue;
-                }
                 foreach(VRStageLighting_Animated_Static light in staticStageLightsList)
                 {
                     light._solidColorAnimSelction = colorCard.rotationValue;
@@ -71,25 +65,16 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
     public void UpdateSliders()
     {
 
-        foreach(VRStageLighting_Animated light in stageLightsList)
-        {
-            light.coneWidth = Mathf.Lerp(0.0f, 5.5f, coneWidthSlider.value);
-            //light._UpdateProps();
-        }
         foreach(VRStageLighting_Animated_Static light in staticStageLightsList)
         {
             light.coneWidth = Mathf.Lerp(0.0f, 5.5f, coneWidthSlider.value);
+            light._UpdateSliders();
             //light._UpdateProps();
         }
-
-        foreach(VRStageLighting_Animated light in stageLightsList)
+            foreach(VRStageLighting_Animated_Static light in staticStageLightsList)
         {
             light.finalIntensity = Mathf.Lerp(0.0f, 1.0f, Mathf.Clamp(Mathf.Pow(finalIntensitySlider.value, intensityCurve),0.0f, Mathf.Pow(masterIntensitySlider.value, intensityCurve)));
-            //light._UpdateProps();
-        }
-                foreach(VRStageLighting_Animated_Static light in staticStageLightsList)
-        {
-            light.finalIntensity = Mathf.Lerp(0.0f, 1.0f, Mathf.Clamp(Mathf.Pow(finalIntensitySlider.value, intensityCurve),0.0f, Mathf.Pow(masterIntensitySlider.value, intensityCurve)));
+            light._UpdateSliders();
             //light._UpdateProps();
         }
     
@@ -300,10 +285,6 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
             panTiltAnim = int.Parse(animSync.Substring(6,3));
         //if(gOBOAnimSync >= 1)
             gOBOAnim = int.Parse(animSync.Substring(9,3));
-        foreach(VRStageLighting_Animated stagelight in stageLightsList)
-        {
-            stagelight._UpdateAnimations();
-        }
         foreach(VRStageLighting_Animated_Static stagelight in staticStageLightsList)
         {
             stagelight._UpdateAnimations();
@@ -315,11 +296,6 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
         switch (card.CardType)
         {
             case 1:
-                foreach(VRStageLighting_Animated stagelight in stageLightsList)
-                {
-                    stagelight._colorAnimation = colorAnim;
-                    stagelight._UpdateColorAnims();
-                }
                 foreach(VRStageLighting_Animated_Static stagelight in staticStageLightsList)
                 {
                     stagelight._colorAnimation = colorAnim;
@@ -331,11 +307,6 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
                 break;
 
             case 2:
-                foreach(VRStageLighting_Animated stagelight in stageLightsList)
-                {
-                    stagelight._intensityAnimation = intensityAnim;
-                    stagelight._UpdateIntensityAnims();
-                }
                 foreach(VRStageLighting_Animated_Static stagelight in staticStageLightsList)
                 {
                     stagelight._intensityAnimation = intensityAnim;
@@ -347,11 +318,6 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
                 break;
 
             case 3:
-                foreach(VRStageLighting_Animated stagelight in stageLightsList)
-                {
-                    stagelight._goboAnimation = gOBOAnim;
-                    stagelight._UpdateGoboAnims();
-                }
                 foreach(VRStageLighting_Animated_Static stagelight in staticStageLightsList)
                 {
                     stagelight._goboAnimation = gOBOAnim;
@@ -367,12 +333,6 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
                 switch (card.measureCount)
                 {
                     case 1:
-                        foreach(VRStageLighting_Animated stagelight in stageLightsList)
-                        {
-                            stagelight._panTiltSingleMeasureAnim = card.CardID;
-                            stagelight._panTiltMeasureCount = card.measureCount;
-                            stagelight._UpdatePanTiltAnims();                           
-                        }
                         foreach(VRStageLighting_Animated_Static stagelight in staticStageLightsList)
                         {
                             stagelight._panTiltSingleMeasureAnim = card.CardID;
@@ -386,12 +346,6 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
                         break;
 
                     case 2:
-                        foreach(VRStageLighting_Animated stagelight in stageLightsList)
-                        {
-                            stagelight._panTiltDualMeasureAnim = card.CardID;
-                            stagelight._panTiltMeasureCount = card.measureCount;
-                            stagelight._UpdatePanTiltAnims();                    
-                        }
                         foreach(VRStageLighting_Animated_Static stagelight in staticStageLightsList)
                         {
                             stagelight._panTiltDualMeasureAnim = card.CardID;
@@ -405,12 +359,6 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
                         break;
 
                     case 4:
-                        foreach(VRStageLighting_Animated stagelight in stageLightsList)
-                        {
-                            stagelight._panTiltQuadMeasureAnim = card.CardID;
-                            stagelight._panTiltMeasureCount = card.measureCount;
-                            stagelight._UpdatePanTiltAnims(); 
-                        }
                         foreach(VRStageLighting_Animated_Static stagelight in staticStageLightsList)
                         {
                             stagelight._panTiltQuadMeasureAnim = card.CardID;
@@ -424,11 +372,6 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
                         break;
 
                     case 8:
-                        foreach(VRStageLighting_Animated stagelight in stageLightsList)
-                        {
-                            stagelight._panTiltQuadMeasureAnim = card.CardID;
-                            stagelight._UpdatePanTiltAnims();
-                        }
                         foreach(VRStageLighting_Animated_Static stagelight in staticStageLightsList)
                         {
                             stagelight._panTiltQuadMeasureAnim = card.CardID;
@@ -467,10 +410,6 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
     }
     public void _CallDownBeat()
     {
-        foreach(VRStageLighting_Animated stagelight in stageLightsList)
-        {
-            stagelight._DownBeat();
-        }
         foreach(VRStageLighting_Animated_Static stagelight in staticStageLightsList)
         {
             stagelight._DownBeat();
@@ -478,10 +417,6 @@ public class VRSL_LightGroupZone : UdonSharpBehaviour
     }
     public void _ResetBPM()
     {
-        foreach(VRStageLighting_Animated stagelight in stageLightsList)
-        {
-            stagelight.CheckBPM();
-        }
         foreach(VRStageLighting_Animated_Static stagelight in staticStageLightsList)
         {
             stagelight.CheckBPM();

@@ -10,6 +10,7 @@
 		 [HideInInspector][Toggle] _EnableStrobe ("Enable Strobe", Int) = 0
 
 		 [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
+		 [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
 		 [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
 		 [Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Source Blend mode", Float) = 2
 		 [Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Destination Blend mode", Float) = 1
@@ -100,7 +101,7 @@
 		SubShader
 	{
 		//UNITY_REQUIRE_ADVANDED_BLEND(all_equations)
-		Tags{ "Queue" = "Transparent+3" "IgnoreProjector"="True" "RenderType" = "Transparent" }
+		Tags{ "Queue" = "Transparent+1" "IgnoreProjector"="True" "RenderType" = "Transparent" }
 		Pass
          {
 

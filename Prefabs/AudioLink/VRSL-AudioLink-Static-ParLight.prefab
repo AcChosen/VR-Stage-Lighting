@@ -52,6 +52,7 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
+  _syncMethod: 0
   serializedProgramAsset: {fileID: 11400000, guid: 8711ddc2323190049b8ecf5e33e6b779,
     type: 2}
   programSource: {fileID: 11400000, guid: 2db8081a72b7c5b4eb87ca6ff1e59c98, type: 2}
@@ -72,7 +73,7 @@ GameObject:
   - component: {fileID: 6587324632544547664}
   - component: {fileID: 6587324632543449488}
   m_Layer: 24
-  m_Name: ParLight-Projection-FixtureMesh
+  m_Name: ParLight-AudioLink-FixtureMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -151,7 +152,7 @@ GameObject:
   - component: {fileID: 6587324632544547666}
   - component: {fileID: 6587324632543449490}
   m_Layer: 24
-  m_Name: ParLight-Projection-ProjectionMesh
+  m_Name: ParLight-AudioLink-ProjectionMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

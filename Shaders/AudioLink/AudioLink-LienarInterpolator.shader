@@ -71,16 +71,16 @@
                 if (_Time.y > 2.0)
                  {
                     float smoothness = _Band0Smoothness;
-                    float2 sampleCoords = float2(IN.localTexcoord.x, 0.0);
+                    float2 sampleCoords = float2(IN.localTexcoord.x, 0.006729);
 
                     smoothness = IF(IN.localTexcoord.y > 0.013463, _Band1Smoothness, smoothness);
-                    sampleCoords = IF(IN.localTexcoord.y > 0.013463, float2(IN.localTexcoord.x, 0.013463), sampleCoords);
+                    sampleCoords = IF(IN.localTexcoord.y > 0.013463, float2(IN.localTexcoord.x, 0.023666), sampleCoords);
 
                     smoothness = IF(IN.localTexcoord.y > 0.038536, _Band2Smoothness, smoothness);
-                    sampleCoords = IF(IN.localTexcoord.y > 0.038536, float2(IN.localTexcoord.x, 0.038536), sampleCoords);
+                    sampleCoords = IF(IN.localTexcoord.y > 0.038536, float2(IN.localTexcoord.x, 0.039392), sampleCoords);
 
                     smoothness = IF(IN.localTexcoord.y > 0.054684, _Band3Smoothness, smoothness);
-                    sampleCoords = IF(IN.localTexcoord.y > 0.054684, float2(IN.localTexcoord.x, 0.054684), sampleCoords);
+                    sampleCoords = IF(IN.localTexcoord.y > 0.054684, float2(IN.localTexcoord.x, 0.054907), sampleCoords);
 
                     smoothness = IF(IN.localTexcoord.y > 0.408014 && IN.localTexcoord.y < 0.419178, _LightColorChordSmoothenss, smoothness);
                     sampleCoords = IF(IN.localTexcoord.y > 0.408014 && IN.localTexcoord.y < 0.419178, float2(IN.localTexcoord.x, 0.419178), sampleCoords);

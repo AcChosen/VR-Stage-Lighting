@@ -34,6 +34,7 @@
 		_LensMaxBrightness("Lens Max Brightness", Range(0.01, 10)) = 5
 		_ConeWidth("Cone Width", Range(0,5.5)) = 0
 		_ConeLength("Cone Length", Range(1,10)) = 1
+		_MaxConeLength("Max Cone Length", Range(1,10)) = 1
 		_ConeSync ("Cone Scale Sync", Range(0,1)) = 0.2
 		// _BlockLengthX("OSC Block Base Distance X", Float) = 0.019231
 		// _BlockLengthY("OSC Block Base Distance Y", Float) = 0
@@ -70,8 +71,11 @@
 		_DistFade("Distance Fade", Range(0,3)) = 0.7
 		_FadeAmt("Depth Blending", Range(0, 1)) = 0.1
 		//_IntensityCutoff("Intensity Minimum Cut Off", Range (0, 1)) = 0.2
+		[Toggle]_GoboBeamSplitEnable("Enable Splitting the beam on Gobos 2-6", Int) = 0
 		_StripeSplit ("Stripe Split", Range(0, 30)) = 0
 		_StripeSplitStrength ("Stripe Split Strength", Range(0, 1)) = 0
+		[Toggle] _EnableSpin("Enable Auto Spinning", Float) = 0
+		_SpinSpeed ("Auto Spin Speed", Range(0, 10)) = 0
 
 
 

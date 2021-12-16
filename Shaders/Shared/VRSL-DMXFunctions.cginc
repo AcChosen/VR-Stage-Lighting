@@ -42,8 +42,8 @@ float2 getSectorCoordinates(float x, float y, uint sector)
         y+= (ymod * 0.03846);
         //y += (ymod * 0.006);
         //originaly = originaly + (0.0147 * sector);
-        originaly = IF(sector == 0, originaly, originaly + (0.0147 * (sector+1)));
-
+        float vertY = IF(sector == 0, originaly, originaly + (0.0147 * (sector+1)));
+       originaly = IF(_EnableVerticalMode == 1, vertY, originaly + (0.0085 * sector));
         return IF(_EnableCompatibilityMode == 1, 
         float2 (x, y), 
         float2(originalx, originaly));
@@ -134,6 +134,10 @@ float getConeLength()
 {
     return UNITY_ACCESS_INSTANCED_PROP(Props, _ConeLength);
 }
+float getMaxConeLength()
+{
+    return UNITY_ACCESS_INSTANCED_PROP(Props, _MaxConeLength);
+}
 
 float getGlobalIntensity()
 {
@@ -185,12 +189,13 @@ float GetStrobeOutput(uint sector)
     getSectorCoordinates(0.498959, standardSampleYAxis, sector)); // this is important i think: 0.498959
     float4 uvcoords = float4(recoords.x, recoords.y, 0,0);
     float4 c = tex2Dlod(_OSCGridStrobeTimer, uvcoords);
-    half freq = c.r;
+    half freq = (c.r);
     half multiplier = 8.0;
     half strobe = IF(sin(freq*multiplier) > 0.0, 1, 0);
     strobe = IF(freq <= 000.1, 1, strobe);
     //half output = IF(freq < 370000.0, 1.0, strobe);
     strobe = IF(isOSC() == 1, strobe, 1);
+    strobe = IF(isStrobe() == 1, strobe, 1);
     
     return strobe;
 

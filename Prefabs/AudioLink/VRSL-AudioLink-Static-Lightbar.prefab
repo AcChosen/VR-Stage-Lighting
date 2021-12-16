@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6001684260661865994}
   - component: {fileID: 6001684260662865098}
   m_Layer: 24
-  m_Name: Lightbar-FixtureMesh
+  m_Name: Lightbar-AudioLink-FixtureMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -130,6 +130,7 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
+  _syncMethod: 0
   serializedProgramAsset: {fileID: 11400000, guid: 8711ddc2323190049b8ecf5e33e6b779,
     type: 2}
   programSource: {fileID: 11400000, guid: 2db8081a72b7c5b4eb87ca6ff1e59c98, type: 2}

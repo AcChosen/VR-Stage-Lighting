@@ -6,7 +6,7 @@ using VRC.Udon;
 
 public class VRSL_CardSystemParent : UdonSharpBehaviour
 {
-    public VRStageLighting_RAW[] lights;
+    public VRStageLighting_Animated_Static[] staticLights;
     public GameObject parent;
     public bool status;
 
@@ -20,7 +20,7 @@ public class VRSL_CardSystemParent : UdonSharpBehaviour
         if(status)
         {
             parent.SetActive(true);
-            foreach(VRStageLighting_RAW light in lights)
+            foreach(VRStageLighting_Animated_Static light in staticLights)
             {
                 
                 // MeshRenderer[] renderers = light.GetComponentsInChildren<MeshRenderer>();
@@ -30,13 +30,14 @@ public class VRSL_CardSystemParent : UdonSharpBehaviour
                 }
                 //light.gameObject.SetActive(true);
                 light.enabled = true;
+                light.CheckBPM();
                 
             }
             
         }
         else
         {
-            foreach(VRStageLighting_RAW light in lights)
+            foreach(VRStageLighting_Animated_Static light in staticLights)
             {
                 // MeshRenderer[] renderers = light.GetComponentsInChildren<MeshRenderer>();
                 foreach(MeshRenderer renderer in light.objRenderers)
@@ -57,8 +58,7 @@ public class VRSL_CardSystemParent : UdonSharpBehaviour
         status = input;
         if(status)
         {
-            parent.SetActive(true);
-            foreach(VRStageLighting_RAW light in lights)
+            foreach(VRStageLighting_Animated_Static light in staticLights)
             {
                 
                 // MeshRenderer[] renderers = light.GetComponentsInChildren<MeshRenderer>();
@@ -68,13 +68,14 @@ public class VRSL_CardSystemParent : UdonSharpBehaviour
                 }
                 //light.gameObject.SetActive(true);
                 light.enabled = true;
+                light.CheckBPM();
                 
             }
             
         }
         else
         {
-            foreach(VRStageLighting_RAW light in lights)
+            foreach(VRStageLighting_Animated_Static light in staticLights)
             {
                 // MeshRenderer[] renderers = light.GetComponentsInChildren<MeshRenderer>();
                 foreach(MeshRenderer renderer in light.objRenderers)

@@ -158,7 +158,7 @@ float4 CalculateConeWidth(appdata v, float4 input, float scalar)
 		// {
 
 			//Set New Origin
-			float4 newOrigin = input.w * _ProjectionRangeOrigin; 
+			float4 newOrigin = input.w * _FixtureRotationOrigin; 
 			input.xyz = input.xyz - newOrigin;
 			// Do Transformation
 			
@@ -169,15 +169,23 @@ float4 CalculateConeWidth(appdata v, float4 input, float scalar)
 				float distanceFromFixture = (v.uv.x) * (scalar);
 				distanceFromFixture = lerp(0, distanceFromFixture, pow(v.uv.x, _ConeSync));
 
-				input.z = (input.z) + (-v.normal.z) * (distanceFromFixture);
+				input.y = (input.y) + (-v.normal.y) * (distanceFromFixture);
 				input.x = (input.x) + (-v.normal.x) * (distanceFromFixture);
+				float3 originStretch = input.xyz;
+				float3 stretchedcoords = (v.tangent.z*getMaxConeLength());
+				input.xyz = lerp(originStretch, (input.xyz * stretchedcoords), pow(v.uv.x,lerp(1, 0.1, v.uv.x)-0.5));
+				input.xyz = IF(v.uv.x < 0.001, originStretch, input.xyz);
 			}
 			else
 			{
 				float distanceFromFixture = (v.uv.x) * scalar;
 				distanceFromFixture = lerp(0, distanceFromFixture, pow(v.uv.x, _ConeSync));
-				input.z = (input.z) + (v.normal.z) * distanceFromFixture;
+				input.y = (input.y) + (v.normal.y) * distanceFromFixture;
 				input.x = (input.x) + (v.normal.x) * distanceFromFixture;
+				float3 originStretch = input.xyz;
+				float3 stretchedcoords = (v.tangent.z*getMaxConeLength());
+				input.xyz = lerp(originStretch, (input.xyz * stretchedcoords), pow(v.uv.x,lerp(1, 0.1, v.uv.x)-0.5));
+				input.xyz = IF(v.uv.x < 0.001, originStretch, input.xyz);
 
 			}
 
@@ -275,10 +283,14 @@ v2f vert (appdata v)
 		worldCam.y = unity_CameraToWorld[1][3];
 		worldCam.z = unity_CameraToWorld[2][3];
 		float3 objCamPos = mul(unity_WorldToObject, float4(worldCam, 1)).xyz;
-		objCamPos = InvertVolumetricRotations(float4(objCamPos,1)).xyz;
+		//objCamPos = InvertVolumetricRotations(float4(objCamPos,1)).xyz;
 		float len = length(objCamPos.xy);
+		len *= len;
+		float4 originScreenPos = ComputeScreenPos(UnityObjectToClipPos(float4(0,0,0,0)));
+		float2 originScreenUV = originScreenPos.xy / originScreenPos.w;
+		float camAngle = saturate((1-distance(float2(0.5, 0.5), originScreenUV))-0.5);
 		o.blindingEffect = clamp(0.6/len,1.0,16.0);
-
+		o.blindingEffect = lerp(1, o.blindingEffect, camAngle);
 	#endif
 
 	//calculate rotations for normals, cast to float4 first with 0 as w

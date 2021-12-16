@@ -60,7 +60,7 @@ float4 VolumetricLightingBRDF(v2f i)
 
 
 		_SpinSpeed = IF(checkPanInvertY() == 1, -_SpinSpeed, _SpinSpeed);
-        _SpinSpeed = IF(isOSC() == 1, _SpinSpeed * i.intensityStrobeGOBOSpinSpeed.z, _SpinSpeed);
+        _SpinSpeed = IF(isOSC() == 1, _SpinSpeed, _SpinSpeed);
 		float fadeStrength = _FadeStrength + lerp(2.0, 0.0, clamp(0,1,getConeWidth()));
 		float spinSpeed = 0.0;
 		//Inside Faces
@@ -91,6 +91,7 @@ float4 VolumetricLightingBRDF(v2f i)
 
 			distFade = saturate(distance(i.worldPos.rgb, wpos) * _DistFade) ;
 			float3 viewDir = normalize(wpos - i.worldPos);
+			viewDir = viewDir * 1.05;
 
 			//viewDir = normalize(mul(unity_WorldToObject,float4(viewDir,0.0)));
 			//viewDir = float3(viewDir.x,viewDir.y,viewDir.z);
@@ -123,6 +124,7 @@ float4 VolumetricLightingBRDF(v2f i)
 
 			distFade = saturate(distance(i.worldPos.rgb, wpos) * _DistFade) ;
     		float3 viewDir = normalize(wpos - i.worldPos);
+			viewDir = viewDir * 1.05;
 			//viewDir = normalize(mul(unity_WorldToObject,float4(viewDir,0.0)));
 			fade = pow(saturate(dot(normalize(i.norm), viewDir)), fadeStrength);
 			uvMap = half2(i.uv.x * getConeLength(), i.uv.y);
@@ -137,7 +139,7 @@ float4 VolumetricLightingBRDF(v2f i)
 		// float4 targetWrld = mul(_FixtureRotationOrigin, unity_ObjectToWorld);
 		// float theta = (acos(dot(targetWrld.xyz, wpos)/(length(targetWrld.xyz) * length(wpos))));
 		fixed4 gradientTexture = tex2D(_LightMainTex, uvMap);
-		fixed4 col = gradientTexture * ((sin(_Time.y * _PulseSpeed) * 0.5 + 1));
+		fixed4 col = gradientTexture.r * ((sin(_Time.y * _PulseSpeed) * 0.5 + 1));
 		col = ((((col*fade) * altFade) * depthFade) * distFade) * _FixtureMaxIntensity;
 		// col *= fade;
 		// col *= altFade;
@@ -145,7 +147,7 @@ float4 VolumetricLightingBRDF(v2f i)
 		// col *= distFade;
 		// col *= _FixtureMaxIntensity;
 
-		col *= (i.blindingEffect *3);
+		col *= (i.blindingEffect * i.blindingEffect);
 		//UNITY_APPLY_FOG_COLOR(i.fogCoord, col, fixed4(0,0,0,0));
 		float strobe = IF(isStrobe() == 1, i.intensityStrobeGOBOSpinSpeed.y, 1);
 		col = col * getEmissionColor();
@@ -158,14 +160,12 @@ float4 VolumetricLightingBRDF(v2f i)
 		//Beam Divider and spin
 		const float pi = 3.14159265;
 		float divide = (sin(i.uv.y * pi * floor(_StripeSplit) * 2 + (_Time.w * spinSpeed)) + 1.0);
-		divide = lerp(1.0, divide, _StripeSplitStrength);
-
+		uint gobo = IF(isOSC() > 0, ceil(i.intensityStrobeGOBOSpinSpeed.w), instancedGOBOSelection());
+		float splitstr = IF((_GoboBeamSplitEnable == 1) && (gobo > 1), _StripeSplitStrength, 0);
+		divide = lerp(1.0, divide, splitstr);
 
 		//noise apply
 		float2 texUV = i.uv2;
-		
-		float randVal = frac(sin((_NoiseSeed + 1) * 10000)); // 適当なランダム値
-		texUV += float2((i.worldPos.x + (_NoiseSeed + 1) * 2.345 + randVal) * 0.2357 * 0.01, (i.worldPos.y + (_NoiseSeed + 1) * 8.345 + randVal) * 0.324643 *  0.1 + 5);
 		
 		float4 tex = tex2D(_NoiseTex, texUV);
 		tex = lerp(fixed4(1, 1, 1, 1), tex, _NoisePower);

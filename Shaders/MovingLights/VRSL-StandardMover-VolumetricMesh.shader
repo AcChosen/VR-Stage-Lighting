@@ -11,6 +11,7 @@
 		 //[HideInInspector]_NewTimer("New Timer From Udon For Strobe", Float) = 0
 
 		 [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
+		 [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
 		 [Toggle] _EnableStrobe ("Enable Strobe", Int) = 0
 		 [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
 		 [HideInInspector]_FixtureBaseRotationY("Mover Pan Offset (Blue + Green)", Range(-540,540)) = 0
@@ -63,8 +64,12 @@
 		_DistFade("Distance Fade", Range(0,3)) = 0.7
 		_FadeAmt("Depth Blending", Range(0, 1)) = 0.1
 		//_IntensityCutoff("Intensity Minimum Cut Off", Range (0, 1)) = 0.2
+		[Toggle]_GoboBeamSplitEnable("Enable Splitting the beam on Gobos 2-6", Int) = 0
 		_StripeSplit ("Stripe Split", Range(0, 30)) = 0
 		_StripeSplitStrength ("Stripe Split Strength", Range(0, 1)) = 0
+		[Toggle] _EnableSpin("Enable Auto Spinning", Float) = 0
+		_SpinSpeed ("Auto Spin Speed", Range(0, 10)) = 0
+		_MaxConeLength("Max Cone Length", Range(1,10)) = 1
 
 
 
@@ -135,7 +140,7 @@
 				float3 norm : TEXCOORD11;
 				float2 uv2 : TEXCOORD13;
 				float4 worldDirection : TEXCOORD14;
-				float3 intensityStrobeGOBOSpinSpeed : TEXCOORD15;
+				float4 intensityStrobeGOBOSpinSpeed : TEXCOORD15;
 				float4 rgbColor : TEXCOORD16;
 
 				UNITY_VERTEX_INPUT_INSTANCE_ID

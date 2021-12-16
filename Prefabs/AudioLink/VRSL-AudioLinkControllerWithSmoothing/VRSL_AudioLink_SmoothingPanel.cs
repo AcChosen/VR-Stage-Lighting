@@ -5,15 +5,28 @@ using VRC.SDKBase;
 using UnityEngine.UI;
 using VRC.Udon;
 
+
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
+
 public class VRSL_AudioLink_SmoothingPanel : UdonSharpBehaviour
 {
     public Material smoothingMaterial;
     public Slider bassSmoothingSlider, lowerMidSmoothingSlider, upperMidSmoothingSlider, trebleSmoothingSlider, colorChordSmoothingSlider;
     public Text bassSmoothingText, lowerMidSmoothingText, upperMidSmoothingText, trebleSmoothingText, colorChordSmoothingText;
     float bassSmoothingInit, lowerMidSmoothingInit, upperMidSmoothingInit, trebleSmoothingInit, colorChordSmoothingInit;
+    public CustomRenderTexture smoothingTexture;
+    public Camera audioLinkCamera;
 
     void Start() 
     {
+        if(smoothingTexture && audioLinkCamera)
+        {
+            audioLinkCamera.targetTexture = smoothingTexture;
+        }
+        else
+        {
+            Debug.Log("AudioLink Camera not found! Please add a reference to the audiolink camera to the AudioLink Smoothing Panel Script!");
+        }
         bassSmoothingInit = bassSmoothingSlider.value;
         lowerMidSmoothingInit = lowerMidSmoothingSlider.value;
         upperMidSmoothingInit = upperMidSmoothingSlider.value;

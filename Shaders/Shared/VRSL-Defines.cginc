@@ -34,7 +34,8 @@ int _TextureSampleMode;
 int _LightProbeMethod;
 uint _UseRawGrid;
 half _Saturation, _SaturationLength, _LensMaxBrightness, _UniversalIntensity;
-uint _EnableCompatibilityMode;
+uint _EnableCompatibilityMode, _EnableVerticalMode;
+uint _GoboBeamSplitEnable;
 
 uniform const half compatSampleYAxis = 0.019231;
 uniform const half standardSampleYAxis = 0.00762;
@@ -90,5 +91,6 @@ UNITY_INSTANCING_BUFFER_START(Props)
     UNITY_DEFINE_INSTANCED_PROP(float, _ConeLength)
     UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
     UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
+    UNITY_DEFINE_INSTANCED_PROP(float, _MaxConeLength)
 UNITY_INSTANCING_BUFFER_END(Props)
 

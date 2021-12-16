@@ -5,6 +5,7 @@
          [HideInInspector]_Sector ("DMX Fixture Number/Sector (Per 13 Channels)", Int) = 0
 
          [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
+         [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
          [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
          [NoScaleOffset] _OSCGridRenderTextureRAW("OSC Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
          _GlobalIntensity("Global Intensity", Range(0,1)) = 1

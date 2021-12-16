@@ -200,7 +200,7 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 
 
                 _SpinSpeed = IF(checkPanInvertY() == 1, -_SpinSpeed, _SpinSpeed);
-                _SpinSpeed = IF(isOSC() == 1, _SpinSpeed * i.intensityStrobeWidth.z, _SpinSpeed);
+                _SpinSpeed = IF(isOSC() == 1, _SpinSpeed, _SpinSpeed);
 
                 uvCoords = IF(isGOBOSpin() == 1, RotateUV(uvCoords, _Time.w * ( 10* _SpinSpeed)), RotateUV(uvCoords, _ProjectionRotation));
                 

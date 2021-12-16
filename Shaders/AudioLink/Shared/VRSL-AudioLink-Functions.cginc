@@ -101,6 +101,10 @@ float getConeLength()
 {
     return UNITY_ACCESS_INSTANCED_PROP(Props, _ConeLength);
 }
+float getMaxConeLength()
+{
+    return UNITY_ACCESS_INSTANCED_PROP(Props, _MaxConeLength);
+}
 
 float getGlobalIntensity()
 {

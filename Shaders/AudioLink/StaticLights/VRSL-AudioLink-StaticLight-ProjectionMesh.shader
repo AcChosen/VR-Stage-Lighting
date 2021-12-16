@@ -101,7 +101,7 @@
 		SubShader
 	{
 		//UNITY_REQUIRE_ADVANDED_BLEND(all_equations)
-		Tags{ "Queue" = "Transparent+3" "IgnoreProjector"="True" "RenderType" = "Transparent" }
+		Tags{ "Queue" = "Transparent+1" "IgnoreProjector"="True" "RenderType" = "Transparent" }
 		Pass
          {
 

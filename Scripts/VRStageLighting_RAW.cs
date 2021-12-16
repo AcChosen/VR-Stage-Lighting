@@ -159,6 +159,9 @@ public class VRStageLighting_RAW : UdonSharpBehaviour
     private float previousConeWidth, previousConeLength, previousGlobalIntensity, previousFinalIntensity;
     private int previousGOBOSelection;
 
+    public int animationNum;
+    public Animator anima;
+
     void Start()
     {
         if(objRenderers.Length > 0 && objRenderers[0] != null)
@@ -188,6 +191,10 @@ public class VRStageLighting_RAW : UdonSharpBehaviour
         {
             Debug.Log("Please add atleast one fixture renderer.");
             //enableInstancing = false;
+        }
+        if(anima)
+        {
+            anima.SetInteger("PanTilt-1Measure", animationNum);
         }
     }
     // void OnEnable() 
@@ -257,8 +264,25 @@ public class VRStageLighting_RAW : UdonSharpBehaviour
             }
         }
     }
+    public void _SetProps()
+    {
+        props = new MaterialPropertyBlock();
+    }
+
     public void _UpdateInstancedProperties()
     {
+        if(props == null)
+        {
+            if(objRenderers.Length > 0 && objRenderers[0] != null)
+            {
+                _SetProps();
+            }
+            else
+            {
+                Debug.Log("Please add atleast one fixture renderer.");
+                return;
+            }
+        }
         //Color Texture Sampling
         props.SetFloat("_TextureColorSampleX", textureSamplingCoordinates.x);
         props.SetFloat("_TextureColorSampleY", textureSamplingCoordinates.y);
@@ -317,6 +341,13 @@ public class VRStageLighting_RAW : UdonSharpBehaviour
 
     void _UpdateInstancedPropertiesPanTilt()
     {
+        if(props == null)
+        {
+            if(objRenderers.Length > 0 && objRenderers[0] != null)
+            {
+                _SetProps();
+            }
+        }
         props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
         props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
         switch(objRenderers.Length)

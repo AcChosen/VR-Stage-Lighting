@@ -4,7 +4,6 @@ using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
-using UnityEngine.UI;
 using VRCAudioLink;
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
@@ -16,6 +15,7 @@ using VRC.Udon.Common.Interfaces;
 using System.Collections.Immutable;
 #endif
 
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class VRStageLighting_AudioLink_Static : UdonSharpBehaviour
 {
      //////////////////Public Variables////////////////////
@@ -99,36 +99,36 @@ public class VRStageLighting_AudioLink_Static : UdonSharpBehaviour
     [Header("Movement Settings")]
 
 
-    [Tooltip ("Invert the pan values (Left/Right Movement) for movers.")]
-    [FieldChangeCallback(nameof(InvertPan))]
-    [SerializeField]
-    private bool invertPan;
+    // [Tooltip ("Invert the pan values (Left/Right Movement) for movers.")]
+    // [FieldChangeCallback(nameof(InvertPan))]
+    // [SerializeField]
+    // private bool invertPan;
 
 
-    [Tooltip ("Invert the tilt values (Up/Down Movement) for movers.")]
-    [FieldChangeCallback(nameof(InvertTilt))]
-    [SerializeField]
-    private bool invertTilt;
+    // [Tooltip ("Invert the tilt values (Up/Down Movement) for movers.")]
+    // [FieldChangeCallback(nameof(InvertTilt))]
+    // [SerializeField]
+    // private bool invertTilt;
 
 
-    [Tooltip ("Enable this if the mover is hanging upside down.")]
-    public bool isUpsideDown;
+    // [Tooltip ("Enable this if the mover is hanging upside down.")]
+    // public bool isUpsideDown;
 
     
-    [Tooltip ("Enable target following for a mover while in Udon mode.")]
-    public bool followTarget;
+    // [Tooltip ("Enable target following for a mover while in Udon mode.")]
+    // public bool followTarget;
 
 
     [Tooltip ("The target for this mover to follow.")]
     public Transform targetToFollow;
 
 
-    [Tooltip ("The speed at which the target is followed, higher = slower.")]
-    public float targetFollowLerpSpeed = 20.0f;
+    // [Tooltip ("The speed at which the target is followed, higher = slower.")]
+    // public float targetFollowLerpSpeed = 20.0f;
 
 
-    [Tooltip ("An offset of where the mover will point at relative to the target.")]
-    public Vector3 targetOffset;
+    // [Tooltip ("An offset of where the mover will point at relative to the target.")]
+    // public Vector3 targetOffset;
 
 
     [Space(5)]
@@ -142,19 +142,19 @@ public class VRStageLighting_AudioLink_Static : UdonSharpBehaviour
 
 
 /////////////////////////////////
-    [Range(0,360.0f)]
-    [Tooltip ("Tilt (Up/Down) offset/movement. Directly controls tilt when in Udon Mode.")]
-    [FieldChangeCallback(nameof(Tilt))]
-    [SerializeField]
-    private float tiltOffsetBlue = 90.0f;
-    float startTiltOffset;
+    // [Range(0,360.0f)]
+    // [Tooltip ("Tilt (Up/Down) offset/movement. Directly controls tilt when in Udon Mode.")]
+    // [FieldChangeCallback(nameof(Tilt))]
+    // [SerializeField]
+    // private float tiltOffsetBlue = 90.0f;
+    // float startTiltOffset;
 
-    [Range(0,360.0f)]
-    [Tooltip ("Pan (Left/Right) offset/movement. Directly controls pan when in Udon Mode; is an offset when in DMX mode.")]
-    [FieldChangeCallback(nameof(Pan))]
-    [SerializeField]
-    public float panOffsetBlueGreen = 0.0f;
-    float startPanOffset;
+    // [Range(0,360.0f)]
+    // [Tooltip ("Pan (Left/Right) offset/movement. Directly controls pan when in Udon Mode; is an offset when in DMX mode.")]
+    // [FieldChangeCallback(nameof(Pan))]
+    // [SerializeField]
+    // public float panOffsetBlueGreen = 0.0f;
+    // float startPanOffset;
 ////////////////////////////////////
 
 
@@ -178,11 +178,18 @@ public class VRStageLighting_AudioLink_Static : UdonSharpBehaviour
     private float coneWidth = 2.5f;
 
 
-    [Range(0.5f,10.0f)]
+    [Range(0.001f,10.0f)]
     [FieldChangeCallback(nameof(ConeLength))]
     [SerializeField]
     [Tooltip ("Controls the length of the cone of a mover/spot light.")]
-    private float coneLength = 8.5f; 
+    private float coneLength = 1.0f; 
+    
+
+    [Range(0.275f,10.0f)]
+    [Tooltip ("Controls the mesh length of the cone of a mover/spot light")]
+    [FieldChangeCallback(nameof(MaxConeLength))]
+    [SerializeField]
+    private float maxConeLength = 8.5f; 
     [ColorUsage(true, true)]
     
 
@@ -197,34 +204,21 @@ public class VRStageLighting_AudioLink_Static : UdonSharpBehaviour
     private Color previousColorTint;
     private Transform previousTargetToFollowTransform;
     
-    private float previousConeWidth, previousConeLength, previousGlobalIntensity, previousFinalIntensity;
+    private float previousConeWidth, previousConeLength, previousGlobalIntensity, previousFinalIntensity, previousMaxConeLength;
     private int previousGOBOSelection;
 
     void OnEnable() 
     {
         if(objRenderers.Length > 0 && objRenderers[0] != null)
         {
-            props = new MaterialPropertyBlock();
-            //enableInstancing = true;
-                    
-            if(followTarget)
-            {
-                GetTargetAngles();
-               // LerpToDefaultTarget();
-                panOffsetBlueGreen = targetPanAngle;
-                tiltOffsetBlue = targetTiltAngle;
-                targetToFollowLast = targetToFollow.position;
-            }
+            _SetProps();
             previousColorTint = lightColorTint;
             previousConeWidth = coneWidth;
             previousConeLength = coneLength;
+            previousMaxConeLength = maxConeLength;
             previousGOBOSelection = selectGOBO;
             previousGlobalIntensity = globalIntensity;
             previousFinalIntensity = finalIntensity;
-            if(targetToFollow)
-            {
-                previousTargetToFollowTransform = targetToFollow;
-            }
             _UpdateInstancedProperties();
         }
         else
@@ -239,27 +233,14 @@ public class VRStageLighting_AudioLink_Static : UdonSharpBehaviour
         //spectrumBands = (float[])audioLink.GetProgramVariable("spectrumBands");
         if(objRenderers.Length > 0 && objRenderers[0] != null)
         {
-            props = new MaterialPropertyBlock();
-            //enableInstancing = true;
-                    
-            if(followTarget)
-            {
-                GetTargetAngles();
-               // LerpToDefaultTarget();
-                panOffsetBlueGreen = targetPanAngle;
-                tiltOffsetBlue = targetTiltAngle;
-                targetToFollowLast = targetToFollow.position;
-            }
+            _SetProps();
             previousColorTint = lightColorTint;
             previousConeWidth = coneWidth;
             previousConeLength = coneLength;
+            previousMaxConeLength = maxConeLength;
             previousGOBOSelection = selectGOBO;
             previousGlobalIntensity = globalIntensity;
             previousFinalIntensity = finalIntensity;
-            if(targetToFollow)
-            {
-                previousTargetToFollowTransform = targetToFollow;
-            }
             _UpdateInstancedProperties();
         }
         else
@@ -267,6 +248,11 @@ public class VRStageLighting_AudioLink_Static : UdonSharpBehaviour
             Debug.Log("Please add atleast one fixture renderer.");
             //enableInstancing = false;
         }
+    }
+
+    public void _SetProps()
+    {
+        props = new MaterialPropertyBlock();
     }
 /////////////////////////////////////////////////////////////////////////PROPERTIES///////////////////////////////////////////////////////////////////////////////////////////////
     public Color LightColorTint
@@ -305,6 +291,20 @@ public class VRStageLighting_AudioLink_Static : UdonSharpBehaviour
         {
             previousConeLength = coneLength;
             coneLength = value;
+            _UpdateInstancedProperties();
+        }
+    }
+
+        public float MaxConeLength
+    {
+        get
+        {
+            return MaxConeLength;
+        }
+        set
+        {
+            previousMaxConeLength = maxConeLength;
+            maxConeLength = value;
             _UpdateInstancedProperties();
         }
     }
@@ -407,30 +407,30 @@ public class VRStageLighting_AudioLink_Static : UdonSharpBehaviour
             _UpdateInstancedProperties();
         }
     }
-    public bool InvertPan
-    {
-        get
-        {
-            return invertPan;
-        }
-        set
-        {
-            invertPan = value;
-            _UpdateInstancedProperties();
-        }
-    }
-    public bool InvertTilt
-    {
-        get
-        {
-            return invertTilt;
-        }
-        set
-        {
-            invertTilt = value;
-            _UpdateInstancedProperties();
-        }
-    }
+    // public bool InvertPan
+    // {
+    //     get
+    //     {
+    //         return invertPan;
+    //     }
+    //     set
+    //     {
+    //         invertPan = value;
+    //         _UpdateInstancedProperties();
+    //     }
+    // }
+    // public bool InvertTilt
+    // {
+    //     get
+    //     {
+    //         return invertTilt;
+    //     }
+    //     set
+    //     {
+    //         invertTilt = value;
+    //         _UpdateInstancedProperties();
+    //     }
+    // }
     public bool ProjectionSpin
     {
         get
@@ -467,46 +467,47 @@ public class VRStageLighting_AudioLink_Static : UdonSharpBehaviour
                 _UpdateInstancedProperties();
             }
         }
-        public float Pan
-        {
-            get
-            {
-                return panOffsetBlueGreen;
-            }
-            set
-            {
-                panOffsetBlueGreen = value;
-                _UpdateInstancedProperties();
-            }
-        }
-        public float Tilt
-        {
-            get
-            {
-                return tiltOffsetBlue;
-            }
-            set
-            {
-                tiltOffsetBlue = value;
-                _UpdateInstancedProperties();
-            }
-        }
+        // public float Pan
+        // {
+        //     get
+        //     {
+        //         return panOffsetBlueGreen;
+        //     }
+        //     set
+        //     {
+        //         panOffsetBlueGreen = value;
+        //         _UpdateInstancedProperties();
+        //     }
+        // }
+        // public float Tilt
+        // {
+        //     get
+        //     {
+        //         return tiltOffsetBlue;
+        //     }
+        //     set
+        //     {
+        //         tiltOffsetBlue = value;
+        //         _UpdateInstancedProperties();
+        //     }
+        // }
 
 /////////////////////////////////////////////////////////////////////////END PROPERTIES///////////////////////////////////////////////////////////////////////////////////////////////
-    public void _ChangeCheckPosition()
-    {
-        GetTargetAngles();
-        if((targetToFollow.position != targetToFollowLast) || (panOffsetBlueGreen != targetPanAngle || tiltOffsetBlue != targetTiltAngle))
-        {
-            LerpToDefaultTarget();
-            targetToFollowLast = targetToFollow.position;
-        }
-        return;
-    }
-
 
     public void _UpdateInstancedProperties()
     {   
+        if(props == null)
+        {
+            if(objRenderers.Length > 0 && objRenderers[0] != null)
+            {
+                _SetProps();
+            }
+            else
+            {
+                Debug.Log("Please add atleast one fixture renderer.");
+                return;
+            }
+        }
         //Color Texture Sampling
         props.SetFloat("_TextureColorSampleX", textureSamplingCoordinates.x);
         props.SetFloat("_TextureColorSampleY", textureSamplingCoordinates.y);
@@ -520,18 +521,19 @@ public class VRStageLighting_AudioLink_Static : UdonSharpBehaviour
         props.SetFloat("_BandMultiplier", bandMultiplier);
         props.SetFloat("_Band", band);
         //Movement Stuff
-        props.SetInt("_PanInvert", invertPan == true ? 1 : 0);
-        props.SetInt("_TiltInvert", invertTilt == true ? 1 : 0);
+        // props.SetInt("_PanInvert", invertPan == true ? 1 : 0);
+        // props.SetInt("_TiltInvert", invertTilt == true ? 1 : 0);
         props.SetInt("_EnableSpin", enableAutoSpin == true ? 1 : 0);
-        props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
-        props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
+        // props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
+        // props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
         //Other Stuff
         props.SetInt("_ProjectionSelection", selectGOBO);
         props.SetColor("_Emission", lightColorTint);
         props.SetFloat("_ConeWidth", coneWidth);
         props.SetFloat("_GlobalIntensity", globalIntensity);
         props.SetFloat("_FinalIntensity", finalIntensity);
-        props.SetFloat("_ConeLength", Mathf.Abs(coneLength - 10.5f));
+        props.SetFloat("_ConeLength", Mathf.Abs(coneLength - 10.0f));
+        props.SetFloat("_MaxConeLength", maxConeLength);
         // for(int i = 0; i < objRenderers.Length; i++)
         // {
         //     objRenderers[i].SetPropertyBlock(props);
@@ -568,26 +570,81 @@ public class VRStageLighting_AudioLink_Static : UdonSharpBehaviour
                 break;          
         }
     }
-    void GetTargetAngles()
-    {
-            Vector3 dir = ((targetToFollow.position + targetOffset) - this.transform.position).normalized;
-            float dist = Vector3.Distance(targetToFollow.position,this.transform.position);       
-            Quaternion rot = Quaternion.LookRotation(dir,Vector3.up);
-            Vector3 angles = rot.eulerAngles;
-            targetPanAngle = invertPan == true ? (1.0f-((angles.y))*-1.0f) : angles.y;
-            targetTiltAngle = invertTilt == true ? (angles.x-180.0f)*-1.0f : angles.x;
-            targetPanAngle = isUpsideDown == false ? targetPanAngle+180.0f : targetPanAngle;
-            targetTiltAngle = isUpsideDown == false ? -targetTiltAngle : targetTiltAngle;
-            targetPanAngle = targetPanAngle - this.transform.localEulerAngles.y;
-            return;
-    }
-    void LerpToDefaultTarget()
-    {
-            float previousPanAngle = panOffsetBlueGreen;
-            float previousTiltAngle = tiltOffsetBlue;
-            panOffsetBlueGreen = Mathf.LerpAngle(previousPanAngle, targetPanAngle, targetFollowLerpSpeed * Time.deltaTime);
-            tiltOffsetBlue = Mathf.Clamp(Mathf.LerpAngle(previousTiltAngle, targetTiltAngle, targetFollowLerpSpeed * Time.deltaTime),0.0f, 180.0f);
-            return;
+    public void _UpdateInstancedPropertiesSansAudioLink()
+    {   
+        if(props == null)
+        {
+            if(objRenderers.Length > 0 && objRenderers[0] != null)
+            {
+                _SetProps();
+            }
+            else
+            {
+                Debug.Log("Please add atleast one fixture renderer.");
+                return;
+            }
+        }
+        //Color Texture Sampling
+        props.SetFloat("_TextureColorSampleX", textureSamplingCoordinates.x);
+        props.SetFloat("_TextureColorSampleY", textureSamplingCoordinates.y);
+        props.SetInt("_EnableColorTextureSample", enableColorTextureSampling == true ? 1 : 0);
+
+        //AudioLink Stuff
+        props.SetFloat("_EnableAudioLink", 0.0f);
+        props.SetInt("_EnableColorChord", 0);
+        //props.SetFloat("_NumBands", spectrumBands.Length);
+        props.SetFloat("_Delay", delay);
+        props.SetFloat("_BandMultiplier", bandMultiplier);
+        props.SetFloat("_Band", band);
+        //Movement Stuff
+        // props.SetInt("_PanInvert", invertPan == true ? 1 : 0);
+        // props.SetInt("_TiltInvert", invertTilt == true ? 1 : 0);
+        props.SetInt("_EnableSpin", enableAutoSpin == true ? 1 : 0);
+        // props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
+        // props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
+        //Other Stuff
+        props.SetInt("_ProjectionSelection", selectGOBO);
+        props.SetColor("_Emission", lightColorTint);
+        props.SetFloat("_ConeWidth", coneWidth);
+        props.SetFloat("_GlobalIntensity", globalIntensity);
+        props.SetFloat("_FinalIntensity", finalIntensity);
+        props.SetFloat("_ConeLength", Mathf.Abs(coneLength - 10.0f));
+        props.SetFloat("_MaxConeLength", maxConeLength);
+        // for(int i = 0; i < objRenderers.Length; i++)
+        // {
+        //     objRenderers[i].SetPropertyBlock(props);
+        // }
+        switch(objRenderers.Length)
+        {
+            case 1:
+                objRenderers[0].SetPropertyBlock(props);
+                break;
+            case 2:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                break;
+            case 3:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                break;
+            case 4:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                break;
+            case 5:
+                objRenderers[0].SetPropertyBlock(props);
+                objRenderers[1].SetPropertyBlock(props);
+                objRenderers[2].SetPropertyBlock(props);
+                objRenderers[3].SetPropertyBlock(props);
+                objRenderers[4].SetPropertyBlock(props);
+                break;
+            default:
+                Debug.Log("Too many mesh renderers for this fixture!");
+                break;          
+        }
     }
     #if !COMPILER_UDONSHARP && UNITY_EDITOR
         private void OnDrawGizmos()

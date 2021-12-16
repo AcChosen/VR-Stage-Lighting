@@ -56,7 +56,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Band0Smoothness: 0.8
+    - _Band0Smoothness: 0
     - _Band1Smoothness: 0.7
     - _Band2Smoothness: 0.6
     - _Band3Smoothness: 0.6

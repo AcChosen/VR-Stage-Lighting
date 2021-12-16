@@ -19,11 +19,12 @@ public class VRSL_BPMResetButton : UdonSharpBehaviour
         // bPMCounter.ResetNoteCounters();
         // bPMTapper.Reset();
         
-        bPMCounter.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "ResetTimerAndBeats");
-        bPMCounter.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "ResetNoteCounters");
+        // bPMCounter.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "ResetTimerAndBeats");
+        // bPMCounter.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "ResetNoteCounters");
+        bPMCounter.FullReset = !bPMCounter.FullReset;
+        bPMCounter.RequestSerialization();
         bPMTapper.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "Reset");
-
-
+        //RequestSerialization();
 
     }
 }

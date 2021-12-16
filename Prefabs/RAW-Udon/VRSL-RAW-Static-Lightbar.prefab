@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4166292722577668795}
   - component: {fileID: 3544532123601049201}
   m_Layer: 24
-  m_Name: Lightbar-FixtureMesh
+  m_Name: Lightbar-RAW-FixtureMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 7521570932628274743}
   - component: {fileID: 8525054766763774383}
   m_Layer: 24
-  m_Name: VRSL-RAW-Static-LightBar 1
+  m_Name: VRSL-RAW-Static-LightBar
   m_TagString: Stage Lighting
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -130,6 +130,7 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
+  _syncMethod: 0
   serializedProgramAsset: {fileID: 11400000, guid: 397dc3ba99a0aed479bbc9c7cf1d10b7,
     type: 2}
   programSource: {fileID: 11400000, guid: 0781cabbca8a79a43ae167ec5bb2d8da, type: 2}

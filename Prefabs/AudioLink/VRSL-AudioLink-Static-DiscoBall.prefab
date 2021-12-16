@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6185022509999308475}
   - component: {fileID: 6185022509999308469}
   m_Layer: 24
-  m_Name: VRSL-AudioLink-DiscoBall
+  m_Name: VRSL-AudioLink-Static-DiscoBall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -100,6 +100,7 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 1
+  _syncMethod: 0
   serializedProgramAsset: {fileID: 11400000, guid: 8711ddc2323190049b8ecf5e33e6b779,
     type: 2}
   programSource: {fileID: 11400000, guid: 2db8081a72b7c5b4eb87ca6ff1e59c98, type: 2}
@@ -119,7 +120,7 @@ GameObject:
   - component: {fileID: 6185022510201054756}
   - component: {fileID: 6185022510201054755}
   m_Layer: 24
-  m_Name: MirrorBall
+  m_Name: MirrorBallMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

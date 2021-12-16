@@ -14,6 +14,8 @@ using VRC.Udon.Common.Interfaces;
 using System.Collections.Immutable;
 #endif
 
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
+
 public class VRStageLighting_DMX : UdonSharpBehaviour
 {
     //////////////////Public Variables////////////////////
@@ -168,6 +170,18 @@ public class VRStageLighting_DMX : UdonSharpBehaviour
     }
     public void _UpdateInstancedProperties()
     {
+        if(props == null)
+        {
+            if(objRenderers.Length > 0 && objRenderers[0] != null)
+            {
+                _SetProps();
+            }
+            else
+            {
+                Debug.Log("Please add atleast one fixture renderer.");
+                return;
+            }
+        }
         props.SetInt("_Sector", (int) sector);
         props.SetInt("_PanInvert", invertPan == true ? 1 : 0);
         props.SetInt("_TiltInvert", invertTilt == true ? 1 : 0);
@@ -214,8 +228,24 @@ public class VRStageLighting_DMX : UdonSharpBehaviour
                 break;  
         }
     }
+    public void _SetProps()
+    {
+        props = new MaterialPropertyBlock();
+    }
     void _UpdateInstancedPropertiesPanTilt()
     {
+        if(props == null)
+        {
+            if(objRenderers.Length > 0 && objRenderers[0] != null)
+            {
+                _SetProps();
+            }
+            else
+            {
+                Debug.Log("Please add atleast one fixture renderer.");
+                return;
+            }
+        }
         props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
         props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
         switch(objRenderers.Length)

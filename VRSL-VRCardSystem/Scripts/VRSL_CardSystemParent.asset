@@ -25,7 +25,7 @@ MonoBehaviour:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
-    - {fileID: 11500000, guid: 9ad1f5bfbe368d442bd9a8341c31d65e, type: 3}
+    - {fileID: 11500000, guid: 0cc4482c1d56e954fa4fe5176e69bee7, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -50,7 +50,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: lights
+      Data: staticLights
     - Name: $v
       Entry: 7
       Data: 2|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -62,7 +62,7 @@ MonoBehaviour:
       Data: 4|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: VRStageLighting_RAW[], Assembly-CSharp
+      Data: VRStageLighting_Animated_Static[], Assembly-CSharp
     - Name: 
       Entry: 8
       Data: 
@@ -77,10 +77,10 @@ MonoBehaviour:
       Data: UnityEngineComponentArray
     - Name: symbolOriginalName
       Entry: 1
-      Data: lights
+      Data: staticLights
     - Name: symbolUniqueName
       Entry: 1
-      Data: lights
+      Data: staticLights
     - Name: symbolDefaultValue
       Entry: 6
       Data: 

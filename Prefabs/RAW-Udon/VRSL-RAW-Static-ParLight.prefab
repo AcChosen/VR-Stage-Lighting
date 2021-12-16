@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5026606236240888670}
   - component: {fileID: 1881720983839571532}
   m_Layer: 24
-  m_Name: ParLight-Projection-ProjectionMesh
+  m_Name: ParLight-RAW-ProjectionMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,6 +131,7 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
+  _syncMethod: 0
   serializedProgramAsset: {fileID: 11400000, guid: 397dc3ba99a0aed479bbc9c7cf1d10b7,
     type: 2}
   programSource: {fileID: 11400000, guid: 0781cabbca8a79a43ae167ec5bb2d8da, type: 2}
@@ -151,7 +152,7 @@ GameObject:
   - component: {fileID: 691713523277512067}
   - component: {fileID: 2215629918412633219}
   m_Layer: 24
-  m_Name: ParLight-Projection-FixtureMesh
+  m_Name: ParLight-RAW-FixtureMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

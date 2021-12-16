@@ -141,7 +141,7 @@ Material:
     - _FixtureBaseRotationY: 0
     - _FixtureMaxIntensity: 15
     - _FixtureRotationX: 0
-    - _FixutreIntensityMultiplier: 5
+    - _FixutreIntensityMultiplier: 10
     - _GlobalIntensity: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.673

@@ -4,6 +4,8 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
+
 public class VRSL_LocalUIControlPanel : UdonSharpBehaviour
 {
     [Header("Materials")]
@@ -27,6 +29,12 @@ public class VRSL_LocalUIControlPanel : UdonSharpBehaviour
     public UnityEngine.UI.Text masterSliderText, fixtureSliderText, volumetricSliderText, projectionSliderText, discoBallSliderText, bloomSliderText;
     public float fixtureIntensityMax = 1.0f, volumetricIntensityMax = 1.0f, projectionIntensityMax = 1.0f, discoballIntensityMax = 1.0f;
 
+    public bool isUsingDMX = true;
+    public bool isUsingAudioLink = true;
+
+    public CustomRenderTexture[] DMX_CRTs;
+    public CustomRenderTexture[] AudioLink_CRTs;
+
     void Start()
     {
         _SetFinalIntensity();
@@ -35,6 +43,44 @@ public class VRSL_LocalUIControlPanel : UdonSharpBehaviour
         _SetProjectionIntensity();
         _SetDiscoBallIntensity();
         _SetBloomIntensity();
+        _CheckDMX();
+        _CheckAudioLink();
+    }
+    
+    public void _CheckDMX()
+    {
+        if(isUsingDMX)
+        {
+            foreach(CustomRenderTexture rt in DMX_CRTs)
+            {
+                rt.updateMode = CustomRenderTextureUpdateMode.Realtime;
+            }
+        }
+        else
+        {
+            foreach(CustomRenderTexture rt in DMX_CRTs)
+            {
+                rt.updateMode = CustomRenderTextureUpdateMode.OnDemand;
+            }
+        }
+    }
+
+    public void _CheckAudioLink()
+    {
+        if(isUsingAudioLink)
+        {
+            foreach(CustomRenderTexture rt in AudioLink_CRTs)
+            {
+                rt.updateMode = CustomRenderTextureUpdateMode.Realtime;
+            }
+        }
+        else
+        {
+            foreach(CustomRenderTexture rt in AudioLink_CRTs)
+            {
+                rt.updateMode = CustomRenderTextureUpdateMode.OnDemand;
+            }
+        }
     }
     
     public void _SetFinalIntensity()
