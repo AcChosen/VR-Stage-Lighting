@@ -5,7 +5,7 @@
 ## A collection of HLSL shaders, UdonSharp scripts, 3D models, prefabs, and assets designed to emulate the real control, quality, and complexity of professional stage lighting into VRChat in as many ways as possible.
 <a href="https://youtu.be/3yaEsIQVaHA">
 <p align="center">
-  <img src="Doc/VRSL-GitHubTrailer-Short.gif">
+  <img src="Documentation/VRSL-GitHubTrailer-Short.gif">
 </p>
   </a>
 
@@ -122,7 +122,7 @@ More information on them can be found in the Shaders folder as well the tooltips
 ## DMX512/ArtNet Via Video/Stream Panel
 
 <p align="center">
-  <img src="Doc/NewNodeGridSample-SectorExample.png">
+  <img src="Documentation/NewNodeGridSample-SectorExample.png">
 </p>
 
 The main system this project was based on. This system can convert signals it reads from a VRChat stream/video panel into actions that the lights can perform, mainly a special black/white grid that coverts DMX signals into something the lighting system can read. This system is powered 95% by shaders, including the actual method of reading the pixels from the screen. The other 5% is to enable GPU instancing for the shaders and certain properties. There is also basic "RAW" Udon support for when DMX Support is disabled for these shaders.
@@ -157,7 +157,7 @@ The appeal of this system is that this allows any software or hardware that supp
 - The grid itself can be purchased at my gumroad, which will also help directly support the development of this project <3! Which can be purchased here! () OSC output is also included with this grid system for when VRChat officially supports it via Udon. You can get it here!: https://gumroad.com/l/xYaPu
 
 <p align="center">
-  <img src="Doc/VRSl-Kradt-ComeWithMe-RecDemo-Short.gif">
+  <img src="Documentation/VRSl-Kradt-ComeWithMe-RecDemo-Short.gif">
 </p>
   </a>
 
