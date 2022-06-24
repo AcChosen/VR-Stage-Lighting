@@ -1,0 +1,195 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: VRSL-AudioLink-StandardMover-FixtureMat
+  m_Shader: {fileID: 4800000, guid: ec0e56fb8480191448eedfb15961ac64, type: 3}
+  m_ShaderKeywords: _DNENABLER_NONE _ENABLEOSC_ON _ENABLESPIN_ON _USERAWGRID_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AudioSpectrum:
+        m_Texture: {fileID: 8600000, guid: f51fa799ef0abde489235f40fc0328ef, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: 0d549127d526cab4fb5696782ef99e7a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _InsideConeNormalMap:
+        m_Texture: {fileID: 2800000, guid: 9136d199df192fc41adaafa24d99337e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LightMainTex:
+        m_Texture: {fileID: 2800000, guid: a8bac92effc9d574cbfd4cc5b3355a32, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: a2bc87eb1653fd046a426272ee22e6bb, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 2800000, guid: c12606bf069188547a833cb3e7b4607e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 2800000, guid: 079576056170341438e4f98f4e8a66d4, type: 3}
+        m_Scale: {x: 0.001, y: 5}
+        m_Offset: {x: 0, y: 0}
+    - _OSCGridRenderTexture:
+        m_Texture: {fileID: 8600000, guid: 85ba02ef33f4e4c4a94d9085f48ec5c1, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OSCGridRenderTextureRAW:
+        m_Texture: {fileID: 8600000, guid: 3bcce6f0fa9c3d4499ca3015b073785e, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OSCGridStrobeTimer:
+        m_Texture: {fileID: 8600000, guid: a0e2ea8d6ec133f4fb7ad6f74d904820, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionMainTex:
+        m_Texture: {fileID: 2800000, guid: 2e4e1fd2424262246bc882aa92947216, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex2:
+        m_Texture: {fileID: 2800000, guid: df6d59abf6bfb8445910615758a83687, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex3:
+        m_Texture: {fileID: 2800000, guid: 47336b42ad08b664aabea2ed84921b1a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex4:
+        m_Texture: {fileID: 2800000, guid: 940f239cf26d93d4681364c9d0d1e262, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex5:
+        m_Texture: {fileID: 2800000, guid: bbdb123cc81324348ac7aa7b6798d8ee, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex6:
+        m_Texture: {fileID: 2800000, guid: b5eb285c3e64e0e4c81558d259a068bc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RendTexPrevFrame:
+        m_Texture: {fileID: 8600000, guid: fe8bb33ccf70ec842b876cf147e6bfc9, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RendTexPrevFrameEven:
+        m_Texture: {fileID: 8600000, guid: fe8bb33ccf70ec842b876cf147e6bfc9, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RendTexPrevFrameOdd:
+        m_Texture: {fileID: 8600000, guid: 94af0f81352065847b397e161587be3d, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SamplingTexture:
+        m_Texture: {fileID: 2800000, guid: ba9a307ceadf5564683f0e0af8af748c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SceneNormals:
+        m_Texture: {fileID: 8400000, guid: 97a6cc22a32ae15489c972f5447a21c0, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - FinalStrobeFreq: 0
+    - _Band: 0
+    - _BandMultiplier: 1
+    - _BlendDst: 1
+    - _BlendOp: 0
+    - _BlendSrc: 2
+    - _BumpScale: 1
+    - _ConeLength: 1.47
+    - _ConeSync: 0.2
+    - _ConeWidth: 4.13
+    - _DNEnabler: 0
+    - _Delay: 0
+    - _DistFade: 1.31
+    - _Divide: 11.6
+    - _DividePower: 0.079
+    - _EnableAudioLink: 0
+    - _EnableColorChord: 0
+    - _EnableColorTextureSample: 0
+    - _EnableOSC: 1
+    - _EnableSpin: 1
+    - _EnableStrobe: 0
+    - _Fade: 1.5
+    - _FadeAmt: 0
+    - _FadeStrength: 3.72
+    - _FeatherOffset: 0.5
+    - _FinalIntensity: 1
+    - _FinalStrobeFreq: 0
+    - _FixtureBaseRotationY: 0
+    - _FixtureMaxIntensity: 0.228
+    - _FixtureRotationX: 0
+    - _FixutreIntensityMultiplier: 1
+    - _GlobalIntensity: 0.568
+    - _Glossiness: 0.877
+    - _InnerFadeStrength: 0.58
+    - _InnerIntensityCurve: -1.3
+    - _IntensityCutoff: 0.15
+    - _IsEven: 0
+    - _LMStrength: 1
+    - _LensMaxBrightness: 1
+    - _LightProbeMethod: 0
+    - _MaxMinPanAngle: 0
+    - _MaxMinTiltAngle: 0
+    - _Metallic: 0.908
+    - _ModX: 0
+    - _ModY: 0
+    - _NoisePower: 0.333
+    - _NoiseSeed: 420
+    - _NumBands: 4
+    - _PanInvert: 0
+    - _ProjectionDistanceFallOff: 0.01
+    - _ProjectionFade: 2.35
+    - _ProjectionFadeCurve: 1.99
+    - _ProjectionIntensity: 2.34
+    - _ProjectionRange: 2.1
+    - _ProjectionRotation: -180
+    - _ProjectionSelection: 0
+    - _ProjectionShadowHarshness: 0.9
+    - _ProjectionUVMod: 0.219
+    - _ProjectionUVMod2: 0.219
+    - _ProjectionUVMod3: 0.234
+    - _ProjectionUVMod4: 0.201
+    - _ProjectionUVMod5: 0.192
+    - _ProjectionUVMod6: 0.159
+    - _PulseSpeed: 0
+    - _RTLMStrength: 1
+    - _Saturation: 0.581
+    - _SaturationLength: 0.1
+    - _Sector: 0
+    - _SpecLMOcclusionAdjust: 0.2
+    - _SpecularLMOcclusion: 0
+    - _SpinSpeed: 4.62
+    - _StrobeFreq: 16.61
+    - _TextureColorSampleX: 0.5
+    - _TextureColorSampleY: 0.5
+    - _TextureSampleMode: 0
+    - _TiltInvert: 0
+    - _TriplanarFalloff: 1
+    - _UniversalIntensity: 1
+    - _UseRawGrid: 1
+    - _UseWorldNorm: 0
+    - _XOffset: 0
+    - _YOffset: 0
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Emission: {r: 0.69886, g: 0.69886, b: 0.69886, a: 3}
+    - _EmissionColor: {r: 9.363626, g: 9.363626, b: 9.363626, a: 3}
+    - _FixtureRotationOrigin: {r: 0, g: 0, b: 0, a: 0}
+    - _LightColor: {r: 23.968628, g: 23.968628, b: 23.968628, a: 1}
+    - _ProjectionRangeOrigin: {r: 0, g: -0.075354, b: 0.123875, a: 0}

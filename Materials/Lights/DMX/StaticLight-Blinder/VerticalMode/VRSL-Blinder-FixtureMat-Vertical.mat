@@ -1,0 +1,198 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: VRSL-Blinder-FixtureMat-Vertical
+  m_Shader: {fileID: 4800000, guid: 75766aa491bc3034791ba036cd616ea7, type: 3}
+  m_ShaderKeywords: _EMISSION _ENABLEVERTICALMODE_ON _METALLICGLOSSMAP _NORMALMAP
+    _USERAWGRID_ON
+  m_LightmapFlags: 1
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 2800000, guid: b4cb310d700df3f4a8145cae79a55d6a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMask:
+        m_Texture: {fileID: 2800000, guid: 4fed70ee86b71514aadfcd7054e2bcd7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LightMainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: d04e97b983ed7e74c97185b26e498ea4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap:
+        m_Texture: {fileID: 2800000, guid: e744e7e550d63a6498a83363977f0d37, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OSCGridRenderTexture:
+        m_Texture: {fileID: 8600000, guid: 3d0e5498d25faf34999f530603c36e4d, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OSCGridRenderTextureRAW:
+        m_Texture: {fileID: 8600000, guid: 2db39b03bdcb2124aaba3db138dd0754, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OSCGridStrobeTimer:
+        m_Texture: {fileID: 8600000, guid: d4c740f9462f25d4a9d1cc2063318a5f, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionMainTex:
+        m_Texture: {fileID: 2800000, guid: 2e4e1fd2424262246bc882aa92947216, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex4:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex5:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex6:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SceneAlbedo:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SceneNormals:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - FinalStrobeFreq: 0
+    - _BlendDst: 1
+    - _BlendOp: 0
+    - _BlendSrc: 1
+    - _BulbMaxIntensity: 1
+    - _BumpScale: 1
+    - _ConeWidth: 0
+    - _CurveMod: 5
+    - _Cutoff: 0.5
+    - _DMXChannel: 0
+    - _DetailNormalMapScale: 1
+    - _DistFade: 0.7
+    - _DstBlend: 0
+    - _EnableCompatibilityMode: 0
+    - _EnableOSC: 0
+    - _EnableSpin: 0
+    - _EnableStrobe: 0
+    - _EnableVerticalMode: 1
+    - _Fade: 0.83
+    - _FadeAmt: 0.1
+    - _FadeStrength: 1
+    - _FeatherOffset: 0
+    - _FinalIntensity: 1
+    - _FinalStrobeFreq: 0
+    - _FixtureBaseRotationY: 0
+    - _FixtureMaxIntensity: 15
+    - _FixtureRotationX: 0
+    - _FixutreIntensityMultiplier: 5
+    - _GlobalIntensity: 1
+    - _GlossMapScale: 1
+    - _Glossiness: 0.673
+    - _GlossyReflections: 1
+    - _LMStrength: 1
+    - _LightProbeMethod: 0
+    - _MaxMinPanAngle: 180
+    - _MaxMinTiltAngle: 180
+    - _Metallic: 0.781
+    - _ModX: -0.12
+    - _ModY: -0.37
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _PanInvert: 0
+    - _Parallax: 0.02
+    - _ProjectionDistanceFallOff: 0
+    - _ProjectionFade: 1.73
+    - _ProjectionFadeCurve: 0.96
+    - _ProjectionIntensity: 0
+    - _ProjectionMaxIntensity: 0
+    - _ProjectionRange: 10
+    - _ProjectionRotation: 125
+    - _ProjectionSelection: 0
+    - _ProjectionUVMod: 0.312
+    - _ProjectionUVMod2: 0
+    - _ProjectionUVMod3: 0
+    - _ProjectionUVMod4: 0
+    - _ProjectionUVMod5: 0
+    - _ProjectionUVMod6: 0
+    - _PulseSpeed: 0
+    - _RTLMStrength: 1
+    - _Sector: 0
+    - _SmoothnessTextureChannel: 0
+    - _SpecLMOcclusionAdjust: 0.359
+    - _SpecularHighlights: 1
+    - _SpecularLMOcclusion: 0
+    - _SpinSpeed: 0
+    - _SrcBlend: 1
+    - _StrobeFreq: 12.76
+    - _TextureSampleMode: 0
+    - _TiltInvert: 0
+    - _TriplanarFalloff: 1
+    - _UVSec: 0
+    - _UniversalIntensity: 1
+    - _UseRawGrid: 1
+    - _UseWorldNorm: 0
+    - _XOffset: -4.21
+    - _YOffset: 2.14
+    - _ZWrite: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Emission: {r: 11.984314, g: 11.984314, b: 11.984314, a: 3}
+    - _EmissionColor: {r: 4.005236, g: 4.005236, b: 4.005236, a: 3}
+    - _FixtureRotationOrigin: {r: 0, g: 0.014709, b: -1.02868, a: 0}
+    - _ProjectionRangeOrigin: {r: 0, g: 0, b: 0, a: 0}

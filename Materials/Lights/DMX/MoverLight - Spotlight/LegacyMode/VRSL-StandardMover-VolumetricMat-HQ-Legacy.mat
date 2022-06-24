@@ -1,0 +1,216 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: VRSL-StandardMover-VolumetricMat-HQ-Legacy
+  m_Shader: {fileID: 4800000, guid: 67a0beb6b3a31dc4e8b2d2344df6a994, type: 3}
+  m_ShaderKeywords: _DNENABLER_NONE _ENABLECOMPATIBILITYMODE_ON _ENABLEOSC_ON _GOBOBEAMSPLITENABLE_ON
+    _TOGGLEMAGICNOISE_ON _USERAWGRID_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: 6c3961508d25b814192d08b9142a7977, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _InsideConeNormalMap:
+        m_Texture: {fileID: 2800000, guid: ffb8f76b1646bdb4fbfca04ea377038b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LightMainTex:
+        m_Texture: {fileID: 2800000, guid: a1743aa18bc963146add4b61267cf038, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 56dc3ab1f4f21d94baf0a5268d5bec91, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 2800000, guid: 95dae414ef2ffd7438602114879b8b41, type: 3}
+        m_Scale: {x: 0.001, y: 5}
+        m_Offset: {x: 0, y: 0}
+    - _OSCGridRenderTexture:
+        m_Texture: {fileID: 8600000, guid: 85ba02ef33f4e4c4a94d9085f48ec5c1, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OSCGridRenderTextureRAW:
+        m_Texture: {fileID: 8600000, guid: 3bcce6f0fa9c3d4499ca3015b073785e, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OSCGridSpinTimer:
+        m_Texture: {fileID: 8600000, guid: 6e9260e8140b1ea4a97d6cc9a137efca, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OSCGridStrobeTimer:
+        m_Texture: {fileID: 8600000, guid: a0e2ea8d6ec133f4fb7ad6f74d904820, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionMainTex:
+        m_Texture: {fileID: 2800000, guid: 2e4e1fd2424262246bc882aa92947216, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex2:
+        m_Texture: {fileID: 2800000, guid: 1f4903470b878734aa4ae27981796635, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex3:
+        m_Texture: {fileID: 2800000, guid: 47336b42ad08b664aabea2ed84921b1a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex4:
+        m_Texture: {fileID: 2800000, guid: 940f239cf26d93d4681364c9d0d1e262, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex5:
+        m_Texture: {fileID: 2800000, guid: bbdb123cc81324348ac7aa7b6798d8ee, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProjectionTex6:
+        m_Texture: {fileID: 2800000, guid: b5eb285c3e64e0e4c81558d259a068bc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RendTexPrevFrame:
+        m_Texture: {fileID: 8600000, guid: fe8bb33ccf70ec842b876cf147e6bfc9, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RendTexPrevFrameEven:
+        m_Texture: {fileID: 8600000, guid: fe8bb33ccf70ec842b876cf147e6bfc9, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RendTexPrevFrameOdd:
+        m_Texture: {fileID: 8600000, guid: 94af0f81352065847b397e161587be3d, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SceneNormals:
+        m_Texture: {fileID: 8400000, guid: 97a6cc22a32ae15489c972f5447a21c0, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - FinalStrobeFreq: 0
+    - _BlendDst: 1
+    - _BlendOp: 0
+    - _BlendSrc: 2
+    - _BlueMultiplier: 1
+    - _BumpScale: 1
+    - _ConeLength: 1
+    - _ConeSync: 0.05
+    - _ConeWidth: 2.96
+    - _DMXChannel: 0
+    - _DNEnabler: 0
+    - _Desaturate: 1
+    - _DistFade: 9
+    - _Divide: 11.6
+    - _DividePower: 0.043
+    - _EnableCompatibilityMode: 1
+    - _EnableExtraChannels: 0
+    - _EnableOSC: 0
+    - _EnableSpin: 0
+    - _EnableStaticEmissionColor: 0
+    - _EnableStrobe: 0
+    - _EnableVerticalMode: 0
+    - _Fade: 1.5
+    - _FadeAmt: 1
+    - _FadeStrength: 6.5
+    - _FeatherOffset: 0.5
+    - _FinalIntensity: 1
+    - _FinalStrobeFreq: 0
+    - _FixtureBaseRotationY: 0
+    - _FixtureMaxIntensity: 0.55
+    - _FixtureRotationX: 0
+    - _GlobalIntensity: 1
+    - _Glossiness: 1
+    - _GoboBeamSplitEnable: 1
+    - _GreenMultiplier: 1
+    - _InnerFadeStrength: 7.5
+    - _InnerIntensityCurve: 20
+    - _IntensityCutoff: 0
+    - _IsEven: 0
+    - _LMStrength: 1
+    - _LegacyGoboRange: 0
+    - _LensMaxBrightness: 4
+    - _LightProbeMethod: 0
+    - _MaxConeLength: 1
+    - _MaxMinPanAngle: 90
+    - _MaxMinTiltAngle: -90
+    - _Metallic: 0.501
+    - _ModX: 0
+    - _ModY: 0
+    - _Noise2Power: 0.8
+    - _Noise2Stretch: 2.5
+    - _Noise2StretchInside: 2.5
+    - _Noise2X: 0
+    - _Noise2Y: 7.5
+    - _Noise2Z: 1
+    - _NoisePower: 0.75
+    - _NoiseSeed: 420
+    - _PanInvert: 0
+    - _ProjectionDistanceFallOff: 0.01
+    - _ProjectionFade: 2.35
+    - _ProjectionFadeCurve: 1.99
+    - _ProjectionIntensity: 2.34
+    - _ProjectionRange: 2.1
+    - _ProjectionRotation: -180
+    - _ProjectionSelection: 3.64
+    - _ProjectionShadowHarshness: 0.9
+    - _ProjectionUVMod: 0.219
+    - _ProjectionUVMod2: 0.219
+    - _ProjectionUVMod3: 0.234
+    - _ProjectionUVMod4: 0.201
+    - _ProjectionUVMod5: 0.192
+    - _ProjectionUVMod6: 0.159
+    - _PulseSpeed: 0
+    - _RTLMStrength: 1
+    - _RedMultiplier: 1
+    - _Saturation: 1
+    - _SaturationLength: 14
+    - _Sector: 0
+    - _SpecLMOcclusionAdjust: 0.2
+    - _SpecularLMOcclusion: 0
+    - _SpinSpeed: 2
+    - _StripeSplit: 9.1
+    - _StripeSplit2: 16.4
+    - _StripeSplit3: 5.2
+    - _StripeSplit4: 6.4
+    - _StripeSplit5: 22.1
+    - _StripeSplit6: 5.4
+    - _StripeSplit7: 9.1
+    - _StripeSplitStrength: 0.441
+    - _StripeSplitStrength2: 0.217
+    - _StripeSplitStrength3: 0.478
+    - _StripeSplitStrength4: 0.395
+    - _StripeSplitStrength5: 0.215
+    - _StripeSplitStrength6: 0.27
+    - _StripeSplitStrength7: 0.5
+    - _StrobeFreq: 16.61
+    - _TextureSampleMode: 0
+    - _TiltInvert: 0
+    - _ToggleMagicNoise: 1
+    - _TriplanarFalloff: 1
+    - _UniversalIntensity: 1
+    - _UseRawGrid: 1
+    - _UseWorldNorm: 0
+    - _XOffset: 0
+    - _YOffset: 0
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Emission: {r: 2.354159, g: 2.354159, b: 2.354159, a: 2}
+    - _EmissionColor: {r: 9.363626, g: 9.363626, b: 9.363626, a: 3}
+    - _FixtureRotationOrigin: {r: 0, g: 0, b: 0.301772, a: 0}
+    - _LightColor: {r: 23.968628, g: 23.968628, b: 23.968628, a: 1}
+    - _ProjectionRangeOrigin: {r: 0, g: -0.075354, b: 0.123875, a: 0}
+    - _StaticEmission: {r: 1, g: 1, b: 1, a: 1}
