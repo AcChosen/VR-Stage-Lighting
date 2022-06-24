@@ -1,4 +1,4 @@
-**Manufacturer**: VRChat
+**Manufacturer**: VR Stage Lighting
 **Fixture Name**: VRSL V1 Spotlight
 
 |Channel|Mapping|
