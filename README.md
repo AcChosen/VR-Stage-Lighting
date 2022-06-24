@@ -59,7 +59,7 @@ The majority of the overhead is powered through a standardized set of custom sha
 2. Have a look at any of the available example scenes. The inspectors of the shaders and scripts will have ToolTips about what they do. Proper documentation for each system will also be included in the same folder.
 
 <p align="center">
-  <img width="497" height="480" src="Doc/VRSL-LightDemonstration.gif">
+  <img width="497" height="480" src="Documentation/VRSL-LightDemonstration.gif">
 </p>
 
 ### Getting started (DMX VIA Stream Panel through Editor)
