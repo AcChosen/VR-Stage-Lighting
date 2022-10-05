@@ -102,4 +102,5 @@ More information about VRSL and many helpful tutorials can be found on this [rep
 ## Support
 
 If you'd like to support the project, you can do so via [patreon](https://www.patreon.com/ac_chosen), where you can also get some VRSL exclusives!~
+
 You can also join the official [VRSL discord](https://discord.gg/zPktZAe48r)! 
