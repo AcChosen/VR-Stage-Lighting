@@ -153,22 +153,24 @@ Material:
     - _NoisePower: 0.333
     - _NoiseSeed: 420
     - _PanInvert: 0
-    - _ProjectionDistanceFallOff: 0.01
+    - _ProjectionCutoff: 0.165
+    - _ProjectionDistanceFallOff: 0.0075
     - _ProjectionFade: 2.35
     - _ProjectionFadeCurve: 1.99
     - _ProjectionIntensity: 4.8
+    - _ProjectionOriginCutoff: 0.19
     - _ProjectionRange: 6.5
     - _ProjectionRotation: -180
     - _ProjectionSelection: 0
     - _ProjectionShadowHarshness: 0.9
-    - _ProjectionUVMod: 1
-    - _ProjectionUVMod2: 1
-    - _ProjectionUVMod3: 0.95
-    - _ProjectionUVMod4: 1
-    - _ProjectionUVMod5: 1
-    - _ProjectionUVMod6: 1
-    - _ProjectionUVMod7: 1
-    - _ProjectionUVMod8: 1
+    - _ProjectionUVMod: 0.8
+    - _ProjectionUVMod2: 0.8
+    - _ProjectionUVMod3: 0.8
+    - _ProjectionUVMod4: 0.8
+    - _ProjectionUVMod5: 0.8
+    - _ProjectionUVMod6: 0.8
+    - _ProjectionUVMod7: 0.8
+    - _ProjectionUVMod8: 0.8
     - _PulseSpeed: 0
     - _RTLMStrength: 1
     - _RedMultiplier: 1

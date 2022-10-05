@@ -78,7 +78,7 @@
 		_InnerFadeStrength("Inner Fade Strength", Range(0.00001,10)) = 0.00001
 		_InnerIntensityCurve("Inner Intensity Curve", Range(0.00001,20)) = 1
 		_DistFade("Distance Fade", Range(0,20)) = 0.1
-		_FadeAmt("Depth Blending", Range(0, 10)) = 0.1
+		_FadeAmt("Depth Blending", Range(0, 100)) = 0.1
 		//_IntensityCutoff("Intensity Minimum Cut Off", Range (0, 1)) = 0.2
 		[Toggle]_GoboBeamSplitEnable("Enable Splitting the beam on Gobos 2-6", Int) = 0
 		_StripeSplit ("Stripe Split GOBO2", Range(0, 30)) = 0
@@ -98,6 +98,8 @@
 
 		[Toggle] _EnableSpin("Enable Auto Spinning", Float) = 0
 		_SpinSpeed ("Auto Spin Speed", Range(-10, 10)) = 0
+		_GradientMod ("Gradient Modifier", Range(1, 4)) = 2.25
+		_GradientModGOBO ("Gradient Modifier GOBO", Range(1, 4)) = 2.25
 
 
 
@@ -171,6 +173,7 @@
 				float4 emissionColor : TEXCOORD12;
 				float2 uv2 : TEXCOORD13;
 				float4 worldDirection : TEXCOORD14;
+				float coneWidth : TEXCOORD15;
 				//float3 intensityStrobeGOBOSpinSpeed : TEXCOORD15;
 				//float4 rgbColor : TEXCOORD16;
 

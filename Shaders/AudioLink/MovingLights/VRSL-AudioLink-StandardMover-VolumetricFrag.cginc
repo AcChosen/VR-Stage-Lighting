@@ -16,11 +16,11 @@ float Fresnel(float3 Normal, float3 ViewDir, float Power)
 
 //3D noise based on iq's https://www.shadertoy.com/view/4sfGzS
 //HLSL conversion by Orels1~
-half Noise(half3 p)
+half Noise(float3 p)
 {
-  half3 i = floor(p); p -= i; 
+  float3 i = floor(p); p -= i; 
   p *= p * (3. - 2. * p);
-  half2 uv = (p.xy + i.xy + half2(37, 17) * i.z + .5)*0.00390625;
+  float2 uv = (p.xy + i.xy + float2(37, 17) * i.z + .5)*0.00390625;
   //uv.y *= -1;
   float4 uv4 = float4(uv.x, uv.y * -1, 0.0, 0.0);
   p.xy = tex2Dlod(_LightMainTex, uv4).yx;
@@ -65,6 +65,8 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 			return half4(0,0,0,0);
 		}
 	#endif
+
+	half widthNormalized = i.coneWidth/5.5;
 	//not sure why this was here... Keeping it just in case... it shouldn't do anything technically.
 	// i.uv.x = saturate(i.uv.x);
 	// i.uv.y = saturate(i.uv.y);
@@ -102,6 +104,7 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 
 	//Attempt to fade cone away when intersecting with another object
 	float intersectionFade = saturate(((depth * _ProjectionParams.z) - i.screenPos.w));
+	intersectionFade = lerp(1, intersectionFade, saturate(i.uv.x * _FadeAmt));
 	//Attempt to fade cone away when intersecting with the camera.
 	
 	//Starts to fade about 1 meter away(x/1). increase divisor to increase distance
@@ -118,7 +121,9 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 
 	//Generate gradient for cone.
 	// #ifndef WASH
-		fixed gradientTexture = saturate((pow(-uvMap.x + 1, 2.25)));
+		half grad = gobo > 1 ? _GradientModGOBO * 0.6f : _GradientMod * 0.8f;
+		fixed gradientTexture = saturate((pow(-uvMap.x + 1, grad)));
+		//fixed gradientTexture = saturate((pow(-uvMap.x + 1, 2.25)));
 	// #else
 	// 	float camFadeMod = saturate(1/(i.camAngleLen.y));
 	// 	fixed gradientTexture = saturate((pow(-uvMap.x + 1, lerp(2.25, 2.25+(getConeWidth()),camFadeMod))));
@@ -143,7 +148,8 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 	else
 	{
 		//Reduce fade strength if closer to source of light
-		float fadeSTR = lerp(1.0, _FadeStrength, saturate(pow(i.uv.x, 0.1) + 0.05));
+		//float fadeSTR = lerp(1.0, _FadeStrength, saturate(pow(i.uv.x, 0.1) + 0.05));
+		float fadeSTR = lerp(1.0, _FadeStrength + (lerp(5.0, 0.5, widthNormalized)), saturate(pow(i.uv.x, 0.1) + 0.05));
 		edgeFade = Fresnel(i.objNormal, viewDir, fadeSTR);
 		noiseScaleThreeD = _Noise2StretchInside;
 	}
@@ -157,8 +163,8 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 
 	//Generate 2D noise texture, add scroll effect, and map to cone.
 	float2 texUV = i.uv2;
-	texUV.x = texUV.x + _Time * 0.75;
-	texUV.y = texUV.y + _Time * 0.1;
+	texUV.x = texUV.x + (_Time.y*0.1) * 0.75;
+	texUV.y = texUV.y + (_Time.y*0.1) * 0.1;
 		#if !defined(WASH)
 		float4 tex = tex2D(_NoiseTex, texUV);
 		#else
@@ -176,9 +182,9 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		//Get vertex/frag position in worldspace
 		float3 worldposNoise = i.worldPos.xyz;
 		//Add Scrolling effect
-		worldposNoise.x += (_Time * _Noise2X);
-		worldposNoise.y += (_Time * _Noise2Y);
-		worldposNoise.z += (_Time * _Noise2Z);
+		worldposNoise.x += ((_Time.y*0.1) * _Noise2X);
+		worldposNoise.y += ((_Time.y*0.1) * _Noise2Y);
+		worldposNoise.z += ((_Time.y*0.1) * _Noise2Z);
 		//Add Tiling effect
 		float3 q = noiseScaleThreeD * worldposNoise.xyz;
 
@@ -233,8 +239,10 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 	col.xyz = lerp(col.xyz, newCol.xyz, _Saturation);
 
 	//Mix in blinding effect.
-	col*= ((i.blindingEffect * (i.blindingEffect * 0.25)));
-	col*=6.0;
+	// col*= ((i.blindingEffect * (i.blindingEffect * 0.25)));
+	//col*= ((i.blindingEffect));
+	col = lerp(col, col*i.blindingEffect * i.blindingEffect * 10, gradientTexture);
+	//col*=6.0;
 	col = lerp(col, fixed4(0,0,0,0), saturate(pow(i.uv.x,.5)));
 
 	#if !defined(WASH)
@@ -276,7 +284,8 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 	//Mix in the rest of the external intensity properties.
 	result = lerp(result, r2, gifi);
 	result = lerp(half4(0,0,0,result.w), result, gifi);
-	result *= _FixtureMaxIntensity * _UniversalIntensity;
+	result *= _UniversalIntensity;
+	result *= (_FixtureMaxIntensity - (lerp(0.15, _FixtureMaxIntensity * 0.95, pow(widthNormalized,0.4))));
 	#ifndef RAW
 		result = lerp(half4(0,0,0,result.w), result, audioReact * audioReact);
 	#endif

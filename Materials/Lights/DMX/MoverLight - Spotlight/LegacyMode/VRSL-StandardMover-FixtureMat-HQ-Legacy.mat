@@ -123,7 +123,7 @@ Material:
     - _FixtureBaseRotationY: 0
     - _FixtureMaxIntensity: 0.228
     - _FixtureRotationX: 180
-    - _FixutreIntensityMultiplier: 8.61
+    - _FixutreIntensityMultiplier: 1
     - _GlobalIntensity: 1
     - _Glossiness: 0.877
     - _InnerFadeStrength: 0.58

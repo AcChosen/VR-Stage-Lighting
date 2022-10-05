@@ -107,13 +107,13 @@ Material:
     - _BlendSrc: 2
     - _BlueMultiplier: 1
     - _BumpScale: 1
-    - _ConeLength: 1
+    - _ConeLength: 5.63
     - _ConeSync: 0.147
     - _ConeWidth: 2.96
     - _DMXChannel: 0
     - _DNEnabler: 0
     - _Desaturate: 1
-    - _DistFade: 9
+    - _DistFade: 1
     - _Divide: 11.6
     - _DividePower: 0.043
     - _EnableCompatibilityMode: 0
@@ -124,7 +124,7 @@ Material:
     - _EnableStrobe: 0
     - _EnableVerticalMode: 0
     - _Fade: 1.5
-    - _FadeAmt: 0.25
+    - _FadeAmt: 95
     - _FadeStrength: 10
     - _FeatherOffset: 0.5
     - _FinalIntensity: 1
@@ -132,11 +132,13 @@ Material:
     - _FixtureBaseRotationY: 0
     - _FixtureMaxIntensity: 0.5
     - _FixtureRotationX: 0
-    - _GlobalIntensity: 1
+    - _GlobalIntensity: 0.938
     - _Glossiness: 1
     - _GoboBeamSplitEnable: 0
+    - _GradientMod: 2.25
+    - _GradientModGOBO: 2.25
     - _GreenMultiplier: 1
-    - _InnerFadeStrength: 9.26
+    - _InnerFadeStrength: 10
     - _InnerIntensityCurve: 20
     - _IntensityCutoff: 0
     - _IsEven: 0
@@ -144,13 +146,13 @@ Material:
     - _LegacyGoboRange: 0
     - _LensMaxBrightness: 1
     - _LightProbeMethod: 0
-    - _MaxConeLength: 1
+    - _MaxConeLength: 4.97
     - _MaxMinPanAngle: 90
     - _MaxMinTiltAngle: -90
     - _Metallic: 0.501
     - _ModX: 0
     - _ModY: 0
-    - _Noise2Power: 0.75
+    - _Noise2Power: 0.96
     - _Noise2Stretch: 2
     - _Noise2StretchInside: 1.5
     - _Noise2X: 0

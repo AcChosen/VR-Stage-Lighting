@@ -64,7 +64,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ProjectionMainTex:
-        m_Texture: {fileID: 2800000, guid: d442c6ef66e42204b9beb47ca297e21d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1961ec7834bd7b143b373bab851dfec2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ProjectionTex2:
@@ -153,15 +153,17 @@ Material:
     - _NoisePower: 0.333
     - _NoiseSeed: 420
     - _PanInvert: 0
+    - _ProjectionCutoff: 0.12
     - _ProjectionDistanceFallOff: 0.01
     - _ProjectionFade: 2.35
     - _ProjectionFadeCurve: 1.99
     - _ProjectionIntensity: 4.8
+    - _ProjectionOriginCutoff: 0.35
     - _ProjectionRange: 20
     - _ProjectionRotation: -180
     - _ProjectionSelection: 0
     - _ProjectionShadowHarshness: 0.9
-    - _ProjectionUVMod: 1.4
+    - _ProjectionUVMod: 1
     - _ProjectionUVMod2: 1
     - _ProjectionUVMod3: 1
     - _ProjectionUVMod4: 1

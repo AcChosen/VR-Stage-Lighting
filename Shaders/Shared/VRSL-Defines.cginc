@@ -80,6 +80,7 @@ half _RedMultiplier, _GreenMultiplier, _BlueMultiplier;
 
 int _EnableStaticEmissionColor;
 float4 _StaticEmission;
+half _ProjectionCutoff, _ProjectionOriginCutoff, _GradientMod, _GradientModGOBO;
 
 //Instanced Properties
 

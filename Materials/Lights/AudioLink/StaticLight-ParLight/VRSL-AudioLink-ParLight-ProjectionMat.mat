@@ -132,7 +132,7 @@ Material:
     - _ProjectionFade: 1.73
     - _ProjectionFadeCurve: 0.96
     - _ProjectionIntensity: 0
-    - _ProjectionMaxIntensity: 0.94799995
+    - _ProjectionMaxIntensity: 5
     - _ProjectionRange: 7
     - _ProjectionRotation: 125
     - _ProjectionSelection: 0

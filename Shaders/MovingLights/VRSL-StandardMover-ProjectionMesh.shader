@@ -69,7 +69,7 @@
 		_ProjectionIntensity ("Projection Intensity", Range(0,20)) = 0
 		_ProjectionFade("Projection Edge Fade", Range(0,10)) = 0
 		_ProjectionFadeCurve("Projection Edge Fade Harshness", Range(0, 10)) = 1
-		_ProjectionDistanceFallOff("Projection Distance Fallof Strength", Range(0.01,0.5)) = 0.05
+		_ProjectionDistanceFallOff("Projection Distance Fallof Strength", Range(0.001,0.5)) = 0.05
 		_ProjectionRange ("Projection Drawing Range", Range(0,10)) = 0
 		_ProjectionRangeOrigin ("Projection Drawing Range Scale Origin", Float) = (0, -0.07535, 0.12387, 0)
 		_ProjectionShadowHarshness("Projection Shadow Harshness", Range(0,1)) = 0
@@ -94,6 +94,9 @@
 		_RedMultiplier ("Red Channel Multiplier", Range(0, 5)) = 1
 		_GreenMultiplier ("Green Channel Multiplier", Range(0, 5)) = 1
 		_BlueMultiplier ("Blue Channel Multiplier", Range(0,5)) = 1
+
+		_ProjectionCutoff("Projection Cutoff Point", Range(0,1)) = 0.25
+		_ProjectionOriginCutoff("Projection Origin Cutoff Point", Range(0,3)) = 0.25
 		//_Fade ("Fade mod", Range(0, 6)) = 1.5
 
 

@@ -56,33 +56,47 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SamplingTexture:
-        m_Texture: {fileID: 2800000, guid: ba9a307ceadf5564683f0e0af8af748c, type: 3}
+        m_Texture: {fileID: 8600000, guid: b6cf0db1726c59641bb1fb9e7248ea45, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AltXRotation: 0
+    - _AltYRotation: 0
+    - _AltZRotation: 0
+    - _Band: 0
+    - _BandMultiplier: 1
+    - _BeamMaskStrength: 55.1
+    - _BeamSlice: 1.39
+    - _BeamSplit: 1
+    - _BeamThing: 1
+    - _BlackOut: 1
     - _BumpScale: 1
     - _Cutoff: 0.5
+    - _Delay: 0
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _EnableAudioLink: 0
     - _EnableColorChord: 0
     - _EnableColorTextureSample: 0
     - _EndFade: 2.05
-    - _FadeStrength: 0
+    - _FadeStrength: 1
     - _FinalIntensity: 1
     - _FlatEdgeFadeStrength: 4.82
     - _GlobalIntensity: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InternalShine: 5
+    - _InternalShine: 3.46
+    - _InternalShineLength: 202
     - _LaserCount: 14
     - _LaserSoftening: 5
-    - _LaserThickness: 0.142
+    - _LaserThickness: 0.005
+    - _MaskStrength: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Scroll: 0.1
+    - _Scroll: 0.022
     - _SmoothnessTextureChannel: 0
     - _SourceIntensity: 5
     - _SpecularHighlights: 1
@@ -91,11 +105,12 @@ Material:
     - _TextureColorSampleY: 0.5
     - _UVSec: 0
     - _UniversalIntensity: 1
-    - _VertexConeLength: -0.4
+    - _VertexConeLength: 1.19
     - _VertexConeWidth: 1
-    - _XRotation: -90
+    - _XRotation: 0
     - _YRotation: 0
     - _ZConeFlatness: 0
+    - _ZConeFlatnessAlt: 0
     - _ZRotation: 0
     - _ZWrite: 1
     m_Colors:
