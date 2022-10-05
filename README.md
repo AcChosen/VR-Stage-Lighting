@@ -1,12 +1,6 @@
-![alt text](https://i.imgur.com/XJtiP9f.png)
+![vrsl-compact](https://user-images.githubusercontent.com/107726700/194073524-eb74f90e-2d40-440c-adea-38a5e0d4ec19.png)
 
 VR Stage Lighting is a collection of shaders, scripts, and models designed to emulate the real control, quality, and complexity of professional stage lighting into VRChat in as many ways as possible.
-
-<a href="https://youtu.be/3yaEsIQVaHA">
-  <p align="center">
-    <img src="Documentation/VRSL-GitHubTrailer-Short.gif">
-  </p>
-</a>
 
 VR Stage Lighting is a year-long project that started out as a means to research and develop a performant/reliable way to send lighting data (including DMX512) to VRChat. It has evolved into creating a package of assets that can bring quality lighting effects in all manner of ways performantly.
 
@@ -41,7 +35,7 @@ See the [Project Setup](https://github.com/AcChosen/VR-Stage-Lighting/wiki/Getti
 ## About VRSL
 
 <p align="center">
-  <img width="497" height="480" src="Documentation/VRSL-LightDemonstration.gif">
+  <img src="https://user-images.githubusercontent.com/107726700/194073714-4685c990-a23b-474d-b2a5-beff83d9e8c8.gif">
 </p>
 
 ### DMX Via Video Artnet Gridnode
@@ -74,11 +68,11 @@ You can purchase a copy [here](https://gumroad.com/l/xYaPu), and your support wi
 
 It is not required for use with AudioLink.
 
-## Local UI Panel
+### Local UI Panel
 
 A UI panel that can control the intensity of the different lighting shaders is also included. Plop this panel in your world to allow users to locally control the brightness of each aspect of the lights, or all lights at once. It also includes a slider for bloom intensity and a pre-made post processing volume for it.
 
-## Audio Reaction via AudioLink
+### Audio Reaction via AudioLink
 
 A varation of these shaders support [AudioLink by llealloo](https://github.com/llealloo/vrc-udon-audio-link).
 
@@ -97,11 +91,13 @@ You can get Audiolink as well as learn more about it [here](https://github.com/l
 - The system currently supports a little over 3 Universes.
   - Support for more is planned for the future.
 
-<a>
-  <p align="center">
-    <img src="Documentation/VRSl-Kradt-ComeWithMe-RecDemo-Short.gif">
-  </p>
-</a>
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/107726700/194075483-c4eb51fb-40da-4974-9820-bfb1ede75ab4.gif">
+</p>
+
+## Wiki
+
+More information about VRSL and many helpful tutorials can be found on this [repo's wiki](https://github.com/AcChosen/VR-Stage-Lighting/wiki).
 
 ## Support
 
