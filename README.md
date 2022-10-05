@@ -1,6 +1,6 @@
 ![vrsl-compact](https://user-images.githubusercontent.com/107726700/194073524-eb74f90e-2d40-440c-adea-38a5e0d4ec19.png)
 
-VR Stage Lighting is a collection of shaders, scripts, and models designed to emulate the real control, quality, and complexity of professional stage lighting into VRChat in as many ways as possible.
+<h2 align="center"> VR Stage Lighting is a collection of shaders, scripts, and models designed to emulate professional stage lighting into VRChat in as many ways as possible.</h2>
 
 VR Stage Lighting is a year-long project that started out as a means to research and develop a performant/reliable way to send lighting data (including DMX512) to VRChat. It has evolved into creating a package of assets that can bring quality lighting effects in all manner of ways performantly.
 
