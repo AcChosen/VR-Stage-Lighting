@@ -33,7 +33,7 @@
   <Channel Number="4" ActsOn="9">Blue</Channel>
   <Channel Number="5" ActsOn="6">Strobe</Channel>
  </Mode>
- <Mode Name="13CH - LEGACY">
+ <Mode Name="13CH - Mode">
   <Channel Number="0" ActsOn="0">Null0</Channel>
   <Channel Number="1" ActsOn="1">Null1</Channel>
   <Channel Number="2" ActsOn="2">Null2</Channel>
