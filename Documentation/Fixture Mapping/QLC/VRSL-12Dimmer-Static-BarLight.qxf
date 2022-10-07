@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FixtureDefinition>
+<FixtureDefinition xmlns="http://www.qlcplus.org/FixtureDefinition">
+ <Creator>
+  <Name>Q Light Controller Plus</Name>
+  <Version>4.12.6</Version>
+  <Author>Sk3leCreeper</Author>
+ </Creator>
+ <Manufacturer>VRSL</Manufacturer>
+ <Model>12 Dimmer BarLight</Model>
+ <Type>LED Bar (Beams)</Type>
+ <Channel Name="Red" Preset="IntensityRed"/>
+ <Channel Name="Green" Preset="IntensityGreen"/>
+ <Channel Name="Blue" Preset="IntensityBlue"/>
+ <Channel Name="Dimmer 1" Preset="IntensityDimmer"/>
+ <Channel Name="Dimmer 2" Preset="IntensityDimmer"/>
+ <Channel Name="Dimmer 3" Preset="IntensityDimmer"/>
+ <Channel Name="Dimmer 4" Preset="IntensityDimmer"/>
+ <Channel Name="Dimmer 5" Preset="IntensityDimmer"/>
+ <Channel Name="Dimmer 6" Preset="IntensityDimmer"/>
+ <Channel Name="Dimmer 7" Preset="IntensityDimmer"/>
+ <Channel Name="Dimmer 8" Preset="IntensityDimmer"/>
+ <Channel Name="Dimmer 9" Preset="IntensityDimmer"/>
+ <Channel Name="Dimmer 10" Preset="IntensityDimmer"/>
+ <Channel Name="Dimmer 11" Preset="IntensityDimmer"/>
+ <Channel Name="Dimmer 12" Preset="IntensityDimmer"/>
+ <Mode Name="15CH - Mode">
+  <Channel Number="0" ActsOn="0">Red</Channel>
+  <Channel Number="1" ActsOn="1">Green</Channel>
+  <Channel Number="2" ActsOn="2">Blue</Channel>
+  <Channel Number="3" ActsOn="3">Dimmer 1</Channel>
+  <Channel Number="4" ActsOn="4">Dimmer 2</Channel>
+  <Channel Number="5" ActsOn="5">Dimmer 3</Channel>
+  <Channel Number="6" ActsOn="6">Dimmer 4</Channel>
+  <Channel Number="7" ActsOn="7">Dimmer 5</Channel>
+  <Channel Number="8" ActsOn="8">Dimmer 6</Channel>
+  <Channel Number="9" ActsOn="9">Dimmer 7</Channel>
+  <Channel Number="10" ActsOn="10">Dimmer 8</Channel>
+  <Channel Number="11" ActsOn="11">Dimmer 9</Channel>
+  <Channel Number="12" ActsOn="12">Dimmer 10</Channel>
+  <Channel Number="13" ActsOn="13">Dimmer 11</Channel>
+  <Channel Number="14" ActsOn="14">Dimmer 12</Channel>
+ </Mode>
+ <Physical>
+  <Bulb Type="yes" Lumens="0" ColourTemperature="0"/>
+  <Dimensions Weight="0" Width="0" Height="0" Depth="0"/>
+  <Lens Name="Other" DegreesMin="0" DegreesMax="0"/>
+  <Focus Type="Fixed" PanMax="0" TiltMax="0"/>
+  <Technical PowerConsumption="0" DmxConnector="5-pin"/>
+ </Physical>
+</FixtureDefinition>
