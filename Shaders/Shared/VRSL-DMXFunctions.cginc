@@ -68,7 +68,8 @@ float getValueAtCoords(uint DMXChannel, sampler2D _Tex)
         //I don't know why, but we need this for some reason otherwise the 13th channel gets shifted around improperly.
         //I"m not sure how to express these exception ranges mathematically. Doing so would be much more cleaner though.
         y = DMXChannel >= 90 && DMXChannel <= 101 ? y - 1 : y;
-        y = DMXChannel >= 160 && DMXChannel <= 404 ? y - 1 : y;
+        y = DMXChannel >= 160 && DMXChannel <= 205 ? y - 1 : y;
+        y = DMXChannel >= 326 && DMXChannel <= 404 ? y - 1 : y;
         y = DMXChannel >= 676 && DMXChannel <= 819 ? y - 1 : y;
         y = DMXChannel >= 1339 ? y - 1 : y;
     }
