@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: VRSL-DMXGlobalExport Udon C# Program Asset
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 247e96171d5523249822f5b5e0ba3a82,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 1f351f0a908e9014ca5a7cfae204823b,
     type: 2}
   udonAssembly: 
   assemblyError: 

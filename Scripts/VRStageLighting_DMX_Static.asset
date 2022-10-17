@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: VRStageLighting_DMX_Static
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 73c0c1abc14a568409919c82ce7846d0,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: efd0a0ccb562b3d41ac3a217237f307a,
     type: 2}
   udonAssembly: 
   assemblyError: 

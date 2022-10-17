@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: VRSL_LocalUIControlPanel
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: c7d284f0cee3ab2499e5263091ea28d5,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 82649152024ff5b4196fe9c8b13aab42,
     type: 2}
   udonAssembly: 
   assemblyError: 
