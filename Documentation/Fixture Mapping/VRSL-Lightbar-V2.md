@@ -1,5 +1,17 @@
-**Manufacturer**: VRChat
-**Fixture Name**: VRSL V1 Lightbar
+**Manufacturer**: VR Stage Lighting
+
+**Fixture Name**: VRSL Lightbar
+
+**5 Channel Mode:**
+|Channel|Mapping|
+|----|-----------------|
+| 1  | Dimmer          |
+| 2  | Red             |
+| 3  | Green           |
+| 4  | Blue            |
+| 5  | Strobe          |
+
+**13 Channel Mode:**
 
 |Channel|Mapping|
 |----|-----------------|
@@ -8,11 +20,11 @@
 | 3  |                 |
 | 4  |                 |
 | 5  |                 |
-| 6  | Intensity       |
+| 6  | Dimmer          |
 | 7  | Strobe          |
-| 8  | Red Intensity   |
-| 9  | Green Intensity |
-| 10 | Blue Intensity  |
+| 8  | Red             |
+| 9  | Green           |
+| 10 | Blue            |
 | 11 |                 |
 | 12 |                 |
 | 13 |                 |

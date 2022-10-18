@@ -1,19 +1,13 @@
-**Manufacturer**: VRChat
-**Fixture Name**: VRSL V1 PAR
+**Manufacturer**: VR Stage Lighting
+
+**Fixture Name**: VRSL 6x4 Light
+
+**5 Channel Mode:**
 
 |Channel|Mapping|
 |----|-----------------|
-| 1  |                 |
-| 2  |                 |
-| 3  |                 |
-| 4  |                 |
-| 5  |                 |
-| 6  | Intensity       |
-| 7  | Strobe          |
-| 8  | Red Intensity   |
-| 9  | Green Intensity |
-| 10 | Blue Intensity  |
-| 11 |                 |
-| 12 |                 |
-| 13 |                 |
-
+| 1  | Dimmer          |
+| 2  | Red             |
+| 3  | Green           |
+| 4  | Blue            |
+| 5  | Strobe          |
