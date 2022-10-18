@@ -29,11 +29,11 @@
 		[HDR]_Emission("Light Color Tint", Color) = (1,1,1,1)
 		_Saturation("Final Saturation", Range(0,1)) = 1
 		_SaturationLength("Final Saturation Length", Range(0,0.2)) = 0.1
-		_LensMaxBrightness("Lens Max Brightness", Range(0.00, 20)) = 5
+		_LensMaxBrightness("Lens Max Brightness", Range(0.00, 200)) = 5
 		_ConeWidth("Cone Width", Range(0,5.5)) = 0
 		_ConeLength("Cone Length", Range(1,10)) = 1
 		_ConeSync ("Cone Scale Sync", Range(0,1)) = 0.2
-		_FixutreIntensityMultiplier ("Intensity Multipler (For Bloom Scaling)", Range(1,10)) = 1
+		_FixutreIntensityMultiplier ("Intensity Multipler (For Bloom Scaling)", Range(1,100)) = 1
 
 		// _BlockLengthX("OSC Block Base Distance X", Float) = 0.019231
 		// _BlockLengthY("OSC Block Base Distance Y", Float) = 0
@@ -98,15 +98,15 @@
 		
 		Tags{ "Queue" = "AlphaTest+1" "RenderType" = "Opaque" }
 
-		Stencil
-            {
+		// Stencil
+        //     {
 				
-                Ref 142
-                Comp GEqual
-                Pass Replace
-				//ZFail Replace
+        //         Ref 142
+        //         Comp GEqual
+        //         Pass Replace
+		// 		//ZFail Replace
 
-            }
+        //     }
 
 		Pass
 	{
@@ -173,7 +173,59 @@ RWStructuredBuffer<float4> buffer4 : register(u2);
 
 	ENDCG
 	}
-	//UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
+			Pass
+	{
+		Tags {"LightMode"="ShadowCaster"}
+
+		CGPROGRAM
+		#define FIXTURE_SHADOWCAST
+		#pragma vertex vert
+		#pragma fragment frag
+		#pragma multi_compile_shadowcaster
+		#pragma multi_compile_instancing
+		#include "UnityCG.cginc"
+		
+
+		struct appdata
+		{
+			float4 vertex : POSITION;
+			float2 uv : TEXCOORD0;
+			float2 uv1 : TEXCOORD1;
+			float2 uv2 : TEXCOORD2;
+			float3 normal : NORMAL;
+			float3 tangent : TANGENT;
+			float4 color : COLOR;
+			UNITY_VERTEX_INPUT_INSTANCE_ID
+		};
+
+		struct v2f
+		{
+			float4 pos : SV_POSITION;
+			float3 normal: TEXCOORD0;
+			UNITY_VERTEX_INPUT_INSTANCE_ID
+			UNITY_VERTEX_OUTPUT_STEREO
+			//SHADOW_COORDS(11)
+		};
+		#include "../Shared/VRSL-Defines.cginc"
+		#include "../Shared/VRSL-DMXFunctions.cginc"
+		#include "VRSL-StandardMover-Vertex.cginc"
+
+		// v2f vert(appdata_base v)
+		// {
+		// 	// v2f o;
+		// 	// o.pos = UnityObjectToClipPos(v.vertex);
+		// 	// o.normal = 
+		// 	//TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+		// 	return o;
+		// }
+
+		// float4 frag(v2f i) : SV_Target
+		// {
+		// 	//SHADOW_CASTER_FRAGMENT(i)
+		// 	return float4(0,0,0,0);
+		// }
+	ENDCG
+	}
 
 
 	}

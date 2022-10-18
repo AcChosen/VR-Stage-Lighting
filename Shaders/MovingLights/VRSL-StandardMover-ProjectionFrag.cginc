@@ -205,6 +205,16 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 //convert view space coordinate to world space coordinate. 
                 //Wpos is now coordinates for intersection.
 
+                //get the projection in object space
+                float3 oPos = mul(unity_WorldToObject, float4(wpos,1)).xyz;
+                if((distance(oPos, _FixtureRotationOrigin) < _ProjectionCutoff) || distance(oPos, float4(0,0,0,0)) < _ProjectionOriginCutoff)
+                {
+                    //check the distance of rotation origin to the set cutoff value.
+                    //if distance is less that the set value, discard the pixel.
+                    //this is used to prevent the projection from bleeding on to the source fixture mesh.
+                    discard;
+                }
+
                 float distanceFromOrigin = abs(distance(objectOrigin , wpos));
                 float projChooser = IF(isOSC() == 1, selection, instancedGOBOSelection());
                 //Get distance of intersection from the origin in world space

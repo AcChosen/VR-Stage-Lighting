@@ -4,7 +4,7 @@ uint getDMXChannel()
 {
     return (uint) round(UNITY_ACCESS_INSTANCED_PROP(Props, _DMXChannel));  
 }
-
+#ifndef LASER
 uint checkPanInvertY()
 {
     return (uint) UNITY_ACCESS_INSTANCED_PROP(Props, _PanInvert);
@@ -13,6 +13,7 @@ uint checkTiltInvertZ()
 {
     return (uint) UNITY_ACCESS_INSTANCED_PROP(Props, _TiltInvert);
 }
+#endif
 
 float2 LegacyRead(int channel, int sector)
 {
@@ -31,8 +32,9 @@ float2 LegacyRead(int channel, int sector)
 
         x+= (xmod * 0.50);
         y+= (ymod * 0.04);
-
+        y-= sector >= 23 ? 0.025 : 0.0;
         x+= (channel * 0.04);
+        x-= sector >= 40 ? 0.01 : 0.0;
         //we are now on the correct
         return float2(x,y);
 
@@ -46,7 +48,7 @@ float2 IndustryRead(int x, int y, uint DMXChannel)
     
     xyUV.x = ((x * resMultiplierX) * _OSCGridRenderTextureRAW_TexelSize.x);
     xyUV.y = (y * resMultiplierX) * _OSCGridRenderTextureRAW_TexelSize.y;
-    xyUV.y -= 0.001;
+    xyUV.y -= 0.001915;
     xyUV.x -= 0.015;
    // xyUV.x = DMXChannel == 15 ? xyUV.x + 0.0769 : xyUV.x;
     return xyUV;
@@ -65,7 +67,9 @@ float getValueAtCoords(uint DMXChannel, sampler2D _Tex)
     
         //I don't know why, but we need this for some reason otherwise the 13th channel gets shifted around improperly.
         //I"m not sure how to express these exception ranges mathematically. Doing so would be much more cleaner though.
-        y = DMXChannel >= 90 && DMXChannel <= 404 ? y - 1 : y;
+        y = DMXChannel >= 90 && DMXChannel <= 101 ? y - 1 : y;
+        y = DMXChannel >= 160 && DMXChannel <= 205 ? y - 1 : y;
+        y = DMXChannel >= 326 && DMXChannel <= 404 ? y - 1 : y;
         y = DMXChannel >= 676 && DMXChannel <= 819 ? y - 1 : y;
         y = DMXChannel >= 1339 ? y - 1 : y;
     }
@@ -100,7 +104,7 @@ float getValueAtCoordsRaw(uint DMXChannel, sampler2D _Tex)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if defined(VOLUMETRIC_YES) || defined(PROJECTION_YES) || defined(FIXTURE_EMIT)
+#if defined(VOLUMETRIC_YES) || defined(PROJECTION_YES) || defined(FIXTURE_EMIT) || defined(FIXTURE_SHADOWCAST)
     float getMinMaxPan()
     {
         return UNITY_ACCESS_INSTANCED_PROP(Props,_MaxMinPanAngle);
@@ -115,7 +119,7 @@ uint isOSC()
 {
     return UNITY_ACCESS_INSTANCED_PROP(Props,_EnableOSC);
 }
-
+#ifndef LASER
 uint isStrobe()
 {
     return UNITY_ACCESS_INSTANCED_PROP(Props,_EnableStrobe);
@@ -141,11 +145,12 @@ float getStrobeFreq()
 {
     return UNITY_ACCESS_INSTANCED_PROP(Props,_StrobeFreq);
 }
+#endif
 float4 getEmissionColor()
 {
     return UNITY_ACCESS_INSTANCED_PROP(Props,_Emission);
 }
-
+#ifndef LASER
 float getConeWidth()
 {
     return UNITY_ACCESS_INSTANCED_PROP(Props,_ConeWidth) - 1.0;
@@ -169,7 +174,7 @@ float getMaxConeLength(uint DMXChannel)
     return UNITY_ACCESS_INSTANCED_PROP(Props, _MaxConeLength);
     #endif
 }
-
+#endif
 float getGlobalIntensity()
 {
     return UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensity);
@@ -179,7 +184,7 @@ float getFinalIntensity()
 {
     return UNITY_ACCESS_INSTANCED_PROP(Props, _FinalIntensity);
 }
-
+#ifndef LASER
 float GetStrobeOutput(uint DMXChannel)
 {
     
@@ -261,7 +266,7 @@ float GetPanValue(uint DMXChannel)
 {
     float inputValue = getValueAtCoords(DMXChannel, _OSCGridRenderTexture);
     //inputValue = (inputValue + (GetFinePanValue(DMXChannel) * 0.01));
-    #if defined(VOLUMETRIC_YES) || defined(PROJECTION_YES) || defined(FIXTURE_EMIT)
+    #if defined(VOLUMETRIC_YES) || defined(PROJECTION_YES) || defined(FIXTURE_EMIT) || defined(FIXTURE_SHADOWCAST)
         return IF(isOSC() == 1, ((getMinMaxPan() * 2) * (inputValue)) - getMinMaxPan(), 0.0);
     #else
         return IF(isOSC() == 1, ((_MaxMinPanAngle * 2) * (inputValue)) - _MaxMinPanAngle, 0.0);
@@ -279,7 +284,7 @@ float GetTiltValue(uint DMXChannel)
 {
     float inputValue = getValueAtCoords(DMXChannel + 2, _OSCGridRenderTexture);
     //inputValue = (inputValue + (GetFineTiltValue(DMXChannel) * 0.01));
-    #if defined(VOLUMETRIC_YES) || defined(PROJECTION_YES) || defined(FIXTURE_EMIT)
+    #if defined(VOLUMETRIC_YES) || defined(PROJECTION_YES) || defined(FIXTURE_EMIT) || defined(FIXTURE_SHADOWCAST)
         return IF(isOSC() == 1, ((getMinMaxTilt() * 2) * (inputValue)) - getMinMaxTilt(), 0.0);
     #else
         return IF(isOSC() == 1, ((_MaxMinTiltAngle * 2) * (inputValue)) - _MaxMinTiltAngle, 0.0);
@@ -313,3 +318,4 @@ float getOSCConeWidth(uint DMXChannel) //Motor Speed Channel// CHANNEL 5
 
 
 }
+#endif

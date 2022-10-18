@@ -76,26 +76,26 @@
 		_ProjectionIntensity ("Projection Intensity", Range(0,20)) = 0
 		_ProjectionFade("Projection Edge Fade", Range(0,10)) = 0
 		_ProjectionFadeCurve("Projection Edge Fade Harshness", Range(0, 10)) = 1
-		_ProjectionDistanceFallOff("Projection Distance Fallof Strength", Range(0.01,0.5)) = 0.05
+		_ProjectionDistanceFallOff("Projection Distance Fallof Strength", Range(0.001,0.5)) = 0.05
 		_ProjectionRange ("Projection Drawing Range", Range(0,10)) = 0
 		_ProjectionRangeOrigin ("Projection Drawing Range Scale Origin", Float) = (0, -0.07535, 0.12387, 0)
 		_ProjectionShadowHarshness("Projection Shadow Harshness", Range(0,1)) = 0
 
 
 		[NoScaleOffset] _ProjectionMainTex ("Projection Texture GOBO 1", 2D) = "white"{}
-		_ProjectionUVMod ("Projection UV Scale Modifier ", Range(0.01,2)) = 0
+		_ProjectionUVMod ("Projection UV Scale Modifier ", Range(0.01,10)) = 0
 		//[NoScaleOffset] _ProjectionTex2 ("Projection Texture GOBO 2", 2D) = "white"{}
-		_ProjectionUVMod2 ("Projection UV Scale Modifier ", Range(0.01,2)) = 0
+		_ProjectionUVMod2 ("Projection UV Scale Modifier ", Range(0.01,10)) = 0
 		//[NoScaleOffset] _ProjectionTex3 ("Projection Texture GOBO 3", 2D) = "white"{}
-		_ProjectionUVMod3 ("Projection UV Scale Modifier ", Range(0.01,2)) = 0
+		_ProjectionUVMod3 ("Projection UV Scale Modifier ", Range(0.01,10)) = 0
 		//[NoScaleOffset] _ProjectionTex4 ("Projection Texture GOBO 4", 2D) = "white"{}
-		_ProjectionUVMod4 ("Projection UV Scale Modifier ", Range(0.01,2)) = 0
+		_ProjectionUVMod4 ("Projection UV Scale Modifier ", Range(0.01,10)) = 0
 		//[NoScaleOffset] _ProjectionTex5 ("Projection Texture GOBO 5", 2D) = "white"{}
-		_ProjectionUVMod5 ("Projection UV Scale Modifier ", Range(0.01,2)) = 0
+		_ProjectionUVMod5 ("Projection UV Scale Modifier ", Range(0.01,10)) = 0
 		// [NoScaleOffset] _ProjectionTex6 ("Projection Texture GOBO 6", 2D) = "white"{}
-		_ProjectionUVMod6 ("Projection UV Scale Modifier ", Range(0.01,2)) = 0	
-		_ProjectionUVMod7 ("Projection UV Scale Modifier ", Range(0.01,2)) = 0	
-		_ProjectionUVMod8 ("Projection UV Scale Modifier ", Range(0.01,2)) = 0	
+		_ProjectionUVMod6 ("Projection UV Scale Modifier ", Range(0.01,10)) = 0	
+		_ProjectionUVMod7 ("Projection UV Scale Modifier ", Range(0.01,10)) = 0	
+		_ProjectionUVMod8 ("Projection UV Scale Modifier ", Range(0.01,10)) = 0	
 		//[Space(8)]	
 
 		_RedMultiplier ("Red Channel Multiplier", Range(0, 5)) = 1

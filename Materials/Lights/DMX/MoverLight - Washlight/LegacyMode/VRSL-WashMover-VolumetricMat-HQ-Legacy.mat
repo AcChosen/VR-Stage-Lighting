@@ -109,11 +109,11 @@ Material:
     - _BumpScale: 1
     - _ConeLength: 1
     - _ConeSync: 0.147
-    - _ConeWidth: 2.96
+    - _ConeWidth: 2.46
     - _DMXChannel: 0
     - _DNEnabler: 0
     - _Desaturate: 1
-    - _DistFade: 9
+    - _DistFade: 0.5
     - _Divide: 11.6
     - _DividePower: 0.043
     - _EnableCompatibilityMode: 1
@@ -124,19 +124,21 @@ Material:
     - _EnableStrobe: 0
     - _EnableVerticalMode: 0
     - _Fade: 1.5
-    - _FadeAmt: 0.25
-    - _FadeStrength: 10
+    - _FadeAmt: 95
+    - _FadeStrength: 12
     - _FeatherOffset: 0.5
     - _FinalIntensity: 1
     - _FinalStrobeFreq: 0
     - _FixtureBaseRotationY: 0
-    - _FixtureMaxIntensity: 0.5
+    - _FixtureMaxIntensity: 0.4
     - _FixtureRotationX: 0
     - _GlobalIntensity: 0
     - _Glossiness: 1
     - _GoboBeamSplitEnable: 0
+    - _GradientMod: 2.25
+    - _GradientModGOBO: 2.25
     - _GreenMultiplier: 1
-    - _InnerFadeStrength: 9.26
+    - _InnerFadeStrength: 12
     - _InnerIntensityCurve: 20
     - _IntensityCutoff: 0
     - _IsEven: 0

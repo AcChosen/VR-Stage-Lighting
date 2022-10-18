@@ -307,6 +307,7 @@ v2f vert (appdata v)
 		o.projectionorigin = calculateRotations(v, _ProjectionRangeOrigin, 0, oscPanValue, oscTiltValue);
 	#endif
 	#if defined(VOLUMETRIC_YES)
+		o.coneWidth = oscConeWidth + 1.5;
 		float3 worldCam;
 		worldCam.x = unity_CameraToWorld[0][3];
 		worldCam.y = unity_CameraToWorld[1][3];
@@ -341,15 +342,24 @@ v2f vert (appdata v)
 	newTangent = calculateRotations(v, newTangent, 1, oscPanValue, oscTiltValue);
 	v.tangent = newTangent.xyz;
 
+	#if defined(FIXTURE_SHADOWCAST)
+		//o.pos = UnityObjectToClipPos(v.vertex);
+		o.pos = UnityClipSpaceShadowCasterPos(v.vertex, v.normal);
+		o.pos = UnityApplyLinearShadowBias(o.pos);
+		//o.normal = v.normal;
+		//TRANSFER_SHADOW_CASTER_NORMALOFFSET(o);
+		return o;
+	#endif
+
 	//original surface shader related code
-	#if !defined(VOLUMETRIC_YES)
+	#if !defined(VOLUMETRIC_YES) && !defined(FIXTURE_SHADOWCAST)
 		float3 worldNormal = UnityObjectToWorldNormal(v.normal);
 		float3 tangent = UnityObjectToWorldDir(v.tangent);
 		float3 bitangent = cross(tangent, worldNormal);
 	#endif
 
 
-	#if !defined(PROJECTION_YES) && !defined(VOLUMETRIC_YES)
+	#if !defined(PROJECTION_YES) && !defined(VOLUMETRIC_YES) && !defined(FIXTURE_SHADOWCAST)
 		o.pos = UnityObjectToClipPos(v.vertex);
 		o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 	#endif
@@ -470,7 +480,7 @@ v2f vert (appdata v)
 
 		#endif
     #else
-	#if !defined(VOLUMETRIC_YES)
+	#if !defined(VOLUMETRIC_YES) && !defined(FIXTURE_SHADOWCAST)
 	o.color = v.color;
 	#endif
     #endif
@@ -490,7 +500,7 @@ fixed4 frag (v2f i) : SV_Target
 {
 	
     //Return only this if in the shadowcaster
-    #if defined(UNITY_PASS_SHADOWCASTER)
+    #if defined(UNITY_PASS_SHADOWCASTER) && !defined(FIXTURE_SHADOWCAST)
 	if(i.color.r > 0 && i.color.b > 0)
 	{
 		discard;
@@ -505,6 +515,9 @@ fixed4 frag (v2f i) : SV_Target
 	// 	return VolumetricLightingBRDF(i);
 	#elif defined (PROJECTION_YES)
 		return ProjectionFrag(i);
+
+	#elif defined (FIXTURE_SHADOWCAST)
+		SHADOW_CASTER_FRAGMENT(i);
     
 	#else
         return CustomStandardLightingBRDF(i);

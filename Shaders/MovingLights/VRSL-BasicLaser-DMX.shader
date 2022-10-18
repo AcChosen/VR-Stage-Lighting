@@ -22,6 +22,7 @@
         _FadeStrength ("Cone Edge Fade", Range(1,2)) = 0
         _LaserSoftening ("Laser Softness", Range(0.05,10)) = 0
         _InternalShine ("Internal Shine Strength", Range(0,5)) = 1
+         _InternalShineLength ("Internal Shine Length", Range(0.001,500)) = 12.1
         _Scroll ("Scroll", Range(-1, 1)) = 1
         [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
         
@@ -33,7 +34,7 @@
     }
     SubShader
     {
-		Tags { "RenderType"="Transparent" "Queue" = "Transparent" }
+		Tags { "RenderType"="Transparent" "Queue" = "Transparent+1" }
 		Cull Off
 		Blend One One
 		Zwrite Off
@@ -49,6 +50,7 @@
             #pragma multi_compile_instancing
 
             #include "UnityCG.cginc"
+            #define LASER
 
             struct appdata
             {
@@ -78,7 +80,7 @@
             sampler2D _MainTex;
             float4 _MainTex_ST, _MainColor;
             half _XConeFlatness, _ZRotation, _UniversalIntensity;
-            half _EndFade, _FadeStrength, _InternalShine, _LaserSoftening;
+            half _EndFade, _FadeStrength, _InternalShine, _LaserSoftening, _InternalShineLength;
             uint _EnableCompatibilityMode, _EnableVerticalMode;
             sampler2D _OSCGridRenderTexture, _OSCGridRenderTextureRAW;
             uniform float4 _OSCGridRenderTextureRAW_TexelSize;
@@ -104,7 +106,9 @@
                 UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleY)
             UNITY_INSTANCING_BUFFER_END(Props)
 
-            #define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
+            #include "../Shared/VRSL-DMXFunctions.cginc"
+
+            //#define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
 
             float getPan()
             {
@@ -114,7 +118,6 @@
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props,_YRotation);
             }
-
             uint getLaserCount()
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props,_LaserCount);
@@ -127,10 +130,6 @@
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props,_VertexConeLength);
             }
-            float4 getEmissionColor()
-            {
-                return UNITY_ACCESS_INSTANCED_PROP(Props,_Emission);
-            }
             float getLaserThickness()
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props,_LaserThickness);
@@ -139,98 +138,9 @@
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props,_Scroll);
             }
-            float getGlobalIntensity()
-            {
-                return UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensity);
-            }
-
-            float getFinalIntensity()
-            {
-                return UNITY_ACCESS_INSTANCED_PROP(Props, _FinalIntensity);
-            }
-            uint getDMXChannel()
-            {
-                return (uint) round(UNITY_ACCESS_INSTANCED_PROP(Props, _DMXChannel));  
-            }
             float getConeFlatness()
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props, _ZConeFlatness);
-            }
-            uint isOSC()
-            {
-                return UNITY_ACCESS_INSTANCED_PROP(Props,_EnableOSC);
-            }
-            float2 LegacyRead(int channel, int sector)
-            {
-                // say we were on sector 6
-                // we need to move over 2 sectors
-                // and we need to move up 3 sectors
-
-                //1 sector is every 13 channels
-                    float x = 0.02000;
-                    float y = 0.02000;
-                    //TRAVERSING THE Y AXIS OF THE OSC GRID
-                    float ymod = floor(sector / 2.0);       
-
-                    //TRAVERSING THE X AXIS OF THE OSC GRID
-                    float xmod = sector % 2.0;
-
-                    x+= (xmod * 0.50);
-                    y+= (ymod * 0.04);
-
-                    x+= (channel * 0.04);
-                    //we are now on the correct
-                    return float2(x,y);
-
-            }
-
-            float2 IndustryRead(int x, int y, uint DMXChannel)
-            {
-                
-                float resMultiplierX = (_OSCGridRenderTextureRAW_TexelSize.z / 13);
-                float2 xyUV = float2(0.0,0.0);
-                
-                xyUV.x = ((x * resMultiplierX) * _OSCGridRenderTextureRAW_TexelSize.x);
-                xyUV.y = (y * resMultiplierX) * _OSCGridRenderTextureRAW_TexelSize.y;
-                xyUV.y -= 0.001;
-                xyUV.x -= 0.015;
-            // xyUV.x = DMXChannel == 15 ? xyUV.x + 0.0769 : xyUV.x;
-                return xyUV;
-            }
-
-            //function for getting the value on the OSC Grid in the bottom right corner configuration
-            float getValueAtCoords(uint DMXChannel, sampler2D _Tex)
-            {
-                //DMXChannel = DMXChannel == 15.0 ? DMXChannel + 1 : DMXChannel;
-                uint x = DMXChannel % 13; // starts at 1 ends at 13
-                x = x == 0.0 ? 13.0 : x;
-                float y = DMXChannel / 13.0; // starts at 1 // doubles as sector
-                y = frac(y)== 0.00000 ? y - 1 : y;
-
-                float2 xyUV = _EnableCompatibilityMode == 1 ? LegacyRead(x-1.0,y) : IndustryRead(x,(y + 1.0), DMXChannel);
-                    
-                float4 uvcoords = float4(xyUV.x, xyUV.y, 0,0);
-                float4 c = tex2Dlod(_Tex, uvcoords);
-                float3 cRGB = float3(c.r, c.g, c.b);
-                float value = LinearRgbToLuminance(cRGB);
-                value = LinearToGammaSpaceExact(value);
-                return value;
-            }
-
-            float getValueAtCoordsRaw(uint DMXChannel, sampler2D _Tex)
-            {
-            // DMXChannel = DMXChannel == 15.0 ? DMXChannel + 1 : DMXChannel;
-                uint x = DMXChannel % 13; // starts at 1 ends at 13
-                x = x == 0.0 ? 13.0 : x;
-                float y = DMXChannel / 13.0; // starts at 1 // doubles as sector
-                y = frac(y)== 0.00000 ? y - 1 : y;
-
-                float2 xyUV = _EnableCompatibilityMode == 1 ? LegacyRead(x-1.0,y) : IndustryRead(x,(y + 1.0), DMXChannel);
-
-                float4 uvcoords = float4(xyUV.x, xyUV.y, 0,0);
-                float4 c = tex2Dlod(_Tex, uvcoords);
-                
-                return c.r;
             }
 
             float3 RGB2HSV(float3 c)
@@ -298,7 +208,7 @@
                 UNITY_TRANSFER_INSTANCE_ID(v, o);
 
                 uint dmx = getDMXChannel();
-                o.rgbIntensity.w = getValueAtCoords(dmx + 10, _OSCGridRenderTexture);
+                o.rgbIntensity.w = getValueAtCoords(dmx + (uint) 10, _OSCGridRenderTexture);
                 o.rgbIntensity.w = IF(isOSC() > 0, o.rgbIntensity.w, 1);
                 if(getGlobalIntensity() <= 0.01 || getFinalIntensity() <= 0.05 || _UniversalIntensity <= 0.05 || o.rgbIntensity.w <= 0.05)
                 {
@@ -306,9 +216,9 @@
                     return o;
                 }
                 o.panTiltLengthWidth.x = lerp(-90,90,clamp(getValueAtCoords(dmx, _OSCGridRenderTexture), 0.0,0.9999)); // ch 1
-                o.panTiltLengthWidth.y = lerp(-90,90,clamp(getValueAtCoords(dmx + 1, _OSCGridRenderTexture), 0.0,0.9999)); // ch 2
-                o.panTiltLengthWidth.z = lerp(-0.5,5,clamp(getValueAtCoords(dmx + 2, _OSCGridRenderTextureRAW), 0.0,0.9999)); // ch 3
-                o.panTiltLengthWidth.w = lerp(-3.75,20,clamp(getValueAtCoords(dmx +3, _OSCGridRenderTextureRAW), 0.0,0.9999)); // ch 4
+                o.panTiltLengthWidth.y = lerp(-90,90,clamp(getValueAtCoords(dmx + (uint) 1, _OSCGridRenderTexture), 0.0,0.9999)); // ch 2
+                o.panTiltLengthWidth.z = lerp(-0.5,5,clamp(getValueAtCoords(dmx + (uint) 2, _OSCGridRenderTextureRAW), 0.0,0.9999)); // ch 3
+                o.panTiltLengthWidth.w = lerp(-3.75,20,clamp(getValueAtCoords(dmx + (uint) 3, _OSCGridRenderTextureRAW), 0.0,0.9999)); // ch 4
 
 
     
@@ -333,7 +243,7 @@
                 vert.y = v.vertex.y; //Prevent the cone from elongating when changing width.
 
                 // Cone Flatness for X and Z
-                float flatness = lerp(0,1.999,getValueAtCoords(dmx+4, _OSCGridRenderTextureRAW));
+                float flatness = lerp(0,1.999,getValueAtCoords(dmx+ (uint) 4, _OSCGridRenderTextureRAW));
                 flatness = IF(isOSC() > 0, flatness, getConeFlatness());
                 vert.z = lerp(vert.z, vert.z/2, flatness);
               //  vert.x = lerp(vert.x, vert.x/2, _XConeFlatness);
@@ -355,14 +265,14 @@
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
                 UNITY_SETUP_INSTANCE_ID(i);
                 uint dmx = getDMXChannel();
-                i.flatnessBeamCountSpinThickness.x = lerp(0,1.999,getValueAtCoords(dmx+4, _OSCGridRenderTextureRAW)); //5
-                i.flatnessBeamCountSpinThickness.y = lerp(4,68,getValueAtCoords(dmx+5, _OSCGridRenderTextureRAW));//6
-                i.flatnessBeamCountSpinThickness.z = lerp(0,1,getValueAtCoords(dmx+6, _OSCGridRenderTextureRAW)); //7
-                i.flatnessBeamCountSpinThickness.w = lerp(0.003, 0.1,getValueAtCoords(dmx+11, _OSCGridRenderTextureRAW)); //12
-                i.rgbIntensity.x = getValueAtCoords(dmx+7, _OSCGridRenderTextureRAW); //8 
-                i.rgbIntensity.y = getValueAtCoords(dmx+8, _OSCGridRenderTextureRAW); //9
-                i.rgbIntensity.z = getValueAtCoords(dmx+9, _OSCGridRenderTextureRAW); //10
-                i.rgbIntensity.w = getValueAtCoords(dmx+10, _OSCGridRenderTextureRAW); //11
+                i.flatnessBeamCountSpinThickness.x = lerp(0,1.999,getValueAtCoords(dmx+ (uint) 4, _OSCGridRenderTextureRAW)); //5
+                i.flatnessBeamCountSpinThickness.y = lerp(4,68,getValueAtCoords(dmx+ (uint) 5, _OSCGridRenderTextureRAW));//6
+                i.flatnessBeamCountSpinThickness.z = lerp(0,1,getValueAtCoords(dmx+ (uint) 6, _OSCGridRenderTextureRAW)); //7
+                i.flatnessBeamCountSpinThickness.w = lerp(0.003, 0.1,getValueAtCoords(dmx+ (uint) 11, _OSCGridRenderTextureRAW)); //12
+                i.rgbIntensity.x = getValueAtCoords(dmx+ (uint) 7, _OSCGridRenderTextureRAW); //8 
+                i.rgbIntensity.y = getValueAtCoords(dmx+ (uint) 8, _OSCGridRenderTextureRAW); //9
+                i.rgbIntensity.z = getValueAtCoords(dmx+ (uint) 9, _OSCGridRenderTextureRAW); //10
+                i.rgbIntensity.w = getValueAtCoords(dmx+ (uint) 10, _OSCGridRenderTextureRAW); //11
                 i.rgbIntensity.w = IF(isOSC() > 0, i.rgbIntensity.w, 1);
                 if(getGlobalIntensity() <= 0.001 || getFinalIntensity() <= 0.001 || _UniversalIntensity <= 0.001 || i.rgbIntensity.w <= 0.001)
                 {
@@ -406,7 +316,7 @@
                 float transv = pow((-i.uv2.y + 1), _EndFade) ;
                 col = col * beams;
 
-                col += pow(-laserUV.y+1,12.1) * 3 * _InternalShine * color;
+                col += pow(-laserUV.y+1,_InternalShineLength) * 3 * _InternalShine * color;
 
                 // float beamGradCorrect = .2 / (1.-laserUV.y);
                 // col *= beamGradCorrect;

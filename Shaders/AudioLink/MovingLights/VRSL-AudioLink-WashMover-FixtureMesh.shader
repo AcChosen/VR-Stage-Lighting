@@ -180,7 +180,7 @@ RWStructuredBuffer<float4> buffer4 : register(u2);
 
 	ENDCG
 	}
-	//UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
+	UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
 
 
 	}

@@ -94,6 +94,9 @@
 		_RedMultiplier ("Red Channel Multiplier", Range(0, 5)) = 1
 		_GreenMultiplier ("Green Channel Multiplier", Range(0, 5)) = 1
 		_BlueMultiplier ("Blue Channel Multiplier", Range(0,5)) = 1
+
+		_ProjectionCutoff("Projection Cutoff Point", Range(0,1)) = 0.25
+		_ProjectionOriginCutoff("Projection Origin Cutoff Point", Range(0,3)) = 0.25
 		//_Fade ("Fade mod", Range(0, 6)) = 1.5
 
 

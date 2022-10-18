@@ -8,32 +8,43 @@
 		 _SamplingTexture ("Texture To Sample From for Color", 2D) = "white" {}
 		 _TextureColorSampleX ("X coordinate to sample the texture from", Range(0,1)) = 0.5
 		 _TextureColorSampleY ("Y coordinate to sample the texture from", Range(0,1)) = 0.5
+         [Toggle]_EnableAudioLink("Enable Audio Link", Int) = 0
+         _Band("AudioLink Band", Int) = 0
+         _BandMultiplier("AudioLink Multiplier", Float) = 1.0
+         _Delay("Audio Link Delay", Int) = 0
 
         _UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
         _FinalIntensity("Final Intensity", Range(0,1)) = 1
         _GlobalIntensity ("Global Intensity", Range(0,1)) = 1
         [HideInInspector]_MainTex ("Texture", 2D) = "white" {}
-        _Emission ("Emission Color" , Color) = (1.0, 1.0, 1.0, 1.0)
+        [HDR]_Emission ("Emission Color" , Color) = (1.0, 1.0, 1.0, 1.0)
+        _Multiplier("Emission Multiplier", Range(1,10)) = 1
         _VertexConeWidth ("Cone Width", Range(-3.75,20)) = 0
         _VertexConeLength("Cone Length", Range(-0.5,5)) = 0
         _ZConeFlatness("Z Flatness", Range(0,1.999)) = 0
+        _ZConeFlatnessAlt("Z Flatness Alt", Range(0,1.999)) = 0
      //  _XConeFlatness("X Flatness", Range(0,1.99)) = 0
         _ZRotation ("Z Rotation", Range (-90, 90)) = 0
         _XRotation ("X Rotation", Range (-90, 90)) = 0
         _YRotation ("Y Rotation", Range (-180, 180)) = 0
+        _AltZRotation ("Alt Z Rotation", Range (-90, 90)) = 0
+        _AltXRotation ("Alt X Rotation", Range (-90, 90)) = 0
+        _AltYRotation ("Alt Y Rotation", Range (-180, 180)) = 0
         [IntRange] _LaserCount ("Laser Beam Count", Range(4, 68)) = 1
         _LaserThickness ("Laser Beam Thickenss", Range(0.003, 0.25)) = 1
         _EndFade ("End Fade", Range(0,3)) = 2.2
         _FadeStrength ("Cone Edge Fade", Range(1,2)) = 0
         _LaserSoftening ("Laser Softness", Range(0.05,5)) = 5
         _InternalShine ("Internal Shine Strength", Range(0,5)) = 1
+        _InternalShineLength ("Internal Shine Length", Range(0.001,500)) = 12.1
+        _BlackOut ("Global Blackout Slider", Range (0,1)) = 1
 
         _Scroll ("Scroll", Range(-1, 1)) = 1
 
     }
     SubShader
     {
-		Tags { "RenderType"="Transparent" "Queue" = "Transparent" }
+		Tags { "RenderType"="Transparent" "Queue" = "Transparent+4" }
 		Cull Off
 		Blend One One
 		Zwrite Off
@@ -72,13 +83,12 @@
                 float4 flatnessBeamCountSpinThickness : TEXCOORD6; //ch 5,6,7,12
                 float4 rgbIntensity : TEXCOORD7;// ch 8,9,10,11
                 UNITY_VERTEX_INPUT_INSTANCE_ID
-                UNITY_VERTEX_OUTPUT_STEREO
             };
 
             sampler2D _MainTex, _SamplingTexture;
             float4 _MainTex_ST;
             half _XConeFlatness, _ZRotation, _UniversalIntensity;
-            half _EndFade, _FadeStrength, _InternalShine, _LaserSoftening;
+            half _EndFade, _FadeStrength, _InternalShine, _LaserSoftening, _InternalShineLength, _Multiplier;
             uint _EnableCompatibilityMode;
             uniform const float compatSampleYAxis = 0.019231;
             uniform const float standardSampleYAxis = 0.00762;
@@ -97,15 +107,20 @@
                 UNITY_DEFINE_INSTANCED_PROP(float, _Scroll)
                 UNITY_DEFINE_INSTANCED_PROP(float, _XRotation)
                 UNITY_DEFINE_INSTANCED_PROP(float, _YRotation)
+                UNITY_DEFINE_INSTANCED_PROP(float, _AltZRotation)
+                UNITY_DEFINE_INSTANCED_PROP(float, _AltXRotation)
+                UNITY_DEFINE_INSTANCED_PROP(float, _AltYRotation)
                 UNITY_DEFINE_INSTANCED_PROP(float, _LaserThickness)
                 UNITY_DEFINE_INSTANCED_PROP(float4, _Emission)
                 UNITY_DEFINE_INSTANCED_PROP(float, _ZConeFlatness)
+                UNITY_DEFINE_INSTANCED_PROP(float, _ZConeFlatnessAlt)
                 UNITY_DEFINE_INSTANCED_PROP(float, _VertexConeWidth)
                 UNITY_DEFINE_INSTANCED_PROP(float, _VertexConeLength)
                 UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
                 UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
                 UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleX)
                 UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleY)
+                UNITY_DEFINE_INSTANCED_PROP(float, _BlackOut)
             UNITY_INSTANCING_BUFFER_END(Props)
 
              inline float AudioLinkLerp3_g5( int Band, float Delay )
@@ -149,9 +164,21 @@
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props,_XRotation);
             }
+            float getAltPan()
+            {
+                return UNITY_ACCESS_INSTANCED_PROP(Props,_AltXRotation);
+            }
             float getTilt()
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props,_YRotation);
+            }
+            float getAltTilt()
+            {
+                return UNITY_ACCESS_INSTANCED_PROP(Props,_AltYRotation);
+            }
+            float getAltTwist()
+            {
+                return UNITY_ACCESS_INSTANCED_PROP(Props,_AltZRotation);
             }
 
             uint getLaserCount()
@@ -186,8 +213,9 @@
             }
             float getConeFlatness()
             {
-                return UNITY_ACCESS_INSTANCED_PROP(Props, _ZConeFlatness);
+                return clamp(UNITY_ACCESS_INSTANCED_PROP(Props, _ZConeFlatness) + UNITY_ACCESS_INSTANCED_PROP(Props, _ZConeFlatnessAlt),0, 1.999);
             }
+
 
             float3 RGB2HSV(float3 c)
             {
@@ -278,8 +306,6 @@
             {
                 v2f o;
                 UNITY_SETUP_INSTANCE_ID(v);
-                UNITY_INITIALIZE_OUTPUT(v2f, o); //DON'T INITIALIZE OR IT WILL BREAK PROJECTION
-                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
                 UNITY_TRANSFER_INSTANCE_ID(v, o);
                 o.rgbIntensity.w = 1;
                 if(getGlobalIntensity() <= 0.05 || getFinalIntensity() <= 0.05 || _UniversalIntensity <= 0.05 || o.rgbIntensity.w <= 0.05)
@@ -311,12 +337,12 @@
                 float flatness = getConeFlatness();
                 vert.z = lerp(vert.z, vert.z/2, flatness);
               //  vert.x = lerp(vert.x, vert.x/2, _XConeFlatness);
-                float xRot = getPan();
-                float yRot = getTilt();
-                vert = CalculateRotations(v, vert, _ZRotation, xRot, yRot);
+                float xRot = getPan() + getAltPan();
+                float yRot = getTilt() + getAltTilt();
+                vert = CalculateRotations(v, vert, _ZRotation + getAltTwist(), xRot, yRot);
 
                 o.viewDir = normalize(wpos - mul(unity_ObjectToWorld, vert).xyz);
-                v.normal = CalculateRotations(v, float4(v.normal, 1), _ZRotation, xRot, yRot).xyz;
+                v.normal = CalculateRotations(v, float4(v.normal, 1), _ZRotation + getAltTwist(), xRot, yRot).xyz;
                 o.normal = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
                 o.worldPos = mul(unity_ObjectToWorld, vert);
                 o.vertex = UnityObjectToClipPos(vert);
@@ -337,7 +363,7 @@
                 
                // fade = pow(fade, pow(_FadeStrength, _FadeAmt)) * fade;
                 // sample the texture
-                float4 actualcolor = getEmissionColor();
+                float4 actualcolor = getEmissionColor() * _Multiplier;
                 float4 color = lerp(float4(0,0,0,0), actualcolor, getGlobalIntensity());
                 float3 newColor = RGB2HSV(color.rgb);
                 newColor.y -= 0.1;
@@ -366,10 +392,10 @@
 
                 
                 float beams = (beamcount * thiknes * 0.1) / abs(laserUV.x);
-                float transv = pow((-i.uv2.y + 1), _EndFade) ;
+                float transv = pow((-i.uv2.y + 1), _EndFade);
                 col = col * beams;
 
-                col += pow(-laserUV.y+1,12.1) * 3 * _InternalShine * color;
+                col += pow(-laserUV.y+1,_InternalShineLength) * 3 * _InternalShine * color;
 
                 // float beamGradCorrect = .2 / (1.-laserUV.y);
                 // col *= beamGradCorrect;
@@ -401,6 +427,7 @@
                float4 flatCol = col * edgeMask;
                 col = lerp(flatCol, col, pow(((flatness/2.0) - 1.0)*-1, 0.95));
                 col *= getFinalIntensity() * _UniversalIntensity * i.rgbIntensity.w;
+                col *= UNITY_ACCESS_INSTANCED_PROP(Props, _BlackOut);
                 return col;
             }
             ENDCG

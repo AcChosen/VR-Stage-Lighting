@@ -72,6 +72,8 @@ public class VRSLInspector : ShaderGUI
     MaterialProperty _Noise2StretchInside = null;
     MaterialProperty _Noise2Power = null;
     MaterialProperty _ToggleMagicNoise = null;
+    MaterialProperty _GradientMod = null;
+    MaterialProperty _GradientModGOBO = null;
    // MaterialProperty _InsideConeNormalMap = null;
 
     //Volumetric Control Specific
@@ -111,6 +113,8 @@ public class VRSLInspector : ShaderGUI
     MaterialProperty _BlendSrc = null;
     MaterialProperty _BlendDst = null;
     MaterialProperty _BlendOp = null;
+    MaterialProperty _ProjectionCutoff = null;
+    MaterialProperty _ProjectionOriginCutoff = null;
 
     //Projection Texture Specific
     MaterialProperty _ProjectionSelection = null;
@@ -574,6 +578,11 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_ProjectionDistanceFallOff, new GUIContent("Projection Distance Fallof Strength", "How quickly the the projection loses strength the further away it is from the source."));
             matEditor.ShaderProperty(_ProjectionRange, new GUIContent("Projection Drawing Range", "Changes the length of the projecction mesh itself. The longer it is, the further away the projection will reach before clipping, but also more pixels on the screen the projection will take up. \nIncrease this if you see the edges of the projection clipping too much from the light being too far away."));
             matEditor.ShaderProperty(_ProjectionRangeOrigin, new GUIContent("Projection Drawing Range Scale Origin", "The place where the projection mesh is being scaled from. Don't change this unless you know what you are doing. "));
+            if(isDMXCompatible)
+            {
+                matEditor.ShaderProperty(_ProjectionCutoff, new GUIContent("Projection Fixture Source Cutoff", "This is where the projector actually begins drawing the projection. Use this to prevent the projection from bleeding on to the fixture mesh."));
+                matEditor.ShaderProperty(_ProjectionOriginCutoff, new GUIContent("Projection Fixture Origin Cutoff", "This is the area between the origin of the fixture and where the projection mesh is. Use this to prevent the projection from bleeding on to the fixture mesh relative to the origin."));
+            }
            // matEditor.DefaultShaderProperty
             matEditor.ShaderProperty(_BlendSrc, new GUIContent("Projection Blend Source", "Projection Transparency Blend Options (Soruce)"));
             matEditor.ShaderProperty(_BlendDst, new GUIContent("Projection Blend Destination", "Projection Transparency Blend Options (Destination)"));
@@ -706,6 +715,9 @@ public class VRSLInspector : ShaderGUI
             GUILayout.Space(5);
             //matEditor.TextureScaleOffsetProperty(_LightMainTex);
             GUILayout.Space(5);
+            matEditor.ShaderProperty(_GradientMod, new GUIContent("Gradient Modifier", "Controls the general gradient of the cone."));
+            matEditor.ShaderProperty(_GradientModGOBO, new GUIContent("Gradient Modifier With GOBO", "Controls the general gradient of the cone when using a GOBO."));
+             GUILayout.Space(5);
             matEditor.TexturePropertySingleLine(new GUIContent("Noise Texture", "Alpha Noise Texture used for adding variation to the cone."), _NoiseTex);
             matEditor.TextureScaleOffsetProperty(_NoiseTex);
             matEditor.ShaderProperty(_NoisePower, new GUIContent("Noise Strength", "Controls how much the noise texture affects the cone"));

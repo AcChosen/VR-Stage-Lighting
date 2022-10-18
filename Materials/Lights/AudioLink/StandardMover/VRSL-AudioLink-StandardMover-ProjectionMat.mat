@@ -96,7 +96,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SamplingTexture:
-        m_Texture: {fileID: 2800000, guid: ba9a307ceadf5564683f0e0af8af748c, type: 3}
+        m_Texture: {fileID: 8600000, guid: b6cf0db1726c59641bb1fb9e7248ea45, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SceneNormals:
@@ -110,7 +110,7 @@ Material:
     - _BlendDst: 1
     - _BlendOp: 0
     - _BlendSrc: 2
-    - _BlueMultiplier: 1
+    - _BlueMultiplier: 2.51
     - _BumpScale: 1
     - _ConeLength: 3.62
     - _ConeSync: 1.7
@@ -156,22 +156,22 @@ Material:
     - _NoiseSeed: 420
     - _NumBands: 4
     - _PanInvert: 0
-    - _ProjectionDistanceFallOff: 0.01
+    - _ProjectionDistanceFallOff: 0.0075
     - _ProjectionFade: 2.4
     - _ProjectionFadeCurve: 1.62
-    - _ProjectionIntensity: 4.8
+    - _ProjectionIntensity: 8
     - _ProjectionRange: 8
     - _ProjectionRotation: -180
-    - _ProjectionSelection: 2.11
+    - _ProjectionSelection: 1
     - _ProjectionShadowHarshness: 0.9
-    - _ProjectionUVMod: 1.1
-    - _ProjectionUVMod2: 1
-    - _ProjectionUVMod3: 1
-    - _ProjectionUVMod4: 1.1
-    - _ProjectionUVMod5: 1
-    - _ProjectionUVMod6: 1
-    - _ProjectionUVMod7: 1
-    - _ProjectionUVMod8: 0.9
+    - _ProjectionUVMod: 0.8
+    - _ProjectionUVMod2: 0.8
+    - _ProjectionUVMod3: 0.8
+    - _ProjectionUVMod4: 0.8
+    - _ProjectionUVMod5: 0.8
+    - _ProjectionUVMod6: 0.75
+    - _ProjectionUVMod7: 0.8
+    - _ProjectionUVMod8: 0.8
     - _PulseSpeed: 0
     - _RTLMStrength: 1
     - _RedMultiplier: 1

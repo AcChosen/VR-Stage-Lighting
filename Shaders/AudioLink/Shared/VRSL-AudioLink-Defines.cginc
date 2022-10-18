@@ -61,6 +61,7 @@ float _ProjectionRange;
 float4 _ProjectionRangeOrigin;
 float _ProjectionFade, _ProjectionFadeCurve, _ProjectionDistanceFallOff;
 uint _GoboBeamSplitEnable;
+half _GradientMod, _GradientModGOBO;
 
 
 //float _FinalStrobeFreq, _NewTimer;

@@ -96,7 +96,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SamplingTexture:
-        m_Texture: {fileID: 2800000, guid: ba9a307ceadf5564683f0e0af8af748c, type: 3}
+        m_Texture: {fileID: 8600000, guid: b6cf0db1726c59641bb1fb9e7248ea45, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SceneNormals:
@@ -142,7 +142,7 @@ Material:
     - _IntensityCutoff: 0.15
     - _IsEven: 0
     - _LMStrength: 1
-    - _LensMaxBrightness: 1
+    - _LensMaxBrightness: 0.1
     - _LightProbeMethod: 0
     - _MaxMinPanAngle: 0
     - _MaxMinTiltAngle: 0

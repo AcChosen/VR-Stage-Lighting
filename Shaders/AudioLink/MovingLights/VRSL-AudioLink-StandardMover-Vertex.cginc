@@ -181,6 +181,7 @@ v2f vert (appdata v)
 		#endif
 		o.emissionColor = getEmissionColor();
 		float3 worldCam;
+		o.coneWidth = getConeWidth() + 1.25;
 		worldCam.x = unity_CameraToWorld[0][3];
 		worldCam.y = unity_CameraToWorld[1][3];
 		worldCam.z = unity_CameraToWorld[2][3];

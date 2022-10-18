@@ -142,7 +142,7 @@ Material:
     - _FinalIntensity: 1
     - _FinalStrobeFreq: 0
     - _FixtureBaseRotationY: 0
-    - _FixtureMaxIntensity: 9.75
+    - _FixtureMaxIntensity: 15
     - _FixtureRotationX: 0
     - _FixutreIntensityMultiplier: 5
     - _GlobalIntensity: 1

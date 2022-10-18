@@ -96,7 +96,7 @@ Material:
     - _Min: 0
     - _Mod: 1
     - _Mode: 0
-    - _Multiplier: 4.5499997
+    - _Multiplier: 6
     - _NumBands: 4
     - _OcclusionStrength: 1
     - _Offset: 0

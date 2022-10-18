@@ -4,6 +4,7 @@ using VRC.SDKBase;
 using VRC.Udon;
 using UnityEngine.UI;
 using System.Threading;
+using VRSL;
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UnityEditor;
@@ -18,6 +19,10 @@ using System;
 using System.Linq;
 #endif
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
+
+
+namespace VRSL.EditorScripts
+{
 
  public static class Extensions
  {
@@ -80,6 +85,7 @@ class DMXListItem
     public bool foldout;
     ///////////////////////////////////////////////////////////////////////
     private bool Z_enableDMXChannels; public bool P_enableDMXChannels; 
+    private int Z_fixtureID; public int P_fixtureID;
     private int Z_dmxChannel; public int P_dmxChannel;
     private int Z_dmxUniverse; public int P_dmxUniverse;
     private bool Z_useLegacySectorMode; public bool P_useLegacySectorMode;
@@ -111,6 +117,7 @@ class DMXListItem
         this.light = light;
         this.foldout = this.light.foldout = foldout;
         Z_enableDMXChannels = P_enableDMXChannels = this.light.enableDMXChannels;
+        Z_fixtureID = P_fixtureID = this.light.fixtureID;
         Z_dmxChannel = P_dmxChannel = this.light.dmxChannel;
         Z_dmxUniverse = P_dmxUniverse = this.light.dmxUniverse;
         Z_useLegacySectorMode = P_useLegacySectorMode =  this.light.useLegacySectorMode;
@@ -147,6 +154,7 @@ class DMXListItem
 
         light.UpdateProxy();
         light.enableDMXChannels = P_enableDMXChannels = Z_enableDMXChannels;
+        light.fixtureID = P_fixtureID = Z_fixtureID;
         light.dmxChannel = P_dmxChannel = Z_dmxChannel;
         light.dmxUniverse = P_dmxUniverse = Z_dmxUniverse;
         light.useLegacySectorMode = P_useLegacySectorMode = Z_useLegacySectorMode;
@@ -180,6 +188,7 @@ class DMXListItem
 
         var so = new SerializedObject(light);
         so.FindProperty("enableDMXChannels").boolValue = P_enableDMXChannels;
+        so.FindProperty("fixtureID").intValue = P_fixtureID;
         so.FindProperty("dmxChannel").intValue = P_dmxChannel;
         so.FindProperty("useLegacySectorMode").boolValue = P_useLegacySectorMode;
         so.FindProperty("singleChannelMode").boolValue = P_singleChannelMode;
@@ -208,6 +217,7 @@ class DMXListItem
 
         light.UpdateProxy();
         light.enableDMXChannels = Z_enableDMXChannels = P_enableDMXChannels;
+        light.fixtureID = Z_fixtureID = P_fixtureID;
         light.dmxChannel = Z_dmxChannel = P_dmxChannel;
         light.dmxUniverse = Z_dmxUniverse = P_dmxUniverse;
         light.useLegacySectorMode = Z_useLegacySectorMode = P_useLegacySectorMode;
@@ -547,6 +557,8 @@ class VRSL_ManagerWindow : EditorWindow {
     private static UnityEngine.Object lightbar_h, lightbar_v, lightbar_l, lightbar_a;
     private static UnityEngine.Object discoball_h, discoball_v, discoball_l, discoball_a;
     private static UnityEngine.Object laser_h, laser_v, laser_l, laser_a;
+    private static UnityEngine.Object sixFour_h, sixFour_v, sixFour_l;
+    private static UnityEngine.Object multiLightbar_h, multiLightbar_v, multiLightbar_l;
     // private float panRangeTarget = 90f; 
     // private float tiltRangeTarget = -90f;
 
@@ -1140,7 +1152,31 @@ class VRSL_ManagerWindow : EditorWindow {
         }
     }
 
-
+    static int GetFixtureCount()
+    {
+        int fixtureCount = 0;
+            for(int i = 0; i < universes.Length; i++)
+            {
+                if(universes[i] == null)
+                {
+                    continue;
+                }
+                foreach(DMXListItem fixture in universes[i])
+                {
+                    fixtureCount++;
+                }
+            }
+        return fixtureCount;
+    }
+    static int GetAudioLinkFixtureCount()
+    {
+        int fixtureCount = 0;
+        foreach(AudioLinkListItem fixture in audioLinkLights)
+        {
+            fixtureCount++;
+        }
+        return fixtureCount;
+    }
     void OnEnable() 
     {
      EditorApplication.hierarchyChanged += HierarchyChanged;
@@ -1205,6 +1241,79 @@ class VRSL_ManagerWindow : EditorWindow {
             }
         }
 
+    }
+    public class FixturePrefabID
+    {
+        public int prefabID;
+        public List<DMXListItem> fixtures = new List<DMXListItem>();
+        public FixturePrefabID(int p_ID)
+        {
+            prefabID = p_ID;
+        }
+        public void AssignIDs()
+        {
+            int id = 0;
+            foreach(DMXListItem fixture in fixtures)
+            {
+                if(fixture == null)
+                {
+                    continue;
+                }
+                if(fixture.light == null)
+                {
+                    continue;
+                }
+                fixture.P_fixtureID = prefabID + id;
+                id++;
+            }
+        }
+    }
+    static void MassApplyIDs()
+    {
+        int prefabID = 100;
+       // int nullPrefabID = 0;
+        Dictionary<UnityEngine.Object, FixturePrefabID> prefabDict = new Dictionary<UnityEngine.Object, FixturePrefabID>();
+        for(int i = 0; i < universes.Length; i++)
+        {
+            if(universes[i] == null)
+            {
+                continue;
+            }
+            foreach(DMXListItem fixture in universes[i])
+            {
+                //Find the prefab this fixture is connected to
+                UnityEngine.Object prefab = PrefabUtility.GetCorrespondingObjectFromOriginalSource(fixture.light.gameObject);
+                //If the prefab is in the dictionary...
+                if(prefabDict.ContainsKey(prefab))
+                {
+                    //add the current fixture to the list in the struct key of the dictionary
+                    prefabDict[prefab].fixtures.Add(fixture);
+                }
+                //otherwise...
+                else
+                {
+                    
+                    ///Create a new dictionary entry with the prefab origin as the key, and a new struct with the a new base prefab ID
+                    if(prefab == null)
+                    {
+                        prefabDict.Add(prefab, new FixturePrefabID(0));
+                    }
+                    else
+                    {
+                        prefabDict.Add(prefab, new FixturePrefabID(prefabID));
+                    }
+                    //increment the base ID by 100
+                    prefabID += 100;
+                    //then add the fixture to the list in the struct key of the dictionary
+                    prefabDict[prefab].fixtures.Add(fixture);
+
+                }
+            }
+        }
+        foreach(var prefabEntry in prefabDict)
+        {
+            prefabEntry.Value.AssignIDs();
+        }
     }
 
     private static void SpawnPrefabWithUndo(UnityEngine.Object obj, string undoMessage)
@@ -1382,6 +1491,8 @@ class VRSL_ManagerWindow : EditorWindow {
         string blind_h_path, blind_v_path, blind_l_path, blind_a_path;
         string par_h_path, par_v_path, par_l_path, par_a_path;
         string bar_h_path, bar_v_path, bar_l_path, bar_a_path;
+        string six_h_path, six_v_path, six_l_path;
+        string multibar_h_path, multibar_v_path, multibar_l_path;
         if(legacyFixtures)
         {
             blind_h_path = horizontalpath + "VRSL-DMX-Static-Blinder-H-13CH.prefab";
@@ -1398,6 +1509,14 @@ class VRSL_ManagerWindow : EditorWindow {
             bar_v_path = verticalpath + "VRSL-DMX-Static-LightBar-V-13CH.prefab";
             bar_l_path = legacypath + "VRSL-DMX-Static-LightBar-L-13CH.prefab";
             bar_a_path = audiopath + "VRSL-AudioLink-Static-Lightbar.prefab";
+            
+            six_h_path = horizontalpath + "5-Channel Statics/" + "VRSL-DMX-Static-6x4StrobeLight-H-5CH.prefab";
+            six_v_path = verticalpath + "5-Channel Statics/" + "VRSL-DMX-Static-6x4StrobeLight-V-5CH.prefab";
+            six_l_path = legacypath + "5-Channel Statics/" + "VRSL-DMX-Static-6x4StrobeLight-L-5CH.prefab";
+
+            multibar_h_path = horizontalpath + "VRSL-DMX-Static-MultiLightBar-H-15CH.prefab";
+            multibar_v_path = verticalpath + "VRSL-DMX-Static-MultiLightBar-V-15CH.prefab";
+            multibar_l_path = legacypath + "VRSL-DMX-Static-MultiLightBar-L-15CH.prefab";
         }
         else
         {
@@ -1415,6 +1534,14 @@ class VRSL_ManagerWindow : EditorWindow {
             bar_v_path = verticalpath + "5-Channel Statics/" +  "VRSL-DMX-Static-LightBar-V-5CH.prefab";
             bar_l_path = legacypath + "VRSL-DMX-Static-LightBar-L-13CH.prefab";
             bar_a_path = audiopath + "VRSL-AudioLink-Static-Lightbar.prefab";
+
+            six_h_path = horizontalpath + "5-Channel Statics/" + "VRSL-DMX-Static-6x4StrobeLight-H-5CH.prefab";
+            six_v_path = verticalpath + "5-Channel Statics/" + "VRSL-DMX-Static-6x4StrobeLight-V-5CH.prefab";
+            six_l_path = legacypath + "5-Channel Statics/" + "VRSL-DMX-Static-6x4StrobeLight-L-5CH.prefab";
+
+            multibar_h_path = horizontalpath + "VRSL-DMX-Static-MultiLightBar-H-15CH.prefab";
+            multibar_v_path = verticalpath + "VRSL-DMX-Static-MultiLightBar-V-15CH.prefab";
+            multibar_l_path = legacypath + "VRSL-DMX-Static-MultiLightBar-L-15CH.prefab";
 
         }
 
@@ -1445,10 +1572,12 @@ class VRSL_ManagerWindow : EditorWindow {
                     flasher_h = AssetDatabase.LoadAssetAtPath(flash_h_path, typeof(GameObject));
                     parlight_h = AssetDatabase.LoadAssetAtPath(par_h_path, typeof(GameObject));
                     lightbar_h = AssetDatabase.LoadAssetAtPath(bar_h_path, typeof(GameObject));
+                    sixFour_h = AssetDatabase.LoadAssetAtPath(six_h_path, typeof(GameObject));
+                    multiLightbar_h = AssetDatabase.LoadAssetAtPath(multibar_h_path, typeof(GameObject));
                     discoball_h = AssetDatabase.LoadAssetAtPath(disco_h_path, typeof(GameObject));
                     laser_h = AssetDatabase.LoadAssetAtPath(laser_h_path, typeof(GameObject));
                 }
-                catch(Exception e)
+                catch(Exception e)      
                 {
                     loadSuccessful = false;
                     Debug.Log("Could not load fixture prefab!");
@@ -1464,6 +1593,8 @@ class VRSL_ManagerWindow : EditorWindow {
                     flasher_v = AssetDatabase.LoadAssetAtPath(flash_v_path, typeof(GameObject));
                     parlight_v = AssetDatabase.LoadAssetAtPath(par_v_path, typeof(GameObject));
                     lightbar_v = AssetDatabase.LoadAssetAtPath(bar_v_path, typeof(GameObject));
+                    sixFour_v = AssetDatabase.LoadAssetAtPath(six_v_path, typeof(GameObject));
+                    multiLightbar_v = AssetDatabase.LoadAssetAtPath(multibar_v_path, typeof(GameObject));
                     discoball_v = AssetDatabase.LoadAssetAtPath(disco_v_path, typeof(GameObject));
                     laser_v = AssetDatabase.LoadAssetAtPath(laser_v_path, typeof(GameObject));
                 }
@@ -1483,6 +1614,8 @@ class VRSL_ManagerWindow : EditorWindow {
                     flasher_l = AssetDatabase.LoadAssetAtPath(flash_l_path, typeof(GameObject));
                     parlight_l = AssetDatabase.LoadAssetAtPath(par_l_path, typeof(GameObject));
                     lightbar_l = AssetDatabase.LoadAssetAtPath(bar_l_path, typeof(GameObject));
+                    sixFour_l = AssetDatabase.LoadAssetAtPath(six_l_path, typeof(GameObject));
+                    multiLightbar_l = AssetDatabase.LoadAssetAtPath(multibar_l_path, typeof(GameObject));
                     discoball_l = AssetDatabase.LoadAssetAtPath(disco_l_path, typeof(GameObject));
                     laser_l = AssetDatabase.LoadAssetAtPath(laser_l_path, typeof(GameObject));
                 }
@@ -1634,6 +1767,20 @@ class VRSL_ManagerWindow : EditorWindow {
                 EditorGUILayout.EndHorizontal();
 
 
+                EditorGUI.EndDisabledGroup();
+                EditorGUI.BeginDisabledGroup(!panel.isUsingDMX);      
+                EditorGUILayout.BeginHorizontal("box");
+                if(GUILayout.Button(Label("Auto Assign Fixture IDs.", "Automatically assigns fixture IDs to all fixtures in the scene based on what prefab they're linked to. If they are not linked to a prefab, their fixture ID will starts with a 0 in the hundreds place."), GUILayout.MaxWidth(170f)))
+                {
+                    MassApplyIDs();
+                    Debug.Log("VRSL Control Panel: Auto assigning Fixture IDs!");
+                    ApplyChangesToFixtures(true, false, false);
+                    ResetItems(false);
+                    Repaint();   
+                }
+
+
+                EditorGUILayout.EndHorizontal();
                 EditorGUI.EndDisabledGroup();
                 EditorGUILayout.EndVertical();
                 //EditorGUILayout.Space();
@@ -1973,6 +2120,66 @@ class VRSL_ManagerWindow : EditorWindow {
                             Repaint();
                         }
                     }
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.BeginHorizontal();
+                    if(GUILayout.Button(Label("6x4 Light (5CH)", "Spawn the " + fp + " version of the DMX 6x4 Light prefab!"), HalfButton()))
+                    {
+                        Debug.Log("VRSL Control Panel: Spawning DMX " + fp + " 6x4 Light Prefab Prefab...");
+                        if(LoadFixturePrefabs(mode))
+                        {
+                            try{
+                                switch(mode)
+                                {
+                                    case 0:
+                                        SpawnPrefabWithUndo(sixFour_h, "Spawn Horizontal 6x4 Light");
+                                        break;
+                                    case 1:
+                                        SpawnPrefabWithUndo(sixFour_v, "Spawn Vertical 6x4 Light");
+                                        break;
+                                    case 2:
+                                        SpawnPrefabWithUndo(sixFour_l, "Spawn Legacy 6x4 Light");
+                                        break; 
+                                    default:
+                                        break;                                    
+                                }
+                            }
+                            catch(Exception e)
+                            {
+                                Debug.Log("VRSL Control Panel: DMX Fixture Prefab Spawn Failed!");
+                                e.ToString();
+                            }
+                            Repaint();
+                        }
+                    }
+                    if(GUILayout.Button(Label("Multi-Lightbar (5CH)", "Spawn the " + fp + " version of the DMX Multi-Lightbar prefab!"), HalfButton()))
+                    {
+                        Debug.Log("VRSL Control Panel: Spawning DMX " + fp + " Multi-Lightbar Prefab Prefab...");
+                        if(LoadFixturePrefabs(mode))
+                        {
+                            try{
+                                switch(mode)
+                                {
+                                    case 0:
+                                        SpawnPrefabWithUndo(multiLightbar_h, "Spawn Horizontal Multi-Lightbar");
+                                        break;
+                                    case 1:
+                                        SpawnPrefabWithUndo(multiLightbar_v, "Spawn Vertical Multi-Lightbar");
+                                        break;
+                                    case 2:
+                                        SpawnPrefabWithUndo(multiLightbar_l, "Spawn Legacy Multi-Lightbar");
+                                        break; 
+                                    default:
+                                        break;                                    
+                                }
+                            }
+                            catch(Exception e)
+                            {
+                                Debug.Log("VRSL Control Panel: DMX Fixture Prefab Spawn Failed!");
+                                e.ToString();
+                            }
+                            Repaint();
+                        }
+                    }
 
                     EditorGUILayout.EndHorizontal();
                   //  panel.useLegacyStaticLights = so.FindProperty("useLegacyStaticLights").boolValue;
@@ -2196,6 +2403,13 @@ class VRSL_ManagerWindow : EditorWindow {
             GuiLine();
             GUILayout.Label("Fixture List", Title2());
             EditorGUILayout.Space(5f);
+           // EditorGUILayout.BeginHorizontal();
+           // GUILayout.Label("DMX Fixture Count: " + GetFixtureCount());
+          //  GUILayout.Label("Audiolink Fixture Count: " + GetAudioLinkFixtureCount());
+           // EditorGUILayout.EndHorizontal();
+           int dmxCount = GetFixtureCount();
+           int audioLinkCount = GetAudioLinkFixtureCount();
+            EditorGUILayout.Space(5f);
             if(GUILayout.Button(Label("Apply Changes", "Apply all changes in the fixture list to all affected fixtures in the scene!"), BigButton()))
             {
 
@@ -2217,7 +2431,7 @@ class VRSL_ManagerWindow : EditorWindow {
 
 ////////////////////////////////////////////////////////////////////////
             Color bg = GUI.backgroundColor;
-            GUIContent dmxRectText = new GUIContent(ToggleText(panel.isUsingDMX,"DMX"), "Enable/Disable DMX mode from this scene. This will disable all corresponding DMX render textures and prevent them from updating at runtime.");
+            GUIContent dmxRectText = new GUIContent(ToggleText(panel.isUsingDMX,"DMX (" + dmxCount +")"), "Enable/Disable DMX mode from this scene. This will disable all corresponding DMX render textures and prevent them from updating at runtime.");
             Rect dmxRect = GUILayoutUtility.GetRect(dmxRectText, NormalButtonToggle(panel.isUsingDMX, dmxHover));
             if (Event.current.type == EventType.Repaint && dmxRect.Contains(Event.current.mousePosition))
             {
@@ -2230,7 +2444,7 @@ class VRSL_ManagerWindow : EditorWindow {
             so.FindProperty("isUsingDMX").boolValue = GUI.Toggle(dmxRect, panel.isUsingDMX, dmxRectText, NormalButtonToggle(panel.isUsingDMX, dmxHover));
             //so.FindProperty("isUsingDMX").boolValue = GUILayout.Toggle(panel.isUsingDMX, ToggleText(panel.isUsingDMX,"DMX"), NormalButtonToggle(panel.isUsingDMX, dmxHover));
             
-            GUIContent audioRectText = new GUIContent(ToggleText(panel.isUsingAudioLink,"AUDIOLINK"), "Enable/Disable AudioLink MOde from this scene. This will diable all corresponding AudioLink render textures and prevent them from updating at runtime.");
+            GUIContent audioRectText = new GUIContent(ToggleText(panel.isUsingAudioLink,"AUDIOLINK (" + audioLinkCount + ")"), "Enable/Disable AudioLink MOde from this scene. This will diable all corresponding AudioLink render textures and prevent them from updating at runtime.");
             Rect audioRect = GUILayoutUtility.GetRect(audioRectText, NormalButtonToggle(panel.isUsingAudioLink, audioLinkHover));
             if (Event.current.type == EventType.Repaint && audioRect.Contains(Event.current.mousePosition))
             {
@@ -2307,6 +2521,7 @@ class VRSL_ManagerWindow : EditorWindow {
                                 GUILayout.Label("DMX Settings", SecLabel());
                                 GUILayout.Space(8.0f);
                                 fixture.P_enableDMXChannels = EditorGUILayout.Toggle("Enable DMX", fixture.P_enableDMXChannels);
+                                fixture.P_fixtureID = EditorGUILayout.IntField("Fixture ID", fixture.P_fixtureID, GUILayout.MaxWidth(sectionWidth - 10));
                                 fixture.P_useLegacySectorMode = EditorGUILayout.Toggle("Legacy Sector Mode",fixture.P_useLegacySectorMode);
                                 if(fixture.P_useLegacySectorMode)
                                 {
@@ -2610,7 +2825,7 @@ class VRSL_ManagerWindow : EditorWindow {
                             Vector3 pos = fixture.light.transform.position;
                             pos.y+= 0.1f;
                             pos.x -= 0.05f;
-                            Handles.Label(pos, "CH: " + fixture.light._GetDMXChannel(), SceneLabel());
+                            Handles.Label(pos, "CH: " + fixture.light._GetDMXChannel() +"\n" + "ID: " + fixture.light.fixtureID, SceneLabel());
                         }
                     }
                     catch(MissingReferenceException e)
@@ -2630,7 +2845,7 @@ class VRSL_ManagerWindow : EditorWindow {
                             Vector3 pos = fixture.light.transform.position;
                             pos.y+= 0.1f;
                             pos.x -= 0.05f;
-                            Handles.Label(pos, "U: " + fixture.light._GetUniverse() +"\n" + "CH: " + fixture.light._GetDMXChannel(), SceneLabel());
+                            Handles.Label(pos, "U: " + fixture.light._GetUniverse() +"\n" + "CH: " + fixture.light._GetDMXChannel() +"\n" + "ID: " + fixture.light.fixtureID, SceneLabel());
                         }
                     }
                     catch(MissingReferenceException e)
@@ -2645,5 +2860,6 @@ class VRSL_ManagerWindow : EditorWindow {
      // Do your drawing here using GUI.
      Handles.EndGUI();    
     }
+}
 }
 #endif

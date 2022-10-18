@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: VRStageLighting_AudioLink_Static
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: bdce08ea15b0ce044b1af98368d1708e,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 4a0ea6f34d412474b952ec43ff3a5d78,
     type: 2}
   udonAssembly: 
   assemblyError: 
