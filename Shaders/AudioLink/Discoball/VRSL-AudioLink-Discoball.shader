@@ -62,6 +62,7 @@
                  UNITY_VERTEX_OUTPUT_STEREO 
              };
             #include "../Shared/VRSL-AudioLink-Defines.cginc"
+            
             half _Multiplier;
 			#include "../Shared/VRSL-AudioLink-Functions.cginc"
 
