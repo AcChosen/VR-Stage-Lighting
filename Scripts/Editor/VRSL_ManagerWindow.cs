@@ -551,7 +551,7 @@ class VRSL_ManagerWindow : EditorWindow {
     private string[] dmxModes = new string[]{"Horizontal", "Vertical", "Legacy"};
     private string [] dmxGizmoInfo = new string[]{"None", "Channel Only", "Universe + Channel"};
     private static UnityEngine.Object controlPanelUiPrefab, directionalLightPrefab, uDesktopHorizontalPrefab, uDesktopVerticalPrefab, uDesktopLegacyPrefab, uVidHorizontalPrefab, uVidVerticalPrefab, uVidLegacyPrefab,
-    audioLinkPrefab, audioLinkControllerPrefab, standardAudioLinkControllerPrefab;
+    audioLinkPrefab, audioLinkControllerPrefab, standardAudioLinkControllerPrefab, oscGridReaderHorizontalPrefab, oscGridReaderVerticalPrefab;
     private static bool dmxSpawnsFoldout, audioLinkSpawnsFoldout, mainOptionsFoldout;
     Vector2 dmxScrollPos, audioLinkScrollPos, mainScrollPos;
     private static bool dmxHover, audioLinkHover;
@@ -630,8 +630,12 @@ class VRSL_ManagerWindow : EditorWindow {
         string audioLinkPath = "Assets/AudioLink/Audiolink.prefab";
         string audioLinkControllerPath = "Assets/VR-Stage-Lighting/Prefabs/AudioLink/VRSL-AudioLinkControllerWithSmoothing/AudioLinkController-WithVRSLSmoothing.prefab";
         string standardAudioLinkControllerPath = "Assets/AudioLink/AudioLinkController.prefab";
+        string oscGridReadHPath = "Assets/VR-Stage-Lighting/Prefabs/DMX/GridReader/VRSL-DMX-TekOSCGridReader-H.prefab";
+        string oscGridReadVPath = "Assets/VR-Stage-Lighting/Prefabs/DMX/GridReader/VRSL-DMX-TekOSCGridReader-V.prefab";
         controlPanelUiPrefab = AssetDatabase.LoadAssetAtPath(controlPanelPath, typeof(GameObject));
         directionalLightPrefab = AssetDatabase.LoadAssetAtPath(directionalLightPath, typeof(GameObject));
+        oscGridReaderHorizontalPrefab = AssetDatabase.LoadAssetAtPath(oscGridReadHPath, typeof(GameObject));
+        oscGridReaderVerticalPrefab = AssetDatabase.LoadAssetAtPath(oscGridReadVPath, typeof(GameObject));
         uDesktopHorizontalPrefab = AssetDatabase.LoadAssetAtPath(udeskHorizontalPath, typeof(GameObject));
         uDesktopVerticalPrefab = AssetDatabase.LoadAssetAtPath(udeskVerticalPath, typeof(GameObject));
         uDesktopLegacyPrefab = AssetDatabase.LoadAssetAtPath(udeskLegacyPath, typeof(GameObject));
@@ -649,6 +653,16 @@ class VRSL_ManagerWindow : EditorWindow {
         if(directionalLightPrefab == null)
         {
             Debug.LogError("VRSL Control Panel: Failed to load " + directionalLightPath);
+            result = false;
+        }
+        if(oscGridReaderHorizontalPrefab == null)
+        {
+            Debug.LogError("VRSL Control Panel: Failed to load  " + oscGridReadHPath);
+            result = false;
+        }
+        if(oscGridReaderVerticalPrefab == null)
+        {
+            Debug.LogError("VRSL Control Panel: Failed to load  " + oscGridReadVPath);
             result = false;
         }
         if(uDesktopHorizontalPrefab == null)
@@ -2011,11 +2025,28 @@ class VRSL_ManagerWindow : EditorWindow {
                 
                 if(dmxSpawnsFoldout)
                 {
+                    GUILayout.Label("DMX Direct Readers (TekOSC To Editor)", Title3());
+                    EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((position.width/2f)));
+                    if(GUILayout.Button(Label("Horizontal", "Spawn the horizontal version of the TekOSC DMX Reader! Use this to send DMX to the Unity Editor through OSC without OBS!"), HalfButton()))
+                    {
+                        Debug.Log("VRSL Control Panel: Spawning Horizontal OSC Grid Reader...");
+                        if(LoadPrefabs())
+                            SpawnPrefabWithUndo(oscGridReaderHorizontalPrefab, "Spawn OSC Grid Reader", false, false);
+                        Repaint();
+                    }
+                    if(GUILayout.Button(Label("Vertical", "Spawn the vertical version of the TekOSC DMX Reader! Use this to send DMX to the Unity Editor through OSC without OBS!"), HalfButton()))
+                    {
+                        Debug.Log("VRSL Control Panel: Spawning Vertical OSC Grid Reader...");
+                        if(LoadPrefabs())
+                            SpawnPrefabWithUndo(oscGridReaderVerticalPrefab, "Spawn OSC Grid Reader", false, false);
+                        Repaint();
+                    }
+                    EditorGUILayout.EndHorizontal();
                     
                     GUILayout.Label("DMX Reader Screens (Desktop To Editor)", Title3());
                     
                     EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((position.width/2f)));
-                    if(GUILayout.Button(Label("Horizontal", "Spawn the horizontal version of the uDesktop DMX Reader screen! Use send your DMX stream directly to the Unity Editor!"), HalfButton()))
+                    if(GUILayout.Button(Label("Horizontal", "Spawn the horizontal version of the uDesktop DMX Reader screen! Use this send your DMX stream directly to the Unity Editor by copying your screen!"), HalfButton()))
                     {
                         Debug.Log("VRSL Control Panel: Spawning Horizontal Desktop to Editor DMX Screen...");
                         if(LoadPrefabs())
@@ -2023,7 +2054,7 @@ class VRSL_ManagerWindow : EditorWindow {
                             //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uDesktopHorizontalPrefab as GameObject), null);
                         Repaint();
                     }
-                    if(GUILayout.Button(Label("Vertical", "Spawn the vertical version of the uDesktop DMX Reader screen! Use send your DMX stream directly to the Unity Editor!"), HalfButton()))
+                    if(GUILayout.Button(Label("Vertical", "Spawn the vertical version of the uDesktop DMX Reader screen! Use send your DMX stream directly to the Unity Editor by copying your screen!"), HalfButton()))
                     {
                         Debug.Log("VRSL Control Panel: Spawning Vertical Desktop to Editor DMX Screen...");
                         if(LoadPrefabs())
@@ -2031,7 +2062,7 @@ class VRSL_ManagerWindow : EditorWindow {
                             //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uDesktopVerticalPrefab as GameObject), null);
                         Repaint();
                     }
-                    if(GUILayout.Button(Label("Legacy", "Spawn the legacy version of the uDesktop DMX Reader screen! Use send your DMX stream directly to the Unity Editor!"), HalfButton()))
+                    if(GUILayout.Button(Label("Legacy", "Spawn the legacy version of the uDesktop DMX Reader screen! Use send your DMX stream directly to the Unity Editor by copying your screen!"), HalfButton()))
                     {
                         Debug.Log("VRSL Control Panel: Spawning Legacy Desktop to Editor DMX Screen...");
                         if(LoadPrefabs())
