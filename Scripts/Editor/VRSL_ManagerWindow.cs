@@ -1219,6 +1219,11 @@ class VRSL_ManagerWindow : EditorWindow {
     }
     static void MassApplyExtendedUniverseStatus()
     {
+        if(panel == null)
+        {
+            Debug.Log("Panel not found!");
+            return;
+        }
         for(int i = 0; i < universes.Length; i++)
         {
             if(universes[i] == null)
@@ -1235,9 +1240,9 @@ class VRSL_ManagerWindow : EditorWindow {
                 {
                     continue;
                 }
-                if(fixture.P_nineUniverseMode != last9UniverseStatus)
+                if(fixture.P_nineUniverseMode != panel.useExtendedUniverses)
                 {
-                    fixture.P_nineUniverseMode = last9UniverseStatus;
+                    fixture.P_nineUniverseMode = panel.useExtendedUniverses;
                 }
             }
         }
