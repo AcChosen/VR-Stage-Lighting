@@ -786,12 +786,15 @@ class VRSL_ManagerWindow : EditorWindow {
             universes[i] = new List<DMXListItem>();
             foreach(DMXListItem fixture in dmxLights)
             {
-                if(fixture.light.nineUniverseMode != last9UniverseStatus)
+                if(panel != null)
                 {
-                    fixture.P_nineUniverseMode = last9UniverseStatus;
-                    //fixture.light.nineUniverseMode = last9UniverseStatus;
-                    fixture.ApplyChanges();
+                    if(fixture.light.nineUniverseMode != panel.useExtendedUniverses)
+                    {
+                        fixture.P_nineUniverseMode = panel.useExtendedUniverses;
+                        //fixture.light.nineUniverseMode = last9UniverseStatus;
+                        fixture.ApplyChanges();
 
+                    }
                 }
                 if(fixture.light._GetUniverse() == i+1)
                 {
@@ -1154,12 +1157,14 @@ class VRSL_ManagerWindow : EditorWindow {
     }
     void OnEnable() 
     {
+     //EditorApplication.playModeStateChanged += LogPlayModeState;
      EditorApplication.hierarchyChanged += HierarchyChanged;
    //  EditorApplication.playModeStateChanged += LogPlayModeState;
      SceneView.duringSceneGui += this.OnSceneGUI;
     }
     void OnDisable( )
     {
+        //EditorApplication.playModeStateChanged -= LogPlayModeState;
         EditorApplication.hierarchyChanged -= HierarchyChanged;
         //EditorApplication.playModeStateChanged -= LogPlayModeState;
         if((panel != null))
@@ -1240,12 +1245,13 @@ class VRSL_ManagerWindow : EditorWindow {
                 {
                     continue;
                 }
-                if(fixture.P_nineUniverseMode != panel.useExtendedUniverses)
+                if(fixture.P_nineUniverseMode != last9UniverseStatus)
                 {
-                    fixture.P_nineUniverseMode = panel.useExtendedUniverses;
+                    fixture.P_nineUniverseMode = last9UniverseStatus;
                 }
             }
         }
+        Debug.Log("Finished Updating Extended Universe Status!");
     }
     public class FixturePrefabID
     {
@@ -1935,7 +1941,7 @@ class VRSL_ManagerWindow : EditorWindow {
             panel.ApplyProxyModifications();
 
 
-            if(panel.useExtendedUniverses != last9UniverseStatus)
+            if((panel.useExtendedUniverses != last9UniverseStatus) && (EditorApplication.isPlayingOrWillChangePlaymode == false))
             {
                 panel._CheckkExtendedUniverses();
                 last9UniverseStatus = panel.useExtendedUniverses;
