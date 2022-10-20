@@ -75,6 +75,7 @@ float _InnerFadeStrength, _InnerIntensityCurve;
 
 UNITY_INSTANCING_BUFFER_START(Props)
     UNITY_DEFINE_INSTANCED_PROP(uint, _DMXChannel)
+    UNITY_DEFINE_INSTANCED_PROP(uint, _NineUniverseMode)
     UNITY_DEFINE_INSTANCED_PROP(uint, _Channel)
     UNITY_DEFINE_INSTANCED_PROP(uint, _PanInvert)
     UNITY_DEFINE_INSTANCED_PROP(uint, _TiltInvert)

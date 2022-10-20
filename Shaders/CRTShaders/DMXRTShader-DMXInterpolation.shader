@@ -5,6 +5,7 @@ Shader "VRSL/DMX CRTs/Interpolation"
         _DMXChannel ("DMX Channel (for legacy global movement speed)", Int) = 0
         [Toggle] _EnableLegacyGlobalMovementSpeedChannel ("Enable Legacy Global Movement Speed Channel (disables individiual movement speed per sector)", Int) = 0
         [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+        [Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
         [Toggle] _EnableCompatibilityMode ("Enable Stream OSC/DMX Control", Int) = 0
         [NoScaleOffset]_OSCGridRenderTexture("OSC Grid Render Texture (To Control Lights)", 2D) = "white" {}
         _SmoothValue ("Smoothness Level (0 to 1, 0 = max)", Range(0,1)) = 0.5
@@ -31,8 +32,9 @@ Shader "VRSL/DMX CRTs/Interpolation"
             sampler2D _OSCGridRenderTexture;
             SamplerState sampler_point_repeat;
             int _IsEven, _DMXChannel, _EnableOSC, _EnableLegacyGlobalMovementSpeedChannel;
-            uint _EnableCompatibilityMode;
+            uint _EnableCompatibilityMode, _NineUniverseMode;
             float oscSmoothnessRAW;
+            float3 rgbSmoothnessRaw;
             #define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
 
 
@@ -81,6 +83,15 @@ Shader "VRSL/DMX CRTs/Interpolation"
             return value;
             }
 
+            float3 getValueAtCoordsRGB(float x, float y, uint sector)
+            {
+            float2 recoords = getSectorCoordinates(x, y, sector);
+            float4 uvcoords = float4(recoords.x, recoords.y, 0,0);
+            float4 c = tex2D(_OSCGridRenderTexture, uvcoords);
+            float3 col = float3(LinearToGammaSpaceExact(c.r), LinearToGammaSpaceExact(c.g), LinearToGammaSpaceExact(c.b));
+            return col;
+            }
+
             float getValueAtUV(float2 uv)
             {
                 float4 c = tex2D(_OSCGridRenderTexture, uv);
@@ -89,6 +100,13 @@ Shader "VRSL/DMX CRTs/Interpolation"
                 value = LinearToGammaSpaceExact(value);
 
                 return value;
+            }
+
+            float3 getValueAtUVRGB(float2 uv)
+            {
+                float4 c = tex2D(_OSCGridRenderTexture, uv);
+                float3 col = float3(LinearToGammaSpaceExact(c.r), LinearToGammaSpaceExact(c.g), LinearToGammaSpaceExact(c.b));
+                return col;
             }
 
             float2 getCh13coords(float2 uv)
@@ -110,6 +128,27 @@ Shader "VRSL/DMX CRTs/Interpolation"
             }
 
 
+            float3 getSmoothnessValueRGB(float2 uv)
+            {
+
+                rgbSmoothnessRaw = float3(0,0,0);
+                if(_EnableLegacyGlobalMovementSpeedChannel == 1)
+                {
+                    rgbSmoothnessRaw = getValueAtCoordsRGB(0.189936, 0.00762, _DMXChannel);
+                }
+                else
+                {
+                    rgbSmoothnessRaw = getValueAtUVRGB(float2(0.960, uv.y));
+                }
+
+                float3 rgbSmoothness = float3(lerp(_MinimumSmoothnessOSC, _MaximumSmoothnessOSC, rgbSmoothnessRaw.r), 
+                lerp(_MinimumSmoothnessOSC, _MaximumSmoothnessOSC, rgbSmoothnessRaw.g), 
+                lerp(_MinimumSmoothnessOSC, _MaximumSmoothnessOSC, rgbSmoothnessRaw.b));
+
+                return IF(_EnableOSC == 1, rgbSmoothness, float3(_SmoothValue, _SmoothValue, _SmoothValue));  
+            }
+
+
             float4 frag(v2f_customrendertexture IN) : COLOR
             {
                 if (_Time.y > 3.0)
@@ -121,8 +160,17 @@ Shader "VRSL/DMX CRTs/Interpolation"
                     //     oscSmoothnessRAW = IF(_EnableCompatibilityMode == 1, getValueAtCoords(0.096151, 0.019231, _DMXChannel), getValueAtCoords(0.189936, 0.00762, _DMXChannel));
                     //     return oscSmoothnessRAW;
                     // }
-                    float smoothness = getSmoothnessValue(IN.localTexcoord.xy);
-                    return lerp(clamp(lerp(previousFrame, currentFrame,smoothstep(0.0, 1.0, clamp(unity_DeltaTime.z,0.0,1.0))) , 0.0, 400.0), currentFrame, smoothness);
+                    if(_NineUniverseMode && _EnableOSC)
+                    {
+                        float3 s = getSmoothnessValueRGB(IN.localTexcoord.xy);
+                        s = lerp(clamp(lerp(previousFrame.rgb, currentFrame.rgb,smoothstep(0.0, 1.0, clamp(unity_DeltaTime.z,0.0,1.0))) , 0.0, 400.0), currentFrame.rgb, s);
+                        return float4(s, currentFrame.a); 
+                    }
+                    else
+                    {
+                        float smoothness = getSmoothnessValue(IN.localTexcoord.xy);
+                        return lerp(clamp(lerp(previousFrame, currentFrame,smoothstep(0.0, 1.0, clamp(unity_DeltaTime.z,0.0,1.0))) , 0.0, 400.0), currentFrame, smoothness);
+                    }
                 }
                 else
                 {

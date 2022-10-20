@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-LightBar-FixtureMat-Horizontal-15CH
   m_Shader: {fileID: 4800000, guid: 629a01163196b0a44afd7287cbee0032, type: 3}
-  m_ShaderKeywords: _EMISSION _METALLICGLOSSMAP _NORMALMAP _USERAWGRID_ON
+  m_ShaderKeywords: _EMISSION _FORWARD_Y _METALLICGLOSSMAP _NORMALMAP _USERAWGRID_ON
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -161,6 +161,7 @@ Material:
     - _ModX: -0.12
     - _ModY: -0.37
     - _Mode: 0
+    - _NineUniverseMode: 0
     - _OcclusionStrength: 1
     - _PanInvert: 0
     - _Parallax: 0.02

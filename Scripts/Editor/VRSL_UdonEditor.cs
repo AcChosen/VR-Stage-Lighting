@@ -191,6 +191,10 @@ namespace VRSL.EditorScripts
             GUILayout.Label("DMX Settings", l);
             serializedObject.FindProperty("enableDMXChannels").boolValue = EditorGUILayout.Toggle(new GUIContent("Enable DMX", 
             "The industry standard DMX Channel this fixture begins on. Most standard VRSL fixtures are 13 channels"), fixture.enableDMXChannels);
+
+            serializedObject.FindProperty("nineUniverseMode").boolValue = EditorGUILayout.Toggle(new GUIContent("Extended Universe Mode", 
+            "Enables 9-Universe mode for this fixture. The grid will be split up by RGB channels with each section and color representing a universe." + 
+            " Only availble on the Vertical and Horizontal Grid nodes."), fixture.nineUniverseMode);
             
             serializedObject.FindProperty("fixtureID").intValue = EditorGUILayout.IntField(new GUIContent("Fixture ID", 
             "The ID number for this fixture. This is mostly for organizational purposes and is entirely optional. Most DMX software have an ID attached to each fixture to run the fixtures through commands more easily, and it is recommended to have those IDs lined up here as well for the sake simplicity. This ID is public and can also be used for Udon scripting as well."),fixture.fixtureID);
@@ -215,7 +219,7 @@ namespace VRSL.EditorScripts
                 serializedObject.FindProperty("dmxChannel").intValue = EditorGUILayout.IntSlider(new GUIContent("DMX Channel", 
                 "The industry standard DMX Channel this fixture begins on. Most standard VRSL fixtures are 13 channels"),fixture.dmxChannel, 1, 512);
                 serializedObject.FindProperty("dmxUniverse").intValue = EditorGUILayout.IntSlider(new GUIContent("Universe", 
-                "The industry standard Artnet Universe. Use this to choose which universe to read the DMX Channel from."),fixture.dmxUniverse, 1, 3);
+                "The industry standard Artnet Universe. Use this to choose which universe to read the DMX Channel from."),fixture.dmxUniverse, 1, 9);
             }
             EditorGUILayout.Space();
             EditorGUILayout.Space();

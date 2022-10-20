@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-AudioLink-StandardMover-FixtureMat
   m_Shader: {fileID: 4800000, guid: ec0e56fb8480191448eedfb15961ac64, type: 3}
-  m_ShaderKeywords: _DNENABLER_NONE _ENABLEOSC_ON _ENABLESPIN_ON _USERAWGRID_ON
+  m_ShaderKeywords: _DNENABLER_NONE _ENABLEOSC_ON _ENABLESPIN_ON _FORWARD_Y _USERAWGRID_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0

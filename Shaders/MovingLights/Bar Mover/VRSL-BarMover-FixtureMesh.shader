@@ -8,6 +8,7 @@
         _EmissionMask("Emission Mask", 2D) = "black" {}
         _BumpMap ("Bumpmap", 2D) = "bump" {}
         [HideInInspector]_DMXChannel ("Starting Channel", Int) = 0
+        [HideInInspector][Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
 		 [HideInInspector][Toggle] _PanInvert ("Invert Mover Pan", Int) = 0
 
 		 //[HideInInspector]_FinalStrobeFreq ("Final Strobe Frequency", Float) = 0
@@ -91,6 +92,7 @@
         #pragma instancing_options assumeuniformscaling
     UNITY_INSTANCING_BUFFER_START(Props)
         UNITY_DEFINE_INSTANCED_PROP(uint, _DMXChannel)
+        UNITY_DEFINE_INSTANCED_PROP(uint, _NineUniverseMode)
         UNITY_DEFINE_INSTANCED_PROP(uint, _PanInvert)
         UNITY_DEFINE_INSTANCED_PROP(uint, _TiltInvert)
         UNITY_DEFINE_INSTANCED_PROP(uint, _EnableOSC)

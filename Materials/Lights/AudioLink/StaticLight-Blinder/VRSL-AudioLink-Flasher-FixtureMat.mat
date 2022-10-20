@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-AudioLink-Flasher-FixtureMat
   m_Shader: {fileID: 4800000, guid: bc962dcf588680b47b0384ddabe83e24, type: 3}
-  m_ShaderKeywords: _EMISSION _METALLICGLOSSMAP _NORMALMAP _USERAWGRID_ON
+  m_ShaderKeywords: _EMISSION _FORWARD_Y _METALLICGLOSSMAP _NORMALMAP _USERAWGRID_ON
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0

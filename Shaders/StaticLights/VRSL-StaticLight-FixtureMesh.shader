@@ -4,6 +4,7 @@
     {
         //[Header (INSTANCED PROPERITES)]
 		 [HideInInspector]_DMXChannel ("DMX Fixture Number/Sector (Per 13 Channels)", Int) = 0
+          [Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
 
 		 [Toggle] _EnableStrobe ("Enable Strobe", Int) = 0
 		 //[HideInInspector][Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0

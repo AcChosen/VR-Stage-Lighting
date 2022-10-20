@@ -3,6 +3,7 @@
     Properties
     {
         [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+         [Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
         _FinalIntensity("Final Intensity", Range(0,1)) = 1
         _GlobalIntensity("Global Intensity", Range(0,1)) = 1
         _UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
@@ -237,7 +238,8 @@
                             continue; //exit means occluded
 
                         //we don't have tex2D() in vertex shader, because rasterization is not done by GPU, so we use tex2Dlod() with mip0 instead
-                        float sampledSceneDepth = tex2Dlod(_CameraDepthTexture,float4(screenUV,0,0)).x;//(uv.x,uv.y,0,mipLevel)
+                        float4 ssd = SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(screenUV, 0.0, 0.0));//(uv.x,uv.y,0,mipLevel)
+                        float sampledSceneDepth = ssd.x;
                         float linearEyeDepthFromSceneDepthTexture = LinearEyeDepth(sampledSceneDepth);
                         float linearEyeDepthFromSelfALU = PivotPosCS.w; //clip space .w is view space z, = linear eye depth
 

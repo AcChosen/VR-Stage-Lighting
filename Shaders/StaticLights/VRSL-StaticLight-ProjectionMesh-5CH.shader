@@ -6,8 +6,10 @@
 		
 		//[Header (INSTANCED PROPERITES)]
 		 [HideInInspector]_DMXChannel ("DMX Fixture Number/Sector (Per 13 Channels)", Int) = 0
+		  [Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
 
 		 [HideInInspector][Toggle] _EnableStrobe ("Enable Strobe", Int) = 0
+
 
 		 [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
 		 [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0

@@ -25,5 +25,6 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _MaxStrobeFreq: 75
+    - _NineUniverseMode: 0
     - _SmoothValue: 0.5
     m_Colors: []

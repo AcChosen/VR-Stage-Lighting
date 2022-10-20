@@ -268,7 +268,8 @@
                             continue; //exit means occluded
 
                         //we don't have tex2D() in vertex shader, because rasterization is not done by GPU, so we use tex2Dlod() with mip0 instead
-                        float sampledSceneDepth = tex2Dlod(_CameraDepthTexture,float4(screenUV,0,0)).x;//(uv.x,uv.y,0,mipLevel)
+                        float4 ssd = SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(screenUV, 0.0, 0.0));//(uv.x,uv.y,0,mipLevel)
+                        float sampledSceneDepth = ssd.x;
                         float linearEyeDepthFromSceneDepthTexture = LinearEyeDepth(sampledSceneDepth);
                         float linearEyeDepthFromSelfALU = PivotPosCS.w; //clip space .w is view space z, = linear eye depth
 

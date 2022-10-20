@@ -5,6 +5,7 @@
     {
         [NoScaleOffset]_OSCGridRenderTexture("OSC Grid Render Texture (To Control Lights)", 2D) = "white" {}
         _MaxStrobeFreq("Maximum Strobe Frequency", Range(1,100)) = 25
+        [Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
      }
 
      SubShader
@@ -26,6 +27,7 @@
             uniform float4 _OSCGridRenderTexture_TexelSize;
             SamplerState sampler_point_repeat;
             half _MaxStrobeFreq;
+            uint _NineUniverseMode;
 
             
 
@@ -47,6 +49,10 @@
                 
                 return value;
             }
+            float3 GetDMXValueRGB(float4 c)
+            {     
+                return float3(LinearToGammaSpaceExact(c.r), LinearToGammaSpaceExact(c.g), LinearToGammaSpaceExact(c.b));
+            }
 
             float4 frag(v2f_customrendertexture IN) : COLOR
             //NOTE
@@ -66,17 +72,40 @@
 
                     float dt = clamp(unity_DeltaTime.x, 0.0, 2.0);
                     //T = CURRENT PHASE
-                    float t = previousFrame.r;
-                    //INCREMENT CURRENT PHASE CLOSER TO 2PI
-                    t = t + (dt * (GetDMXValue(currentFrame) * _MaxStrobeFreq));
-
-                    //IF PHASE IS GREATER THAN OR EQUAL TO 2PI, RETURN TO 0, CAUSE SIN(2PI) == SIN(0)
-                    if (t >= 2*3.14159265) 
+                    if(_NineUniverseMode)
                     {
-                        t -= 2*3.14159265; 
+                        float3 t = float3(previousFrame.r, previousFrame.g, previousFrame.b);
+                        //INCREMENT CURRENT PHASE CLOSER TO 2PI
+                        t = t + (float3(dt, dt, dt) * (GetDMXValueRGB(currentFrame) * float3(_MaxStrobeFreq, _MaxStrobeFreq, _MaxStrobeFreq)));
+
+                        //IF PHASE IS GREATER THAN OR EQUAL TO 2PI, RETURN TO 0, CAUSE SIN(2PI) == SIN(0)
+                        // if (t >= 2*3.14159265) 
+                        // {
+                        //     t -= 2*3.14159265; 
+                        // }
+                        t.r -= t.r >= 2*3.14159265 ? 2*3.14159265 : 0.0;
+                        t.g -= t.g >= 2*3.14159265 ? 2*3.14159265 : 0.0;
+                        t.b -= t.b >= 2*3.14159265 ? 2*3.14159265 : 0.0;
+
+                        t = float3(clamp(t.r, 0.0, 1000000.0), clamp(t.g, 0.0, 1000000.0), clamp(t.b, 0.0, 1000000.0));
+                        //EZ CLAP
+                        return float4(t, currentFrame.a);
                     }
-                    //EZ CLAP
-                    return clamp(t, 0.0, 1000000.0);
+                    else
+                    {
+                        float t = previousFrame.r;
+                        //INCREMENT CURRENT PHASE CLOSER TO 2PI
+                        t = t + (dt * (GetDMXValue(currentFrame) * _MaxStrobeFreq));
+
+                        //IF PHASE IS GREATER THAN OR EQUAL TO 2PI, RETURN TO 0, CAUSE SIN(2PI) == SIN(0)
+                        // if (t >= 2*3.14159265) 
+                        // {
+                        //     t -= 2*3.14159265; 
+                        // }
+                        t -= t >= 2*3.14159265 ? 2*3.14159265 : 0.0;
+                        //EZ CLAP
+                        return clamp(t, 0.0, 1000000.0);
+                    }
                 }
 
                 else

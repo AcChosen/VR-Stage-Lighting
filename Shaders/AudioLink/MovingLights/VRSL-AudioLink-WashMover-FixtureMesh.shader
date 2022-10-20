@@ -180,7 +180,48 @@ RWStructuredBuffer<float4> buffer4 : register(u2);
 
 	ENDCG
 	}
-	UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
+	//UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
+		Pass
+        {
+            Tags {"LightMode"="ShadowCaster"}
+ 
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_shadowcaster
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ LOD_FADE_CROSSFADE
+            #include "UnityCG.cginc"
+ 
+            struct v2f {
+                V2F_SHADOW_CASTER;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
+            };
+ 
+            v2f vert(appdata_full v)
+            {
+                v2f o;
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_INITIALIZE_OUTPUT(v2f, o); //DON'T INITIALIZE OR IT WILL BREAK PROJECTION
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+				UNITY_TRANSFER_INSTANCE_ID(v, o);
+                o.pos = ComputeScreenPos(UnityObjectToClipPos(v.vertex));
+                TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+                return o;
+            }
+ 
+            float4 frag(v2f i) : SV_Target
+            {
+                #ifdef LOD_FADE_CROSSFADE
+                    float2 vpos = i.pos.xy / i.pos.w * _ScreenParams.xy;
+                    UnityApplyDitherCrossFade(vpos);
+                #endif
+ 
+                SHADOW_CASTER_FRAGMENT(i)
+            }
+            ENDCG
+		}
 
 
 	}

@@ -6,6 +6,7 @@
         _gRayTex ("Mask 2 Texture", 2D) = "white" {}
         _RayTexture ("God Ray Texture", 2D) = "white" {}
          [HideInInspector]_DMXChannel ("Starting Channel", Int) = 0
+         [HideInInspector][Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
 		 [HideInInspector][Toggle] _PanInvert ("Invert Mover Pan", Int) = 0
 
 		 //[HideInInspector]_FinalStrobeFreq ("Final Strobe Frequency", Float) = 0
@@ -135,6 +136,7 @@
         half _InnerFadeStrength, _FadeStrength, _InnerIntensityCurve, _CamAngleFadeStrength, _IntersectionFadeStrength, _EdgeFadeCurve, _VolumectricCornerOutside, _VolumectricCornerInside;
         UNITY_INSTANCING_BUFFER_START(Props)
             UNITY_DEFINE_INSTANCED_PROP(uint, _DMXChannel)
+            UNITY_DEFINE_INSTANCED_PROP(uint, _NineUniverseMode)
             UNITY_DEFINE_INSTANCED_PROP(uint, _PanInvert)
             UNITY_DEFINE_INSTANCED_PROP(uint, _TiltInvert)
             UNITY_DEFINE_INSTANCED_PROP(uint, _EnableOSC)
