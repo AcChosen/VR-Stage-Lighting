@@ -4,6 +4,7 @@
     {
          [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
         _DMXChannel ("DMX Fixture Number/Sector (Per 13 Channels)", Int) = 0 
+        [HideInInspector][Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
         [Toggle] _UseRawGrid("Use Raw Grid For Light Intensity", Int) = 0
 		[NoScaleOffset] _OSCGridRenderTextureRAW("OSC Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
 		[NoScaleOffset] _OSCGridRenderTexture("OSC Grid Render Texture (To Control Lights)", 2D) = "white" {}

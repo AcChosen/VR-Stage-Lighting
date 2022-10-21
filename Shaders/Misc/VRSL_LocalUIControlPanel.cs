@@ -61,6 +61,7 @@ namespace VRSL
 
         [HideInInspector]
         public bool useLegacyStaticLights = false;
+        public bool useExtendedUniverses = false;
 
 
         void Start()
@@ -73,6 +74,7 @@ namespace VRSL
             _SetBloomIntensity();
             _CheckDMX();
             _CheckAudioLink();
+            _CheckkExtendedUniverses();
         }
         
         void EnableCRTS(CustomRenderTexture[] rtArray)
@@ -135,6 +137,18 @@ namespace VRSL
             else
             {
                 DisableCRTS(AudioLink_CRTs);
+            }
+        }
+
+        public void _CheckkExtendedUniverses()
+        {
+            foreach(CustomRenderTexture crt in DMX_CRTS_Horizontal)
+            {
+                crt.material.SetInt("_NineUniverseMode", useExtendedUniverses ? 1 : 0);
+            }
+            foreach(CustomRenderTexture crt in DMX_CRTS_Vertical)
+            {
+                crt.material.SetInt("_NineUniverseMode", useExtendedUniverses ? 1 : 0);
             }
         }
         

@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-AudioLink-WashMover-FixtureMat
   m_Shader: {fileID: 4800000, guid: 14623a3aee51a16448cfe73c1dc57d3b, type: 3}
-  m_ShaderKeywords: _DNENABLER_NONE _ENABLEOSC_ON _ENABLESPIN_ON _USERAWGRID_ON
+  m_ShaderKeywords: _DNENABLER_NONE _ENABLEOSC_ON _ENABLESPIN_ON _FORWARD_Y _USERAWGRID_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0

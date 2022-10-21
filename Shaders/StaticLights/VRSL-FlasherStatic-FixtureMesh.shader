@@ -5,6 +5,7 @@
         //[Header (INSTANCED PROPERITES)]
 		 _Sector ("DMX Fixture Number/Sector (Per 13 Channels)", Int) = 0
         [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+        [Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
         [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
          [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
         _FixutreIntensityMultiplier ("Intensity Multipler (For Bloom Scaling)", Range(1,15)) = 1

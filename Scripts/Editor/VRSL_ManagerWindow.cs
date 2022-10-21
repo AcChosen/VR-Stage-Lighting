@@ -1,4 +1,4 @@
-﻿using UdonSharp;
+using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
@@ -97,6 +97,7 @@ class DMXListItem
     private float Z_finalIntensity; public float P_finalIntensity;
     private Color Z_lightColorTint; public Color P_lightColorTint;
     private bool Z_invertPan; public bool P_invertPan;
+    private bool Z_nineUniverseMode; public bool P_nineUniverseMode;
     private bool Z_invertTilt; public bool P_invertTilt;
     private bool Z_isUpsideDown; public bool P_isUpsideDown;
     private bool Z_enableAutoSpin; public bool P_enableAutoSpin;
@@ -129,6 +130,7 @@ class DMXListItem
         Z_finalIntensity = P_finalIntensity = this.light.finalIntensity;
         Z_lightColorTint = P_lightColorTint = this.light.lightColorTint;
         Z_invertPan = P_invertPan = this.light.invertPan;
+        Z_nineUniverseMode = P_nineUniverseMode = this.light.nineUniverseMode;
         Z_invertTilt = P_invertTilt = this.light.invertTilt;
         Z_isUpsideDown = P_isUpsideDown = this.light.isUpsideDown;
         Z_enableAutoSpin = P_enableAutoSpin = this.light.enableAutoSpin;
@@ -166,6 +168,7 @@ class DMXListItem
         light.finalIntensity = P_finalIntensity = Z_finalIntensity;
         light.lightColorTint = P_lightColorTint = Z_lightColorTint;
         light.invertPan = P_invertPan = Z_invertPan;
+        light.nineUniverseMode = P_nineUniverseMode = Z_nineUniverseMode;
         light.invertTilt = P_invertTilt = Z_invertTilt;
         light.isUpsideDown = P_isUpsideDown = Z_isUpsideDown;
         light.enableAutoSpin = P_enableAutoSpin = Z_enableAutoSpin;
@@ -185,7 +188,7 @@ class DMXListItem
     {
       //  Undo.RecordObject(light, "Undo Apply Changes");
       //  PrefabUtility.RecordPrefabInstancePropertyModifications(light);
-
+        try{
         var so = new SerializedObject(light);
         so.FindProperty("enableDMXChannels").boolValue = P_enableDMXChannels;
         so.FindProperty("fixtureID").intValue = P_fixtureID;
@@ -198,6 +201,7 @@ class DMXListItem
         so.FindProperty("globalIntensity").floatValue = P_globalIntensity;
         so.FindProperty("finalIntensity").floatValue = P_finalIntensity;
         so.FindProperty("lightColorTint").colorValue = P_lightColorTint;
+        so.FindProperty("nineUniverseMode").boolValue = P_nineUniverseMode;
         so.FindProperty("invertPan").boolValue = P_invertPan;
         so.FindProperty("invertTilt").boolValue = P_invertTilt;
         so.FindProperty("isUpsideDown").boolValue = P_isUpsideDown;
@@ -228,6 +232,7 @@ class DMXListItem
         light.globalIntensity = Z_globalIntensity = P_globalIntensity;
         light.finalIntensity = Z_finalIntensity = P_finalIntensity;
         light.lightColorTint = Z_lightColorTint = P_lightColorTint;
+        light.nineUniverseMode = Z_nineUniverseMode = P_nineUniverseMode;
         light.invertPan = Z_invertPan = P_invertPan;
         light.invertTilt = Z_invertTilt = P_invertTilt;
         light.isUpsideDown = Z_isUpsideDown = P_isUpsideDown;
@@ -243,6 +248,11 @@ class DMXListItem
         light.maxMinTilt = Z_maxMinTilt = P_maxMinTilt; 
         light.foldout = foldout;
         light.ApplyProxyModifications();
+        }
+        catch(Exception e)
+        {
+            e.GetType();
+        }
     }
 }
 class AudioLinkListItem
@@ -332,9 +342,16 @@ class AudioLinkListItem
     {
         if(closeMenus)
         {
-            var so = new SerializedObject(light);
-            so.FindProperty("foldout").boolValue = false;
-            so.ApplyModifiedProperties();
+            try
+            {
+                var so = new SerializedObject(light);
+                so.FindProperty("foldout").boolValue = false;
+                so.ApplyModifiedProperties();
+            }
+            catch(Exception e)
+            {
+                e.GetType();
+            }
         }
 
         light.UpdateProxy();
@@ -515,8 +532,6 @@ class AudioLinkListItem
 // }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class VRSL_ManagerWindow : EditorWindow {
-
-    static uDesktopDuplication.Texture runTimeScreen;
     static float panRangeOff = 180f;
     static float tiltRangeOff = -180f;
     public static Texture logo, github, twitter, discord;
@@ -535,19 +550,19 @@ class VRSL_ManagerWindow : EditorWindow {
     private static List<AudioLinkListItem> audioLinkLights = new List<AudioLinkListItem>();
     //private static List<AudioLinkLaserListItem> audioLinkLasers = new List<AudioLinkLaserListItem>();
     private static List<GameObject> sceneObjects = new List<GameObject>();
-    private static List<DMXListItem>[] universes =  new List<DMXListItem>[3];
-    private static bool[] universeFold = new bool[3];
+    private static List<DMXListItem>[] universes =  new List<DMXListItem>[9];
+    private static bool[] universeFold = new bool[9];
     private static bool universeFourFold;
     private static bool[] bandFold = new bool[4];
     static GUIContent colorLabel;
     private string[] dmxModes = new string[]{"Horizontal", "Vertical", "Legacy"};
     private string [] dmxGizmoInfo = new string[]{"None", "Channel Only", "Universe + Channel"};
     private static UnityEngine.Object controlPanelUiPrefab, directionalLightPrefab, uDesktopHorizontalPrefab, uDesktopVerticalPrefab, uDesktopLegacyPrefab, uVidHorizontalPrefab, uVidVerticalPrefab, uVidLegacyPrefab,
-    audioLinkPrefab, audioLinkControllerPrefab, standardAudioLinkControllerPrefab;
+    audioLinkPrefab, audioLinkControllerPrefab, standardAudioLinkControllerPrefab, oscGridReaderHorizontalPrefab, oscGridReaderVerticalPrefab;
     private static bool dmxSpawnsFoldout, audioLinkSpawnsFoldout, mainOptionsFoldout;
     Vector2 dmxScrollPos, audioLinkScrollPos, mainScrollPos;
     private static bool dmxHover, audioLinkHover;
-    static bool hasDesktopDuplication;
+    private static bool last9UniverseStatus;
 
     private static UnityEngine.Object spotlight_h, spotlight_v, spotlight_l, spotlight_a;
     private static UnityEngine.Object washlight_h, washlight_v, washlight_l, washlight_a;
@@ -559,6 +574,9 @@ class VRSL_ManagerWindow : EditorWindow {
     private static UnityEngine.Object laser_h, laser_v, laser_l, laser_a;
     private static UnityEngine.Object sixFour_h, sixFour_v, sixFour_l;
     private static UnityEngine.Object multiLightbar_h, multiLightbar_v, multiLightbar_l;
+
+    private static DMXListItem copyDMXListProx;
+    private static AudioLinkListItem copyAudioLinkListProx;
     // private float panRangeTarget = 90f; 
     // private float tiltRangeTarget = -90f;
 
@@ -578,15 +596,13 @@ class VRSL_ManagerWindow : EditorWindow {
                     GetDMXLights(true);
                 if(panel.isUsingAudioLink)
                     GetAudioLinkLights(true);
+
+                last9UniverseStatus = panel.useExtendedUniverses;
                     
             }    
             LoadPrefabs();
             //Debug.Log("VRSL Control Panel: Initializing!");
             ApplyChangesToFixtures(true, true, false);
-        }
-        else
-        {
-            CheckForDesktopScreen();
         }
 
 
@@ -607,43 +623,6 @@ class VRSL_ManagerWindow : EditorWindow {
        
     // }
 
-    private static void LogPlayModeState(PlayModeStateChange state)
-    {
-       // Debug.Log(state);
-        if(state == PlayModeStateChange.EnteredPlayMode)
-        {
-            CheckForDesktopScreen();
-        }
-
-    }
-
-    static void CheckForDesktopScreen()
-    {
-        // if(sceneObjects != null)
-        // {
-        //     return;
-        // }
-        sceneObjects = GetAllObjectsOnlyInScene();
-        foreach(GameObject go in sceneObjects)
-        {   
-            runTimeScreen = go.GetComponent<uDesktopDuplication.Texture>();
-            if(runTimeScreen != null)
-            {
-                break;
-            }
-        }
-        if(runTimeScreen != null)
-        {
-            Debug.Log("Found uDesktopDuplication Screen!");
-            hasDesktopDuplication = true;
-        }
-        else
-        {
-            Debug.Log("Could not find uDesktopDuplication Screen!");
-            hasDesktopDuplication = false;
-        }
-    }
-
     static bool LoadPrefabs()
     {
         bool result = true;
@@ -658,8 +637,12 @@ class VRSL_ManagerWindow : EditorWindow {
         string audioLinkPath = "Assets/AudioLink/Audiolink.prefab";
         string audioLinkControllerPath = "Assets/VR-Stage-Lighting/Prefabs/AudioLink/VRSL-AudioLinkControllerWithSmoothing/AudioLinkController-WithVRSLSmoothing.prefab";
         string standardAudioLinkControllerPath = "Assets/AudioLink/AudioLinkController.prefab";
+        string oscGridReadHPath = "Assets/VR-Stage-Lighting/Prefabs/DMX/GridReader/VRSL-DMX-TekOSCGridReader-H.prefab";
+        string oscGridReadVPath = "Assets/VR-Stage-Lighting/Prefabs/DMX/GridReader/VRSL-DMX-TekOSCGridReader-V.prefab";
         controlPanelUiPrefab = AssetDatabase.LoadAssetAtPath(controlPanelPath, typeof(GameObject));
         directionalLightPrefab = AssetDatabase.LoadAssetAtPath(directionalLightPath, typeof(GameObject));
+        oscGridReaderHorizontalPrefab = AssetDatabase.LoadAssetAtPath(oscGridReadHPath, typeof(GameObject));
+        oscGridReaderVerticalPrefab = AssetDatabase.LoadAssetAtPath(oscGridReadVPath, typeof(GameObject));
         uDesktopHorizontalPrefab = AssetDatabase.LoadAssetAtPath(udeskHorizontalPath, typeof(GameObject));
         uDesktopVerticalPrefab = AssetDatabase.LoadAssetAtPath(udeskVerticalPath, typeof(GameObject));
         uDesktopLegacyPrefab = AssetDatabase.LoadAssetAtPath(udeskLegacyPath, typeof(GameObject));
@@ -677,6 +660,16 @@ class VRSL_ManagerWindow : EditorWindow {
         if(directionalLightPrefab == null)
         {
             Debug.LogError("VRSL Control Panel: Failed to load " + directionalLightPath);
+            result = false;
+        }
+        if(oscGridReaderHorizontalPrefab == null)
+        {
+            Debug.LogError("VRSL Control Panel: Failed to load  " + oscGridReadHPath);
+            result = false;
+        }
+        if(oscGridReaderVerticalPrefab == null)
+        {
+            Debug.LogError("VRSL Control Panel: Failed to load  " + oscGridReadVPath);
             result = false;
         }
         if(uDesktopHorizontalPrefab == null)
@@ -800,6 +793,16 @@ class VRSL_ManagerWindow : EditorWindow {
             universes[i] = new List<DMXListItem>();
             foreach(DMXListItem fixture in dmxLights)
             {
+                if(panel != null)
+                {
+                    if(fixture.light.nineUniverseMode != panel.useExtendedUniverses)
+                    {
+                        fixture.P_nineUniverseMode = panel.useExtendedUniverses;
+                        //fixture.light.nineUniverseMode = last9UniverseStatus;
+                        fixture.ApplyChanges();
+
+                    }
+                }
                 if(fixture.light._GetUniverse() == i+1)
                 {
                     universes[i].Add(fixture);
@@ -834,24 +837,6 @@ class VRSL_ManagerWindow : EditorWindow {
         }
         //GetAudioLinkLasers(updateBools);
     }
-    // private static void GetAudioLinkLasers(bool updateBools)
-    // {
-    //     if(updateBools)
-    //     {
-    //         audioLinkLasers.Clear();
-    //         foreach(GameObject go in sceneObjects)
-    //         {
-    //             VRStageLighting_AudioLink_Laser laserScript = go.GetUdonSharpComponent<VRStageLighting_AudioLink_Laser>();
-    //             if(laserScript != null)
-    //             {
-    //                 audioLinkLasers.Add(
-    //                     new AudioLinkLaserListItem(laserScript, false)
-    //                 );
-    //             }
-    //         }
-    //     }
-    // }
-
     static List<GameObject> GetAllObjectsOnlyInScene()
     {
         List<GameObject> objectsInScene = new List<GameObject>();
@@ -876,7 +861,7 @@ class VRSL_ManagerWindow : EditorWindow {
         // greenTex = Resources.Load("greenTex") as Texture2D;
         // lightGreenTex = Resources.Load("light_greenTex") as Texture2D;
     }
-    private static void DrawLogo()
+    public static void DrawLogo()
     {
         ///GUILayout.BeginArea(new Rect(0,0, Screen.width, Screen.height));
         // GUILayout.FlexibleSpace();
@@ -1179,14 +1164,16 @@ class VRSL_ManagerWindow : EditorWindow {
     }
     void OnEnable() 
     {
+     //EditorApplication.playModeStateChanged += LogPlayModeState;
      EditorApplication.hierarchyChanged += HierarchyChanged;
-     EditorApplication.playModeStateChanged += LogPlayModeState;
+   //  EditorApplication.playModeStateChanged += LogPlayModeState;
      SceneView.duringSceneGui += this.OnSceneGUI;
     }
     void OnDisable( )
     {
+        //EditorApplication.playModeStateChanged -= LogPlayModeState;
         EditorApplication.hierarchyChanged -= HierarchyChanged;
-        EditorApplication.playModeStateChanged -= LogPlayModeState;
+        //EditorApplication.playModeStateChanged -= LogPlayModeState;
         if((panel != null))
         {
             if(panel.fixtureGizmos == 0)
@@ -1241,6 +1228,37 @@ class VRSL_ManagerWindow : EditorWindow {
             }
         }
 
+    }
+    static void MassApplyExtendedUniverseStatus()
+    {
+        if(panel == null)
+        {
+            Debug.Log("Panel not found!");
+            return;
+        }
+        for(int i = 0; i < universes.Length; i++)
+        {
+            if(universes[i] == null)
+            {
+                continue;
+            }
+            foreach(DMXListItem fixture in universes[i])
+            {
+                if(fixture == null)
+                {
+                    continue;
+                }
+                if(fixture.light == null)
+                {
+                    continue;
+                }
+                if(fixture.P_nineUniverseMode != last9UniverseStatus)
+                {
+                    fixture.P_nineUniverseMode = last9UniverseStatus;
+                }
+            }
+        }
+        Debug.Log("Finished Updating Extended Universe Status!");
     }
     public class FixturePrefabID
     {
@@ -1316,11 +1334,11 @@ class VRSL_ManagerWindow : EditorWindow {
         }
     }
 
-    private static void SpawnPrefabWithUndo(UnityEngine.Object obj, string undoMessage)
+    private static void SpawnPrefabWithUndo(UnityEngine.Object obj, string undoMessage, bool isFixture, bool isAudioLinkFixture)
     {
         GameObject instance = (GameObject) PrefabUtility.InstantiatePrefab(obj as GameObject);
         Undo.RegisterCreatedObjectUndo (instance, undoMessage);
-        Selection.SetActiveObjectWithContext(instance, null);       
+        Selection.SetActiveObjectWithContext(instance, null);
     }
 
      private static void ApplyChangesToFixtures(bool acceptChanges, bool initialize, bool closeMenus)
@@ -1436,6 +1454,7 @@ class VRSL_ManagerWindow : EditorWindow {
     void GuiLine( int i_height = 1 )
 
    {
+        try{
        //GUIStyle g = GUIStyle.none;
        //g.fixedHeight = 6;
        Rect rect = EditorGUILayout.GetControlRect(false, i_height);
@@ -1443,6 +1462,11 @@ class VRSL_ManagerWindow : EditorWindow {
        rect.height = i_height;
 
        EditorGUI.DrawRect(rect, new Color ( 0.5f,0.5f,0.5f, 1 ) );
+        }
+        catch(Exception e)
+        {
+            e.GetType();
+        }
 
    }
 
@@ -1469,6 +1493,211 @@ class VRSL_ManagerWindow : EditorWindow {
             }
         }
     } 
+    private void CopyPasteFunctionAudioLinkNoBandLaser(AudioLinkListItem copyTofixture, AudioLinkListItem copyFromfixture)
+    {
+        if(panel == null)
+        {
+            return;
+        }
+        if(copyTofixture.laser != null)
+        {
+            copyTofixture.P_coneWidth = copyFromfixture.P_coneWidth;
+            copyTofixture.P_coneFlatness = copyFromfixture.P_coneFlatness;
+            copyTofixture.P_coneXRotation = copyFromfixture.P_coneXRotation;
+            copyTofixture.P_coneYRotation = copyFromfixture.P_coneYRotation;
+            copyTofixture.P_coneZRotation = copyFromfixture.P_coneZRotation;
+            copyTofixture.P_laserCount = copyFromfixture.P_laserCount;
+            copyTofixture.P_laserScroll = copyFromfixture.P_laserScroll;
+            copyTofixture.P_laserThickness = copyFromfixture.P_laserThickness;
+        }
+       // copyTofixture.P_band = copyFromfixture.P_band;
+        copyTofixture.P_coneLength = copyFromfixture.P_coneLength;
+       // copyTofixture.P_coneWidth = copyFromfixture.P_coneWidth;
+       // copyTofixture.P_enableAutoSpin = copyFromfixture.P_enableAutoSpin;
+        copyTofixture.P_bandMultiplier = copyFromfixture.P_bandMultiplier;
+        copyTofixture.P_finalIntensity = copyFromfixture.P_finalIntensity;
+        copyTofixture.P_globalIntensity = copyFromfixture.P_globalIntensity;
+       // copyTofixture.P_coneFlatness = copyFromfixture.P_coneFlatness;
+       // copyTofixture.P_coneXRotation = copyFromfixture.P_coneXRotation;
+       // copyTofixture.P_coneYRotation = copyFromfixture.P_coneYRotation;
+        //copyTofixture.P_coneZRotation = copyFromfixture.P_coneZRotation;
+        copyTofixture.P_lightColorTint = copyFromfixture.P_lightColorTint;
+       // copyTofixture.P_maxConeLength = copyFromfixture.P_maxConeLength;
+        //copyTofixture.P_delay = copyFromfixture.P_delay;
+        copyTofixture.P_enableAudioLink = copyFromfixture.P_enableAudioLink;
+        copyTofixture.P_enableColorChord = copyFromfixture.P_enableColorChord;
+        //copyTofixture.P_enableAutoSpin = copyFromfixture.P_enableAutoSpin;
+      //  copyTofixture.P_selectGOBO = copyFromfixture.P_selectGOBO;
+       // copyTofixture.P_laserCount = copyFromfixture.P_laserCount;
+      //  copyTofixture.P_laserScroll = copyFromfixture.P_laserScroll;
+      //  copyTofixture.P_laserThickness = copyFromfixture.P_laserThickness;
+        copyTofixture.P_textureSamplingCoordinates = copyFromfixture.P_textureSamplingCoordinates;
+        //copyTofixture.P_spinSpeed = copyFromfixture.P_spinSpeed;
+        Debug.Log("VRSL Control Panel: Applying Changes!");
+        ApplyChangesToFixtures(true, false, false);
+        ResetItems(false);
+        Repaint();
+    }
+    private void CopyPasteFunctionAudioLinkNoBandFixture(AudioLinkListItem copyTofixture, AudioLinkListItem copyFromfixture)
+    {
+        if(panel == null)
+        {
+            return;
+        }
+        if(copyTofixture.light != null)
+        {
+            copyTofixture.P_coneWidth = copyFromfixture.P_coneWidth;
+            copyTofixture.P_coneLength = copyFromfixture.P_coneLength;
+            copyTofixture.P_maxConeLength = copyFromfixture.P_maxConeLength;
+            copyTofixture.P_enableAutoSpin = copyFromfixture.P_enableAutoSpin;
+            copyTofixture.P_selectGOBO = copyFromfixture.P_selectGOBO;
+            copyTofixture.P_spinSpeed = copyFromfixture.P_spinSpeed;
+        }
+       // copyTofixture.P_band = copyFromfixture.P_band;
+
+
+       // copyTofixture.P_enableAutoSpin = copyFromfixture.P_enableAutoSpin;
+        copyTofixture.P_bandMultiplier = copyFromfixture.P_bandMultiplier;
+        copyTofixture.P_finalIntensity = copyFromfixture.P_finalIntensity;
+        copyTofixture.P_globalIntensity = copyFromfixture.P_globalIntensity;
+       // copyTofixture.P_coneFlatness = copyFromfixture.P_coneFlatness;
+        //copyTofixture.P_coneXRotation = copyFromfixture.P_coneXRotation;
+       // copyTofixture.P_coneYRotation = copyFromfixture.P_coneYRotation;
+       // copyTofixture.P_coneZRotation = copyFromfixture.P_coneZRotation;
+        copyTofixture.P_lightColorTint = copyFromfixture.P_lightColorTint;
+
+        //copyTofixture.P_delay = copyFromfixture.P_delay;
+        copyTofixture.P_enableAudioLink = copyFromfixture.P_enableAudioLink;
+        copyTofixture.P_enableColorChord = copyFromfixture.P_enableColorChord;
+
+        //copyTofixture.P_laserCount = copyFromfixture.P_laserCount;
+       // copyTofixture.P_laserScroll = copyFromfixture.P_laserScroll;
+       // copyTofixture.P_laserThickness = copyFromfixture.P_laserThickness;
+        copyTofixture.P_textureSamplingCoordinates = copyFromfixture.P_textureSamplingCoordinates;
+
+        Debug.Log("VRSL Control Panel: Applying Changes!");
+        ApplyChangesToFixtures(true, false, false);
+        ResetItems(false);
+        Repaint();
+    }
+        private void CopyPasteFunctionAudioLinkLaser(AudioLinkListItem copyTofixture, AudioLinkListItem copyFromfixture)
+    {
+        if(panel == null)
+        {
+            return;
+        }
+        if(copyTofixture.laser != null)
+        {
+            copyTofixture.P_coneWidth = copyFromfixture.P_coneWidth;
+            copyTofixture.P_coneFlatness = copyFromfixture.P_coneFlatness;
+            copyTofixture.P_coneXRotation = copyFromfixture.P_coneXRotation;
+            copyTofixture.P_coneYRotation = copyFromfixture.P_coneYRotation;
+            copyTofixture.P_coneZRotation = copyFromfixture.P_coneZRotation;
+            copyTofixture.P_laserCount = copyFromfixture.P_laserCount;
+            copyTofixture.P_laserScroll = copyFromfixture.P_laserScroll;
+            copyTofixture.P_laserThickness = copyFromfixture.P_laserThickness;
+        }
+        copyTofixture.P_band = copyFromfixture.P_band;
+        copyTofixture.P_coneLength = copyFromfixture.P_coneLength;
+
+       // copyTofixture.P_enableAutoSpin = copyFromfixture.P_enableAutoSpin;
+        copyTofixture.P_bandMultiplier = copyFromfixture.P_bandMultiplier;
+        copyTofixture.P_finalIntensity = copyFromfixture.P_finalIntensity;
+        copyTofixture.P_globalIntensity = copyFromfixture.P_globalIntensity;
+
+        copyTofixture.P_lightColorTint = copyFromfixture.P_lightColorTint;
+       // copyTofixture.P_maxConeLength = copyFromfixture.P_maxConeLength;
+        copyTofixture.P_delay = copyFromfixture.P_delay;
+        copyTofixture.P_enableAudioLink = copyFromfixture.P_enableAudioLink;
+        copyTofixture.P_enableColorChord = copyFromfixture.P_enableColorChord;
+        copyTofixture.P_enableAutoSpin = copyFromfixture.P_enableAutoSpin;
+        //copyTofixture.P_selectGOBO = copyFromfixture.P_selectGOBO;
+
+        copyTofixture.P_textureSamplingCoordinates = copyFromfixture.P_textureSamplingCoordinates;
+      //  copyTofixture.P_spinSpeed = copyFromfixture.P_spinSpeed;
+        Debug.Log("VRSL Control Panel: Applying Changes!");
+        ApplyChangesToFixtures(true, false, false);
+        ResetItems(false);
+        Repaint();
+    }
+    private void CopyPasteFunctionAudioLinkFixture(AudioLinkListItem copyTofixture, AudioLinkListItem copyFromfixture)
+    {
+        if(panel == null)
+        {
+            return;
+        }
+        if(copyTofixture.light != null)
+        {
+            copyTofixture.P_coneWidth = copyFromfixture.P_coneWidth;
+            copyTofixture.P_coneLength = copyFromfixture.P_coneLength;
+            copyTofixture.P_maxConeLength = copyFromfixture.P_maxConeLength;
+            copyTofixture.P_enableAutoSpin = copyFromfixture.P_enableAutoSpin;
+            copyTofixture.P_selectGOBO = copyFromfixture.P_selectGOBO;
+            copyTofixture.P_spinSpeed = copyFromfixture.P_spinSpeed;
+        }
+        copyTofixture.P_band = copyFromfixture.P_band;
+      //  copyTofixture.P_coneLength = copyFromfixture.P_coneLength;
+      //  copyTofixture.P_coneWidth = copyFromfixture.P_coneWidth;
+      //  copyTofixture.P_enableAutoSpin = copyFromfixture.P_enableAutoSpin;
+        copyTofixture.P_bandMultiplier = copyFromfixture.P_bandMultiplier;
+        copyTofixture.P_finalIntensity = copyFromfixture.P_finalIntensity;
+        copyTofixture.P_globalIntensity = copyFromfixture.P_globalIntensity;
+       // copyTofixture.P_coneFlatness = copyFromfixture.P_coneFlatness;
+       // copyTofixture.P_coneXRotation = copyFromfixture.P_coneXRotation;
+        //copyTofixture.P_coneYRotation = copyFromfixture.P_coneYRotation;
+       // copyTofixture.P_coneZRotation = copyFromfixture.P_coneZRotation;
+        copyTofixture.P_lightColorTint = copyFromfixture.P_lightColorTint;
+       // copyTofixture.P_maxConeLength = copyFromfixture.P_maxConeLength;
+       // copyTofixture.P_delay = copyFromfixture.P_delay;
+        copyTofixture.P_enableAudioLink = copyFromfixture.P_enableAudioLink;
+        copyTofixture.P_enableColorChord = copyFromfixture.P_enableColorChord;
+       // copyTofixture.P_enableAutoSpin = copyFromfixture.P_enableAutoSpin;
+       // copyTofixture.P_selectGOBO = copyFromfixture.P_selectGOBO;
+     //   copyTofixture.P_laserCount = copyFromfixture.P_laserCount;
+        //copyTofixture.P_laserScroll = copyFromfixture.P_laserScroll;
+       // copyTofixture.P_laserThickness = copyFromfixture.P_laserThickness;
+        copyTofixture.P_textureSamplingCoordinates = copyFromfixture.P_textureSamplingCoordinates;
+       // copyTofixture.P_spinSpeed = copyFromfixture.P_spinSpeed;
+        Debug.Log("VRSL Control Panel: Applying Changes!");
+        ApplyChangesToFixtures(true, false, false);
+        ResetItems(false);
+        Repaint();
+    }
+
+    private void CopyPasteFunction(DMXListItem copyTofixture, DMXListItem copyFromfixture)
+    {
+        if(panel == null)
+        {
+            return;
+        }
+        copyTofixture.P_enableDMXChannels = copyFromfixture.P_enableDMXChannels;
+        copyTofixture.P_coneLength = copyFromfixture.P_coneLength;
+        copyTofixture.P_coneWidth = copyFromfixture.P_coneWidth;
+        copyTofixture.P_enableAutoSpin = copyFromfixture.P_enableAutoSpin;
+        copyTofixture.P_enableStrobe = copyFromfixture.P_enableStrobe;
+        copyTofixture.P_finalIntensity = copyFromfixture.P_finalIntensity;
+        copyTofixture.P_globalIntensity = copyFromfixture.P_globalIntensity;
+        copyTofixture.P_invertPan = copyFromfixture.P_invertPan;
+        copyTofixture.P_invertTilt = copyFromfixture.P_invertTilt;
+        copyTofixture.P_isUpsideDown = copyFromfixture.P_isUpsideDown;
+        copyTofixture.P_legacyGoboRange = copyFromfixture.P_legacyGoboRange;
+        copyTofixture.P_lightColorTint = copyFromfixture.P_lightColorTint;
+        copyTofixture.P_maxConeLength = copyFromfixture.P_maxConeLength;
+        copyTofixture.P_maxMinPan = copyFromfixture.P_maxMinPan;
+        copyTofixture.P_maxMinTilt = copyFromfixture.P_maxMinTilt;
+        copyTofixture.P_nineUniverseMode = copyFromfixture.P_nineUniverseMode;
+        copyTofixture.P_panOffsetBlueGreen = copyFromfixture.P_panOffsetBlueGreen;
+        copyTofixture.P_selectGOBO = copyFromfixture.P_selectGOBO;
+        copyTofixture.P_tiltOffsetBlue = copyFromfixture.P_tiltOffsetBlue;
+        if(panel.isUsingDMX)
+        {
+            MassApplyExtendedUniverseStatus();
+        }
+        Debug.Log("VRSL Control Panel: Applying Changes!");
+        ApplyChangesToFixtures(true, false, false);
+        ResetItems(false);
+        Repaint();
+    }
 
     private bool LoadFixturePrefabs(int a)
     {
@@ -1662,21 +1891,6 @@ class VRSL_ManagerWindow : EditorWindow {
             GUILayout.Label("Control Panel Disabled while Editor is playing!", WarningLabel());
             GUILayout.Space(10f);
             EditorGUILayout.BeginVertical("box");
-            if(hasDesktopDuplication && runTimeScreen !=null)
-            {
-                GUILayout.Label("Scene Desktop Duplication Screen.", SectionLabel());
-                //CreateEditor(runTimeScreen, typeof(Editor).Assembly.GetType("UnityEditor.RectTransformEditor")).OnInspectorGUI();
-                var monitor = runTimeScreen.monitor;
-                //SerializedObject obj = new SerializedObject(monitor);
-                var id = EditorGUILayout.Popup("Monitor", monitor.id, uDesktopDuplication.Manager.monitors.Select(x => x.name).ToArray());
-                if (id != monitor.id) { runTimeScreen.monitorId = id; }
-                //obj.Update();
-                //SerializedProperty prop = obj.FindProperty("monitor");
-                //EditorGUILayout.PropertyField(prop, true);
-                //obj.ApplyModifiedProperties();
-
-                // DrawProperties(prop, true);
-            }
             EditorGUILayout.EndVertical();
             return;
         }
@@ -1704,7 +1918,7 @@ class VRSL_ManagerWindow : EditorWindow {
             {
                     Debug.Log("VRSL Control Panel: Spawning Depth Light Prefab...");
                     if(LoadPrefabs())
-                        SpawnPrefabWithUndo(directionalLightPrefab, "Spawn Directional Light");
+                        SpawnPrefabWithUndo(directionalLightPrefab, "Spawn Directional Light", false, false);
                         //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(directionalLightPrefab as GameObject) ,null);
                     Repaint();
             }
@@ -1717,6 +1931,8 @@ class VRSL_ManagerWindow : EditorWindow {
             var so = new SerializedObject(panel);
             so.FindProperty("DMXMode").intValue = EditorGUILayout.Popup(Label("DMX Grid Mode", "Choose what grid type textures should be enabled for DMX mode. Unused textures will be disabled to save editor performance!"),panel.DMXMode, dmxModes);
             so.FindProperty("fixtureGizmos").intValue = EditorGUILayout.Popup(Label("Show DMX Info In Scene", "Display DMX Channel and/or Universe information above each fixture in the scene view!"), panel.fixtureGizmos, dmxGizmoInfo);
+            so.FindProperty("useExtendedUniverses").boolValue = EditorGUILayout.ToggleLeft(Label("Use RGB Extended Universes (9-Universe Mode)", "Enable Extended Universe Mode. This will convert all fixtures to read an RGB grid that contains 9 universes of information instead a grayscale grid with 3 universes." + 
+            "This only applies to the Vertical and Horizontal grid modes."),panel.useExtendedUniverses);
             so.ApplyModifiedProperties();
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndVertical();
@@ -1725,6 +1941,33 @@ class VRSL_ManagerWindow : EditorWindow {
             string o = mainOptionsFoldout ? "Hide Options" : "Show Options";
             mainOptionsFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(mainOptionsFoldout,Label(o, "Show/Hide Global VRSL Settings and Prefab Spawners."));
             EditorGUILayout.EndFoldoutHeaderGroup();
+            panel.UpdateProxy();
+            panel.DMXMode = so.FindProperty("DMXMode").intValue;
+            panel.fixtureGizmos = so.FindProperty("fixtureGizmos").intValue;
+            panel.useExtendedUniverses = so.FindProperty("useExtendedUniverses").boolValue;
+            panel.ApplyProxyModifications();
+
+
+            if((panel.useExtendedUniverses != last9UniverseStatus) && (EditorApplication.isPlayingOrWillChangePlaymode == false))
+            {
+                panel._CheckkExtendedUniverses();
+                last9UniverseStatus = panel.useExtendedUniverses;
+                MassApplyExtendedUniverseStatus();
+                if(last9UniverseStatus)
+                {
+                    Debug.Log("VRSL Control Panel: Updating all fixtures to Extended 9 Universe Mode!");
+                }
+                else
+                {
+                    Debug.Log("VRSL Control Panel: Updating all fixtures to Standard 3 Universe Mode!");
+                }
+                ApplyChangesToFixtures(true, false, false);
+                ResetItems(false);
+                Repaint();  
+            }
+
+
+
             if(mainOptionsFoldout)
             {
                 EditorGUILayout.BeginVertical("box");
@@ -1787,10 +2030,7 @@ class VRSL_ManagerWindow : EditorWindow {
                 
                 //GuiLine();
                 //GUILayout.Label("Prefab Spawn List", Title2());
-                panel.UpdateProxy();
-                panel.DMXMode = so.FindProperty("DMXMode").intValue;
-                panel.fixtureGizmos = so.FindProperty("fixtureGizmos").intValue;
-                panel.ApplyProxyModifications();
+
                 EditorGUILayout.BeginHorizontal("box");
 
 
@@ -1803,31 +2043,48 @@ class VRSL_ManagerWindow : EditorWindow {
                 
                 if(dmxSpawnsFoldout)
                 {
+                    GUILayout.Label("DMX Direct Readers (TekOSC To Editor)", Title3());
+                    EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((position.width/2f)));
+                    if(GUILayout.Button(Label("Horizontal", "Spawn the horizontal version of the TekOSC DMX Reader! Use this to send DMX to the Unity Editor through OSC without OBS!"), HalfButton()))
+                    {
+                        Debug.Log("VRSL Control Panel: Spawning Horizontal OSC Grid Reader...");
+                        if(LoadPrefabs())
+                            SpawnPrefabWithUndo(oscGridReaderHorizontalPrefab, "Spawn OSC Grid Reader", false, false);
+                        Repaint();
+                    }
+                    if(GUILayout.Button(Label("Vertical", "Spawn the vertical version of the TekOSC DMX Reader! Use this to send DMX to the Unity Editor through OSC without OBS!"), HalfButton()))
+                    {
+                        Debug.Log("VRSL Control Panel: Spawning Vertical OSC Grid Reader...");
+                        if(LoadPrefabs())
+                            SpawnPrefabWithUndo(oscGridReaderVerticalPrefab, "Spawn OSC Grid Reader", false, false);
+                        Repaint();
+                    }
+                    EditorGUILayout.EndHorizontal();
                     
                     GUILayout.Label("DMX Reader Screens (Desktop To Editor)", Title3());
                     
                     EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((position.width/2f)));
-                    if(GUILayout.Button(Label("Horizontal", "Spawn the horizontal version of the uDesktop DMX Reader screen! Use send your DMX stream directly to the Unity Editor!"), HalfButton()))
+                    if(GUILayout.Button(Label("Horizontal", "Spawn the horizontal version of the uDesktop DMX Reader screen! Use this send your DMX stream directly to the Unity Editor by copying your screen!"), HalfButton()))
                     {
                         Debug.Log("VRSL Control Panel: Spawning Horizontal Desktop to Editor DMX Screen...");
                         if(LoadPrefabs())
-                            SpawnPrefabWithUndo(uDesktopHorizontalPrefab, "Spawn Desktop To Editor Screen");
+                            SpawnPrefabWithUndo(uDesktopHorizontalPrefab, "Spawn Desktop To Editor Screen", false, false);
                             //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uDesktopHorizontalPrefab as GameObject), null);
                         Repaint();
                     }
-                    if(GUILayout.Button(Label("Vertical", "Spawn the vertical version of the uDesktop DMX Reader screen! Use send your DMX stream directly to the Unity Editor!"), HalfButton()))
+                    if(GUILayout.Button(Label("Vertical", "Spawn the vertical version of the uDesktop DMX Reader screen! Use send your DMX stream directly to the Unity Editor by copying your screen!"), HalfButton()))
                     {
                         Debug.Log("VRSL Control Panel: Spawning Vertical Desktop to Editor DMX Screen...");
                         if(LoadPrefabs())
-                            SpawnPrefabWithUndo(uDesktopVerticalPrefab, "Spawn Desktop To Editor Screen");
+                            SpawnPrefabWithUndo(uDesktopVerticalPrefab, "Spawn Desktop To Editor Screen", false, false);
                             //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uDesktopVerticalPrefab as GameObject), null);
                         Repaint();
                     }
-                    if(GUILayout.Button(Label("Legacy", "Spawn the legacy version of the uDesktop DMX Reader screen! Use send your DMX stream directly to the Unity Editor!"), HalfButton()))
+                    if(GUILayout.Button(Label("Legacy", "Spawn the legacy version of the uDesktop DMX Reader screen! Use send your DMX stream directly to the Unity Editor by copying your screen!"), HalfButton()))
                     {
                         Debug.Log("VRSL Control Panel: Spawning Legacy Desktop to Editor DMX Screen...");
                         if(LoadPrefabs())
-                            SpawnPrefabWithUndo(uDesktopLegacyPrefab, "Spawn Desktop To Editor Screen");
+                            SpawnPrefabWithUndo(uDesktopLegacyPrefab, "Spawn Desktop To Editor Screen", false, false);
                             //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uDesktopLegacyPrefab as GameObject), null);
                         Repaint();
                     }
@@ -1841,7 +2098,7 @@ class VRSL_ManagerWindow : EditorWindow {
                     {
                         Debug.Log("VRSL Control Panel: Spawning Horizontal Usharp Video DMX Screen...");
                         if(LoadPrefabs())
-                            SpawnPrefabWithUndo(uVidHorizontalPrefab, "Spawn Usharp Video DMX Screen");
+                            SpawnPrefabWithUndo(uVidHorizontalPrefab, "Spawn Usharp Video DMX Screen", false, false);
                             //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uVidHorizontalPrefab as GameObject), null);
                         Repaint();
                     }
@@ -1849,7 +2106,7 @@ class VRSL_ManagerWindow : EditorWindow {
                     {
                         Debug.Log("VRSL Control Panel: Spawning Vertical Usharp Video DMX Screen...");
                         if(LoadPrefabs())
-                            SpawnPrefabWithUndo(uVidVerticalPrefab, "Spawn Usharp Video DMX Screen");
+                            SpawnPrefabWithUndo(uVidVerticalPrefab, "Spawn Usharp Video DMX Screen", false, false);
                             //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uVidVerticalPrefab as GameObject), null);
                         Repaint();
                     }
@@ -1857,7 +2114,7 @@ class VRSL_ManagerWindow : EditorWindow {
                     {
                         Debug.Log("VRSL Control Panel: Spawning Legacy Usharp Video DMX Screen...");
                         if(LoadPrefabs())
-                            SpawnPrefabWithUndo(uVidLegacyPrefab, "Spawn Usharp Video DMX Screen");
+                            SpawnPrefabWithUndo(uVidLegacyPrefab, "Spawn Usharp Video DMX Screen", false, false);
                             //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uVidLegacyPrefab as GameObject), null);
                         Repaint();
                     }
@@ -1895,13 +2152,13 @@ class VRSL_ManagerWindow : EditorWindow {
                                 switch(mode)
                                 {
                                     case 0:
-                                        SpawnPrefabWithUndo(spotlight_h, "Spawn Horizontal Spotlight");
+                                        SpawnPrefabWithUndo(spotlight_h, "Spawn Horizontal Spotlight", true, false);
                                         break;
                                     case 1:
-                                        SpawnPrefabWithUndo(spotlight_v, "Spawn Vertical Spotlight");
+                                        SpawnPrefabWithUndo(spotlight_v, "Spawn Vertical Spotlight", true, false);
                                         break;
                                     case 2:
-                                        SpawnPrefabWithUndo(spotlight_l, "Spawn Legacy Spotlight");
+                                        SpawnPrefabWithUndo(spotlight_l, "Spawn Legacy Spotlight", true, false);
                                         break; 
                                     default:
                                         break;                                    
@@ -1924,13 +2181,13 @@ class VRSL_ManagerWindow : EditorWindow {
                                 switch(mode)
                                 {
                                     case 0:
-                                        SpawnPrefabWithUndo(washlight_h, "Spawn Horizontal Washlight");
+                                        SpawnPrefabWithUndo(washlight_h, "Spawn Horizontal Washlight", true, false);
                                         break;
                                     case 1:
-                                        SpawnPrefabWithUndo(washlight_v, "Spawn Vertical Washlight");
+                                        SpawnPrefabWithUndo(washlight_v, "Spawn Vertical Washlight", true, false);
                                         break;
                                     case 2:
-                                        SpawnPrefabWithUndo(washlight_l, "Spawn Legacy Washlight");
+                                        SpawnPrefabWithUndo(washlight_l, "Spawn Legacy Washlight", true, false);
                                         break; 
                                     default:
                                         break;                                    
@@ -1953,13 +2210,13 @@ class VRSL_ManagerWindow : EditorWindow {
                                 switch(mode)
                                 {
                                     case 0:
-                                        SpawnPrefabWithUndo(blinder_h, "Spawn Horizontal Blinder");
+                                        SpawnPrefabWithUndo(blinder_h, "Spawn Horizontal Blinder", true, false);
                                         break;
                                     case 1:
-                                        SpawnPrefabWithUndo(blinder_v, "Spawn Vertical Blinder");
+                                        SpawnPrefabWithUndo(blinder_v, "Spawn Vertical Blinder", true, false);
                                         break;
                                     case 2:
-                                        SpawnPrefabWithUndo(blinder_l, "Spawn Legacy Blinder");
+                                        SpawnPrefabWithUndo(blinder_l, "Spawn Legacy Blinder", true, false);
                                         break; 
                                     default:
                                         break;                                    
@@ -1982,13 +2239,13 @@ class VRSL_ManagerWindow : EditorWindow {
                                 switch(mode)
                                 {
                                     case 0:
-                                        SpawnPrefabWithUndo(flasher_h, "Spawn Horizontal Flasher");
+                                        SpawnPrefabWithUndo(flasher_h, "Spawn Horizontal Flasher", true, false);
                                         break;
                                     case 1:
-                                        SpawnPrefabWithUndo(flasher_v, "Spawn Vertical Flasher");
+                                        SpawnPrefabWithUndo(flasher_v, "Spawn Vertical Flasher", true, false);
                                         break;
                                     case 2:
-                                        SpawnPrefabWithUndo(flasher_l, "Spawn Legacy Flasher");
+                                        SpawnPrefabWithUndo(flasher_l, "Spawn Legacy Flasher", true, false);
                                         break; 
                                     default:
                                         break;                                    
@@ -2013,13 +2270,13 @@ class VRSL_ManagerWindow : EditorWindow {
                                 switch(mode)
                                 {
                                     case 0:
-                                        SpawnPrefabWithUndo(parlight_h, "Spawn Horizontal Parlight");
+                                        SpawnPrefabWithUndo(parlight_h, "Spawn Horizontal Parlight", true, false);
                                         break;
                                     case 1:
-                                        SpawnPrefabWithUndo(parlight_v, "Spawn Vertical Parlight");
+                                        SpawnPrefabWithUndo(parlight_v, "Spawn Vertical Parlight", true, false);
                                         break;
                                     case 2:
-                                        SpawnPrefabWithUndo(parlight_l, "Spawn Legacy Parlight");
+                                        SpawnPrefabWithUndo(parlight_l, "Spawn Legacy Parlight", true, false);
                                         break; 
                                     default:
                                         break;                                    
@@ -2042,13 +2299,13 @@ class VRSL_ManagerWindow : EditorWindow {
                                 switch(mode)
                                 {
                                     case 0:
-                                        SpawnPrefabWithUndo(lightbar_h, "Spawn Horizontal LightBar");
+                                        SpawnPrefabWithUndo(lightbar_h, "Spawn Horizontal LightBar", true, false);
                                         break;
                                     case 1:
-                                        SpawnPrefabWithUndo(lightbar_v, "Spawn Vertical LightBar");
+                                        SpawnPrefabWithUndo(lightbar_v, "Spawn Vertical LightBar", true, false);
                                         break;
                                     case 2:
-                                        SpawnPrefabWithUndo(lightbar_l, "Spawn Legacy LightBar");
+                                        SpawnPrefabWithUndo(lightbar_l, "Spawn Legacy LightBar", true, false);
                                         break; 
                                     default:
                                         break;                                    
@@ -2071,13 +2328,13 @@ class VRSL_ManagerWindow : EditorWindow {
                                 switch(mode)
                                 {
                                     case 0:
-                                        SpawnPrefabWithUndo(discoball_h, "Spawn Horizontal Discoball");
+                                        SpawnPrefabWithUndo(discoball_h, "Spawn Horizontal Discoball", true, false);
                                         break;
                                     case 1:
-                                        SpawnPrefabWithUndo(discoball_v, "Spawn Vertical Discoball");
+                                        SpawnPrefabWithUndo(discoball_v, "Spawn Vertical Discoball", true, false);
                                         break;
                                     case 2:
-                                        SpawnPrefabWithUndo(discoball_l, "Spawn Legacy Discoball");
+                                        SpawnPrefabWithUndo(discoball_l, "Spawn Legacy Discoball", true, false);
                                         break; 
                                     default:
                                         break;                                    
@@ -2100,13 +2357,13 @@ class VRSL_ManagerWindow : EditorWindow {
                                 switch(mode)
                                 {
                                     case 0:
-                                        SpawnPrefabWithUndo(laser_h, "Spawn Horizontal Laser");
+                                        SpawnPrefabWithUndo(laser_h, "Spawn Horizontal Laser", true, false);
                                         break;
                                     case 1:
-                                        SpawnPrefabWithUndo(laser_v, "Spawn Vertical Laser");
+                                        SpawnPrefabWithUndo(laser_v, "Spawn Vertical Laser", true, false);
                                         break;
                                     case 2:
-                                        SpawnPrefabWithUndo(laser_l, "Spawn Legacy Laser");
+                                        SpawnPrefabWithUndo(laser_l, "Spawn Legacy Laser", true, false);
                                         break; 
                                     default:
                                         break;                                    
@@ -2131,13 +2388,13 @@ class VRSL_ManagerWindow : EditorWindow {
                                 switch(mode)
                                 {
                                     case 0:
-                                        SpawnPrefabWithUndo(sixFour_h, "Spawn Horizontal 6x4 Light");
+                                        SpawnPrefabWithUndo(sixFour_h, "Spawn Horizontal 6x4 Light", true, false);
                                         break;
                                     case 1:
-                                        SpawnPrefabWithUndo(sixFour_v, "Spawn Vertical 6x4 Light");
+                                        SpawnPrefabWithUndo(sixFour_v, "Spawn Vertical 6x4 Light", true, false);
                                         break;
                                     case 2:
-                                        SpawnPrefabWithUndo(sixFour_l, "Spawn Legacy 6x4 Light");
+                                        SpawnPrefabWithUndo(sixFour_l, "Spawn Legacy 6x4 Light", true, false);
                                         break; 
                                     default:
                                         break;                                    
@@ -2160,13 +2417,13 @@ class VRSL_ManagerWindow : EditorWindow {
                                 switch(mode)
                                 {
                                     case 0:
-                                        SpawnPrefabWithUndo(multiLightbar_h, "Spawn Horizontal Multi-Lightbar");
+                                        SpawnPrefabWithUndo(multiLightbar_h, "Spawn Horizontal Multi-Lightbar", true, false);
                                         break;
                                     case 1:
-                                        SpawnPrefabWithUndo(multiLightbar_v, "Spawn Vertical Multi-Lightbar");
+                                        SpawnPrefabWithUndo(multiLightbar_v, "Spawn Vertical Multi-Lightbar", true, false);
                                         break;
                                     case 2:
-                                        SpawnPrefabWithUndo(multiLightbar_l, "Spawn Legacy Multi-Lightbar");
+                                        SpawnPrefabWithUndo(multiLightbar_l, "Spawn Legacy Multi-Lightbar", true, false);
                                         break; 
                                     default:
                                         break;                                    
@@ -2210,7 +2467,7 @@ class VRSL_ManagerWindow : EditorWindow {
                     {
                         Debug.Log("VRSL Control Panel: Spawning Standard AudioLink Prefab...");
                         if(LoadPrefabs())
-                            SpawnPrefabWithUndo(audioLinkPrefab, "Spawn AudioLink Prefab");
+                            SpawnPrefabWithUndo(audioLinkPrefab, "Spawn AudioLink Prefab", false, false);
                             //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(audioLinkPrefab as GameObject), null);
                         Repaint();
                     }
@@ -2221,7 +2478,7 @@ class VRSL_ManagerWindow : EditorWindow {
                     {
                         Debug.Log("VRSL Control Panel: Spawning VRSL AudioLink Controller Prefab...");
                         if(LoadPrefabs())
-                            SpawnPrefabWithUndo(standardAudioLinkControllerPrefab, "Spawn AudioLink Controller");
+                            SpawnPrefabWithUndo(standardAudioLinkControllerPrefab, "Spawn AudioLink Controller", false, false);
                         Repaint();
                     }
 
@@ -2229,7 +2486,7 @@ class VRSL_ManagerWindow : EditorWindow {
                     {
                         Debug.Log("VRSL Control Panel: Spawning VRSL AudioLink Controller Prefab...");
                         if(LoadPrefabs())
-                            SpawnPrefabWithUndo(audioLinkControllerPrefab, "Spawn VRSL AudioLink Controller");
+                            SpawnPrefabWithUndo(audioLinkControllerPrefab, "Spawn VRSL AudioLink Controller", false, false);
                             //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(audioLinkControllerPrefab as GameObject), null);
                         Repaint();
                     }
@@ -2244,7 +2501,7 @@ class VRSL_ManagerWindow : EditorWindow {
                         {
                             try
                             {
-                                SpawnPrefabWithUndo(spotlight_a, "Spawn AudioLink Spotlight");
+                                SpawnPrefabWithUndo(spotlight_a, "Spawn AudioLink Spotlight", true, true);
                             }
                             catch(Exception e)
                             {
@@ -2261,7 +2518,7 @@ class VRSL_ManagerWindow : EditorWindow {
                         {
                             try
                             {
-                                SpawnPrefabWithUndo(washlight_a, "Spawn AudioLink Washlight");
+                                SpawnPrefabWithUndo(washlight_a, "Spawn AudioLink Washlight", true, true);
                             }
                             catch(Exception e)
                             {
@@ -2278,7 +2535,7 @@ class VRSL_ManagerWindow : EditorWindow {
                         {
                             try
                             {
-                                SpawnPrefabWithUndo(blinder_a, "Spawn AudioLink Blinder");
+                                SpawnPrefabWithUndo(blinder_a, "Spawn AudioLink Blinder", true, true);
                             }
                             catch(Exception e)
                             {
@@ -2295,7 +2552,7 @@ class VRSL_ManagerWindow : EditorWindow {
                         {
                             try
                             {
-                                SpawnPrefabWithUndo(flasher_a, "Spawn AudioLink Flasher");
+                                SpawnPrefabWithUndo(flasher_a, "Spawn AudioLink Flasher", true, true);
                             }
                             catch(Exception e)
                             {
@@ -2314,7 +2571,7 @@ class VRSL_ManagerWindow : EditorWindow {
                         {
                             try
                             {
-                                SpawnPrefabWithUndo(parlight_a, "Spawn AudioLink Parlight");
+                                SpawnPrefabWithUndo(parlight_a, "Spawn AudioLink Parlight", true, true);
                             }
                             catch(Exception e)
                             {
@@ -2331,7 +2588,7 @@ class VRSL_ManagerWindow : EditorWindow {
                         {
                             try
                             {
-                                SpawnPrefabWithUndo(lightbar_a, "Spawn AudioLink LightBar");
+                                SpawnPrefabWithUndo(lightbar_a, "Spawn AudioLink LightBar", true, true);
                             }
                             catch(Exception e)
                             {
@@ -2348,7 +2605,7 @@ class VRSL_ManagerWindow : EditorWindow {
                         {
                             try
                             {
-                                SpawnPrefabWithUndo(discoball_a, "Spawn AudioLink Discoball");
+                                SpawnPrefabWithUndo(discoball_a, "Spawn AudioLink Discoball", true, true);
                             }
                             catch(Exception e)
                             {
@@ -2365,7 +2622,7 @@ class VRSL_ManagerWindow : EditorWindow {
                         {
                             try
                             {
-                                SpawnPrefabWithUndo(laser_a, "Spawn AudioLink Laser");
+                                SpawnPrefabWithUndo(laser_a, "Spawn AudioLink Laser", true, true);
                             }
                             catch(Exception e)
                             {
@@ -2410,9 +2667,12 @@ class VRSL_ManagerWindow : EditorWindow {
            int dmxCount = GetFixtureCount();
            int audioLinkCount = GetAudioLinkFixtureCount();
             EditorGUILayout.Space(5f);
-            if(GUILayout.Button(Label("Apply Changes", "Apply all changes in the fixture list to all affected fixtures in the scene!"), BigButton()))
+            if(GUILayout.Button(Label("Update Fixtures", "Apply all changes in the fixture list to all affected fixtures in the scene! Also ensures all fixtures are updated with the current global statuses of the control panel."), BigButton()))
             {
-
+                if(panel.isUsingDMX)
+                {
+                    MassApplyExtendedUniverseStatus();
+                }
                 Debug.Log("VRSL Control Panel: Applying Changes!");
                 ApplyChangesToFixtures(true, false, false);
                 ResetItems(false);
@@ -2476,6 +2736,11 @@ class VRSL_ManagerWindow : EditorWindow {
 
                 for(int i = 0; i < universes.Length; i++)
                 {
+
+                    if(!last9UniverseStatus && i >=3)
+                    {
+                        continue;
+                    }
                     // if(i == 0)
                     //     GUILayout.Space(3.0f);
                    // GUILayout.Space(15.0f);
@@ -2504,6 +2769,39 @@ class VRSL_ManagerWindow : EditorWindow {
                             EditorGUILayout.BeginHorizontal();
                             GUILayout.Space(15f);
                             fixture.foldout = EditorGUILayout.BeginFoldoutHeaderGroup(fixture.foldout,"<b><i>Channel: " + fixture.light._GetDMXChannel() + "</i></b> \n" + fixture.light.name, SelectionFoldout());
+                            if(GUILayout.Button("Copy", GUILayout.MinWidth(45f), GUILayout.MaxWidth(45f),GUILayout.MinHeight(28f)))
+                            {
+                                //Debug.Log("Test Copy Button!~");
+                                try{
+                                copyDMXListProx = new DMXListItem(fixture.light,false);
+                                Debug.Log("Copying properties from fixture: " + fixture.light.name);
+                                }
+                                catch(MissingReferenceException e)
+                                {
+                                    e.GetType();
+                                    Debug.Log("Failed to copy properties over! Was the fixture deleted recently?");
+                                }
+
+                            }
+                            if(GUILayout.Button("Paste", GUILayout.MinWidth(45f), GUILayout.MaxWidth(45f),GUILayout.MinHeight(28f)))
+                            {
+                                try{
+                                    if(copyDMXListProx != null)
+                                    {
+                                        CopyPasteFunction(fixture, copyDMXListProx);
+                                        Debug.Log("Pasting properties from fixture: " + copyDMXListProx.light.name);
+                                    }
+                                    else
+                                    {
+                                        Debug.Log("Copy from a fixture first before using this!");
+                                    }
+                                }
+                                catch(MissingReferenceException e)
+                                {
+                                    e.GetType();
+                                    Debug.Log("Failed to past properties over! Was the fixture deleted recently?");
+                                }
+                            }
                             EditorGUILayout.EndHorizontal();
                         // EditorGUILayout.Foldout(dmxBoolList[dmxLights.IndexOf(light)],"U: " + light._GetUniverse() + " CH: " + light._GetDMXChannel() + " " + light.name, FoldOutStyle());
                             if(fixture.foldout)
@@ -2521,6 +2819,7 @@ class VRSL_ManagerWindow : EditorWindow {
                                 GUILayout.Label("DMX Settings", SecLabel());
                                 GUILayout.Space(8.0f);
                                 fixture.P_enableDMXChannels = EditorGUILayout.Toggle("Enable DMX", fixture.P_enableDMXChannels);
+                                fixture.P_nineUniverseMode = EditorGUILayout.Toggle("Extended Universe Mode", fixture.P_nineUniverseMode);
                                 fixture.P_fixtureID = EditorGUILayout.IntField("Fixture ID", fixture.P_fixtureID, GUILayout.MaxWidth(sectionWidth - 10));
                                 fixture.P_useLegacySectorMode = EditorGUILayout.Toggle("Legacy Sector Mode",fixture.P_useLegacySectorMode);
                                 if(fixture.P_useLegacySectorMode)
@@ -2589,12 +2888,12 @@ class VRSL_ManagerWindow : EditorWindow {
                    // EditorGUILayout.EndVertical();
                    // EditorGUILayout.EndHorizontal();
                 }
-                universeFourFold = EditorGUILayout.BeginFoldoutHeaderGroup(universeFourFold, Label("Universe 4 (Experimental)", "DMX Universe 4 is an experimental universe used for testing out the new DMX via Audio Amplitude feature. Any Audio Amplitude based scripts will appear here."), Title1Foldout());
+                universeFourFold = EditorGUILayout.BeginFoldoutHeaderGroup(universeFourFold, Label("Universe 10 (Experimental)", "DMX Universe 10 is an experimental universe used for testing out the new DMX via Audio Amplitude feature. Any Audio Amplitude based scripts will appear here."), Title1Foldout());
                 GuiLine();
                 EditorGUILayout.EndFoldoutHeaderGroup();
             }
             EditorGUILayout.EndScrollView();
-            audioLinkScrollPos = EditorGUILayout.BeginScrollView(audioLinkScrollPos, true, true,GUILayout.MaxWidth((position.width / 2) + 25f));
+            audioLinkScrollPos = EditorGUILayout.BeginScrollView(audioLinkScrollPos, true, true,GUILayout.MaxWidth((position.width / 2)));
                 if(panel.isUsingAudioLink)
                 {
 
@@ -2632,6 +2931,74 @@ class VRSL_ManagerWindow : EditorWindow {
                                         EditorGUILayout.BeginHorizontal();
                                         GUILayout.Space(15f);
                                         fixture.foldout = EditorGUILayout.BeginFoldoutHeaderGroup(fixture.foldout, fixture.laser.name, SelectionFoldout());
+                                        if(GUILayout.Button("Copy", GUILayout.MinWidth(45f), GUILayout.MaxWidth(45f),GUILayout.MinHeight(28f)))
+                                        {
+                                            try{
+                                            copyAudioLinkListProx = new AudioLinkListItem(fixture.laser,false);
+                                            Debug.Log("Copying properties from laser: " + fixture.laser.name);
+                                            }
+                                            catch(MissingReferenceException e)
+                                            {
+                                                e.GetType();
+                                                Debug.Log("Failed to copy properties over! Was the fixture deleted recently?");
+                                            }
+                                        }
+                                        if(GUILayout.Button("Paste", GUILayout.MinWidth(45f), GUILayout.MaxWidth(45f),GUILayout.MinHeight(28f)))
+                                        {
+                                            try{
+                                                if(copyAudioLinkListProx != null)
+                                                {
+                                                    
+                                                    if(copyAudioLinkListProx.light != null)
+                                                    {
+                                                        Debug.Log("Pasting properties from fixture: " + copyAudioLinkListProx.light.name);
+                                                        CopyPasteFunctionAudioLinkNoBandFixture(fixture, copyAudioLinkListProx);
+                                                    }
+                                                    else if(copyAudioLinkListProx.laser != null)
+                                                    {
+                                                        Debug.Log("Pasting properties from fixture: " + copyAudioLinkListProx.laser.name);
+                                                        CopyPasteFunctionAudioLinkNoBandLaser(fixture, copyAudioLinkListProx);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    Debug.Log("Copy from a fixture first before using this!");
+                                                }
+                                            }
+                                            catch(MissingReferenceException e)
+                                            {
+                                                e.GetType();
+                                                Debug.Log("Failed to past properties over! Was the fixture deleted recently?");
+                                            }
+                                        }
+                                        if(GUILayout.Button("Paste w/ Bands", GUILayout.MinWidth(105f), GUILayout.MaxWidth(105f),GUILayout.MinHeight(28f)))
+                                        {
+                                            try{
+                                                if(copyAudioLinkListProx != null)
+                                                {
+                                                    
+                                                    if(copyAudioLinkListProx.light != null)
+                                                    {
+                                                        Debug.Log("Pasting properties from fixture: " + copyAudioLinkListProx.light.name);
+                                                        CopyPasteFunctionAudioLinkFixture(fixture, copyAudioLinkListProx);
+                                                    }
+                                                    else if(copyAudioLinkListProx.laser != null)
+                                                    {
+                                                        Debug.Log("Pasting properties from fixture: " + copyAudioLinkListProx.laser.name);
+                                                        CopyPasteFunctionAudioLinkLaser(fixture, copyAudioLinkListProx);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    Debug.Log("Copy from a fixture first before using this!");
+                                                }
+                                            }
+                                            catch(MissingReferenceException e)
+                                            {
+                                                e.GetType();
+                                                Debug.Log("Failed to past properties over! Was the fixture deleted recently?");
+                                            }
+                                        }
                                         EditorGUILayout.EndHorizontal();
                                         if(fixture.foldout)
                                         {
@@ -2641,8 +3008,7 @@ class VRSL_ManagerWindow : EditorWindow {
                                             EditorGUILayout.BeginVertical();
                                             EditorGUI.BeginDisabledGroup(true);
                                             EditorGUILayout.ObjectField("Band: " + fixture.laser.Band + " Delay: " + fixture.laser.Delay,fixture.laser, fixture.laser.GetType(), true, GUILayout.MaxWidth(sectionWidth - 10));
-                                            EditorGUI.EndDisabledGroup();
-                                            
+                                            EditorGUI.EndDisabledGroup();                                            
                                             GUILayout.Space(15.0f);
                                             GUILayout.Label("AudioLink Settings", SecLabel());
                                             GUILayout.Space(8.0f);
@@ -2691,6 +3057,74 @@ class VRSL_ManagerWindow : EditorWindow {
                                         EditorGUILayout.BeginHorizontal();
                                         GUILayout.Space(15f);
                                         fixture.foldout = EditorGUILayout.BeginFoldoutHeaderGroup(fixture.foldout, fixture.light.name, SelectionFoldout());
+                                        if(GUILayout.Button("Copy", GUILayout.MinWidth(45f), GUILayout.MaxWidth(45f),GUILayout.MinHeight(28f)))
+                                        {
+                                            try{
+                                            copyAudioLinkListProx = new AudioLinkListItem(fixture.light,false);
+                                            Debug.Log("Copying properties from laser: " + fixture.light.name);
+                                            }
+                                            catch(MissingReferenceException e)
+                                            {
+                                                e.GetType();
+                                                Debug.Log("Failed to copy properties over! Was the fixture deleted recently?");
+                                            }
+                                        }
+                                        if(GUILayout.Button("Paste", GUILayout.MinWidth(45f), GUILayout.MaxWidth(45f),GUILayout.MinHeight(28f)))
+                                        {
+                                            try{
+                                                if(copyAudioLinkListProx != null)
+                                                {
+                                                    //CopyPasteFunctionAudioLinkNoBand(fixture, copyAudioLinkListProx);
+                                                    if(copyAudioLinkListProx.light != null)
+                                                    {
+                                                        Debug.Log("Pasting properties from fixture: " + copyAudioLinkListProx.light.name);
+                                                        CopyPasteFunctionAudioLinkNoBandFixture(fixture, copyAudioLinkListProx);
+                                                    }
+                                                    else if(copyAudioLinkListProx.laser != null)
+                                                    {
+                                                        Debug.Log("Pasting properties from fixture: " + copyAudioLinkListProx.laser.name);
+                                                        CopyPasteFunctionAudioLinkNoBandLaser(fixture, copyAudioLinkListProx);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    Debug.Log("Copy from a fixture first before using this!");
+                                                }
+                                            }
+                                            catch(MissingReferenceException e)
+                                            {
+                                                e.GetType();
+                                                Debug.Log("Failed to past properties over! Was the fixture deleted recently?");
+                                            }                                            
+                                        }
+                                        if(GUILayout.Button("Paste w/ Bands", GUILayout.MinWidth(105f), GUILayout.MaxWidth(105f),GUILayout.MinHeight(28f)))
+                                        {
+                                            try{
+                                                if(copyAudioLinkListProx != null)
+                                                {
+                                                   // CopyPasteFunctionAudioLink(fixture, copyAudioLinkListProx);
+                                                    if(copyAudioLinkListProx.light != null)
+                                                    {
+                                                        Debug.Log("Pasting properties from fixture: " + copyAudioLinkListProx.light.name);
+                                                        CopyPasteFunctionAudioLinkFixture(fixture, copyAudioLinkListProx);
+                                                    }
+                                                    else if(copyAudioLinkListProx.laser != null)
+                                                    {
+                                                        Debug.Log("Pasting properties from fixture: " + copyAudioLinkListProx.laser.name);
+                                                        CopyPasteFunctionAudioLinkLaser(fixture, copyAudioLinkListProx);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    Debug.Log("Copy from a fixture first before using this!");
+                                                }
+                                            }
+                                            catch(MissingReferenceException e)
+                                            {
+                                                e.GetType();
+                                                Debug.Log("Failed to past properties over! Was the fixture deleted recently?");
+                                            }
+                                        }
                                         EditorGUILayout.EndHorizontal();
                                         if(fixture.foldout)
                                         {
@@ -2768,7 +3202,7 @@ class VRSL_ManagerWindow : EditorWindow {
                 {
                     Debug.Log("VRSL Control Panel: Spawning Control Panel Prefab...");
                     if(LoadPrefabs())
-                        SpawnPrefabWithUndo(controlPanelUiPrefab, "Spawn VRSL Control Panel");
+                        SpawnPrefabWithUndo(controlPanelUiPrefab, "Spawn VRSL Control Panel", false, false);
                         //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(controlPanelUiPrefab as GameObject), null);
                     Repaint();
                 }

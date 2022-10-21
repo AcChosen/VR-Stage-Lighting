@@ -4,6 +4,12 @@ uint getDMXChannel()
 {
     return (uint) round(UNITY_ACCESS_INSTANCED_PROP(Props, _DMXChannel));  
 }
+
+uint getNineUniverseMode()
+{
+    return (uint) UNITY_ACCESS_INSTANCED_PROP(Props, _NineUniverseMode);
+}
+
 #ifndef LASER
 uint checkPanInvertY()
 {
@@ -40,7 +46,7 @@ float2 LegacyRead(int channel, int sector)
 
 }
 
-float2 IndustryRead(int x, int y, uint DMXChannel)
+float2 IndustryRead(int x, int y)
 {
     
     float resMultiplierX = (_OSCGridRenderTextureRAW_TexelSize.z / 13);
@@ -53,11 +59,23 @@ float2 IndustryRead(int x, int y, uint DMXChannel)
    // xyUV.x = DMXChannel == 15 ? xyUV.x + 0.0769 : xyUV.x;
     return xyUV;
 }
+int getTargetRGBValue(uint universe)
+{
+    universe -=1;
+    return floor((int)(universe / 3));
+    //returns 0 for red, 1 for green, 2, for blue
+}
 
 //function for getting the value on the OSC Grid in the bottom right corner configuration
 float getValueAtCoords(uint DMXChannel, sampler2D _Tex)
 {
+    uint universe = ceil(((int) DMXChannel)/512.0);
+    int targetColor = getTargetRGBValue(universe);
+    
     //DMXChannel = DMXChannel == 15.0 ? DMXChannel + 1 : DMXChannel;
+    universe-=1;
+    DMXChannel = targetColor > 0 ? DMXChannel - (((universe - (universe % 3)) * 512)) - (targetColor * 24) : DMXChannel;
+
     uint x = DMXChannel % 13; // starts at 1 ends at 13
     x = x == 0.0 ? 13.0 : x;
     float y = DMXChannel / 13.0; // starts at 1 // doubles as sector
@@ -75,13 +93,24 @@ float getValueAtCoords(uint DMXChannel, sampler2D _Tex)
     }
 
     // y = (y > 6 && y < 31) && x == 13.0 ? y - 1 : y;
-
-    float2 xyUV = _EnableCompatibilityMode == 1 ? LegacyRead(x-1.0,y) : IndustryRead(x,(y + 1.0), DMXChannel);
+    
+    float2 xyUV = _EnableCompatibilityMode == 1 ? LegacyRead(x-1.0,y) : IndustryRead(x,(y + 1.0));
         
     float4 uvcoords = float4(xyUV.x, xyUV.y, 0,0);
     float4 c = tex2Dlod(_Tex, uvcoords);
-    float3 cRGB = float3(c.r, c.g, c.b);
-    float value = LinearRgbToLuminance(cRGB);
+    float value = 0.0;
+    
+   if(getNineUniverseMode() && _EnableCompatibilityMode != 1)
+   {
+    value = c.r;
+    value = IF(targetColor > 0, c.g, value);
+    value = IF(targetColor > 1, c.b, value);
+   }
+   else
+   {
+        float3 cRGB = float3(c.r, c.g, c.b);
+        value = LinearRgbToLuminance(cRGB);
+    }
     value = LinearToGammaSpaceExact(value);
     return value;
 }
@@ -89,17 +118,26 @@ float getValueAtCoords(uint DMXChannel, sampler2D _Tex)
 float getValueAtCoordsRaw(uint DMXChannel, sampler2D _Tex)
 {
    // DMXChannel = DMXChannel == 15.0 ? DMXChannel + 1 : DMXChannel;
+    uint universe = ceil(((int) DMXChannel)/512.0);
+    int targetColor = getTargetRGBValue(universe);
+
+    universe-=1;
+    DMXChannel = targetColor > 0 ? DMXChannel - (((universe - (universe % 3)) * 512)) - (targetColor * 24) : DMXChannel;
+
+
     uint x = DMXChannel % 13; // starts at 1 ends at 13
     x = x == 0.0 ? 13.0 : x;
     float y = DMXChannel / 13.0; // starts at 1 // doubles as sector
     y = frac(y)== 0.00000 ? y - 1 : y;
-
-    float2 xyUV = _EnableCompatibilityMode == 1 ? LegacyRead(x-1.0,y) : IndustryRead(x,(y + 1.0), DMXChannel);
+    
+    float2 xyUV = _EnableCompatibilityMode == 1 ? LegacyRead(x-1.0,y) : IndustryRead(x,(y + 1.0));
 
     float4 uvcoords = float4(xyUV.x, xyUV.y, 0,0);
     float4 c = tex2Dlod(_Tex, uvcoords);
-    
-	return c.r;
+    float value = c.r;
+    value = IF(targetColor > 0, c.g, value);
+    value = IF(targetColor > 1, c.b, value);
+	return value;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

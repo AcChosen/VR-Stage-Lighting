@@ -4,6 +4,7 @@
 	{
 		//[Header (INSTANCED PROPERITES)]
 		 [HideInInspector]_DMXChannel ("Starting DMX Channel", Int) = 0
+		 [HideInInspector][Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
 		 [HideInInspector][Toggle] _PanInvert ("Invert Mover Pan", Int) = 0
 		 [HideInInspector][Toggle] _TiltInvert ("Invert Mover Tilt", Int) = 0
 

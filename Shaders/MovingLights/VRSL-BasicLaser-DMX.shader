@@ -3,6 +3,7 @@
     Properties
     {
         _DMXChannel ("DMX Channel Number)", Int) = 0
+        [HideInInspector][Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
         _UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
         _FinalIntensity("Final Intensity", Range(0,1)) = 1
         _GlobalIntensity ("Global Intensity", Range(0,1)) = 1
@@ -89,6 +90,7 @@
 
             UNITY_INSTANCING_BUFFER_START(Props)
                 UNITY_DEFINE_INSTANCED_PROP(uint, _DMXChannel)
+                UNITY_DEFINE_INSTANCED_PROP(uint, _NineUniverseMode)
                 UNITY_DEFINE_INSTANCED_PROP(uint, _EnableColorTextureSample)
                 UNITY_DEFINE_INSTANCED_PROP(uint, _LaserCount)
                 UNITY_DEFINE_INSTANCED_PROP(uint, _EnableOSC)

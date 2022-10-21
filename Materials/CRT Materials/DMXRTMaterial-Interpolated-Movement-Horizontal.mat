@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: DMXRTMaterial-Interpolated-Movement-Horizontal
   m_Shader: {fileID: 4800000, guid: 715ebff4a0305954f96e78ccb3676141, type: 3}
-  m_ShaderKeywords: _ENABLEOSC_ON
+  m_ShaderKeywords: _ENABLEOSC_ON _NINEUNIVERSEMODE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -66,6 +66,7 @@ Material:
     m_Floats:
     - _BumpScale: 1
     - _Cutoff: 0.5
+    - _DMXChannel: 0
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EnableCompatibilityMode: 0
@@ -78,6 +79,7 @@ Material:
     - _Metallic: 0
     - _MinimumSmoothnessOSC: 0.0025
     - _Mode: 0
+    - _NineUniverseMode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Sector: 39

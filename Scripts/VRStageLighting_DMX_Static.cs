@@ -30,6 +30,9 @@ namespace VRSL
         public int dmxChannel = 1;
         [Tooltip ("The industry standard Artnet Universe. Use this to choose which universe to read the DMX Channel from.")]
         public int dmxUniverse = 1;
+        [Tooltip ("Enables 9-Universe mode for this fixture. The grid will be split up by RGB channels with each section and color representing a universe. Only availble on the Vertical and Horizontal Grid nodes.")]
+        public bool nineUniverseMode;
+
         [Tooltip ("Enables the legacy 'Sector' based method of assigning DMX Channels. Keep this unchecked to use industry standard DMX Channels.")]
 
         public bool useLegacySectorMode = false;
@@ -183,29 +186,29 @@ namespace VRSL
             calculatedDMXChannel -= ((512*3)+11) + (13 * 1); // universe 4
             calculatedDMXUniverse = 4;
         }
-            else if (calculatedDMXChannel > 512 * 4 + 21 && calculatedDMXChannel < (512 * 5) + 16 )
+            else if (calculatedDMXChannel > 512 * 4 + 21 && calculatedDMXChannel < (512 * 5) + 16 +13 )
         {
-            calculatedDMXChannel -= ((512*4)+6) + (13 * 2);
+            calculatedDMXChannel -= ((512*4)+6) + (13 * 2); // universe 5
             calculatedDMXUniverse = 5;
         }
-            else if (calculatedDMXChannel > 512 * 5 && calculatedDMXChannel < 512 * 6 )
+            else if (calculatedDMXChannel > 512 * 5 && calculatedDMXChannel < (512 * 6) + 39)
         {
-            calculatedDMXChannel -= ((512*5)+1);
+            calculatedDMXChannel -= ((512*5)+1) +(13 * 3); // universe 6
             calculatedDMXUniverse = 6;
         }
-            else if (calculatedDMXChannel > 512 * 6 && calculatedDMXChannel < 512 * 7 )
+            else if (calculatedDMXChannel > 512 * 6 && calculatedDMXChannel < 512 * 7 +  52)
         {
-            calculatedDMXChannel -= ((512*6)+9);
+            calculatedDMXChannel -= ((512*6)+9) +(13 * 3); // universe 7
             calculatedDMXUniverse = 7;
         }
-            else if (calculatedDMXChannel > 512 * 7 && calculatedDMXChannel < 512 * 8 )
+            else if (calculatedDMXChannel > 512 * 7 && calculatedDMXChannel < 512 * 8  + 65)
         {
-            calculatedDMXChannel -= ((512*7)+4);
+            calculatedDMXChannel -= ((512*7)+4) + 52; // universe 8
             calculatedDMXUniverse = 8;
         }
-            else if (calculatedDMXChannel > 512 * 8 && calculatedDMXChannel < 512 * 9 )
+            else if (calculatedDMXChannel > 512 * 8 && calculatedDMXChannel < 512 * 9 + 65 )
         {
-            calculatedDMXChannel -= ((512*8)-1);
+            calculatedDMXChannel -= ((512*8)-1) + 65; // universe 9
             calculatedDMXUniverse = 9;
         }
         #endif
@@ -254,6 +257,7 @@ namespace VRSL
                 props.SetInt("_DMXChannel", RawDMXConversion());
             }
 
+            props.SetInt("_NineUniverseMode", nineUniverseMode == true ? 1 : 0);
             props.SetInt("_PanInvert", invertPan == true ? 1 : 0);
             props.SetInt("_LegacyGoboRange", legacyGoboRange == true ? 1 : 0);
             props.SetInt("_TiltInvert", invertTilt == true ? 1 : 0);
@@ -350,6 +354,7 @@ namespace VRSL
             {
                 props.SetInt("_DMXChannel", RawDMXConversion());
             }
+            props.SetInt("_NineUniverseMode", nineUniverseMode == true ? 1 : 0);
             props.SetInt("_PanInvert", invertPan == true ? 1 : 0);
             props.SetInt("_TiltInvert", invertTilt == true ? 1 : 0);
             props.SetInt("_LegacyGoboRange", legacyGoboRange == true ? 1 : 0);
@@ -503,6 +508,18 @@ namespace VRSL
             {
                 previousGOBOSelection = selectGOBO;
                 selectGOBO = value;
+                _UpdateInstancedProperties();
+            }
+        }
+        public bool NineUniverseMode
+        {
+            get
+            {
+                return nineUniverseMode;
+            }
+            set
+            {
+                nineUniverseMode = value;
                 _UpdateInstancedProperties();
             }
         }

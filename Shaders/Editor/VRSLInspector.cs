@@ -13,6 +13,7 @@ public class VRSLInspector : ShaderGUI
                                 BindingFlags.Instance |
                                 BindingFlags.Static;
     MaterialProperty _DMXChannel = null;
+    MaterialProperty _NineUniverseMode = null;
     MaterialProperty _EnableOSC = null;
     MaterialProperty _EnableExtraChannels = null;
     MaterialProperty _OSCGridRenderTextureRAW = null;
@@ -349,6 +350,7 @@ public class VRSLInspector : ShaderGUI
                 EditorGUILayout.HelpBox("''Sector'' and ''Enable DMX'' are usually overridden by their corresponding Udon Script. \nAdjust these at your own risk.", MessageType.Info,true);
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
+                matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
                 matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
                 matEditor.ShaderProperty(_DMXChannel, new GUIContent("DMX Channel","Chooses the DMX Address to start this fixture at."));
@@ -451,6 +453,7 @@ public class VRSLInspector : ShaderGUI
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
                 matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
                 matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
+                matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
                 matEditor.ShaderProperty(_DMXChannel, new GUIContent("DMX Channel","Chooses the DMX Address to start this fixture at."));
                 EditorGUI.indentLevel--;   
                 VRSLStyles.PartingLine();
@@ -525,6 +528,7 @@ public class VRSLInspector : ShaderGUI
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
                 matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
                 matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
+                matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
                 matEditor.ShaderProperty(_DMXChannel, new GUIContent("DMX Channel","Chooses the DMX Address to start this fixture at."));
                 EditorGUI.indentLevel--;   
                 VRSLStyles.PartingLine();
@@ -668,6 +672,7 @@ public class VRSLInspector : ShaderGUI
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
                 matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
                 matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
+                matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
                 matEditor.ShaderProperty(_DMXChannel, new GUIContent("DMX Channel","Chooses the DMX Address to start this fixture at."));
                 matEditor.ShaderProperty(_EnableExtraChannels, new GUIContent("Enable Cone Length DMX Controls","Enable this if you want to be able to extend the lenghth of the cone on Channel 2!"));
                 EditorGUI.indentLevel--;   
@@ -829,6 +834,7 @@ public class VRSLInspector : ShaderGUI
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
                 matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
                 matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
+                matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
                 matEditor.ShaderProperty(_DMXChannel, new GUIContent("DMX Channel","Chooses the DMX Address to start this fixture at."));
                 EditorGUI.indentLevel--;   
                 VRSLStyles.PartingLine();
@@ -936,6 +942,7 @@ public class VRSLInspector : ShaderGUI
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
                 matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
                 matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
+                matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
                 matEditor.ShaderProperty(_DMXChannel, new GUIContent("DMX Channel","Chooses the DMX Address to start this fixture at."));
                 VRSLStyles.PartingLine();
                 matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid", "The DMX Render Texture to read from for color and intensity. Slightly smoothed."),_OSCGridRenderTextureRAW);
@@ -981,6 +988,7 @@ public class VRSLInspector : ShaderGUI
         matEditor.ShaderProperty(_EnableLegacyGlobalMovementSpeedChannel, new GUIContent("Enable Legacy Global Movement Speed", "Enables the use of the old Global Movement Speed Channel (DMX Channel 511) instead of having each sector have its own movement speed control. /nThis will always be true when compatibility mode is enabled"));
         matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
         matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
+        matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
         matEditor.ShaderProperty(_DMXChannel, new GUIContent("Sector","for legacy global movement speed"));
         matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Raw", "The raw DMX Render texture from the camera."),_OSCGridRenderTexture);
         matEditor.ShaderProperty(_SmoothValue, new GUIContent("Smoothness Level", "Changes how much interpolated smoothing is applied to the texture. The closer to 0, the more smoothing applied, the closer to 1, the less smoothing applied. \nThis value is usually controlled by a seperate DMX signal to control the movement speed of the movers. "));
@@ -996,6 +1004,7 @@ public class VRSLInspector : ShaderGUI
         EditorGUI.indentLevel++;
         matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Raw", "The raw DMX Render texture from the camera."),_OSCGridRenderTexture);
         matEditor.ShaderProperty(_MaxStrobeFreq, new GUIContent("Maximum Strobe Frequency", "The maximum strobing frequency of all fixtures."));
+        matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
         matEditor.RenderQueueField();
         EditorGUI.indentLevel--;
         GUILayout.Space(5);
@@ -1006,6 +1015,7 @@ public class VRSLInspector : ShaderGUI
         GUILayout.Space(5);
         EditorGUI.indentLevel++;
         matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Raw", "The raw DMX Render texture from the camera."),_OSCGridRenderTexture);
+        matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
         matEditor.RenderQueueField();
         EditorGUI.indentLevel--;
         GUILayout.Space(5);

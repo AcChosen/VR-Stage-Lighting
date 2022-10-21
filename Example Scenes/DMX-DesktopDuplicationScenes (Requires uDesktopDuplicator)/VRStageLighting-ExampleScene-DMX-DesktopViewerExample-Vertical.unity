@@ -1592,6 +1592,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: VRSL-DMX-uDesktopDuplicationReaderScreen-Vertical
       objectReference: {fileID: 0}
+    - target: {fileID: 2763271472158312026, guid: b55309c416955b044a48bbced977331d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3382481417565174037, guid: b55309c416955b044a48bbced977331d,
         type: 3}
       propertyPath: m_RootOrder
