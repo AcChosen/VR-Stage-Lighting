@@ -75,7 +75,7 @@
                 float2 uv : TEXCOORD0;
                 float2 uv2 : TEXCOORD1;
                 float3 normal : TEXCOORD2;
-                UNITY_FOG_COORDS(8)
+                UNITY_FOG_COORDS(9)
                 float4 vertex : SV_POSITION;
                 float4 worldPos : TEXCOORD3;
                 float3 viewDir : TEXCOORD4;
