@@ -75,7 +75,7 @@
                 float2 uv : TEXCOORD0;
                 float2 uv2 : TEXCOORD1;
                 float3 normal : TEXCOORD2;
-                UNITY_FOG_COORDS(1)
+                UNITY_FOG_COORDS(8)
                 float4 vertex : SV_POSITION;
                 float4 worldPos : TEXCOORD3;
                 float3 viewDir : TEXCOORD4;
@@ -307,6 +307,7 @@
                 v2f o;
                 UNITY_SETUP_INSTANCE_ID(v);
                 UNITY_TRANSFER_INSTANCE_ID(v, o);
+                UNITY_INITIALIZE_OUTPUT(v2f, o);
                 o.rgbIntensity.w = 1;
                 if(getGlobalIntensity() <= 0.05 || getFinalIntensity() <= 0.05 || _UniversalIntensity <= 0.05 || o.rgbIntensity.w <= 0.05)
                 {

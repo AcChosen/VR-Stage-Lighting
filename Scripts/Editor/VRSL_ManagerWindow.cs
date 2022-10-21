@@ -342,9 +342,16 @@ class AudioLinkListItem
     {
         if(closeMenus)
         {
-            var so = new SerializedObject(light);
-            so.FindProperty("foldout").boolValue = false;
-            so.ApplyModifiedProperties();
+            try
+            {
+                var so = new SerializedObject(light);
+                so.FindProperty("foldout").boolValue = false;
+                so.ApplyModifiedProperties();
+            }
+            catch(Exception e)
+            {
+                e.GetType();
+            }
         }
 
         light.UpdateProxy();
