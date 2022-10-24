@@ -21,7 +21,7 @@ namespace VRSL.EditorScripts
     public class VRSL_UdonEditor : Editor
     {
         public static Texture logo;
-        public static string ver = "VR Stage Lighting ver:" + "<b><color=#6a15ce> 2.0</color></b>";
+        public static string ver = "VR Stage Lighting ver:" + " <b><color=#6a15ce> 2.1</color></b>";
         public void OnEnable() 
         {
             logo = Resources.Load("VRStageLighting-Logo") as Texture;

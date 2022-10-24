@@ -536,7 +536,7 @@ class VRSL_ManagerWindow : EditorWindow {
     static float tiltRangeOff = -180f;
     public static Texture logo, github, twitter, discord;
     public bool legacyFixtures;
-    public static string ver = "VR Stage Lighting ver:" + "<b><color=#6a15ce> 2.0</color></b>";
+    public static string ver = "VR Stage Lighting ver:" + " <b><color=#6a15ce> 2.1</color></b>";
 
     public static bool hasLocalPanel, hasDepthLight;
     private static VRSL_LocalUIControlPanel panel;
