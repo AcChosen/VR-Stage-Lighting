@@ -16,6 +16,7 @@ using VRC.Udon.Common.Interfaces;
 using System.Collections.Immutable;
 using System.Collections.Generic;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 #endif
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
@@ -147,14 +148,22 @@ class DMXListItem
 
     public void ResetChanges(bool closeMenus)
     {
-        if(closeMenus)
-        {
-            var so = new SerializedObject(light);
-            so.FindProperty("foldout").boolValue = false;
-            so.ApplyModifiedProperties();
+        try
+        {       
+            if(closeMenus)
+            {
+                var so = new SerializedObject(light);
+                so.FindProperty("foldout").boolValue = false;
+                so.ApplyModifiedProperties();
+            }
         }
-
+        catch(ArgumentException e)
+        {
+            e.GetType();
+        }
+        #pragma warning disable 0618 //suppressing obsoletion warnings
         light.UpdateProxy();
+        #pragma warning restore 0618 //suppressing obsoletion warnings
         light.enableDMXChannels = P_enableDMXChannels = Z_enableDMXChannels;
         light.fixtureID = P_fixtureID = Z_fixtureID;
         light.dmxChannel = P_dmxChannel = Z_dmxChannel;
@@ -182,7 +191,9 @@ class DMXListItem
         light.maxMinPan = P_maxMinPan = Z_maxMinPan;
         light.maxMinTilt = P_maxMinTilt = Z_maxMinTilt; 
         light.foldout = false;
+        #pragma warning disable 0618 //suppressing obsoletion warnings
         light.ApplyProxyModifications();
+        #pragma warning restore 0618 //suppressing obsoletion warnings
     }
     public void ApplyChanges()
     {
@@ -218,8 +229,9 @@ class DMXListItem
         so.FindProperty("foldout").boolValue = foldout;
         so.ApplyModifiedProperties();
         
-
+        #pragma warning disable 0618 //suppressing obsoletion warnings
         light.UpdateProxy();
+        #pragma warning restore 0618 //suppressing obsoletion warnings
         light.enableDMXChannels = Z_enableDMXChannels = P_enableDMXChannels;
         light.fixtureID = Z_fixtureID = P_fixtureID;
         light.dmxChannel = Z_dmxChannel = P_dmxChannel;
@@ -247,7 +259,9 @@ class DMXListItem
         light.maxMinPan = Z_maxMinPan = P_maxMinPan;
         light.maxMinTilt = Z_maxMinTilt = P_maxMinTilt; 
         light.foldout = foldout;
+        #pragma warning disable 0618 //suppressing obsoletion warnings
         light.ApplyProxyModifications();
+        #pragma warning restore 0618 //suppressing obsoletion warnings
         }
         catch(Exception e)
         {
@@ -340,21 +354,23 @@ class AudioLinkListItem
     }
     public void ResetChanges(VRStageLighting_AudioLink_Static li , bool closeMenus)
     {
-        if(closeMenus)
+        try
         {
-            try
+            if(closeMenus)
             {
-                var so = new SerializedObject(light);
-                so.FindProperty("foldout").boolValue = false;
-                so.ApplyModifiedProperties();
-            }
-            catch(Exception e)
-            {
-                e.GetType();
+                    var so = new SerializedObject(light);
+                    so.FindProperty("foldout").boolValue = false;
+                    so.ApplyModifiedProperties();
             }
         }
+        catch(ArgumentException e)
+        {
+            e.GetType();
+        }
 
+        #pragma warning disable 0618 //suppressing obsoletion warnings
         light.UpdateProxy();
+        #pragma warning restore 0618 //suppressing obsoletion warnings
         light.EnableAudioLink = P_enableAudioLink = Z_enableAudioLink;
         light.Band = P_band = Z_band;
         light.Delay = P_delay = Z_delay;
@@ -373,18 +389,28 @@ class AudioLinkListItem
         light.ConeLength = P_coneLength = Z_coneLength;
         light.MaxConeLength = P_maxConeLength = Z_maxConeLength;
         light.foldout = false;
+        #pragma warning disable 0618 //suppressing obsoletion warnings
         light.ApplyProxyModifications();
+        #pragma warning restore 0618 //suppressing obsoletion warnings
     }
     public void ResetChanges(VRStageLighting_AudioLink_Laser li , bool closeMenus)
     {
-        if(closeMenus)
+        try
         {
-            var so = new SerializedObject(laser);
-            so.FindProperty("foldout").boolValue = false;
-            so.ApplyModifiedProperties();
+            if(closeMenus)
+            {
+                var so = new SerializedObject(laser);
+                so.FindProperty("foldout").boolValue = false;
+                so.ApplyModifiedProperties();
+            }
         }
-
+        catch(ArgumentException e)
+        {
+            e.GetType();
+        }
+        #pragma warning disable 0618 //suppressing obsoletion warnings
         laser.UpdateProxy();
+        #pragma warning restore 0618 //suppressing obsoletion warnings
         laser.EnableAudioLink = P_enableAudioLink = Z_enableAudioLink;
         laser.Band = P_band = Z_band;
         laser.Delay = P_delay = Z_delay;
@@ -403,7 +429,9 @@ class AudioLinkListItem
         laser.ConeLength = P_coneLength = Z_coneLength;
         laser.LaserScroll = P_laserScroll = Z_laserScroll;
         laser.foldout = false;
+        #pragma warning disable 0618 //suppressing obsoletion warnings
         laser.ApplyProxyModifications();
+        #pragma warning restore 0618 //suppressing obsoletion warnings
     }
 
     public void ApplyChanges(VRStageLighting_AudioLink_Static li)
@@ -435,8 +463,9 @@ class AudioLinkListItem
         //var soTarget = new SerializedObject(light.targetToFollow.gameObject);
 
     
-
+        #pragma warning disable 0618 //suppressing obsoletion warnings
         light.UpdateProxy();
+        #pragma warning restore 0618 //suppressing obsoletion warnings
         light.EnableAudioLink = Z_enableAudioLink = P_enableAudioLink;
         light.Band = Z_band = P_band;
         light.Delay = Z_delay = P_delay;
@@ -455,8 +484,9 @@ class AudioLinkListItem
         light.ConeLength = Z_coneLength = P_coneLength;
         light.MaxConeLength = Z_maxConeLength = P_maxConeLength;
         light.foldout = foldout;
-        
+        #pragma warning disable 0618 //suppressing obsoletion warnings
         light.ApplyProxyModifications();
+        #pragma warning restore 0618 //suppressing obsoletion warnings
     }
 
     public void ApplyChanges(VRStageLighting_AudioLink_Laser li)
@@ -491,8 +521,9 @@ class AudioLinkListItem
         //var soTarget = new SerializedObject(light.targetToFollow.gameObject);
 
     
-
+        #pragma warning disable 0618 //suppressing obsoletion warnings
         laser.UpdateProxy();
+        #pragma warning restore 0618 //suppressing obsoletion warnings
         laser.EnableAudioLink = Z_enableAudioLink = P_enableAudioLink;
         laser.Band = Z_band = P_band;
         laser.Delay = Z_delay = P_delay;
@@ -514,7 +545,9 @@ class AudioLinkListItem
         laser.LaserScroll = Z_laserScroll = P_laserScroll;
         laser.LaserThickness = Z_laserThickness = P_laserThickness;
         laser.foldout = foldout;
+        #pragma warning disable 0618 //suppressing obsoletion warnings
         laser.ApplyProxyModifications();
+        #pragma warning restore 0618 //suppressing obsoletion warnings
     }
 
 
@@ -720,18 +753,18 @@ class VRSL_ManagerWindow : EditorWindow {
         return result;
     }
 
-
+    
     private static void CheckForLocalPanel()
     {
         hasLocalPanel = false;
         panel = null;
         colorLabel = new GUIContent();
         colorLabel.text = "Emission Color";
-     //   List<GameObject> sceneObjects = GetAllObjectsOnlyInScene();
         foreach (GameObject go in sceneObjects)
         {
-           // if(go.name = "")
+           #pragma warning disable 0618 //suppressing obsoletion warnings
            panel =  go.GetUdonSharpComponent<VRSL_LocalUIControlPanel>();
+           #pragma warning restore 0618
            if(panel != null)
            {
                hasLocalPanel = true;
@@ -740,6 +773,7 @@ class VRSL_ManagerWindow : EditorWindow {
         }
         return;
     }
+    
 
     private static void CheckForDepthLight()
     {
@@ -772,10 +806,11 @@ class VRSL_ManagerWindow : EditorWindow {
             dmxLights.Clear();
             foreach(GameObject go in sceneObjects)
             {
+                #pragma warning disable 0618 //suppressing obsoletion warnings
                 VRStageLighting_DMX_Static lightScript = go.GetUdonSharpComponent<VRStageLighting_DMX_Static>();
+                #pragma warning restore 0618 //suppressing obsoletion warnings
                 if(lightScript != null)
                 {
-                    //dmxLights.Add(go.GetUdonSharpComponent<VRStageLighting_DMX_Static>());
                     dmxLights.Add(
                         new DMXListItem(lightScript, lightScript.foldout)
                     );
@@ -817,7 +852,9 @@ class VRSL_ManagerWindow : EditorWindow {
             audioLinkLights.Clear();
             foreach(GameObject go in sceneObjects)
             {
+                #pragma warning disable 0618 //suppressing obsoletion warnings
                 VRStageLighting_AudioLink_Static audioScript = go.GetUdonSharpComponent<VRStageLighting_AudioLink_Static>();
+                #pragma warning restore 0618 //suppressing obsoletion warnings
                 if(audioScript != null)
                 {
                     audioLinkLights.Add(
@@ -825,7 +862,9 @@ class VRSL_ManagerWindow : EditorWindow {
                     );
                     continue;
                 }
+                #pragma warning disable 0618 //suppressing obsoletion warnings
                 VRStageLighting_AudioLink_Laser laserScript = go.GetUdonSharpComponent<VRStageLighting_AudioLink_Laser>();
+                #pragma warning restore 0618 //suppressing obsoletion warnings
                 if(laserScript != null)
                 {
                     audioLinkLights.Add(
@@ -1122,18 +1161,14 @@ class VRSL_ManagerWindow : EditorWindow {
     {
         if(GUILayout.Button(Label(range.ToString(), "Set the field to " + range.ToString() + "°!"), GUILayout.MaxWidth(50f)))
         {
-            //target.UpdateProxy();
             if(isPan)
             {
-                //target.panRangeTarget = range;
                 panRangeOff = range;
             }
             else
             {
-                //target.tiltRangeTarget = range;
                 tiltRangeOff = range;
             }
-            //target.ApplyProxyModifications();
         }
     }
 
@@ -1941,11 +1976,15 @@ class VRSL_ManagerWindow : EditorWindow {
             string o = mainOptionsFoldout ? "Hide Options" : "Show Options";
             mainOptionsFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(mainOptionsFoldout,Label(o, "Show/Hide Global VRSL Settings and Prefab Spawners."));
             EditorGUILayout.EndFoldoutHeaderGroup();
+            #pragma warning disable 0618 //suppressing obsoletion warnings
             panel.UpdateProxy();
+            #pragma warning restore 0618 //suppressing obsoletion warnings
             panel.DMXMode = so.FindProperty("DMXMode").intValue;
             panel.fixtureGizmos = so.FindProperty("fixtureGizmos").intValue;
             panel.useExtendedUniverses = so.FindProperty("useExtendedUniverses").boolValue;
+            #pragma warning disable 0618 //suppressing obsoletion warnings
             panel.ApplyProxyModifications();
+            #pragma warning restore 0618 //suppressing obsoletion warnings
 
 
             if((panel.useExtendedUniverses != last9UniverseStatus) && (EditorApplication.isPlayingOrWillChangePlaymode == false))
@@ -2668,12 +2707,16 @@ class VRSL_ManagerWindow : EditorWindow {
 
                 //EditorGUILayout
                 soptr.ApplyModifiedProperties();
+                #pragma warning disable 0618 //suppressing obsoletion warnings
                 panel.UpdateProxy();
+                #pragma warning restore 0618 //suppressing obsoletion warnings
                 panel.panRangeTarget = soptr.FindProperty("panRangeTarget").floatValue;
                 panel.tiltRangeTarget = soptr.FindProperty("tiltRangeTarget").floatValue;
                 panel.useLegacyStaticLights = soptr.FindProperty("useLegacyStaticLights").boolValue;
-                panel.videoSampleTargetTexture = (Texture) soptr.FindProperty("videoSampleTargetTexture").objectReferenceValue;
+                panel.videoSampleTargetTexture = (Texture)soptr.FindProperty("videoSampleTargetTexture").objectReferenceValue;
+                #pragma warning disable 0618 //suppressing obsoletion warnings
                 panel.ApplyProxyModifications(); 
+                #pragma warning restore 0618 //suppressing obsoletion warnings
                 
             }
         }
@@ -2747,10 +2790,14 @@ class VRSL_ManagerWindow : EditorWindow {
 
 
             so.ApplyModifiedProperties();
+            #pragma warning disable 0618 //suppressing obsoletion warnings
             panel.UpdateProxy();
+            #pragma warning restore 0618 //suppressing obsoletion warnings
             panel.isUsingDMX = so.FindProperty("isUsingDMX").boolValue;
             panel.isUsingAudioLink = so.FindProperty("isUsingAudioLink").boolValue;
+            #pragma warning disable 0618 //suppressing obsoletion warnings
             panel.ApplyProxyModifications();
+            #pragma warning restore 0618 //suppressing obsoletion warnings
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             float sectionWidth = position.width /2;
@@ -2765,22 +2812,14 @@ class VRSL_ManagerWindow : EditorWindow {
                     {
                         continue;
                     }
-                    // if(i == 0)
-                    //     GUILayout.Space(3.0f);
-                   // GUILayout.Space(15.0f);
-                    //GUILayout.Label("Universe " + (i + 1), Title1());
+
                     universeFold[i] = EditorGUILayout.BeginFoldoutHeaderGroup(universeFold[i], Label("Universe " + (i + 1), "Show/Hide all fixtures in in DMX Universe " + (i+1)), Title1Foldout());
                     EditorGUILayout.EndFoldoutHeaderGroup();
                     GuiLine();
-                    //EditorGUILayout.BeginHorizontal();
-                    //EditorGUILayout.Space();
-                   // EditorGUILayout.BeginVertical();
+
                     if(universeFold[i])
                     {
-                        //if(i == 0)
-                        // EditorGUILayout.BeginHorizontal();
-                        // EditorGUILayout.Space();
-                        // EditorGUILayout.BeginVertical();
+
                         if(universes[i] == null)
                         {
                             continue;
@@ -2831,8 +2870,6 @@ class VRSL_ManagerWindow : EditorWindow {
                             if(fixture.foldout)
                             {
                                 EditorGUILayout.BeginVertical("box");
-                            // fixture.light.UpdateProxy();
-                            // GUILayout.Label("U: " + light._GetUniverse() + " CH: " + light._GetDMXChannel() + " " + light.name, SectionLabel());
                                 GUILayout.Space(8.0f);
                                 EditorGUI.BeginDisabledGroup(true);
                                 EditorGUILayout.ObjectField("Selected Fixture",fixture.light, fixture.light.GetType(), true, GUILayout.MaxWidth(sectionWidth -10));
@@ -2896,7 +2933,6 @@ class VRSL_ManagerWindow : EditorWindow {
                                 GUILayout.Space(15.0f);
 
                                 EditorGUILayout.EndVertical();
-                            // fixture.light.ApplyProxyModifications();
                             }
 
                             GuiLine();

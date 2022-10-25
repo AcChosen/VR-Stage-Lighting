@@ -708,6 +708,7 @@ namespace VRSL.EditorScripts
             {  
                 foreach(GameObject obj in objs)
                 {
+                    #pragma warning disable 0618 //suppressing obsoletion warnings
                     //VRStageLighting_RAW_Static[] staticLights = obj.GetUdonSharpComponentsInChildren<VRStageLighting_RAW_Static>();
                     VRStageLighting_AudioLink_Static[] audioLinkLights = obj.GetUdonSharpComponentsInChildren<VRStageLighting_AudioLink_Static>();
                 // VRStageLighting_Animated_Static[] animatedLights = obj.GetUdonSharpComponentsInChildren<VRStageLighting_Animated_Static>();
@@ -715,6 +716,7 @@ namespace VRSL.EditorScripts
                     //VRStageLighting_RAW_Laser[] rawLasers = obj.GetUdonSharpComponentsInChildren<VRStageLighting_RAW_Laser>();
                     VRStageLighting_AudioLink_Laser[] audioLinkLasers = obj.GetUdonSharpComponentsInChildren<VRStageLighting_AudioLink_Laser>();
                 // VRStageLighting_DMX_Static[] dmxLights = obj.GetUdonSharpComponentsInChildren<VRStageLighting_DMX_Static>();
+                    #pragma warning restore 0618 //suppressing obsoletion warnings
                     // if(staticLights != null)
                     // {
                     //         foreach(VRStageLighting_RAW_Static fixture in staticLights)
