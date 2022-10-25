@@ -22,7 +22,6 @@ This performance is provided through a standardized set of custom shaders that a
 - UdonSharp
 - USharp Video Player
 - PostProcessing Stack V2 (Unity Package Manager)
-- uDesktopDuplication 1.8.0
 - AudioLink v2.7+ (Full)
 - Recommended: Open Broadcast Software (or streaming software of your choice)
 - Recommended: VRSL Grid Node (For DMX control)
@@ -52,7 +51,7 @@ This is the main system this project was based on. Once in unity, VRSL can conve
 
 This system is powered 95% by shaders, including the actual method of reading the pixels from the screen. The other 5% is to enable GPU instancing for the shaders and certain properties. There is also basic "RAW" Udon support for when DMX Support is disabled for these shaders.
 
-#### The appeal of this system is that this allows any software or hardware that supports Artnet to be able to control these lights in VRChat in real time through a stream or a recorded video. 
+#### The appeal of this system is that it allows any software or hardware that supports Artnet to control VRSL lights in real time with entirely hardware-accelerated computation with nearly unrivaled performance for the end user.
 
 This repository comes with an example recorded video in an example scene of the lights in action as well as the grid system they're reacting to. The video is placed in an example scene where the same lights are set-up to re-react to the video in real time, mimicing the actions of the lights shown in the example video.
 
@@ -88,8 +87,6 @@ You can get Audiolink as well as learn more about it [here](https://github.com/l
 - Compression artifacting can cause movement data to be scrambled a bit. VRSL works to compensate for the scrambling somewhat, but does make the movement much slower.
   - Light fixtures have the ability to set to control the smoothing intensity, but it is recommended to keep the smoothing at maximum (which is 0) for most situations.
   - If quicker movement is needed, it is recommended to do it in small bursts, quickly returning the smoothing back to maximum when you can.
-- The system currently supports a little over 3 Universes.
-  - Support for more is planned for the future.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/107726700/194075483-c4eb51fb-40da-4974-9820-bfb1ede75ab4.gif">
@@ -103,4 +100,4 @@ More information about VRSL and many helpful tutorials can be found on this [rep
 
 If you'd like to support the project, you can do so via [patreon](https://www.patreon.com/ac_chosen), where you can also get some VRSL exclusives!~
 
-You can also join the official [VRSL discord](https://discord.gg/zPktZAe48r)! 
+You can also join the official [VRSL discord](https://discord.gg/zPktZAe48r)!
