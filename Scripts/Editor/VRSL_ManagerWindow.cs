@@ -2025,6 +2025,27 @@ class VRSL_ManagerWindow : EditorWindow {
 
                 EditorGUILayout.EndHorizontal();
                 EditorGUI.EndDisabledGroup();
+
+
+
+                EditorGUI.BeginDisabledGroup(!panel.isUsingAudioLink);   
+                Rect alr = EditorGUILayout.BeginHorizontal("box");
+                EditorGUILayout.BeginVertical();
+                EditorGUILayout.LabelField(Label("VRSL AudioLink Target Sample Texture", "Use this field to set the texture that all AudioLink VRSL fixtures will sample from when texture sampling is enabled on them."));
+                if (GUILayout.Button(new GUIContent("Force Update Target Sample Texture", "Updates all AudioLink VRSL Fixtures to sample from the selected target texture when texture sampling is enabled on the fixture."), GUILayout.MaxWidth(230f), GUILayout.MinHeight(20f))) { panel._ForceUpdateVideoSampleTexture(); }
+                EditorGUILayout.EndVertical();
+                Rect texPropRect = alr;
+                texPropRect.width = 40f;
+                texPropRect.height = 40f;
+                texPropRect.x += 250f;
+                texPropRect.y += 5f;
+                soptr.FindProperty("videoSampleTargetTexture").objectReferenceValue = (Texture)EditorGUI.ObjectField(texPropRect, panel.videoSampleTargetTexture, typeof(Texture), true);
+                
+                EditorGUILayout.EndHorizontal();
+                EditorGUI.EndDisabledGroup();
+
+
+                
                 EditorGUILayout.EndVertical();
                 //EditorGUILayout.Space();
                 
@@ -2442,15 +2463,11 @@ class VRSL_ManagerWindow : EditorWindow {
                   //  panel.useLegacyStaticLights = so.FindProperty("useLegacyStaticLights").boolValue;
                  //   panel.useLegacyStaticLights = EditorGUILayout.Toggle("Use Legacy Static Lights", panel.useLegacyStaticLights);
                     soptr.FindProperty("useLegacyStaticLights").boolValue = EditorGUILayout.ToggleLeft("Use Old 13 Channel Static Lights (Not Recommended)", panel.useLegacyStaticLights);
-                    soptr.ApplyModifiedProperties();
-                    panel.UpdateProxy();
-                    panel.panRangeTarget = soptr.FindProperty("panRangeTarget").floatValue;
-                    panel.tiltRangeTarget = soptr.FindProperty("tiltRangeTarget").floatValue;
-                    panel.useLegacyStaticLights = soptr.FindProperty("useLegacyStaticLights").boolValue;
-                    panel.ApplyProxyModifications();
+
 
                     
-                }        
+                }  
+     
                 EditorGUILayout.EndFoldoutHeaderGroup();
                 EditorGUILayout.EndVertical();
                //EditorGUILayout.Space();
@@ -2650,6 +2667,13 @@ class VRSL_ManagerWindow : EditorWindow {
                 
 
                 //EditorGUILayout
+                soptr.ApplyModifiedProperties();
+                panel.UpdateProxy();
+                panel.panRangeTarget = soptr.FindProperty("panRangeTarget").floatValue;
+                panel.tiltRangeTarget = soptr.FindProperty("tiltRangeTarget").floatValue;
+                panel.useLegacyStaticLights = soptr.FindProperty("useLegacyStaticLights").boolValue;
+                panel.videoSampleTargetTexture = (Texture) soptr.FindProperty("videoSampleTargetTexture").objectReferenceValue;
+                panel.ApplyProxyModifications(); 
                 
             }
         }

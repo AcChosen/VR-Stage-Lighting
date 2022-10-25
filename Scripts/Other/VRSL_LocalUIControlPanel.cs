@@ -4,6 +4,11 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+using UnityEditor;
+using UdonSharpEditor;
+#endif
+
 namespace VRSL
 {
 
@@ -11,6 +16,8 @@ namespace VRSL
 
     public class VRSL_LocalUIControlPanel : UdonSharpBehaviour
     {
+        public Texture videoSampleTargetTexture;
+
         [Header("Materials")]
         public Material[] fixtureMaterials;
         public Material[] volumetricMaterials;
@@ -75,6 +82,7 @@ namespace VRSL
             _CheckDMX();
             _CheckAudioLink();
             _CheckkExtendedUniverses();
+            _ForceUpdateVideoSampleTexture();
         }
         
         void EnableCRTS(CustomRenderTexture[] rtArray)
@@ -151,6 +159,49 @@ namespace VRSL
                 crt.material.SetInt("_NineUniverseMode", useExtendedUniverses ? 1 : 0);
             }
         }
+
+        public void _ForceUpdateVideoSampleTexture()
+        {
+            if(videoSampleTargetTexture == null)
+            {
+                return;
+            }
+            foreach(Material m in laserMaterials)
+            {
+                if(m.HasProperty("_SamplingTexture"))
+                {
+                    m.SetTexture("_SamplingTexture",videoSampleTargetTexture);
+                }
+            }
+            foreach(Material m in fixtureMaterials)
+            {
+                if(m.HasProperty("_SamplingTexture"))
+                {
+                    m.SetTexture("_SamplingTexture",videoSampleTargetTexture);
+                }
+            }
+            foreach(Material m in discoBallMaterials)
+            {
+                if(m.HasProperty("_SamplingTexture"))
+                {
+                    m.SetTexture("_SamplingTexture",videoSampleTargetTexture);
+                }
+            }
+            foreach(Material m in projectionMaterials)
+            {
+                if(m.HasProperty("_SamplingTexture"))
+                {
+                    m.SetTexture("_SamplingTexture",videoSampleTargetTexture);
+                }
+            }
+            foreach(Material m in volumetricMaterials)
+            {
+                if(m.HasProperty("_SamplingTexture"))
+                {
+                    m.SetTexture("_SamplingTexture",videoSampleTargetTexture);
+                }
+            }
+        }
         
         public void _SetFinalIntensity()
         {
@@ -220,4 +271,66 @@ namespace VRSL
             }
         }
     }
+
+        #if !COMPILER_UDONSHARP && UNITY_EDITOR
+    [CustomEditor(typeof(VRSL_LocalUIControlPanel))]
+    public class VRSL_LocalUIControlPanel_Editor : Editor
+    {
+        public static Texture logo;
+        public static string ver = "VR Stage Lighting ver:" + " <b><color=#6a15ce> 2.1</color></b>";
+
+        public void OnEnable() 
+        {
+            logo = Resources.Load("VRStageLighting-Logo") as Texture;
+        }
+        public static void DrawLogo()
+        {
+            ///GUILayout.BeginArea(new Rect(0,0, Screen.width, Screen.height));
+            // GUILayout.FlexibleSpace();
+            //GUI.DrawTexture(pos,logo,ScaleMode.ScaleToFit);
+            //EditorGUI.DrawPreviewTexture(new Rect(0,0,400,150), logo);
+            Vector2 contentOffset = new Vector2(0f, -2f);
+            GUIStyle style = new GUIStyle(EditorStyles.label);
+            style.fixedHeight = 150;
+            //style.fixedWidth = 300;
+            style.contentOffset = contentOffset;
+            style.alignment = TextAnchor.MiddleCenter;
+            var rect = GUILayoutUtility.GetRect(300f, 140f, style);
+            //GUILayout.Label(logo,style, GUILayout.MaxWidth(500), GUILayout.MaxHeight(200));
+            GUI.Box(rect, logo,style);
+            //GUILayout.Label(logo);
+            // GUILayout.FlexibleSpace();
+            //GUILayout.EndArea();
+        }
+        private static Rect DrawShurikenCenteredTitle(string title, Vector2 contentOffset, int HeaderHeight)
+        {
+            var style = new GUIStyle("ShurikenModuleTitle");
+            style.font = new GUIStyle(EditorStyles.boldLabel).font;
+            style.border = new RectOffset(15, 7, 4, 4);
+            style.fontSize = 14;
+            style.fixedHeight = HeaderHeight;
+            style.contentOffset = contentOffset;
+            style.alignment = TextAnchor.MiddleCenter;
+            var rect = GUILayoutUtility.GetRect(16f, HeaderHeight, style);
+
+            GUI.Box(rect, title, style);
+            return rect;
+        }
+        public static void ShurikenHeaderCentered(string title)
+        {
+            DrawShurikenCenteredTitle(title, new Vector2(0f, -2f), 22);
+        }
+        public override void OnInspectorGUI()
+        {
+            if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
+            DrawLogo();
+            ShurikenHeaderCentered(ver);
+            EditorGUILayout.Space();
+            VRSL_LocalUIControlPanel controlPanel = (VRSL_LocalUIControlPanel)target;
+            if (GUILayout.Button(new GUIContent("Force Update Target AudioLink Sample Texture", "Updates all AudioLink VRSL Fixtures to sample from the selected target texture when texture sampling is enabled on the fixture."))) { controlPanel._ForceUpdateVideoSampleTexture(); }
+            EditorGUILayout.Space();
+            base.OnInspectorGUI();
+        }
+    }
+    #endif
 }
