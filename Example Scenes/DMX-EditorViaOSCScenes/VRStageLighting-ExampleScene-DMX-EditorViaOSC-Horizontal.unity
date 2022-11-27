@@ -398,6 +398,11 @@ PrefabInstance:
       propertyPath: publicVariablesUnityEngineObjects.Array.size
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5825422817945746806, guid: b3e8ff051cc2d684aa255ceccce9b96f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6606377100955968320, guid: b3e8ff051cc2d684aa255ceccce9b96f,
         type: 3}
       propertyPath: m_RootOrder
@@ -590,6 +595,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: VRSL-DMX-Static-ParLight-H (Sector 5-Alt)
       objectReference: {fileID: 0}
+    - target: {fileID: 8473887432807896544, guid: 946b3c09cfa93244c90a4b0ac7764b44,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 946b3c09cfa93244c90a4b0ac7764b44, type: 3}
 --- !u!4 &269083155 stripped
@@ -666,6 +676,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: VRSL-DMX-Mover-Spotlight-H (Sector 0-Invert)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6935407641794089727, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7730740239420329161, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
         type: 3}
@@ -823,6 +838,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: VRSL-DMX-Mover-Spotlight-H (Sector 3-Invert)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6935407641794089727, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7730740239420329161, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
         type: 3}
@@ -1192,6 +1212,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3561410614008698204, guid: e9dde3e86ccb8ca4bb4ecbe35a6fa7b1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8117001334545528025, guid: e9dde3e86ccb8ca4bb4ecbe35a6fa7b1,
         type: 3}
       propertyPath: m_Name
@@ -1299,6 +1324,11 @@ PrefabInstance:
         type: 3}
       propertyPath: publicVariablesUnityEngineObjects.Array.size
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5825422817945746806, guid: b3e8ff051cc2d684aa255ceccce9b96f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6606377100955968320, guid: b3e8ff051cc2d684aa255ceccce9b96f,
         type: 3}
@@ -1461,6 +1491,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: VRSL-DMX-Mover-Spotlight-H (Sector 3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6935407641794089727, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7730740239420329161, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
         type: 3}
@@ -1726,6 +1761,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: VRSL-DMX-Mover-Spotlight-H (Sector 1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6935407641794089727, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7730740239420329161, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
         type: 3}
       propertyPath: m_RootOrder
@@ -1942,6 +1982,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: VRSL-DMX-Static-ParLight-H (Sector 6-Alt)
       objectReference: {fileID: 0}
+    - target: {fileID: 8473887432807896544, guid: 946b3c09cfa93244c90a4b0ac7764b44,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 946b3c09cfa93244c90a4b0ac7764b44, type: 3}
 --- !u!4 &674297278 stripped
@@ -2133,6 +2178,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3561410614008698204, guid: e9dde3e86ccb8ca4bb4ecbe35a6fa7b1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8117001334545528025, guid: e9dde3e86ccb8ca4bb4ecbe35a6fa7b1,
         type: 3}
@@ -2389,6 +2439,11 @@ PrefabInstance:
       propertyPath: publicVariablesUnityEngineObjects.Array.size
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5825422817945746806, guid: b3e8ff051cc2d684aa255ceccce9b96f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6606377100955968320, guid: b3e8ff051cc2d684aa255ceccce9b96f,
         type: 3}
       propertyPath: m_RootOrder
@@ -2540,6 +2595,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: VRSL-DMX-Mover-Spotlight-H (Sector 0)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6935407641794089727, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7730740239420329161, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
         type: 3}
@@ -2755,6 +2815,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: VRSL-DMX-Static-ParLight-H (Sector 4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8473887432807896544, guid: 946b3c09cfa93244c90a4b0ac7764b44,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 946b3c09cfa93244c90a4b0ac7764b44, type: 3}
@@ -3063,6 +3128,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: VRSL-DMX-Mover-Spotlight-H (Sector 2-Invert)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6935407641794089727, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7730740239420329161, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
         type: 3}
@@ -3493,6 +3563,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Directional Light (For Depth)
       objectReference: {fileID: 0}
+    - target: {fileID: 353812187978428513, guid: dc2b8d13712a0f3488413e49afae73ef,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1895161030725929991, guid: dc2b8d13712a0f3488413e49afae73ef,
         type: 3}
       propertyPath: m_RootOrder
@@ -3716,6 +3791,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3561410614008698204, guid: e9dde3e86ccb8ca4bb4ecbe35a6fa7b1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8117001334545528025, guid: e9dde3e86ccb8ca4bb4ecbe35a6fa7b1,
         type: 3}
@@ -4007,6 +4087,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: VRSL-DMX-Static-ParLight-H (Sector 5)
       objectReference: {fileID: 0}
+    - target: {fileID: 8473887432807896544, guid: 946b3c09cfa93244c90a4b0ac7764b44,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 946b3c09cfa93244c90a4b0ac7764b44, type: 3}
 --- !u!4 &1526241255 stripped
@@ -4207,6 +4292,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: VRSL-DMX-Static-ParLight-H (Sector 4-Alt)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8473887432807896544, guid: 946b3c09cfa93244c90a4b0ac7764b44,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 946b3c09cfa93244c90a4b0ac7764b44, type: 3}
@@ -4649,6 +4739,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: VRSL-DMX-Static-ParLight-H (Sector 6)
       objectReference: {fileID: 0}
+    - target: {fileID: 8473887432807896544, guid: 946b3c09cfa93244c90a4b0ac7764b44,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 946b3c09cfa93244c90a4b0ac7764b44, type: 3}
 --- !u!4 &1636251377 stripped
@@ -4923,6 +5018,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: VRSL-DMX-Mover-Spotlight-H (Sector 2)
       objectReference: {fileID: 0}
+    - target: {fileID: 6935407641794089727, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7730740239420329161, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
         type: 3}
       propertyPath: m_RootOrder
@@ -5181,6 +5281,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: VRSL-DMX-Mover-Spotlight-H (Sector 1-Invert)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6935407641794089727, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7730740239420329161, guid: f5be3cfe3f15bfb4e9477904c5af9daf,
         type: 3}
@@ -5640,8 +5745,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5595631434132784427, guid: dedfba01424b93148b3d9a42e95ed2f7,
         type: 3}
+      propertyPath: _volumetricNoise
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5595631434132784427, guid: dedfba01424b93148b3d9a42e95ed2f7,
+        type: 3}
       propertyPath: isUsingAudioLink
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5595631434132784427, guid: dedfba01424b93148b3d9a42e95ed2f7,
+        type: 3}
+      propertyPath: _requireDepthLight
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5595631434132784427, guid: dedfba01424b93148b3d9a42e95ed2f7,
         type: 3}
@@ -6263,6 +6378,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: VRSL-DMX-Static-DiscoBall-H (Sector 39)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7053024667453560164, guid: 22192b7ad03f22a4db578b035fdca38d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7053024667453560171, guid: 22192b7ad03f22a4db578b035fdca38d,
         type: 3}

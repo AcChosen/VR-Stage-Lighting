@@ -1227,6 +1227,7 @@ MonoBehaviour:
   projectionIntensityMax: 1
   discoballIntensityMax: 1
   laserIntensityMax: 1
+  volumetricNoiseToggle: {fileID: 0}
   isUsingDMX: 1
   isUsingAudioLink: 1
   DMXMode: 0
@@ -1253,6 +1254,7 @@ MonoBehaviour:
   tiltRangeTarget: -90
   useLegacyStaticLights: 0
   useExtendedUniverses: 0
+  _requireDepthLight: 1
 --- !u!114 &5530545822544342666
 MonoBehaviour:
   m_ObjectHideFlags: 0

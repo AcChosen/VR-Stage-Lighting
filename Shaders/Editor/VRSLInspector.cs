@@ -72,7 +72,9 @@ public class VRSLInspector : ShaderGUI
     MaterialProperty _Noise2Stretch = null;
     MaterialProperty _Noise2StretchInside = null;
     MaterialProperty _Noise2Power = null;
-    MaterialProperty _ToggleMagicNoise = null;
+    MaterialProperty _MAGIC_NOISE_ON = null;
+    MaterialProperty _UseDepthLight = null;
+    MaterialProperty _PotatoMode = null;
     MaterialProperty _GradientMod = null;
     MaterialProperty _GradientModGOBO = null;
    // MaterialProperty _InsideConeNormalMap = null;
@@ -251,7 +253,7 @@ public class VRSLInspector : ShaderGUI
             GUILayout.Space(5);
             if(isDiscoBall)
             {
-                    DiscoballGUI(materialEditor, props);
+                    DiscoballGUI(materialEditor, props, material);
                     return;
 
             }
@@ -259,17 +261,17 @@ public class VRSLInspector : ShaderGUI
             {
                 if(isMoverLight && isFixture)
                 {
-                    MoverLightFixtureGUI(materialEditor, props);
+                    MoverLightFixtureGUI(materialEditor, props, material);
                     return;
                 }
                 if(isMoverLight && isVolumetric)
                 {
-                    MoverLightVolumetricGUI(materialEditor, props);
+                    MoverLightVolumetricGUI(materialEditor, props, material);
                     return;
                 }
                 if(isMoverLight && isProjection)
                 {
-                    MoverLightProjectionGUI(materialEditor,props);
+                    MoverLightProjectionGUI(materialEditor,props, material);
                     return;
                 }
             }
@@ -277,12 +279,12 @@ public class VRSLInspector : ShaderGUI
             {
                 if(isStaticLight && isFixture)
                 {
-                    StaticLightFixtureGUI(materialEditor,props);
+                    StaticLightFixtureGUI(materialEditor,props, material);
                     return;
                 }
                 if(isStaticLight && isProjection)
                 {
-                    StaticLightProjectionGUI(materialEditor,props);
+                    StaticLightProjectionGUI(materialEditor,props, material);
                     return;
                 }
             }
@@ -290,17 +292,17 @@ public class VRSLInspector : ShaderGUI
             {
                 if(isRTStrobe && !isRTSpin)
                 {
-                    DMXStrobeGUI(materialEditor,props);
+                    DMXStrobeGUI(materialEditor,props, material);
                     return;
                 }
                 else if(isRTSpin && !isRTStrobe)
                 {
-                    DMXSpinnerGUI(materialEditor, props);
+                    DMXSpinnerGUI(materialEditor, props, material);
                     return;
                 }
                 else
                 {
-                    DMXInterpolationGUI(materialEditor,props);
+                    DMXInterpolationGUI(materialEditor,props, material);
                     return;
                 }
             }
@@ -309,7 +311,7 @@ public class VRSLInspector : ShaderGUI
 
     }
 
-    public void AudioLinkGUI(MaterialEditor matEditor, MaterialProperty[] props)
+    public void AudioLinkGUI(MaterialEditor matEditor, MaterialProperty[] props, Material target)
     {
         if(isAudioLink)
         {
@@ -337,9 +339,9 @@ public class VRSLInspector : ShaderGUI
         }
     }
 
-    public void StaticLightProjectionGUI(MaterialEditor matEditor, MaterialProperty[] props)
+    public void StaticLightProjectionGUI(MaterialEditor matEditor, MaterialProperty[] props, Material target)
     {
-        AudioLinkGUI(matEditor, props);
+        AudioLinkGUI(matEditor, props, target);
         //DMX CONTROLS
         if(isDMXCompatible)
         {
@@ -378,7 +380,7 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             GUILayout.Space(10);
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
-            ColorTextureSamplingGUI(matEditor, props);
+            ColorTextureSamplingGUI(matEditor, props, target);
 
             //matEditor.ShaderProperty(_CurveMod, new GUIContent("Light Intensity Curve Modifier", "Curve modifier for light intensity."));
             matEditor.ShaderProperty(_FixtureMaxIntensity, new GUIContent("Lens Max Brightness", "General slider for adjusting the max brightness of the lens"));
@@ -438,9 +440,9 @@ public class VRSLInspector : ShaderGUI
         // EditorGUI.indentLevel--;
     }
 
-    public void StaticLightFixtureGUI(MaterialEditor matEditor, MaterialProperty[] props)
+    public void StaticLightFixtureGUI(MaterialEditor matEditor, MaterialProperty[] props, Material target)
     {
-        AudioLinkGUI(matEditor, props);
+        AudioLinkGUI(matEditor, props, target);
         //DMX CONTROLS
         if(isDMXCompatible)
         {
@@ -477,7 +479,7 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
-            ColorTextureSamplingGUI(matEditor, props);
+            ColorTextureSamplingGUI(matEditor, props, target);
             matEditor.ShaderProperty(_CurveMod, new GUIContent("Light Intensity Curve Modifier", "Curve modifier for light intensity."));
             matEditor.ShaderProperty(_FixtureMaxIntensity, new GUIContent("Lens Max Brightness", "General slider for adjusting the max brightness of the lens"));
             matEditor.ShaderProperty(_FixutreIntensityMultiplier, new GUIContent ("Intensity Multiplier", "Multiplier for the lens brightness. Good for adjusting to increase bloom"));
@@ -513,9 +515,9 @@ public class VRSLInspector : ShaderGUI
         // matEditor.RenderQueueField();  
     } 
 
-    public void MoverLightProjectionGUI(MaterialEditor matEditor, MaterialProperty[] props)
+    public void MoverLightProjectionGUI(MaterialEditor matEditor, MaterialProperty[] props, Material target)
     {
-        AudioLinkGUI(matEditor, props);
+        AudioLinkGUI(matEditor, props, target);
          //DMX CONTROLS
         if(isDMXCompatible)
         {
@@ -558,7 +560,7 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_FixtureBaseRotationY, new GUIContent("Rotation Y Offset", "Offset the Y Rotation of the fixture."));
             matEditor.ShaderProperty(_FixtureRotationX, new GUIContent("Rotation X Offset", "Offset the X Rotation of the fixture."));
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
-            ColorTextureSamplingGUI(matEditor, props);
+            ColorTextureSamplingGUI(matEditor, props, target);
             //matEditor.ShaderProperty(_, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
             //matEditor.ShaderProperty(_FixutreIntensityMultiplier, new GUIContent ("Intensity Multiplier", "Multiplier for the brightness. Good for adjusting to increase bloom"));
             matEditor.EnableInstancingField();
@@ -657,9 +659,9 @@ public class VRSLInspector : ShaderGUI
         // matEditor.RenderQueueField();       
     }
 
-    public void MoverLightVolumetricGUI(MaterialEditor matEditor, MaterialProperty[] props)
+    public void MoverLightVolumetricGUI(MaterialEditor matEditor, MaterialProperty[] props, Material target)
     {
-        AudioLinkGUI(matEditor, props);
+        AudioLinkGUI(matEditor, props, target);
         //DMX CONTROLS
         if(isDMXCompatible)
         {
@@ -701,7 +703,7 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
             matEditor.ShaderProperty(_FixtureBaseRotationY, new GUIContent("Rotation Y Offset", "Offset the Y Rotation of the fixture."));
             matEditor.ShaderProperty(_FixtureRotationX, new GUIContent("Rotation X Offset", "Offset the X Rotation of the fixture."));
-            ColorTextureSamplingGUI(matEditor, props);
+            ColorTextureSamplingGUI(matEditor, props, target);
             matEditor.ShaderProperty(_Saturation, new GUIContent("Saturation", "Saturation modifier for light color."));
             matEditor.ShaderProperty(_SaturationLength, new GUIContent("Saturation Length", "Har far from the source does the saturation slider affect the shader."));
             matEditor.ShaderProperty(_LensMaxBrightness, new GUIContent("Lens Max Brightness", "General slider for adjusting the max brightness of the lens"));
@@ -731,7 +733,12 @@ public class VRSLInspector : ShaderGUI
             matEditor.TexturePropertySingleLine(new GUIContent("Magic 3D Noise Texture", "A magical texture for generating 3D Perlin Noise at runtime! Code and texture based on https://www.shadertoy.com/view/4sfGzS by iq!"), _LightMainTex);
             //if(!isDMXCompatible)
             //{
-                matEditor.ShaderProperty(_ToggleMagicNoise, new GUIContent("Enable Magic 3D Noise", "Enable Second layer of world space, faux 3D Noise"));
+                matEditor.ShaderProperty(_UseDepthLight, new GUIContent("Use Depth Light", "Enable/Disable the reliance of the depth light for this volumetric shader."));
+                matEditor.ShaderProperty(_MAGIC_NOISE_ON, new GUIContent("Enable Magic 3D Noise", "Enable Second layer of world space, faux 3D Noise"));
+                matEditor.ShaderProperty(_PotatoMode, new GUIContent("Potato Mode", "Reduces the overhead on the fragment shader by removing both noise components to extra texture sampling."));
+                SetKeyword(target, "_MAGIC_NOISE_ON", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON"))) == 1 ? true : false);
+                SetKeyword(target, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(target.GetInt("_UseDepthLight"))) == 1 ? true : false);
+                SetKeyword(target, "_POTATO_MODE_ON", (Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 ? true : false);
                 //if(isDMXCompatible)
               //  {
                     matEditor.ShaderProperty(_Noise2Stretch, new GUIContent("Outside Magic Noise Scale", "Second Layer of Noise Scale"));
@@ -819,9 +826,9 @@ public class VRSLInspector : ShaderGUI
         
     }
 
-    public void MoverLightFixtureGUI(MaterialEditor matEditor, MaterialProperty[] props)
+    public void MoverLightFixtureGUI(MaterialEditor matEditor, MaterialProperty[] props, Material target)
     {
-        AudioLinkGUI(matEditor, props);
+        AudioLinkGUI(matEditor, props, target);
         //DMX CONTROLS
         if(isDMXCompatible)
         {
@@ -860,7 +867,7 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
             matEditor.ShaderProperty(_FixtureBaseRotationY, new GUIContent("Rotation Y Offset", "Offset the Y Rotation of the fixture."));
             matEditor.ShaderProperty(_FixtureRotationX, new GUIContent("Rotation X Offset", "Offset the X Rotation of the fixture."));
-            ColorTextureSamplingGUI(matEditor, props);
+            ColorTextureSamplingGUI(matEditor, props, target);
             matEditor.ShaderProperty(_Saturation, new GUIContent("Saturation", "Saturation modifier for light color."));
             matEditor.ShaderProperty(_LensMaxBrightness, new GUIContent("Lens Max Brightness", "General slider for adjusting the max brightness of the lens"));
             matEditor.ShaderProperty(_FixutreIntensityMultiplier, new GUIContent ("Intensity Multiplier", "Multiplier for the lens brightness. Good for adjusting to increase bloom"));
@@ -910,7 +917,7 @@ public class VRSLInspector : ShaderGUI
         // matEditor.RenderQueueField();
     }
 
-    public void ColorTextureSamplingGUI(MaterialEditor matEditor, MaterialProperty[] props)
+    public void ColorTextureSamplingGUI(MaterialEditor matEditor, MaterialProperty[] props, Material target)
     {
         if(isDMXCompatible || isRTShader || isDiscoBall) return;
             matEditor.ShaderProperty(_EnableColorTextureSample, new GUIContent("Enable Color Texture Sampling", "Check this box if you wish to sample seperate texture for the color. The color will be influenced by the intensity of the original emission color!"));
@@ -926,9 +933,9 @@ public class VRSLInspector : ShaderGUI
 
 
 
-    public void DiscoballGUI(MaterialEditor matEditor, MaterialProperty[] props)
+    public void DiscoballGUI(MaterialEditor matEditor, MaterialProperty[] props, Material target)
     {
-        AudioLinkGUI(matEditor, props);
+        AudioLinkGUI(matEditor, props, target);
         //DMX CONTROLS
         if(isDMXCompatible)
         {
@@ -981,7 +988,7 @@ public class VRSLInspector : ShaderGUI
 
     }
 
-    public void DMXInterpolationGUI(MaterialEditor matEditor, MaterialProperty[] props)
+    public void DMXInterpolationGUI(MaterialEditor matEditor, MaterialProperty[] props, Material target)
     {
         GUILayout.Space(5);
         EditorGUI.indentLevel++;
@@ -998,7 +1005,7 @@ public class VRSLInspector : ShaderGUI
         EditorGUI.indentLevel--;
         GUILayout.Space(5);
     }
-    public void DMXStrobeGUI(MaterialEditor matEditor, MaterialProperty[] props)
+    public void DMXStrobeGUI(MaterialEditor matEditor, MaterialProperty[] props, Material target)
     {
         GUILayout.Space(5);
         EditorGUI.indentLevel++;
@@ -1010,7 +1017,7 @@ public class VRSLInspector : ShaderGUI
         GUILayout.Space(5);
     }
 
-    public void DMXSpinnerGUI(MaterialEditor matEditor, MaterialProperty[] props)
+    public void DMXSpinnerGUI(MaterialEditor matEditor, MaterialProperty[] props, Material target)
     {
         GUILayout.Space(5);
         EditorGUI.indentLevel++;
@@ -1102,6 +1109,18 @@ public class VRSLInspector : ShaderGUI
         return "Shader: " + dmx + " " + lightType + ": " + shaderType;
 
     }
+
+        public static void SetKeyword(Material mat, string keyword, bool status)
+        {
+            if (status)
+            {
+                mat.EnableKeyword(keyword);
+            } 
+            else 
+            {
+                mat.DisableKeyword(keyword);
+            }
+        }
 
 
 

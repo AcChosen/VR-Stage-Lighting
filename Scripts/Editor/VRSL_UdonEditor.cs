@@ -716,6 +716,7 @@ namespace VRSL.EditorScripts
                     //VRStageLighting_RAW_Laser[] rawLasers = obj.GetUdonSharpComponentsInChildren<VRStageLighting_RAW_Laser>();
                     VRStageLighting_AudioLink_Laser[] audioLinkLasers = obj.GetUdonSharpComponentsInChildren<VRStageLighting_AudioLink_Laser>();
                 // VRStageLighting_DMX_Static[] dmxLights = obj.GetUdonSharpComponentsInChildren<VRStageLighting_DMX_Static>();
+                    VRSL_LocalUIControlPanel[] controlPanels = obj.GetUdonSharpComponentsInChildren<VRSL_LocalUIControlPanel>();
                     #pragma warning restore 0618 //suppressing obsoletion warnings
                     // if(staticLights != null)
                     // {
@@ -789,6 +790,15 @@ namespace VRSL.EditorScripts
                                 }
 
                             }
+                        }
+                    }
+
+                    if(controlPanels != null)
+                    {
+                        foreach(VRSL_LocalUIControlPanel panel in controlPanels)
+                        {
+                            panel._CheckDepthLightStatus();
+                            //Debug.Log("AutoChecking Status");
                         }
                     }
                     // if(animatedLights != null)

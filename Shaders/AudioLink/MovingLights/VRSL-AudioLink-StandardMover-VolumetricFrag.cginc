@@ -9,29 +9,25 @@ inline float CorrectedLinearEyeDepth(float z, float B)
 	#endif
 	return 1.0 / (z/UNITY_MATRIX_P._34 + B);
 }
-float Fresnel(float3 Normal, float3 ViewDir, float Power)
-{
-    return pow(max(0, dot(normalize(Normal), -ViewDir)), Power);
-}
 
-//3D noise based on iq's https://www.shadertoy.com/view/4sfGzS
-//HLSL conversion by Orels1~
-half Noise(float3 p)
-{
-  float3 i = floor(p); p -= i; 
-  p *= p * (3. - 2. * p);
-  float2 uv = (p.xy + i.xy + float2(37, 17) * i.z + .5)*0.00390625;
-  //uv.y *= -1;
-  float4 uv4 = float4(uv.x, uv.y * -1, 0.0, 0.0);
-  p.xy = tex2Dlod(_LightMainTex, uv4).yx;
-  return lerp(p.x, p.y, p.z);
-}
-
-const float3x3 m = float3x3( 0.00,  0.80,  0.60,
-                    -0.80,  0.36, -0.48,
-                    -0.60, -0.48,  0.64 );
-
-
+	float Fresnel(float3 Normal, float3 ViewDir, float Power)
+	{
+		return pow(max(0, dot(normalize(Normal), -ViewDir)), Power);
+	}
+#ifndef _POTATO_MODE_ON
+	//3D noise based on iq's https://www.shadertoy.com/view/4sfGzS
+	//HLSL conversion by Orels1~
+	half Noise(float3 p)
+	{
+	float3 i = floor(p); p -= i; 
+	p *= p * (3. - 2. * p);
+	float2 uv = (p.xy + i.xy + float2(37, 17) * i.z + .5)*0.00390625;
+	//uv.y *= -1;
+	float4 uv4 = float4(uv.x, uv.y * -1, 0.0, 0.0);
+	p.xy = tex2Dlod(_LightMainTex, uv4).yx;
+	return lerp(p.x, p.y, p.z);
+	}
+#endif
 
 float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 {
@@ -67,9 +63,6 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 	#endif
 
 	half widthNormalized = i.coneWidth/5.5;
-	//not sure why this was here... Keeping it just in case... it shouldn't do anything technically.
-	// i.uv.x = saturate(i.uv.x);
-	// i.uv.y = saturate(i.uv.y);
 
 
 	//Get gobo selection! Getting this in vertex shader seems to cause weird artifacting for some reason!
@@ -85,26 +78,35 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 	wpos.z = unity_CameraToWorld[2][3];
 
 	//Get Gobo Spin speed information
-	float goboSpinSpeed = IF(checkPanInvertY() == 1, -getGoboSpinSpeed(), getGoboSpinSpeed());
+	//float goboSpinSpeed = IF(checkPanInvertY() == 1, -getGoboSpinSpeed(), getGoboSpinSpeed());
+	float goboSpinSpeed = checkPanInvertY() == 1 ? -getGoboSpinSpeed() : getGoboSpinSpeed();
 	float spinSpeed = UNITY_ACCESS_INSTANCED_PROP(Props,_EnableSpin);
 
 	//CREDIT TO DJ LUKIS FOR MIRROR DEPTH CORRECTION
 	//Get Screen Pos UVs
-	float perspectiveDivide = 1.0f / i.pos.w;
-	float4 direction = i.worldDirection * perspectiveDivide;
-	float2 screenUV = i.screenPos.xy / i.screenPos.w;
-	//Sampling Depth
-	float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenUV);
-	//Correct for mirrors as Eye Depth
-	depth = CorrectedLinearEyeDepth(depth, direction.w);
-	//Convert to Raw Depth
-	depth = (1.0 - (depth * _ZBufferParams.w)) / (depth * _ZBufferParams.z);
-	//Convert to Linear01 Deppth
-	depth = Linear01Depth(depth);
+	#ifdef _USE_DEPTH_LIGHT
+		float perspectiveDivide = 1.0f / i.pos.w;
+		float4 direction = i.worldDirection * perspectiveDivide;
+		float2 screenUV = i.screenPos.xy / i.screenPos.w;
+		//Sampling Depth
+		float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenUV);
+		//Correct for mirrors as Eye Depth
+		depth = CorrectedLinearEyeDepth(depth, direction.w);
+		//Convert to Raw Depth
+		depth = (1.0 - (depth * _ZBufferParams.w)) / (depth * _ZBufferParams.z);
+		//Convert to Linear01 Deppth
+		depth = Linear01Depth(depth);
 
-	//Attempt to fade cone away when intersecting with another object
-	float intersectionFade = saturate(((depth * _ProjectionParams.z) - i.screenPos.w));
-	intersectionFade = lerp(1, intersectionFade, saturate(i.uv.x * _FadeAmt));
+		//Attempt to fade cone away when intersecting with another object
+		float intersectionFade = saturate(((depth * _ProjectionParams.z) - i.screenPos.w));
+		intersectionFade = lerp(1, intersectionFade, saturate(i.uv.x * _FadeAmt));
+	#else
+		float intersectionFade = 1.0;
+	#endif
+
+
+
+
 	//Attempt to fade cone away when intersecting with the camera.
 	
 	//Starts to fade about 1 meter away(x/1). increase divisor to increase distance
@@ -121,13 +123,13 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 
 	//Generate gradient for cone.
 	// #ifndef WASH
-		half grad = gobo > 1 ? _GradientModGOBO * 0.6f : _GradientMod * 0.8f;
+
+		#ifndef _POTATO_MODE_ON
+			half grad = gobo > 1 ? _GradientModGOBO * 0.6f : _GradientMod * 0.8f;
+		#else
+			half grad = gobo > 1 ? _GradientModGOBO * 0.95f : _GradientMod * 0.8f;
+		#endif
 		fixed gradientTexture = saturate((pow(-uvMap.x + 1, grad)));
-		//fixed gradientTexture = saturate((pow(-uvMap.x + 1, 2.25)));
-	// #else
-	// 	float camFadeMod = saturate(1/(i.camAngleLen.y));
-	// 	fixed gradientTexture = saturate((pow(-uvMap.x + 1, lerp(2.25, 2.25+(getConeWidth()),camFadeMod))));
-	// #endif
 	fixed4 col = gradientTexture.r;
 
 	//Calculate View Direction for fading edges.
@@ -160,69 +162,76 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 	//Combine Gradient with emission color, intersection fade and camera fade.
 	col = col * emissionTint * cameraFade;
 	//return cameraFade;
+	#ifndef _POTATO_MODE_ON
+		//Generate 2D noise texture, add scroll effect, and map to cone.
+		float2 texUV = i.uv2;
+		texUV.x = texUV.x + (_Time.y*0.1) * 0.75;
+		texUV.y = texUV.y + (_Time.y*0.1) * 0.1;
+			#if !defined(WASH)
+			float4 tex = tex2D(_NoiseTex, texUV);
+			#else
+			float4 tex = float4(1,1,1,1);
+			#endif
 
-	//Generate 2D noise texture, add scroll effect, and map to cone.
-	float2 texUV = i.uv2;
-	texUV.x = texUV.x + (_Time.y*0.1) * 0.75;
-	texUV.y = texUV.y + (_Time.y*0.1) * 0.1;
-		#if !defined(WASH)
-		float4 tex = tex2D(_NoiseTex, texUV);
-		#else
-		float4 tex = float4(1,1,1,1);
-		#endif
-
-	//initialize 3D noise value and 2D noise strength value
-	float threeDNoise = 1.0;
-	half np = 0.0;
-	
-
-	//If we are using 3D noise...
-	if(_ToggleMagicNoise > 0)
-	{
-		//Get vertex/frag position in worldspace
-		float3 worldposNoise = i.worldPos.xyz;
-		//Add Scrolling effect
-		worldposNoise.x += ((_Time.y*0.1) * _Noise2X);
-		worldposNoise.y += ((_Time.y*0.1) * _Noise2Y);
-		worldposNoise.z += ((_Time.y*0.1) * _Noise2Z);
-		//Add Tiling effect
-		float3 q = noiseScaleThreeD * worldposNoise.xyz;
-
-		//Use IQ's noise calculation equation to calculate 3D noise in world space.
-		//Currently only sampling the noise twice as sampling anymore isn't creating any visible improvements.
-		threeDNoise  = 0.5000*Noise( q ); 
-		q = mul(m,q)*2.01;
-		threeDNoise += 0.2500*Noise( q ); 
-		// q = mul(m,q)*2.02;
-		// threeDNoise += 0.1250*Noise( q ); 
-		// q = mul(m,q)*2.03;
-		// threeDNoise += 0.0625*Noise( q ); 
-		// q = mul(m,q)*2.01;
+		//initialize 3D noise value and 2D noise strength value
+		float threeDNoise = 1.0;
+		half np = 0.0;
 		
-		//If we aren't using gobos, remove the 2D noise effect
-		np = gobo > 1 ? _NoisePower : 0.0;
-		//Set 3D Noise Power
-		#ifndef WASH
-			float newNP = lerp(_Noise2Power - 0.2, _Noise2Power, gradientTexture.r);
-			threeDNoise = lerp(1, threeDNoise, newNP);
-		#else
-			threeDNoise = lerp(1, threeDNoise, _Noise2Power);
-		#endif
-	}
-	//If we aren't using 3D noise..
-	else
-	{
-		//If we are using gobos, add another 0.2 to the 2D noise power strength.
-		#ifndef WASH
-			np = gobo > 1 ? clamp(0,1,_NoisePower + 0.2) : _NoisePower; 
-		#else
-			//tex = tex2D(_NoiseTex, texUV);
-			np = _NoisePower;
-		#endif
-	}
 
-	//Mix 2D noise Power
-	tex = lerp(fixed4(1, 1, 1, 1), tex, np);
+		//If we are using 3D noise...
+		#ifdef _MAGIC_NOISE_ON
+		//if(_ToggleMagicNoise > 0)
+		//{
+			//Get vertex/frag position in worldspace
+			float3 worldposNoise = i.worldPos.xyz;
+			//Add Scrolling effect
+			worldposNoise.x += ((_Time.y*0.1) * _Noise2X);
+			worldposNoise.y += ((_Time.y*0.1) * _Noise2Y);
+			worldposNoise.z += ((_Time.y*0.1) * _Noise2Z);
+			//Add Tiling effect
+			float3 q = noiseScaleThreeD * worldposNoise.xyz;
+
+			//Use IQ's noise calculation equation to calculate 3D noise in world space.
+			//Currently only sampling the noise twice as sampling anymore isn't creating any visible improvements.
+			threeDNoise  = 0.5000*Noise( q ); 
+			// q = mul(float3x3( 0.00000,  0.80000,  0.60000,
+			//             		  -0.80000,  0.36000, -0.48000,
+			//             		  -0.60000, -0.48000,  0.64000),q)*2.01;
+			// //q = q * m;
+			// threeDNoise += 0.2500*Noise( q ); 
+			// q = mul(m,q)*2.02;
+			// threeDNoise += 0.1250*Noise( q ); 
+			// q = mul(m,q)*2.03;
+			// threeDNoise += 0.0625*Noise( q ); 
+			// q = mul(m,q)*2.01;
+			
+			//If we aren't using gobos, remove the 2D noise effect
+			np = gobo > 1 ? _NoisePower : 0.0;
+			//Set 3D Noise Power
+			#ifndef WASH
+				float newNP = lerp(_Noise2Power - 0.2, _Noise2Power, gradientTexture.r);
+				threeDNoise = lerp(1, threeDNoise, newNP);
+			#else
+				threeDNoise = lerp(1, threeDNoise, _Noise2Power);
+			#endif
+		//}
+		//If we aren't using 3D noise..
+		#else
+		//else
+		//{
+			//If we are using gobos, add another 0.2 to the 2D noise power strength.
+			#ifndef WASH
+				np = gobo > 1 ? clamp(0,1,_NoisePower + 0.2) : _NoisePower; 
+			#else
+				np = _NoisePower;
+			#endif
+		//}
+		#endif
+
+		//Mix 2D noise Power
+		tex = lerp(fixed4(1, 1, 1, 1), tex, np);
+
+	#endif
 
 	//Find Greyscale value of cone.
 	float3 newCol = (col.r + col.g + col.b)/3;
@@ -235,12 +244,14 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 
 	}
 	//float satMod = gobo > 1 ? 5.0 : 0.0;
-	newCol.xyz = lerp(col.xyz,newCol * 5, saturate(pow(saturate(gradientTexture - 0.25), _SaturationLength - satMod)) * tex.r);
+	#ifndef _POTATO_MODE_ON
+		newCol.xyz = lerp(col.xyz,newCol * 5, saturate(pow(saturate(gradientTexture - 0.25), _SaturationLength - satMod)) * tex.r);
+	#else
+		newCol.xyz = lerp(col.xyz,newCol * 5, saturate(pow(saturate(gradientTexture - 0.25), _SaturationLength - satMod)));
+	#endif
 	col.xyz = lerp(col.xyz, newCol.xyz, _Saturation);
 
 	//Mix in blinding effect.
-	// col*= ((i.blindingEffect * (i.blindingEffect * 0.25)));
-	//col*= ((i.blindingEffect));
 	col = lerp(col, col*i.blindingEffect * i.blindingEffect * 10, gradientTexture);
 	//col*=6.0;
 	col = lerp(col, fixed4(0,0,0,0), saturate(pow(i.uv.x,.5)));
@@ -251,7 +262,8 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		//Choose split strength and pattern based on information in i.stripeinfo.
 		float splitter = (sin(i.uv.y * pi * floor(i.stripeInfo.x) * 2 + (_Time.w * spinSpeed)) + 1.0);
 		//Do not use beam splitting if we aren't using gobos.
-		float splitstr = IF(_GoboBeamSplitEnable == 1 && gobo > 1, i.stripeInfo.y, 0);
+		//float splitstr = IF(_GoboBeamSplitEnable == 1 && gobo > 1, i.stripeInfo.y, 0);
+		float splitstr = _GoboBeamSplitEnable == 1 && gobo > 1 ? i.stripeInfo.y : 0;
 		splitter = lerp(1.0, splitter, splitstr);
 	#else
 		float splitter = 1.0;
@@ -259,9 +271,14 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 
 
 	//Mix in 2D noise, beam splitting, and 3D noise.
-	col *= tex;
+	#ifndef _POTATO_MODE_ON
+		col *= tex;
+		col *= threeDNoise;
+	#else
+		col *= 0.35;
+	#endif
 	col *= splitter;
-	col *= threeDNoise;
+	
 
 	//Add more power to Inner side of cone
 	float4 result = col;

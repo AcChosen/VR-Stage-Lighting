@@ -48,6 +48,8 @@
         [Toggle]_ShouldDoFlicker("ShouldDoFlicker", FLoat) = 1
         _FlickerAnimSpeed("FlickerAnimSpeed", Float) = 5
         _FlickResultIntensityLowestPoint("FlickResultIntensityLowestPoint", range(0,1)) = 0.5
+
+        [Toggle]_UseDepthLight("Toggle The Requirement of the depth light to function.", Int) = 1
     }
     SubShader
     {
@@ -116,6 +118,7 @@
             float _FlickResultIntensityLowestPoint;
             float _ShouldDoFlicker;
              half _RemoveTextureArtifact, _CurveMod;
+             uint _UseDepthLight;
              #include "../Shared/VRSL-DMXFunctions.cginc"
 
             float4x4 GetWorldToViewMatrix()
@@ -223,6 +226,8 @@
                 //Test for n*n grid in view space, where quad pivot is grid's center.
                 //For each iteration,
                 //if that test point passed the scene depth occlusion test, we add 1 to visibilityTestPassedCount
+                if(_UseDepthLight)
+                {
                 for(int x = -COUNT; x <= COUNT; x++)
                 {
                     for(int y = -COUNT; y <= COUNT ; y++)
@@ -255,6 +260,9 @@
                 //if camera too close to flare , smooth fade out to prevent flare blocking camera too much (usually for fps games)
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 visibilityResult01 *= smoothstep(_StartFadeinDistanceWorldUnit,_EndFadeinDistanceWorldUnit,linearEyeDepthOfFlarePivot);
+                o.vertex = visibilityResult01 < divider ? 0 : o.vertex;
+                o.color.a *= visibilityResult01;
+                }
 
                 // if(_ShouldDoFlicker)
                 // {
@@ -267,7 +275,7 @@
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //apply all combinations(visibilityResult01) to vertex color
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                o.color.a *= visibilityResult01;
+                
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //premultiply alpha to rgb after alpha's calculation is done
@@ -281,7 +289,7 @@
                 //invalid this vertex (and all connected vertices).
                 //This 100% early exit at clipping stage will prevent any rasterization & fragment shader cost at all
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                o.vertex = visibilityResult01 < divider ? 0 : o.vertex;
+
 
                 
                 // float3 hsvFC = RGB2HSV(o.color.xyz);

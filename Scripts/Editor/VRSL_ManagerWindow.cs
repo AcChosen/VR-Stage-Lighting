@@ -596,6 +596,7 @@ class VRSL_ManagerWindow : EditorWindow {
     Vector2 dmxScrollPos, audioLinkScrollPos, mainScrollPos;
     private static bool dmxHover, audioLinkHover;
     private static bool last9UniverseStatus;
+    private static bool lastDepthLightRequirement, lastVolumetricNoiseToggle;
 
     private static UnityEngine.Object spotlight_h, spotlight_v, spotlight_l, spotlight_a;
     private static UnityEngine.Object washlight_h, washlight_v, washlight_l, washlight_a;
@@ -631,7 +632,10 @@ class VRSL_ManagerWindow : EditorWindow {
                     GetAudioLinkLights(true);
 
                 last9UniverseStatus = panel.useExtendedUniverses;
-                    
+                lastDepthLightRequirement = panel.RequireDepthLight;
+                lastVolumetricNoiseToggle = panel.VolumetricNoise;
+                MassHideShowProjections();
+                panel._CheckDepthLightStatus();   
             }    
             LoadPrefabs();
             //Debug.Log("VRSL Control Panel: Initializing!");
@@ -1231,6 +1235,7 @@ class VRSL_ManagerWindow : EditorWindow {
             if(panel.isUsingAudioLink)
                 GetAudioLinkLights(updateBools);
         }
+
      }
 
     static void MassApplyPTRange(bool isPan)
@@ -1294,6 +1299,85 @@ class VRSL_ManagerWindow : EditorWindow {
             }
         }
         Debug.Log("Finished Updating Extended Universe Status!");
+    }
+    static void MassHideShowProjections()
+    {
+        if(panel == null)
+        {
+            Debug.Log("Panel not found!");
+            return;
+        }
+        if(panel.isUsingDMX)
+        {
+            for(int i = 0; i < universes.Length; i++)
+            {
+                if(universes[i] == null)
+                {
+                    continue;
+                }
+                foreach(DMXListItem fixture in universes[i])
+                {
+                    if(fixture == null)
+                    {
+                        continue;
+                    }
+                    if(fixture.light == null)
+                    {
+                        continue;
+                    }
+                    foreach(MeshRenderer rend in fixture.light.objRenderers)
+                    {
+                        if(rend.gameObject.name.Contains("Projection"))
+                        {
+                            if(rend.gameObject.name.Contains("Fixture"))
+                            {
+                                continue;
+                            }
+                            rend.gameObject.SetActive(lastDepthLightRequirement);
+                            continue;
+                        }
+                        if(rend.gameObject.name.Contains("Disco"))
+                        {
+                            rend.gameObject.SetActive(lastDepthLightRequirement);
+                            continue;                        
+                        }
+                    }
+                }
+            }
+        }
+        if(panel.isUsingAudioLink)
+        {
+            foreach(AudioLinkListItem fixture in audioLinkLights)
+            {
+                if(!fixture.isLaser)
+                {
+                    if(fixture.light!=null)
+                    {
+                        foreach(MeshRenderer rend in fixture.light.objRenderers)
+                        {
+                            if(rend.gameObject.name.Contains("Projection"))
+                            {
+                                if(rend.gameObject.name.Contains("Fixture"))
+                                {
+                                    continue;
+                                }
+                                rend.gameObject.SetActive(lastDepthLightRequirement);
+                                continue;
+                            }
+                            if(rend.gameObject.name.Contains("Disco"))
+                            {
+                                rend.gameObject.SetActive(lastDepthLightRequirement);
+                                continue;                        
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if(hasDepthLight && depthLight != null)
+        {
+            depthLight.gameObject.SetActive(lastDepthLightRequirement);
+        }
     }
     public class FixturePrefabID
     {
@@ -1374,6 +1458,7 @@ class VRSL_ManagerWindow : EditorWindow {
         GameObject instance = (GameObject) PrefabUtility.InstantiatePrefab(obj as GameObject);
         Undo.RegisterCreatedObjectUndo (instance, undoMessage);
         Selection.SetActiveObjectWithContext(instance, null);
+        //MassHideShowProjections();
     }
 
      private static void ApplyChangesToFixtures(bool acceptChanges, bool initialize, bool closeMenus)
@@ -1939,25 +2024,66 @@ class VRSL_ManagerWindow : EditorWindow {
         {
             EditorGUILayout.ObjectField(Label("Current Local UI Panel", "The Current VRSL Control Panel in the scene. This is where most of the settings for your VRSL enabled scene will be stored."),panel, panel.GetType(), true);
         }
-        if(hasDepthLight)
+        EditorGUI.EndDisabledGroup();
+        if(hasLocalPanel && panel != null)
         {
-            EditorGUILayout.ObjectField(Label("Current Depth Light", "The main depth enabled directioanl light in the scene. This ensures that the PC quality lighting effects are working properly."),depthLight, depthLight.GetType(), true);
+            var so = new SerializedObject(panel);
+            EditorGUI.indentLevel++;
+            so.FindProperty("_requireDepthLight").boolValue = EditorGUILayout.ToggleLeft(Label("Require Depth Light (Recommended: Enable on PC. Required: Disable on Quest)", "Require The Depth Texture to be used in this scene. This will remove the requirement for a directional light in the scene to generate a depth texture for the shaders. WARNING: This will remove the ability to use projections and make volumetrics clip through objects more aggressively. Disabling this is required for VRSL to work on Quest."),panel.RequireDepthLight);
+            so.FindProperty("_volumetricNoise").boolValue = EditorGUILayout.ToggleLeft(Label("Use Volumetric Noise (Recomended: Enable on PC and Disable on Quest)", "Disables both 3D and 2D noise effects on all volumetric VRSL shaders in this scene at the shader level. Disable this for more performance if you do not care for the noise effect. Disabling this is highly recommend for quest."),panel.VolumetricNoise);
+            EditorGUI.indentLevel--;
+            so.ApplyModifiedProperties();
+            if((so.FindProperty("_requireDepthLight").boolValue != lastDepthLightRequirement) || (so.FindProperty("_volumetricNoise").boolValue != lastVolumetricNoiseToggle))
+            {
+                #pragma warning disable 0618 //suppressing obsoletion warnings
+                panel.UpdateProxy();
+                panel.RequireDepthLight = so.FindProperty("_requireDepthLight").boolValue;
+                panel.VolumetricNoise = so.FindProperty("_volumetricNoise").boolValue;
+                panel.ApplyProxyModifications();
+                #pragma warning restore 0618 //suppressing obsoletion warnings
+                lastDepthLightRequirement = panel.RequireDepthLight;
+                lastVolumetricNoiseToggle = panel.VolumetricNoise;
+                MassHideShowProjections();
+            }
+        }
+        EditorGUI.BeginDisabledGroup(true);
+        if(hasDepthLight && panel != null)
+        {
+            if(panel.RequireDepthLight)
+            {
+                EditorGUILayout.ObjectField(Label("Current Depth Light", "The main depth enabled directioanl light in the scene. This ensures that the PC quality lighting effects are working properly."),depthLight, depthLight.GetType(), true);
+            }
         }
         EditorGUI.EndDisabledGroup();
         mainScrollPos = EditorGUILayout.BeginScrollView(mainScrollPos, false, false);
-        if(!hasDepthLight)
+        if(!hasDepthLight && panel != null)
         {
-            EditorGUILayout.BeginVertical();
-            GUILayout.Label("Please ensure the ''Directional Light (For Depth)'' object is in your scene to ensure your lights work properly!", WarningLabel());
-            if(GUILayout.Button(Label("Spawn Depth Light Prefab!", "Spawn the VRSL depth light prefab! A directional light that emits no light/shadows, but still enables the camera's depth texture for the scene.")))
+            if(panel.RequireDepthLight)
             {
-                    Debug.Log("VRSL Control Panel: Spawning Depth Light Prefab...");
-                    if(LoadPrefabs())
-                        SpawnPrefabWithUndo(directionalLightPrefab, "Spawn Directional Light", false, false);
-                        //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(directionalLightPrefab as GameObject) ,null);
-                    Repaint();
+                EditorGUILayout.BeginVertical();
+                GUILayout.Label("Please ensure the ''Directional Light (For Depth)'' object is in your scene to ensure your lights work properly!", WarningLabel());
+                if(GUILayout.Button(Label("Spawn Depth Light Prefab!", "Spawn the VRSL depth light prefab! A directional light that emits no light/shadows, but still enables the camera's depth texture for the scene.")))
+                {
+                        Debug.Log("VRSL Control Panel: Spawning Depth Light Prefab...");
+                        if(LoadPrefabs())
+                            SpawnPrefabWithUndo(directionalLightPrefab, "Spawn Directional Light", false, false);
+                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(directionalLightPrefab as GameObject) ,null);
+                        Repaint();
+                }
+                EditorGUILayout.EndVertical();
             }
-            EditorGUILayout.EndVertical();
+        }
+        if(panel != null)
+        {
+            if(panel.RequireDepthLight && !hasDepthLight)
+            {
+                EditorGUILayout.EndScrollView();
+                return;
+            }
+            else if(!panel.RequireDepthLight)
+            {
+                GUILayout.Label("WARNING: Depth Light Requirement Disabled. All projection based shaders (such as spot lights, disco balls, par lights) will no longer work properly! Use at your own risk!", WarningLabel());
+            }
         }
         if(hasLocalPanel && panel != null)
         {
@@ -2719,11 +2845,6 @@ class VRSL_ManagerWindow : EditorWindow {
                 #pragma warning restore 0618 //suppressing obsoletion warnings
                 
             }
-        }
-
-
-        if(hasLocalPanel && panel != null)
-        {
             GuiLine();
             GUILayout.Label("Fixture List", Title2());
             EditorGUILayout.Space(5f);
@@ -2754,9 +2875,9 @@ class VRSL_ManagerWindow : EditorWindow {
             }
             GUILayout.BeginHorizontal();
 
-            var so = new SerializedObject(panel);
+            so = new SerializedObject(panel);
 
-////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////
             Color bg = GUI.backgroundColor;
             GUIContent dmxRectText = new GUIContent(ToggleText(panel.isUsingDMX,"DMX (" + dmxCount +")"), "Enable/Disable DMX mode from this scene. This will disable all corresponding DMX render textures and prevent them from updating at runtime.");
             Rect dmxRect = GUILayoutUtility.GetRect(dmxRectText, NormalButtonToggle(panel.isUsingDMX, dmxHover));
@@ -2785,7 +2906,7 @@ class VRSL_ManagerWindow : EditorWindow {
             //so.FindProperty("isUsingAudioLink").boolValue = GUILayout.Toggle(panel.isUsingAudioLink, ToggleText(panel.isUsingAudioLink,"AUDIOLINK"), NormalButtonToggle(panel.isUsingAudioLink, audioLinkHover));
 
             GUI.backgroundColor = bg;
-/////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////
 
 
 

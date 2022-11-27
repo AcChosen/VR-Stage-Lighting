@@ -61,7 +61,7 @@
 		_NoiseTex ("NoiseTex", 2D) = "white" {}
 		_NoisePower("Noise Strength", Range(0, 1)) = 1
 		_NoiseSeed ("Noise Seed", float) = 0
-		[Toggle]_ToggleMagicNoise ("Toggle Magic Noise", Int) = 1
+		[ToggleUI]_MAGIC_NOISE_ON ("Toggle Magic Noise", Int) = 1
 		//_ThreeDNoiseScaleInside ("Inside Magic Noise Scale", Range(-10, 10)) = 1
 		_Noise2Stretch ("Outside Magic Noise Scale", Range(-10, 10)) = 1
 		_Noise2StretchInside ("Inside Magic Noise Scale", Range(-10, 10)) = 1
@@ -101,6 +101,9 @@
 		_GradientMod ("Gradient Modifier", Range(1, 4)) = 2.25
 		_GradientModGOBO ("Gradient Modifier GOBO", Range(1, 4)) = 2.25
 
+		[Toggle]_UseDepthLight("Toggle The Requirement of the depth light to function.", Int) = 1
+		[Toggle]_PotatoMode("Reduces the overhead on the fragment shader by removing both noise components to extra texture sampling", Int) = 0
+
 
 
 		//[Space(16)]
@@ -139,9 +142,11 @@
 			#define VOLUMETRIC_YES //To identify the pass in the vert/frag
 			#define WASH
 
+			#pragma shader_feature_local _MAGIC_NOISE_ON
+			#pragma shader_feature_local _USE_DEPTH_LIGHT
+			#pragma shader_feature_local _POTATO_MODE_ON
 			#include "UnityCG.cginc"
 			#include "../Shared/VRSL-AudioLink-Defines.cginc" //Property Defines are here
-			float3 thisIsAChange;
 			#include "../Shared/VRSL-AudioLink-Functions.cginc" //Custom Functions
 
 			struct appdata

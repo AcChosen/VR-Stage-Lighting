@@ -48,6 +48,8 @@
         [Toggle]_ShouldDoFlicker("ShouldDoFlicker", FLoat) = 1
         _FlickerAnimSpeed("FlickerAnimSpeed", Float) = 5
         _FlickResultIntensityLowestPoint("FlickResultIntensityLowestPoint", range(0,1)) = 0.5
+
+        [Toggle]_UseDepthLight("Toggle The Requirement of the depth light to function.", Int) = 1
     }
     SubShader
     {
@@ -116,6 +118,7 @@
             float _FlickResultIntensityLowestPoint;
             float _ShouldDoFlicker;
              half _RemoveTextureArtifact, _CurveMod;
+            uint _UseDepthLight;
              #include "../Shared/VRSL-DMXFunctions.cginc"
 
             float4x4 GetWorldToViewMatrix()
@@ -223,39 +226,43 @@
                 //Test for n*n grid in view space, where quad pivot is grid's center.
                 //For each iteration,
                 //if that test point passed the scene depth occlusion test, we add 1 to visibilityTestPassedCount
-                for(int x = -COUNT; x <= COUNT; x++)
+                if(_UseDepthLight)
                 {
-                    for(int y = -COUNT; y <= COUNT ; y++)
+                    for(int x = -COUNT; x <= COUNT; x++)
                     {
-                        float3 testPosVS = quadPivotPosVS;
-                        testPosVS.xy += float2(x,y) * maxSingleAxisOffset;//add 2D test grid offset, in const view space unit
-                        float4 PivotPosCS = mul(UNITY_MATRIX_P,float4(testPosVS,1));
-                        float4 PivotScreenPos = ComputeScreenPos(PivotPosCS);
-                        float2 screenUV = PivotScreenPos.xy/PivotScreenPos.w;
+                        for(int y = -COUNT; y <= COUNT ; y++)
+                        {
+                            float3 testPosVS = quadPivotPosVS;
+                            testPosVS.xy += float2(x,y) * maxSingleAxisOffset;//add 2D test grid offset, in const view space unit
+                            float4 PivotPosCS = mul(UNITY_MATRIX_P,float4(testPosVS,1));
+                            float4 PivotScreenPos = ComputeScreenPos(PivotPosCS);
+                            float2 screenUV = PivotScreenPos.xy/PivotScreenPos.w;
 
-                        //if screenUV out of bound, treat it as occluded, because no correct depth texture data can be used to compare
-                        if(screenUV.x > 1 || screenUV.x < 0 || screenUV.y > 1 || screenUV.y < 0)
-                            continue; //exit means occluded
+                            //if screenUV out of bound, treat it as occluded, because no correct depth texture data can be used to compare
+                            if(screenUV.x > 1 || screenUV.x < 0 || screenUV.y > 1 || screenUV.y < 0)
+                                continue; //exit means occluded
 
-                        //we don't have tex2D() in vertex shader, because rasterization is not done by GPU, so we use tex2Dlod() with mip0 instead
-                        float4 ssd = SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(screenUV, 0.0, 0.0));//(uv.x,uv.y,0,mipLevel)
-                        float sampledSceneDepth = ssd.x;
-                        float linearEyeDepthFromSceneDepthTexture = LinearEyeDepth(sampledSceneDepth);
-                        float linearEyeDepthFromSelfALU = PivotPosCS.w; //clip space .w is view space z, = linear eye depth
+                            //we don't have tex2D() in vertex shader, because rasterization is not done by GPU, so we use tex2Dlod() with mip0 instead
+                            float4 ssd = SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(screenUV, 0.0, 0.0));//(uv.x,uv.y,0,mipLevel)
+                            float sampledSceneDepth = ssd.x;
+                            float linearEyeDepthFromSceneDepthTexture = LinearEyeDepth(sampledSceneDepth);
+                            float linearEyeDepthFromSelfALU = PivotPosCS.w; //clip space .w is view space z, = linear eye depth
 
-                        //do the actual depth comparision test
-                        //+1 means flare test point is visible in screen space
-                        //+0 means flare test point blocked by other objects in screen space, not visible
-                        visibilityTestPassedCount += linearEyeDepthFromSelfALU + _DepthOcclusionTestZBias < linearEyeDepthFromSceneDepthTexture ? 1 : 0; 
+                            //do the actual depth comparision test
+                            //+1 means flare test point is visible in screen space
+                            //+0 means flare test point blocked by other objects in screen space, not visible
+                            visibilityTestPassedCount += linearEyeDepthFromSelfALU + _DepthOcclusionTestZBias < linearEyeDepthFromSceneDepthTexture ? 1 : 0; 
+                        }
                     }
+                    float visibilityResult01 = visibilityTestPassedCount * divider;//0~100% visiblility result 
+
+                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    //if camera too close to flare , smooth fade out to prevent flare blocking camera too much (usually for fps games)
+                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    visibilityResult01 *= smoothstep(_StartFadeinDistanceWorldUnit,_EndFadeinDistanceWorldUnit,linearEyeDepthOfFlarePivot);
+                    o.vertex = visibilityResult01 < divider ? 0 : o.vertex;
+                    o.color.a *= visibilityResult01;
                 }
-                float visibilityResult01 = visibilityTestPassedCount * divider;//0~100% visiblility result 
-
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //if camera too close to flare , smooth fade out to prevent flare blocking camera too much (usually for fps games)
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                visibilityResult01 *= smoothstep(_StartFadeinDistanceWorldUnit,_EndFadeinDistanceWorldUnit,linearEyeDepthOfFlarePivot);
-
                 // if(_ShouldDoFlicker)
                 // {
                 //     float flickerMul = 0;
@@ -267,7 +274,7 @@
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //apply all combinations(visibilityResult01) to vertex color
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                o.color.a *= visibilityResult01;
+                
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //premultiply alpha to rgb after alpha's calculation is done
@@ -281,7 +288,7 @@
                 //invalid this vertex (and all connected vertices).
                 //This 100% early exit at clipping stage will prevent any rasterization & fragment shader cost at all
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                o.vertex = visibilityResult01 < divider ? 0 : o.vertex;
+                
 
                 
                 // float3 hsvFC = RGB2HSV(o.color.xyz);

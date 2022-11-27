@@ -38,7 +38,7 @@ float4x4 _viewToWorld;
 #endif
 float4 _NoiseTex_ST;
 float _NoisePower, _NoiseSeed, _Noise2X, _Noise2Y, _Noise2Z, _Noise2Power, _Noise2StretchInside;
-uint _ToggleMagicNoise;
+//int _MAGIC_NOISE_ON;
 
 float _SpecularLMOcclusion;
 float _SpecLMOcclusionAdjust;
@@ -60,7 +60,7 @@ float _ProjectionIntensity;
 float _ProjectionRange;
 float4 _ProjectionRangeOrigin;
 float _ProjectionFade, _ProjectionFadeCurve, _ProjectionDistanceFallOff;
-uint _GoboBeamSplitEnable;
+uint _GoboBeamSplitEnable, _UseDepthLight;
 half _GradientMod, _GradientModGOBO;
 
 

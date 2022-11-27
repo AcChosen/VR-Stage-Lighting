@@ -41,6 +41,7 @@ namespace VRSL
         public UnityEngine.UI.Text masterSliderText, fixtureSliderText, volumetricSliderText, projectionSliderText, discoBallSliderText, laserSliderText, bloomSliderText;
         public float fixtureIntensityMax = 1.0f, volumetricIntensityMax = 1.0f, projectionIntensityMax = 1.0f, discoballIntensityMax = 1.0f, laserIntensityMax = 1.0f;
 
+        public UnityEngine.UI.Toggle volumetricNoiseToggle;
         public bool isUsingDMX = true;
         public bool isUsingAudioLink = true;
         [Space(10)]
@@ -70,9 +71,40 @@ namespace VRSL
         public bool useLegacyStaticLights = false;
         public bool useExtendedUniverses = false;
 
+        [FieldChangeCallback(nameof(VolumetricNoise)), SerializeField]
+        private bool _volumetricNoise = true;
 
+        public bool VolumetricNoise
+        {
+            set
+            {
+                _volumetricNoise = value;
+                _CheckDepthLightStatus();
+            }
+            get => _volumetricNoise;
+        }
+
+        [FieldChangeCallback(nameof(RequireDepthLight)), SerializeField]
+        private bool _requireDepthLight = true;
+
+        public bool RequireDepthLight
+        {
+            set
+            {
+                _requireDepthLight = value;
+                _CheckDepthLightStatus();
+                _DepthLightStatusReport();
+            }
+            get => _requireDepthLight;
+        }
+
+        public void OnEnable() 
+        {
+            _CheckDepthLightStatus();
+        }
         void Start()
         {
+            _CheckDepthLightStatus();
             _SetFinalIntensity();
             _SetFixtureIntensity();
             _SetVolumetricIntensity();
@@ -83,6 +115,43 @@ namespace VRSL
             _CheckAudioLink();
             _CheckkExtendedUniverses();
             _ForceUpdateVideoSampleTexture();
+        }
+
+        public void _Test()
+        {
+            Debug.Log("This is a test");
+        }
+
+        public void _CheckDepthLightStatus()
+        {
+
+            foreach(Material mat in volumetricMaterials)
+            {
+                mat.SetInt("_PotatoMode", _volumetricNoise ? 0 : 1);
+                mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
+                SetKeyword(mat, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(mat.GetInt("_UseDepthLight"))) == 1 ? true : false);
+                SetKeyword(mat, "_MAGIC_NOISE_ON", (Mathf.FloorToInt(mat.GetInt("_MAGIC_NOISE_ON"))) == 1 ? true : false);
+                SetKeyword(mat, "_POTATO_MODE_ON", (Mathf.FloorToInt(mat.GetInt("_PotatoMode"))) == 1 ? true : false);
+            }
+            foreach(Material mat in projectionMaterials)
+            {
+                mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
+            }
+            foreach(Material mat in fixtureMaterials)
+            {
+                mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
+            }
+        }
+        void _DepthLightStatusReport()
+        {
+            // if(_requireDepthLight)
+            // {
+            //     Debug.Log("VRSL Control Panel: Enabling Depth Light Requirement");
+            // }
+            // else
+            // {
+            //     Debug.Log("VRSL Control Panel: Disabling Depth Light Requirement");
+            // }
         }
         
         void EnableCRTS(CustomRenderTexture[] rtArray)
@@ -268,6 +337,18 @@ namespace VRSL
             {
                 bloomAnimator.SetFloat("BloomIntensity", bloomSlider.value);
                 bloomSliderText.text = Mathf.Round(bloomSlider.value * 100.0f).ToString();
+            }
+        }
+
+        void SetKeyword(Material mat, string keyword, bool status)
+        {
+            if (status)
+            {
+                mat.EnableKeyword(keyword);
+            } 
+            else 
+            {
+                mat.DisableKeyword(keyword);
             }
         }
     }

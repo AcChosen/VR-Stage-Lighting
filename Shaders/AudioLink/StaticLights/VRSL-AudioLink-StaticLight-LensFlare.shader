@@ -48,6 +48,8 @@
         // [Toggle]_ShouldDoFlicker("ShouldDoFlicker", FLoat) = 1
         // _FlickerAnimSpeed("FlickerAnimSpeed", Float) = 5
         // _FlickResultIntensityLowestPoint("FlickResultIntensityLowestPoint", range(0,1)) = 0.5
+
+        [Toggle]_UseDepthLight("Toggle The Requirement of the depth light to function.", Int) = 1
     }
     SubShader
     {
@@ -201,26 +203,6 @@
 
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.color = v.color * e;
-
-                // float2 scaleXY_WS = float2(
-                // length(float3(unity_ObjectToWorld[0].x, unity_ObjectToWorld[1].x, unity_ObjectToWorld[2].x)), // scale x axis
-                // length(float3(unity_ObjectToWorld[0].y, unity_ObjectToWorld[1].y, unity_ObjectToWorld[2].y)) // scale y axis  // scale z axis
-                // );
-
-                // float4 world_origin = mul(UNITY_MATRIX_M, float4(0,0,0,1));
-                // float4 view_origin = float4(UnityObjectToViewPos(float3(0,0,0)),1);
-
-                // float scale = (_ScaleFactor * (length(view_origin)/_ReferenceDistance)) + (1 - _ScaleFactor);
-
-
-
-                // float4 worldPos = mul(UNITY_MATRIX_M, float4(scale, scale, scale, 1) * v.vertex);
-                // float4 flippedWorldPos = float4(-1,1,-1,1) * (worldPos - world_origin) + world_origin;
-                // //float4 viewPos = mul(UNITY_MATRIX_V, worldPos);
-                // float4 viewPos = flippedWorldPos - world_origin + view_origin;
-                // viewPos = float4(viewPos.x, viewPos.y, viewPos.z, viewPos.w);
-                // float4 clipPos = mul(UNITY_MATRIX_P, viewPos);
-                // o.vertex = clipPos;
                 float3 quadPivotPosOS = float3(0,0,0);
                 float3 quadPivotPosWS = TransformObjectToWorld(quadPivotPosOS);
                 float3 quadPivotPosVS = TransformWorldToView(quadPivotPosWS);
@@ -253,52 +235,55 @@
                 //Test for n*n grid in view space, where quad pivot is grid's center.
                 //For each iteration,
                 //if that test point passed the scene depth occlusion test, we add 1 to visibilityTestPassedCount
-                for(int x = -COUNT; x <= COUNT; x++)
+                if(_UseDepthLight)
                 {
-                    for(int y = -COUNT; y <= COUNT ; y++)
+                    for(int x = -COUNT; x <= COUNT; x++)
                     {
-                        float3 testPosVS = quadPivotPosVS;
-                        testPosVS.xy += float2(x,y) * maxSingleAxisOffset;//add 2D test grid offset, in const view space unit
-                        float4 PivotPosCS = mul(UNITY_MATRIX_P,float4(testPosVS,1));
-                        float4 PivotScreenPos = ComputeScreenPos(PivotPosCS);
-                        float2 screenUV = PivotScreenPos.xy/PivotScreenPos.w;
+                        for(int y = -COUNT; y <= COUNT ; y++)
+                        {
+                            float3 testPosVS = quadPivotPosVS;
+                            testPosVS.xy += float2(x,y) * maxSingleAxisOffset;//add 2D test grid offset, in const view space unit
+                            float4 PivotPosCS = mul(UNITY_MATRIX_P,float4(testPosVS,1));
+                            float4 PivotScreenPos = ComputeScreenPos(PivotPosCS);
+                            float2 screenUV = PivotScreenPos.xy/PivotScreenPos.w;
 
-                        //if screenUV out of bound, treat it as occluded, because no correct depth texture data can be used to compare
-                        if(screenUV.x > 1 || screenUV.x < 0 || screenUV.y > 1 || screenUV.y < 0)
-                            continue; //exit means occluded
+                            //if screenUV out of bound, treat it as occluded, because no correct depth texture data can be used to compare
+                            if(screenUV.x > 1 || screenUV.x < 0 || screenUV.y > 1 || screenUV.y < 0)
+                                continue; //exit means occluded
 
-                        //we don't have tex2D() in vertex shader, because rasterization is not done by GPU, so we use tex2Dlod() with mip0 instead
-                        float4 ssd = SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(screenUV, 0.0, 0.0));//(uv.x,uv.y,0,mipLevel)
-                        float sampledSceneDepth = ssd.x;
-                        float linearEyeDepthFromSceneDepthTexture = LinearEyeDepth(sampledSceneDepth);
-                        float linearEyeDepthFromSelfALU = PivotPosCS.w; //clip space .w is view space z, = linear eye depth
+                            //we don't have tex2D() in vertex shader, because rasterization is not done by GPU, so we use tex2Dlod() with mip0 instead
+                            float4 ssd = SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(screenUV, 0.0, 0.0));//(uv.x,uv.y,0,mipLevel)
+                            float sampledSceneDepth = ssd.x;
+                            float linearEyeDepthFromSceneDepthTexture = LinearEyeDepth(sampledSceneDepth);
+                            float linearEyeDepthFromSelfALU = PivotPosCS.w; //clip space .w is view space z, = linear eye depth
 
-                        //do the actual depth comparision test
-                        //+1 means flare test point is visible in screen space
-                        //+0 means flare test point blocked by other objects in screen space, not visible
-                        visibilityTestPassedCount += linearEyeDepthFromSelfALU + _DepthOcclusionTestZBias < linearEyeDepthFromSceneDepthTexture ? 1 : 0; 
+                            //do the actual depth comparision test
+                            //+1 means flare test point is visible in screen space
+                            //+0 means flare test point blocked by other objects in screen space, not visible
+                            visibilityTestPassedCount += linearEyeDepthFromSelfALU + _DepthOcclusionTestZBias < linearEyeDepthFromSceneDepthTexture ? 1 : 0; 
+                        }
                     }
+                    float visibilityResult01 = visibilityTestPassedCount * divider;//0~100% visiblility result 
+
+                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    //if camera too close to flare , smooth fade out to prevent flare blocking camera too much (usually for fps games)
+                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    visibilityResult01 *= smoothstep(_StartFadeinDistanceWorldUnit,_EndFadeinDistanceWorldUnit,linearEyeDepthOfFlarePivot);
+
+                    // if(_ShouldDoFlicker)
+                    // {
+                    //     float flickerMul = 0;
+                    //     //TODO: expose more control to noise? (send me an issue in GitHub, if anyone need this)
+                    //     flickerMul += saturate(sin(_Time.y * _FlickerAnimSpeed * 1.0000)) * (1-_FlickResultIntensityLowestPoint) + _FlickResultIntensityLowestPoint;
+                    //     flickerMul += saturate(sin(_Time.y * _FlickerAnimSpeed * 0.6437)) * (1-_FlickResultIntensityLowestPoint) + _FlickResultIntensityLowestPoint;   
+                    //     visibilityResult01 *= saturate(flickerMul/2);
+                    // }
+                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    //apply all combinations(visibilityResult01) to vertex color
+                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    o.color.a *= visibilityResult01;
+                    o.vertex = visibilityResult01 < divider ? 0 : o.vertex;
                 }
-                float visibilityResult01 = visibilityTestPassedCount * divider;//0~100% visiblility result 
-
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //if camera too close to flare , smooth fade out to prevent flare blocking camera too much (usually for fps games)
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                visibilityResult01 *= smoothstep(_StartFadeinDistanceWorldUnit,_EndFadeinDistanceWorldUnit,linearEyeDepthOfFlarePivot);
-
-                // if(_ShouldDoFlicker)
-                // {
-                //     float flickerMul = 0;
-                //     //TODO: expose more control to noise? (send me an issue in GitHub, if anyone need this)
-                //     flickerMul += saturate(sin(_Time.y * _FlickerAnimSpeed * 1.0000)) * (1-_FlickResultIntensityLowestPoint) + _FlickResultIntensityLowestPoint;
-                //     flickerMul += saturate(sin(_Time.y * _FlickerAnimSpeed * 0.6437)) * (1-_FlickResultIntensityLowestPoint) + _FlickResultIntensityLowestPoint;   
-                //     visibilityResult01 *= saturate(flickerMul/2);
-                // }
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //apply all combinations(visibilityResult01) to vertex color
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                o.color.a *= visibilityResult01;
-
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //premultiply alpha to rgb after alpha's calculation is done
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
@@ -311,7 +296,7 @@
                 //invalid this vertex (and all connected vertices).
                 //This 100% early exit at clipping stage will prevent any rasterization & fragment shader cost at all
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                o.vertex = visibilityResult01 < divider ? 0 : o.vertex;
+               
 
                 
                 float3 hsvFC = RGB2HSV(o.color.xyz);
@@ -321,42 +306,14 @@
                 float satMask = lerp(1, 0, pow(distance(half2(0.5, 0.5), o.uv), _ColorSat));
                 o.color = lerp(o.color, e2, satMask);
                 
-
-
-
-                
               //  UNITY_TRANSFER_FOG(o,o.vertex);
                 return o;
             }
 
-
-
-
-
             fixed4 frag (v2f i) : SV_Target
             {
-                // float2 screenposUV = i.screenPos.xy / i.screenPos.w;
-                //     //CREDIT TO DJ LUKIS FOR MIRROR DEPTH CORRECTION
-                // float perspectiveDivide = 1.0f / i.vertex.w;
-                // float4 depthdirect = i.worldDirection * perspectiveDivide;
-                // float sceneZ = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenposUV);
-                // #if UNITY_REVERSED_Z
-                //     if (sceneZ == 0)
-                // #else
-                //     if (sceneZ == 1)
-                // #endif
-                // return float4(0,0,0,1);
-                // float depth = CorrectedLinearEyeDepth(sceneZ, depthdirect.w);
-                // //Convert from Corrected Linear Eye Depth to Linear01Depth
-                // //Credit: https://www.cyanilux.com/tutorials/depth/#eye-depth
-                // depth = (1.0 - (depth * _ZBufferParams.w)) / (depth * _ZBufferParams.z);
-                // depth = Linear01Depth(depth);
                 fixed4 col = saturate(tex2D(_MainTex, i.uv )-_RemoveTextureArtifact) * i.color;
-               // float2 p = i.uv * 2.0 - 1.0;
-               // col *= (lerp(1, 0, abs(p.x))) * (lerp(1, 0, abs(p.y)));
-                // apply fog
-                UNITY_APPLY_FOG(i.fogCoord, col);
-                
+                UNITY_APPLY_FOG(i.fogCoord, col);            
                 col *= i.maskX;
                 return col;
             }

@@ -94,6 +94,7 @@ Material:
     - _LightSourceViewSpaceRadius: 0.05
     - _Metallic: 0
     - _Mode: 0
+    - _NineUniverseMode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReferenceDistance: 10
@@ -109,6 +110,7 @@ Material:
     - _UVScale: 1
     - _UVSec: 0
     - _UniversalIntensity: 1
+    - _UseDepthLight: 1
     - _UsePreMultiplyAlpha: 0
     - _UseRawGrid: 1
     - _ZWrite: 1

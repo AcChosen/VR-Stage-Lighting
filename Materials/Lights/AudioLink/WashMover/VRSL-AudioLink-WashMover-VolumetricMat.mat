@@ -10,7 +10,8 @@ Material:
   m_Name: VRSL-AudioLink-WashMover-VolumetricMat
   m_Shader: {fileID: 4800000, guid: e94b1a2d8b9ef034da37a82c4fb64b60, type: 3}
   m_ShaderKeywords: _DNENABLER_NONE _ENABLECOLORTEXTURESAMPLE_ON _ENABLEOSC_ON _ENABLESPIN_ON
-    _GOBOBEAMSPLITENABLE_ON _TOGGLEMAGICNOISE_ON _USERAWGRID_ON
+    _GOBOBEAMSPLITENABLE_ON _MAGIC_NOISE_ON _TOGGLEMAGICNOISE_ON _USEDEPTHLIGHT_ON
+    _USERAWGRID_ON _USE_DEPTH_LIGHT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -151,6 +152,7 @@ Material:
     - _LMStrength: 1
     - _LensMaxBrightness: 1.5
     - _LightProbeMethod: 0
+    - _MAGIC_NOISE_ON: 1
     - _MagicNoiseScale: 2.5
     - _MaxConeLength: 1
     - _MaxMinPanAngle: 0
@@ -158,7 +160,7 @@ Material:
     - _Metallic: 0.501
     - _ModX: 0
     - _ModY: 0
-    - _Noise2Power: 0.935
+    - _Noise2Power: 0.844
     - _Noise2Stretch: 1.5
     - _Noise2StretchInside: 1.5
     - _Noise2X: 0
@@ -168,6 +170,7 @@ Material:
     - _NoiseSeed: 420
     - _NumBands: 4
     - _PanInvert: 0
+    - _PotatoMode: 0
     - _ProjectionDistanceFallOff: 0.01
     - _ProjectionFade: 2.35
     - _ProjectionFadeCurve: 1.99
@@ -215,6 +218,7 @@ Material:
     - _ToggleMagicNoise: 1
     - _TriplanarFalloff: 1
     - _UniversalIntensity: 1
+    - _UseDepthLight: 1
     - _UseRawGrid: 1
     - _UseWorldNorm: 0
     - _XOffset: 0
