@@ -80,7 +80,7 @@ namespace VRSL.EditorScripts
  }
 
 
-class DMXListItem
+public class DMXListItem
 {
     public VRStageLighting_DMX_Static light;
     public bool foldout;
@@ -269,7 +269,7 @@ class DMXListItem
         }
     }
 }
-class AudioLinkListItem
+public class AudioLinkListItem
 {
     public VRStageLighting_AudioLink_Static light;
     public bool foldout;
@@ -582,7 +582,7 @@ class AudioLinkListItem
 //     }
 // }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class VRSL_ManagerWindow : EditorWindow {
+public class VRSL_ManagerWindow : EditorWindow {
     static float panRangeOff = 180f;
     static float tiltRangeOff = -180f;
     public static Texture logo, github, twitter, discord;

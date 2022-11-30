@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if !COMPILER_UDONSHARP && UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
 
 // help link https://docs.unity3d.com/ScriptReference/EditorStyles.html
@@ -187,3 +188,4 @@ public class VRSLStyles : MonoBehaviour
 
 
 }
+#endif

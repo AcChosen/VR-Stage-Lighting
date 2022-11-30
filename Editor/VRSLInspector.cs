@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿#if !COMPILER_UDONSHARP && UNITY_EDITOR
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -1130,3 +1131,4 @@ public class VRSLInspector : ShaderGUI
 
 
 }
+#endif

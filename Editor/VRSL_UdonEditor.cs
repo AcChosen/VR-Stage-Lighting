@@ -15,9 +15,11 @@ using VRC.Udon.Common.Interfaces;
 using System.Collections.Immutable;
 using System;
 #endif
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
+
+
 namespace VRSL.EditorScripts
 {
+    #if !COMPILER_UDONSHARP && UNITY_EDITOR
     public class VRSL_UdonEditor : Editor
     {
         public static Texture logo;
