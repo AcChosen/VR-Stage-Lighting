@@ -35,7 +35,6 @@ jobs:
           cp README.md* Packages/${{ env.packageName }}/
           cp CHANGELOG.md* Packages/${{ env.packageName }}/
           mkdir -p Packages/${{ env.packageName }}/Documentation~/
-          cp -R Docs/* Packages/${{ env.packageName }}/Documentation~/
       
       - name: Create zip
         uses: thedoctor0/zip-release@09336613be18a8208dfa66bd57efafd9e2685657
