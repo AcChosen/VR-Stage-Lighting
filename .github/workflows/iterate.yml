@@ -42,20 +42,14 @@ jobs:
           directory: "Packages/${{env.packageName}}/"
           filename: "../../${{env.zipFile}}"
           
-     # - run: find "Packages/${{env.packageName}}/" -name \*.meta >> metaList
+      - run: find "Packages/${{env.packageName}}/" -name \*.meta >> metaList
           
-   #   - name: Create full UnityPackage
-    #    uses: pCYSl5EDgo/create-unitypackage@e28c7a4616b2754c564b0a959a03b3c89b756fdb
-     #   with:
-      #    package-path: ${{ env.unityPackage }}
-       #   include-files: metaList
-       
       - name: Create full UnityPackage
-        uses: quabug/unity-pack@v1
+        uses: AcChosen/create-unitypackage@e28c7a4616b2754c564b0a959a03b3c89b756fdb
         with:
-          output-path: ${{ env.unityPackage }}
-          package-dir: "Packages/${{env.packageName}}/"
-        #  include-files: metaList
+          package-path: ${{ env.unityPackage }}
+          include-files: metaList
+       
         
       - uses: actions/upload-artifact@v3
         with:
