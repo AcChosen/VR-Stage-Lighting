@@ -7,7 +7,7 @@ on:
 env:
   packageName: "com.acchosen.vr-stage-lighting"
   
-  jobs:
+jobs:
   build:
     runs-on: ubuntu-latest
     steps:
