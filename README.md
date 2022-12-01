@@ -4,7 +4,7 @@
 
 VR Stage Lighting is a year-long project that started out as a means to research and develop a performant/reliable way to send lighting data (including DMX512) to VRChat. It has evolved into creating a package of assets that can bring quality lighting effects in all manner of ways performantly.
 
-This performance is provided through a standardized set of custom shaders that avoid things such as real-time unity lights and using cost saving measures such as GPU-instancing and batching.
+This performance is provided through a standardized set of custom shaders that aim to avoid things such as real-time unity lights and using cost saving measures such as GPU-instancing and batching.
 
 
 ### SEE ALL THESE SYSTEMS LIVE IN VRCHAT [@ CLUB ORION](https://vrchat.com/home/launch?worldId=wrld_b2d9f284-3a77-4a8a-a58e-f8427f87ba79)
