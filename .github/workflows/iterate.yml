@@ -45,7 +45,7 @@ jobs:
       - run: find "Packages/${{env.packageName}}/" -name \*.meta >> metaList
           
       - name: Create full UnityPackage
-        uses: AcChosen/create-unitypackage@v1.1.2
+        uses: AcChosen/create-unitypackage@v1.1.3
         with:
           package-path: ${{ env.unityPackage }}
           include-files: metaList
