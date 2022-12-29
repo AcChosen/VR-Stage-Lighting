@@ -11,7 +11,7 @@ This performance is provided through a standardized set of custom shaders that a
 
 ### JOIN THE GROWING VRSL COMMUNITY ON OUR DISCORD [@ VRSL.DEV](https://vrsl.dev)
 
-### CHECK OUT AN EXAMPLE ORION MUSIC FESTIVAL'S IMPLEMENTATION OF VRSL HERE!:
+### CHECK OUT AN EXAMPLE ORION MUSIC FESTIVAL'S IMPLEMENTATION OF VRSL (Click the image below)!:
 
 [![VRSL EXample Video](https://imgur.com/RsnNnML.png)](https://youtu.be/b6SjQHFF6Qo "Defreeze at Orion Music Festival 2022")
 
