@@ -9,6 +9,12 @@ This performance is provided through a standardized set of custom shaders that a
 
 ### SEE ALL THESE SYSTEMS LIVE IN VRCHAT [@ CLUB ORION](https://vrchat.com/home/launch?worldId=wrld_b2d9f284-3a77-4a8a-a58e-f8427f87ba79)
 
+### JOIN THE GROWING VRSL COMMUNITY ON OUR DISCORD [@ VRSL.DEV](https://vrsl.dev)
+
+### CHECK OUT AN EXAMPLE ORION MUSIC FESTIVAL'S IMPLEMENTATION OF VRSL (Click the image below)!:
+
+[![VRSL EXample Video](https://imgur.com/RsnNnML.png)](https://youtu.be/b6SjQHFF6Qo "Defreeze at Orion Music Festival 2022")
+
 ## IMPORTANT
 - These systems are designed for world building on VRChat for PC. While some of the shaders in theory could be used on avatars, they are primarily designed to be placed in a PC world.
 - This system is still a work in progress and is planned for long-term support as more VRChat features are released. Planned features include OSC support and Quest-Ready alternatives.
