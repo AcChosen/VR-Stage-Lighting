@@ -1,3 +1,65 @@
+#define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
+UNITY_INSTANCING_BUFFER_START(Props)
+    UNITY_DEFINE_INSTANCED_PROP(uint, _DMXChannel)
+    UNITY_DEFINE_INSTANCED_PROP(uint, _NineUniverseMode)
+    UNITY_DEFINE_INSTANCED_PROP(uint, _EnableDMX)
+    UNITY_DEFINE_INSTANCED_PROP(float4, _Emission)
+    UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
+    UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
+    UNITY_DEFINE_INSTANCED_PROP(uint, _EnableStrobe)
+UNITY_INSTANCING_BUFFER_END(Props)
+
+sampler2D _DMXGridRenderTexture;
+uniform float4 _DMXGridRenderTexture_TexelSize;
+sampler2D _DMXGridStrobeTimer, _DMXGridSpinTimer;
+uint _EnableCompatibilityMode, _EnableVerticalMode;
+
+float invLerp(float from, float to, float value)
+{
+  return (value - from) / (to - from);
+}
+
+float remap(float origFrom, float origTo, float targetFrom, float targetTo, float value)
+{
+  float rel = invLerp(origFrom, origTo, value);
+  return lerp(targetFrom, targetTo, rel);
+}
+
+float4 getBaseEmission()
+{
+    return UNITY_ACCESS_INSTANCED_PROP(Props, _Emission);
+}
+
+float getGlobalIntensity()
+{
+    return UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensity);
+}
+
+float getFinalIntensity()
+{
+    return UNITY_ACCESS_INSTANCED_PROP(Props, _FinalIntensity);
+}
+
+uint isStrobe()
+{
+    return UNITY_ACCESS_INSTANCED_PROP(Props,_EnableStrobe);
+}
+
+uint isDMX()
+{
+    return UNITY_ACCESS_INSTANCED_PROP(Props,_EnableDMX);
+}
+
+uint GetDMXChannel()
+{
+    return (uint) round(UNITY_ACCESS_INSTANCED_PROP(Props, _DMXChannel));  
+}
+
+uint getNineUniverseMode()
+{
+    return (uint) UNITY_ACCESS_INSTANCED_PROP(Props, _NineUniverseMode);
+}
+
 
 float2 LegacyRead(int channel, int sector)
 {
@@ -16,51 +78,45 @@ float2 LegacyRead(int channel, int sector)
 
         x+= (xmod * 0.50);
         y+= (ymod * 0.04);
-
+        y-= sector >= 23 ? 0.025 : 0.0;
         x+= (channel * 0.04);
+        x-= sector >= 40 ? 0.01 : 0.0;
         //we are now on the correct
         return float2(x,y);
 
 }
 
-float2 IndustryRead(int x, int y, uint DMXChannel)
+float2 IndustryRead(int x, int y)
 {
     
-    float resMultiplierX = (_OSCGridRenderTextureRAW_TexelSize.z / 13);
+    float resMultiplierX = (_DMXGridRenderTexture_TexelSize.z / 13);
     float2 xyUV = float2(0.0,0.0);
     
-    xyUV.x = ((x * resMultiplierX) * _OSCGridRenderTextureRAW_TexelSize.x);
-    xyUV.y = (y * resMultiplierX) * _OSCGridRenderTextureRAW_TexelSize.y;
-    xyUV.y -= 0.001;
+    xyUV.x = ((x * resMultiplierX) * _DMXGridRenderTexture_TexelSize.x);
+    xyUV.y = (y * resMultiplierX) * _DMXGridRenderTexture_TexelSize.y;
+    xyUV.y -= 0.001915;
     xyUV.x -= 0.015;
    // xyUV.x = DMXChannel == 15 ? xyUV.x + 0.0769 : xyUV.x;
     return xyUV;
 }
+int getTargetRGBValue(uint universe)
+{
+    universe -=1;
+    return floor((int)(universe / 3));
+    //returns 0 for red, 1 for green, 2, for blue
+}
 
-//function for getting the value on the OSC Grid
+//function for getting the value on the DMX Grid
 //Returns a value from 0 to 1
 float ReadDMX(uint DMXChannel, sampler2D _Tex)
 {
+    uint universe = ceil(((int) DMXChannel)/512.0);
+    int targetColor = getTargetRGBValue(universe);
+    
     //DMXChannel = DMXChannel == 15.0 ? DMXChannel + 1 : DMXChannel;
-    uint x = DMXChannel % 13; // starts at 1 ends at 13
-    x = x == 0.0 ? 13.0 : x;
-    float y = DMXChannel / 13.0; // starts at 1 // doubles as sector
-    y = frac(y)== 0.00000 ? y - 1 : y;
+    universe-=1;
+    DMXChannel = targetColor > 0 ? DMXChannel - (((universe - (universe % 3)) * 512)) - (targetColor * 24) : DMXChannel;
 
-    float2 xyUV = _EnableCompatibilityMode == 1 ? LegacyRead(x-1.0,y) : IndustryRead(x,(y + 1.0), DMXChannel);
-        
-    float4 uvcoords = float4(xyUV.x, xyUV.y, 0,0);
-    float4 c = tex2Dlod(_Tex, uvcoords);
-    float3 cRGB = float3(c.r, c.g, c.b);
-    float value = LinearRgbToLuminance(cRGB);
-    value = LinearToGammaSpaceExact(value);
-    return value;
-}
-//function for getting the value on the OSC Grid
-//Returns a value from 0 to 1
-float ReadDMXRaw(uint DMXChannel, sampler2D _Tex)
-{
-   // DMXChannel = DMXChannel == 15.0 ? DMXChannel + 1 : DMXChannel;
     uint x = DMXChannel % 13; // starts at 1 ends at 13
     x = x == 0.0 ? 13.0 : x;
     float y = DMXChannel / 13.0; // starts at 1 // doubles as sector
@@ -77,19 +133,62 @@ float ReadDMXRaw(uint DMXChannel, sampler2D _Tex)
         y = DMXChannel >= 1339 ? y - 1 : y;
     }
 
-    float2 xyUV = _EnableCompatibilityMode == 1 ? LegacyRead(x-1.0,y) : IndustryRead(x,(y + 1.0), DMXChannel);
+    // y = (y > 6 && y < 31) && x == 13.0 ? y - 1 : y;
+    
+    float2 xyUV = _EnableCompatibilityMode == 1 ? LegacyRead(x-1.0,y) : IndustryRead(x,(y + 1.0));
+        
+    float4 uvcoords = float4(xyUV.x, xyUV.y, 0,0);
+    float4 c = tex2Dlod(_Tex, uvcoords);
+    float value = 0.0;
+    
+   if(getNineUniverseMode() && _EnableCompatibilityMode != 1)
+   {
+    value = c.r;
+    value = IF(targetColor > 0, c.g, value);
+    value = IF(targetColor > 1, c.b, value);
+   }
+   else
+   {
+        float3 cRGB = float3(c.r, c.g, c.b);
+        value = LinearRgbToLuminance(cRGB);
+    }
+    value = LinearToGammaSpaceExact(value);
+    return value;
+}
+
+
+//function for getting the value on the DMX Grid
+//Returns a value from 0 to 1
+float ReadDMXRaw(uint DMXChannel, sampler2D _Tex)
+{
+   // DMXChannel = DMXChannel == 15.0 ? DMXChannel + 1 : DMXChannel;
+    uint universe = ceil(((int) DMXChannel)/512.0);
+    int targetColor = getTargetRGBValue(universe);
+
+    universe-=1;
+    DMXChannel = targetColor > 0 ? DMXChannel - (((universe - (universe % 3)) * 512)) - (targetColor * 24) : DMXChannel;
+
+
+    uint x = DMXChannel % 13; // starts at 1 ends at 13
+    x = x == 0.0 ? 13.0 : x;
+    float y = DMXChannel / 13.0; // starts at 1 // doubles as sector
+    y = frac(y)== 0.00000 ? y - 1 : y;
+    
+    float2 xyUV = _EnableCompatibilityMode == 1 ? LegacyRead(x-1.0,y) : IndustryRead(x,(y + 1.0));
 
     float4 uvcoords = float4(xyUV.x, xyUV.y, 0,0);
     float4 c = tex2Dlod(_Tex, uvcoords);
-    
-	return c.r;
+    float value = c.r;
+    value = IF(targetColor > 0, c.g, value);
+    value = IF(targetColor > 1, c.b, value);
+	return value;
 }
 
 float GetStrobeOutput(uint DMXChannel)
 {
     
-    float phase = ReadDMXRaw(DMXChannel + 6, _OSCGridStrobeTimer);
-    float status = ReadDMX(DMXChannel + 6, _OSCGridRenderTextureRAW);
+    float phase = ReadDMXRaw(DMXChannel, _DMXGridStrobeTimer);
+    float status = ReadDMX(DMXChannel, _DMXGridRenderTexture);
 
     half strobe = (sin(phase));//Get sin wave
     strobe = IF(strobe > 0.0, 1.0, 0.0);//turn to square wave
@@ -98,9 +197,27 @@ float GetStrobeOutput(uint DMXChannel)
     strobe = IF(status > 0.2, strobe, 1); //minimum channel threshold set
     
     //check if we should even be strobing at all.
-    strobe = IF(isOSC() == 1, strobe, 1);
+    strobe = IF(isDMX() == 1, strobe, 1);
     strobe = IF(isStrobe() == 1, strobe, 1);
     
     return strobe;
 
+}
+
+//Function for getting the RGB Color Value (Channels 4, 5, and 6)
+float4 GetDMXColor(uint DMXChannel)
+{
+    float redchannel = ReadDMX(DMXChannel, _DMXGridRenderTexture);
+    float greenchannel = ReadDMX(DMXChannel + 1, _DMXGridRenderTexture);
+    float bluechannel = ReadDMX(DMXChannel + 2, _DMXGridRenderTexture);
+
+    #if defined(PROJECTION_YES)
+        redchannel = redchannel * _RedMultiplier;
+        bluechannel = bluechannel * _BlueMultiplier;
+        greenchannel = greenchannel * _GreenMultiplier;
+    #endif
+
+
+    //return IF(isOSC() == 1,lerp(fixed4(0,0,0,1), float4(redchannel,greenchannel,bluechannel,1), GetOSCIntensity(DMXChannel, _FixtureMaxIntensity)), float4(redchannel,greenchannel,bluechannel,1) * GetOSCIntensity(DMXChannel, _FixtureMaxIntensity));
+    return float4(redchannel,greenchannel,bluechannel,1);
 }
