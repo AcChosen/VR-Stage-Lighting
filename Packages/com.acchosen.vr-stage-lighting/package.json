@@ -5,7 +5,6 @@
   "description": "A collection of HLSL shaders, UdonSharp scripts, 3D models, prefabs, and assets designed to emulate the real control, quality, and complexity of professional stage lighting into VRChat in as many ways as possible.",
   "gitDependencies": {},
   "vpmDependencies": {
-    "com.vrchat.clientsim": "1.2.2"
   },
   "legacyFolders": {},
   "legacyFiles": {},
