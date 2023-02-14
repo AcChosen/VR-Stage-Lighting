@@ -34,12 +34,12 @@
             float fi = i.globalFinalIntensity.y;
             float4 emissionTint = i.emissionColor;
             #ifdef FIVECH
-            if(((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobe.x <= 0.01) && isOSC() == 1) || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1.0)))
+            if(((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobe.x <= 0.01) && isDMX() == 1) || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1.0)))
             {
                 return float4(0,0,0,0);
             }
             #else
-            if(((all(i.rgbColor <= float4(0.05,0.05,0.05,1)) || i.intensityStrobe.x <= 0.05) && isOSC() == 1) || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1.0)))
+            if(((all(i.rgbColor <= float4(0.05,0.05,0.05,1)) || i.intensityStrobe.x <= 0.05) && isDMX() == 1) || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1.0)))
             {
                 return float4(0,0,0,0);
             }
@@ -118,9 +118,9 @@
                 float strobe = IF(isStrobe() == 1, i.intensityStrobe.y, 1);
 
 
-                float4 OSCcol = col;
-                OSCcol *= i.rgbColor;
-                col = IF(isOSC() == 1, OSCcol, col);
+                float4 DMXcol = col;
+                DMXcol *= i.rgbColor;
+                col = IF(isDMX() == 1, DMXcol, col);
 
                 
                 float4 result = ((col * UVscale  * _ProjectionMaxIntensity) * emissionTint) * strobe;

@@ -9,9 +9,10 @@ UNITY_INSTANCING_BUFFER_START(Props)
     UNITY_DEFINE_INSTANCED_PROP(uint, _EnableStrobe)
 UNITY_INSTANCING_BUFFER_END(Props)
 
-sampler2D _DMXGridRenderTexture;
-uniform float4 _DMXGridRenderTexture_TexelSize;
-sampler2D _DMXGridStrobeTimer, _DMXGridSpinTimer;
+sampler2D _Udon_DMXGridRenderTexture;
+uniform float4 _Udon_DMXGridRenderTexture_TexelSize;
+sampler2D _Udon_DMXGridStrobeTimer, _Udon_DMXGridSpinTimer;
+uniform float4 _Udon_DMXGridStrobeTimer_TexelSize, _Udon_DMXGridSpinTimer_TexelSize;
 uint _EnableCompatibilityMode, _EnableVerticalMode;
 
 float invLerp(float from, float to, float value)
@@ -89,11 +90,11 @@ float2 LegacyRead(int channel, int sector)
 float2 IndustryRead(int x, int y)
 {
     
-    float resMultiplierX = (_DMXGridRenderTexture_TexelSize.z / 13);
+    float resMultiplierX = (_Udon_DMXGridRenderTexture_TexelSize.z / 13);
     float2 xyUV = float2(0.0,0.0);
     
-    xyUV.x = ((x * resMultiplierX) * _DMXGridRenderTexture_TexelSize.x);
-    xyUV.y = (y * resMultiplierX) * _DMXGridRenderTexture_TexelSize.y;
+    xyUV.x = ((x * resMultiplierX) * _Udon_DMXGridRenderTexture_TexelSize.x);
+    xyUV.y = (y * resMultiplierX) * _Udon_DMXGridRenderTexture_TexelSize.y;
     xyUV.y -= 0.001915;
     xyUV.x -= 0.015;
    // xyUV.x = DMXChannel == 15 ? xyUV.x + 0.0769 : xyUV.x;
@@ -187,8 +188,8 @@ float ReadDMXRaw(uint DMXChannel, sampler2D _Tex)
 float GetStrobeOutput(uint DMXChannel)
 {
     
-    float phase = ReadDMXRaw(DMXChannel, _DMXGridStrobeTimer);
-    float status = ReadDMX(DMXChannel, _DMXGridRenderTexture);
+    float phase = ReadDMXRaw(DMXChannel, _Udon_DMXGridStrobeTimer);
+    float status = ReadDMX(DMXChannel, _Udon_DMXGridRenderTexture);
 
     half strobe = (sin(phase));//Get sin wave
     strobe = IF(strobe > 0.0, 1.0, 0.0);//turn to square wave
@@ -207,9 +208,9 @@ float GetStrobeOutput(uint DMXChannel)
 //Function for getting the RGB Color Value (Channels 4, 5, and 6)
 float4 GetDMXColor(uint DMXChannel)
 {
-    float redchannel = ReadDMX(DMXChannel, _DMXGridRenderTexture);
-    float greenchannel = ReadDMX(DMXChannel + 1, _DMXGridRenderTexture);
-    float bluechannel = ReadDMX(DMXChannel + 2, _DMXGridRenderTexture);
+    float redchannel = ReadDMX(DMXChannel, _Udon_DMXGridRenderTexture);
+    float greenchannel = ReadDMX(DMXChannel + 1, _Udon_DMXGridRenderTexture);
+    float bluechannel = ReadDMX(DMXChannel + 2, _Udon_DMXGridRenderTexture);
 
     #if defined(PROJECTION_YES)
         redchannel = redchannel * _RedMultiplier;

@@ -1,6 +1,6 @@
 //MOVER LIGHT SYSTEM DEFINES
 sampler2D _MainTex;
-sampler2D _OSCGridRenderTexture, _OSCGridRenderTextureRAW, _OSCGridStrobeTimer;
+sampler2D _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridStrobeTimer;
 //SamplerState sampler_point_repeat;
 int _IsEven;
 sampler2D _MetallicGlossMap;
@@ -48,11 +48,11 @@ float _ProjectionFade, _ProjectionFadeCurve, _ProjectionDistanceFallOff;
 
 uniform const half compatSampleYAxis = 0.019231;
 uniform const half standardSampleYAxis = 0.00762;
-uniform float4 _OSCGridRenderTextureRAW_TexelSize;
+uniform float4 _Udon_DMXGridRenderTexture_TexelSize;
 
 //float _FinalStrobeFreq, _NewTimer;
 
-// int _EnableOSC;
+// int _EnableDMX;
 // int _EnableStrobe;
 uint _EnableCompatibilityMode, _EnableVerticalMode;
 UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
@@ -79,7 +79,7 @@ UNITY_INSTANCING_BUFFER_START(Props)
     UNITY_DEFINE_INSTANCED_PROP(uint, _Channel)
     UNITY_DEFINE_INSTANCED_PROP(uint, _PanInvert)
     UNITY_DEFINE_INSTANCED_PROP(uint, _TiltInvert)
-    UNITY_DEFINE_INSTANCED_PROP(uint, _EnableOSC)
+    UNITY_DEFINE_INSTANCED_PROP(uint, _EnableDMX)
     UNITY_DEFINE_INSTANCED_PROP(uint, _EnableStrobe)
     UNITY_DEFINE_INSTANCED_PROP(uint, _EnableSpin)
     UNITY_DEFINE_INSTANCED_PROP(float, _StrobeFreq)

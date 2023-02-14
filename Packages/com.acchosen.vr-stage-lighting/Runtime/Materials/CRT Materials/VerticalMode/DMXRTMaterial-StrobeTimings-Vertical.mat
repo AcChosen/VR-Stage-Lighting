@@ -19,6 +19,14 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _DMXGridRenderTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DMXTexture:
+        m_Texture: {fileID: 8400000, guid: 159c71081e572e648a894d41fca32894, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _OSCGridRenderTexture:
         m_Texture: {fileID: 8400000, guid: 159c71081e572e648a894d41fca32894, type: 2}
         m_Scale: {x: 1, y: 1}

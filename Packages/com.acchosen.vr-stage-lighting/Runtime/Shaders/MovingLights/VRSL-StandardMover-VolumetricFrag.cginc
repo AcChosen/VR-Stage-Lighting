@@ -36,7 +36,7 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 
 	 float gi = getGlobalIntensity();
 	 float fi = getFinalIntensity();
-		if(((all(i.rgbColor <= float4(0.005,0.005,0.005,1)) || i.intensityStrobeGOBOSpinSpeed.x <= 0.005) && isOSC() == 1) || gi <= 0.005 || fi <= 0.005)
+		if(((all(i.rgbColor <= float4(0.005,0.005,0.005,1)) || i.intensityStrobeGOBOSpinSpeed.x <= 0.005) && isDMX() == 1) || gi <= 0.005 || fi <= 0.005)
 		{
 			return half4(0,0,0,0);
 		} 
@@ -239,7 +239,7 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		result *= edgeFade;
 
 
-		if(isOSC() == 1)
+		if(isDMX() == 1)
 		{
 			result = lerp(fixed4(0,0,0,result.w), (result * i.rgbColor * strobe), i.intensityStrobeGOBOSpinSpeed.x * _FixtureMaxIntensity);
 			result = lerp(half4(0,0,0,result.w), result, i.intensityStrobeGOBOSpinSpeed.x * i.intensityStrobeGOBOSpinSpeed.x * 2);
@@ -249,14 +249,14 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 			result *= strobe;
 		}
 		result *= (_FixtureMaxIntensity - (lerp(0.15, _FixtureMaxIntensity * 0.95, pow(widthNormalized,0.4))));
-		// result = isOSC() == 1 ?
+		// result = isDMX() == 1 ?
 		// lerp(fixed4(0,0,0,result.w), (result * i.rgbColor * strobe), i.intensityStrobeGOBOSpinSpeed.x * _FixtureMaxIntensity) :
 		// result * strobe;
 
-		// result = isOSC() == 1 ? 
+		// result = isDMX() == 1 ? 
 		// 	lerp(half4(0,0,0,result.w), result, i.intensityStrobeGOBOSpinSpeed.x * i.intensityStrobeGOBOSpinSpeed.x * 2) : result;
 
-		result = (i.intensityStrobeGOBOSpinSpeed.x <= _IntensityCutoff && isOSC() == 1) ? half4(0,0,0,result.w) : result;
+		result = (i.intensityStrobeGOBOSpinSpeed.x <= _IntensityCutoff && isDMX() == 1) ? half4(0,0,0,result.w) : result;
 
 		//Fixture lens is now apart of Volumetrics, calculation for lens strenght is here
 		//float maxBrightness = lerp(1.0, _LensMaxBrightness)

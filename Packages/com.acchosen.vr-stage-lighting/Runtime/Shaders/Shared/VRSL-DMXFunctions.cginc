@@ -30,10 +30,10 @@ float2 LegacyRead(int channel, int sector)
     //1 sector is every 13 channels
         float x = 0.02000;
         float y = 0.02000;
-        //TRAVERSING THE Y AXIS OF THE OSC GRID
+        //TRAVERSING THE Y AXIS OF THE DMX GRID
         float ymod = floor(sector / 2.0);       
 
-        //TRAVERSING THE X AXIS OF THE OSC GRID
+        //TRAVERSING THE X AXIS OF THE DMX GRID
         float xmod = sector % 2.0;
 
         x+= (xmod * 0.50);
@@ -49,11 +49,11 @@ float2 LegacyRead(int channel, int sector)
 float2 IndustryRead(int x, int y)
 {
     
-    float resMultiplierX = (_OSCGridRenderTextureRAW_TexelSize.z / 13);
+    float resMultiplierX = (_Udon_DMXGridRenderTexture_TexelSize.z / 13);
     float2 xyUV = float2(0.0,0.0);
     
-    xyUV.x = ((x * resMultiplierX) * _OSCGridRenderTextureRAW_TexelSize.x);
-    xyUV.y = (y * resMultiplierX) * _OSCGridRenderTextureRAW_TexelSize.y;
+    xyUV.x = ((x * resMultiplierX) * _Udon_DMXGridRenderTexture_TexelSize.x);
+    xyUV.y = (y * resMultiplierX) * _Udon_DMXGridRenderTexture_TexelSize.y;
     xyUV.y -= 0.001915;
     xyUV.x -= 0.015;
    // xyUV.x = DMXChannel == 15 ? xyUV.x + 0.0769 : xyUV.x;
@@ -66,7 +66,7 @@ int getTargetRGBValue(uint universe)
     //returns 0 for red, 1 for green, 2, for blue
 }
 
-//function for getting the value on the OSC Grid in the bottom right corner configuration
+//function for getting the value on the DMX Grid in the bottom right corner configuration
 float getValueAtCoords(uint DMXChannel, sampler2D _Tex)
 {
     uint universe = ceil(((int) DMXChannel)/512.0);
@@ -153,9 +153,9 @@ float getValueAtCoordsRaw(uint DMXChannel, sampler2D _Tex)
     }
 #endif
 
-uint isOSC()
+uint isDMX()
 {
-    return UNITY_ACCESS_INSTANCED_PROP(Props,_EnableOSC);
+    return UNITY_ACCESS_INSTANCED_PROP(Props,_EnableDMX);
 }
 #ifndef LASER
 uint isStrobe()
@@ -207,7 +207,7 @@ float getMaxConeLength(uint DMXChannel)
 {
     #ifdef VOLUMETRIC_YES
     float mcl = UNITY_ACCESS_INSTANCED_PROP(Props, _MaxConeLength);
-    return isOSC() == 1 && _EnableExtraChannels == 1 ? mcl + (getValueAtCoords(DMXChannel+1, _OSCGridRenderTextureRAW) * 4) : mcl;
+    return isDMX() == 1 && _EnableExtraChannels == 1 ? mcl + (getValueAtCoords(DMXChannel+1, _Udon_DMXGridRenderTexture) * 4) : mcl;
     #else
     return UNITY_ACCESS_INSTANCED_PROP(Props, _MaxConeLength);
     #endif
@@ -226,8 +226,8 @@ float getFinalIntensity()
 float GetStrobeOutput(uint DMXChannel)
 {
     
-    float phase = getValueAtCoordsRaw(DMXChannel + 6, _OSCGridStrobeTimer);
-    float status = getValueAtCoords(DMXChannel + 6, _OSCGridRenderTextureRAW);
+    float phase = getValueAtCoordsRaw(DMXChannel + 6, _Udon_DMXGridStrobeTimer);
+    float status = getValueAtCoords(DMXChannel + 6, _Udon_DMXGridRenderTexture);
 
     half strobe = (sin(phase));//Get sin wave
     strobe = IF(strobe > 0.0, 1.0, 0.0);//turn to square wave
@@ -236,7 +236,7 @@ float GetStrobeOutput(uint DMXChannel)
     strobe = IF(status > 0.2, strobe, 1); //minimum channel threshold set
     
     //check if we should even be strobing at all.
-    strobe = IF(isOSC() == 1, strobe, 1);
+    strobe = IF(isDMX() == 1, strobe, 1);
     strobe = IF(isStrobe() == 1, strobe, 1);
     
     return strobe;
@@ -245,8 +245,8 @@ float GetStrobeOutput(uint DMXChannel)
 float GetStrobeOutputFiveCH(uint DMXChannel)
 {
     
-    float phase = getValueAtCoordsRaw(DMXChannel + 4, _OSCGridStrobeTimer);
-    float status = getValueAtCoords(DMXChannel + 4, _OSCGridRenderTextureRAW);
+    float phase = getValueAtCoordsRaw(DMXChannel + 4, _Udon_DMXGridStrobeTimer);
+    float status = getValueAtCoords(DMXChannel + 4, _Udon_DMXGridRenderTexture);
 
     half strobe = (sin(phase));//Get sin wave
     strobe = IF(strobe > 0.0, 1.0, 0.0);//turn to square wave
@@ -255,13 +255,13 @@ float GetStrobeOutputFiveCH(uint DMXChannel)
     strobe = IF(status > 0.2, strobe, 1); //minimum channel threshold set
     
     //check if we should even be strobing at all.
-    strobe = IF(isOSC() == 1, strobe, 1);
+    strobe = IF(isDMX() == 1, strobe, 1);
     strobe = IF(isStrobe() == 1, strobe, 1);
     
     return strobe;
 
 }
-float getOSCGoboSelection(uint DMXChannel)
+float getDMXGoboSelection(uint DMXChannel)
 {
     float goboSelect = 30.0;
 
@@ -269,20 +269,16 @@ float getOSCGoboSelection(uint DMXChannel)
         goboSelect = IF(UNITY_ACCESS_INSTANCED_PROP(Props, _LegacyGoboRange) > 0, 42.5, goboSelect);
     #endif
 
-    uint value = round(((getValueAtCoords(DMXChannel + 11, _OSCGridRenderTextureRAW))*255)/goboSelect);
-    value = isOSC() > 0.0 ? value : instancedGOBOSelection();
+    uint value = round(((getValueAtCoords(DMXChannel + 11, _Udon_DMXGridRenderTexture))*255)/goboSelect);
+    value = isDMX() > 0.0 ? value : instancedGOBOSelection();
     return clamp(value, 1, 8) -0.1;
 }
 
 float getGoboSpinSpeed (uint DMXChannel)
 {
-    // float speed = getValueAtCoords(DMXChannel + 10, _OSCGridRenderTextureRAW);
-    // speed = speed > 0.5 ? -(speed - 0.5) : speed;
-    // speed = abs(speed) < 0.05 ? 0 : speed;
-    // return speed * 8;
     #if defined(PROJECTION_YES) || defined(VOLUMETRIC_YES)
-        float status = getValueAtCoords(DMXChannel + 10, _OSCGridRenderTextureRAW);
-        float phase = getValueAtCoordsRaw(DMXChannel + 10, _OSCGridSpinTimer);
+        float status = getValueAtCoords(DMXChannel + 10, _Udon_DMXGridRenderTexture);
+        float phase = getValueAtCoordsRaw(DMXChannel + 10, _Udon_DMXGridSpinTimer);
         phase = checkPanInvertY() == 1 ? -phase : phase;
         return status > 0.5 ? -phase : phase;
     #endif
@@ -290,52 +286,52 @@ float getGoboSpinSpeed (uint DMXChannel)
 }
 
 //function for getting the Intensity Value (Channel 6)
-float GetOSCIntensity(uint DMXChannel, float multiplier)
+float GetDMXIntensity(uint DMXChannel, float multiplier)
 {
-    return getValueAtCoords(DMXChannel + 5, _OSCGridRenderTextureRAW) * multiplier;
+    return getValueAtCoords(DMXChannel + 5, _Udon_DMXGridRenderTexture) * multiplier;
 }
 
 //function for getting the Pan Value (Channel 2)
 float GetFinePanValue(uint DMXChannel)
 {
-    return getValueAtCoords(DMXChannel+1, _OSCGridRenderTexture);
+    return getValueAtCoords(DMXChannel+1, _Udon_DMXGridRenderTextureMovement);
 }
 float GetPanValue(uint DMXChannel)
 {
-    float inputValue = getValueAtCoords(DMXChannel, _OSCGridRenderTexture);
+    float inputValue = getValueAtCoords(DMXChannel, _Udon_DMXGridRenderTextureMovement);
     //inputValue = (inputValue + (GetFinePanValue(DMXChannel) * 0.01));
     #if defined(VOLUMETRIC_YES) || defined(PROJECTION_YES) || defined(FIXTURE_EMIT) || defined(FIXTURE_SHADOWCAST)
-        return IF(isOSC() == 1, ((getMinMaxPan() * 2) * (inputValue)) - getMinMaxPan(), 0.0);
+        return IF(isDMX() == 1, ((getMinMaxPan() * 2) * (inputValue)) - getMinMaxPan(), 0.0);
     #else
-        return IF(isOSC() == 1, ((_MaxMinPanAngle * 2) * (inputValue)) - _MaxMinPanAngle, 0.0);
+        return IF(isDMX() == 1, ((_MaxMinPanAngle * 2) * (inputValue)) - _MaxMinPanAngle, 0.0);
     #endif
 }
 
 
 float GetFineTiltValue(uint DMXChannel)
 {
-    return getValueAtCoords(DMXChannel+3, _OSCGridRenderTexture);
+    return getValueAtCoords(DMXChannel+3, _Udon_DMXGridRenderTextureMovement);
 }
 
 //function for getting the Tilt Value (Channel 3)
 float GetTiltValue(uint DMXChannel)
 {
-    float inputValue = getValueAtCoords(DMXChannel + 2, _OSCGridRenderTexture);
+    float inputValue = getValueAtCoords(DMXChannel + 2, _Udon_DMXGridRenderTextureMovement);
     //inputValue = (inputValue + (GetFineTiltValue(DMXChannel) * 0.01));
     #if defined(VOLUMETRIC_YES) || defined(PROJECTION_YES) || defined(FIXTURE_EMIT) || defined(FIXTURE_SHADOWCAST)
-        return IF(isOSC() == 1, ((getMinMaxTilt() * 2) * (inputValue)) - getMinMaxTilt(), 0.0);
+        return IF(isDMX() == 1, ((getMinMaxTilt() * 2) * (inputValue)) - getMinMaxTilt(), 0.0);
     #else
-        return IF(isOSC() == 1, ((_MaxMinTiltAngle * 2) * (inputValue)) - _MaxMinTiltAngle, 0.0);
+        return IF(isDMX() == 1, ((_MaxMinTiltAngle * 2) * (inputValue)) - _MaxMinTiltAngle, 0.0);
     #endif
      
 }
 
 //Function for getting the RGB Color Value (Channels 4, 5, and 6)
-float4 GetOSCColor(uint DMXChannel)
+float4 GetDMXColor(uint DMXChannel)
 {
-    float redchannel = getValueAtCoords(DMXChannel + 7, _OSCGridRenderTextureRAW);
-    float greenchannel = getValueAtCoords(DMXChannel + 8, _OSCGridRenderTextureRAW);
-    float bluechannel = getValueAtCoords(DMXChannel + 9, _OSCGridRenderTextureRAW);
+    float redchannel = getValueAtCoords(DMXChannel + 7, _Udon_DMXGridRenderTexture);
+    float greenchannel = getValueAtCoords(DMXChannel + 8, _Udon_DMXGridRenderTexture);
+    float bluechannel = getValueAtCoords(DMXChannel + 9, _Udon_DMXGridRenderTexture);
 
     #if defined(PROJECTION_YES)
         redchannel = redchannel * _RedMultiplier;
@@ -344,15 +340,15 @@ float4 GetOSCColor(uint DMXChannel)
     #endif
 
 
-    //return IF(isOSC() == 1,lerp(fixed4(0,0,0,1), float4(redchannel,greenchannel,bluechannel,1), GetOSCIntensity(DMXChannel, _FixtureMaxIntensity)), float4(redchannel,greenchannel,bluechannel,1) * GetOSCIntensity(DMXChannel, _FixtureMaxIntensity));
-    return lerp(fixed4(0,0,0,1), float4(redchannel,greenchannel,bluechannel,1), GetOSCIntensity(DMXChannel, _FixtureMaxIntensity));
+    //return IF(isDMX() == 1,lerp(fixed4(0,0,0,1), float4(redchannel,greenchannel,bluechannel,1), GetDMXIntensity(DMXChannel, _FixtureMaxIntensity)), float4(redchannel,greenchannel,bluechannel,1) * GetDMXIntensity(DMXChannel, _FixtureMaxIntensity));
+    return lerp(fixed4(0,0,0,1), float4(redchannel,greenchannel,bluechannel,1), GetDMXIntensity(DMXChannel, _FixtureMaxIntensity));
 }
 
-float getOSCConeWidth(uint DMXChannel) //Motor Speed Channel// CHANNEL 5
+float getDMXConeWidth(uint DMXChannel) //Motor Speed Channel// CHANNEL 5
 {
-    float inputvalue = getValueAtCoords(DMXChannel + 4, _OSCGridRenderTextureRAW);
-    float OSCWidth = lerp(0, 5.5, inputvalue) - 1.5;
-    return IF(isOSC() == 1, OSCWidth, getConeWidth());
+    float inputvalue = getValueAtCoords(DMXChannel + 4, _Udon_DMXGridRenderTexture);
+    float DMXWidth = lerp(0, 5.5, inputvalue) - 1.5;
+    return IF(isDMX() == 1, DMXWidth, getConeWidth());
 
 
 }

@@ -1,29 +1,36 @@
-[uDD::Log][2022-11-23 09:30:58] Start
-[uDD::Log][2022-11-23 09:30:58] OS Version    : 10.0
-[uDD::Log][2022-11-23 09:30:58] Build Number  : 19045
-[uDD::Log][2022-11-23 09:30:58] Service Pack  : 
-[uDD::Log][2022-11-23 09:30:58] Graphics Card [0] : NVIDIA GeForce RTX 3090
-[uDD::Log][2022-11-23 09:30:58]   > Monitor[0] : \\.\DISPLAY3
-[uDD::Log][2022-11-23 09:30:58]   > Monitor[1] : \\.\DISPLAY1
-[uDD::Log][2022-11-23 09:30:58]   > Monitor[2] : \\.\DISPLAY2
-[uDD::Log][2022-11-23 09:30:58] Graphics Card [1] : Microsoft Basic Render Driver
-[uDD::Log][2022-11-23 09:30:58] Monitor::Initialized() =>
-[uDD::Log][2022-11-23 09:30:58]     ID    : 0
-[uDD::Log][2022-11-23 09:30:58]     Size  : (3840, 2160)
-[uDD::Log][2022-11-23 09:30:58]     DPI   : (157, 160)
-[uDD::Log][2022-11-23 09:30:58]     Rot   : Landscape
-[uDD::Log][2022-11-23 09:30:58] Duplicator::Initialize() => OK.
-[uDD::Err][2022-11-23 09:30:58] Monitor::Initialize() => GetDpiForMonitor() failed.
-[uDD::Log][2022-11-23 09:30:58] Monitor::Initialized() =>
-[uDD::Log][2022-11-23 09:30:58]     ID    : 1
-[uDD::Log][2022-11-23 09:30:58]     Size  : (1920, 1080)
-[uDD::Log][2022-11-23 09:30:58]     DPI   : (0, 0)
-[uDD::Log][2022-11-23 09:30:58]     Rot   : Landscape
-[uDD::Log][2022-11-23 09:30:58] Duplicator::Initialize() => OK.
-[uDD::Log][2022-11-23 09:30:58] Monitor::Initialized() =>
-[uDD::Log][2022-11-23 09:30:58]     ID    : 2
-[uDD::Log][2022-11-23 09:30:58]     Size  : (1920, 1080)
-[uDD::Log][2022-11-23 09:30:58]     DPI   : (81, 81)
-[uDD::Log][2022-11-23 09:30:58]     Rot   : Landscape
-[uDD::Log][2022-11-23 09:30:58] Duplicator::Initialize() => OK.
-[uDD::Log][2022-11-23 09:31:03] Stop
+[uDD::Log][2023-02-14 14:14:38] Start
+[uDD::Log][2023-02-14 14:14:38] OS Version    : 10.0
+[uDD::Log][2023-02-14 14:14:38] Build Number  : 19045
+[uDD::Log][2023-02-14 14:14:38] Service Pack  : 
+[uDD::Log][2023-02-14 14:14:38] Graphics Card [0] : NVIDIA GeForce RTX 3090
+[uDD::Log][2023-02-14 14:14:38]   > Monitor[0] : \\.\DISPLAY2
+[uDD::Log][2023-02-14 14:14:38]   > Monitor[1] : \\.\DISPLAY1
+[uDD::Log][2023-02-14 14:14:38]   > Monitor[2] : \\.\DISPLAY3
+[uDD::Log][2023-02-14 14:14:38]   > Monitor[3] : \\.\DISPLAY4
+[uDD::Log][2023-02-14 14:14:38] Graphics Card [1] : Microsoft Basic Render Driver
+[uDD::Log][2023-02-14 14:14:38] Monitor::Initialized() =>
+[uDD::Log][2023-02-14 14:14:38]     ID    : 0
+[uDD::Log][2023-02-14 14:14:38]     Size  : (3840, 2160)
+[uDD::Log][2023-02-14 14:14:38]     DPI   : (157, 160)
+[uDD::Log][2023-02-14 14:14:38]     Rot   : Landscape
+[uDD::Log][2023-02-14 14:14:38] Duplicator::Initialize() => OK.
+[uDD::Log][2023-02-14 14:14:38] Monitor::Initialized() =>
+[uDD::Log][2023-02-14 14:14:38]     ID    : 1
+[uDD::Log][2023-02-14 14:14:38]     Size  : (1920, 1080)
+[uDD::Log][2023-02-14 14:14:38]     DPI   : (81, 81)
+[uDD::Log][2023-02-14 14:14:38]     Rot   : Landscape
+[uDD::Log][2023-02-14 14:14:38] Duplicator::Initialize() => OK.
+[uDD::Log][2023-02-14 14:14:38] Monitor::Initialized() =>
+[uDD::Log][2023-02-14 14:14:38]     ID    : 2
+[uDD::Log][2023-02-14 14:14:38]     Size  : (1920, 1080)
+[uDD::Log][2023-02-14 14:14:38]     DPI   : (88, 88)
+[uDD::Log][2023-02-14 14:14:38]     Rot   : Landscape
+[uDD::Log][2023-02-14 14:14:38] Duplicator::Initialize() => OK.
+[uDD::Err][2023-02-14 14:14:38] Monitor::Initialize() => GetDpiForMonitor() failed.
+[uDD::Log][2023-02-14 14:14:38] Monitor::Initialized() =>
+[uDD::Log][2023-02-14 14:14:38]     ID    : 3
+[uDD::Log][2023-02-14 14:14:38]     Size  : (1920, 1080)
+[uDD::Log][2023-02-14 14:14:38]     DPI   : (0, 0)
+[uDD::Log][2023-02-14 14:14:38]     Rot   : Landscape
+[uDD::Log][2023-02-14 14:14:38] Duplicator::Initialize() => OK.
+[uDD::Log][2023-02-14 14:14:57] Stop

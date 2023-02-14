@@ -2,7 +2,7 @@
 {
     Properties
     {
-        [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+        [Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
          [Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
         _FinalIntensity("Final Intensity", Range(0,1)) = 1
         _GlobalIntensity("Global Intensity", Range(0,1)) = 1
@@ -18,9 +18,9 @@
         _Channel ("Individual Channel", Int) = 0
         _FixtureMaxIntensity ("Maximum Light Intensity",Range (0,15)) = 1
         [Toggle] _UseRawGrid("Use Raw Grid For Light Intensity", Int) = 0
-		[NoScaleOffset] _OSCGridRenderTextureRAW("OSC Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
-		[NoScaleOffset] _OSCGridRenderTexture("OSC Grid Render Texture (To Control Lights)", 2D) = "white" {}
-		[NoScaleOffset] _OSCGridStrobeTimer ("OSC Grid Render Texture (For Strobe Timings", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridRenderTexture("DMX Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridRenderTextureMovement("DMX Grid Render Texture (To Control Lights)", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridStrobeTimer("DMX Grid Render Texture (For Strobe Timings", 2D) = "white" {}
         _CurveMod ("Light Intensity Curve Modifier", Range (-3,8)) = 5.0
 
 		 [Toggle] _EnableStrobe ("Enable Strobe", Int) = 0
@@ -28,7 +28,7 @@
 
          [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
          [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
-        [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+        [Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
         _FixutreIntensityMultiplier ("Intensity Multipler (For Bloom Scaling)", Range(1,150)) = 1
 
         _RemoveTextureArtifact("RemoveTextureArtifact", Range(0,0.1)) = 0
@@ -177,7 +177,7 @@
             }
             float4 GetChannelIntensity(uint _DMXChannel)
             {
-                float value = getValueAtCoords(_DMXChannel, _OSCGridRenderTextureRAW);
+                float value = getValueAtCoords(_DMXChannel, _Udon_DMXGridRenderTexture);
                 value = IF(value <= 0.1, 0.0, value);
                 return value;
             }
@@ -191,8 +191,8 @@
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o); //Insert
 
                 uint dmx = getDMXChannel();
-                float4 OSCcol = float4(0,0,0,0);
-                float4 col = IF(isOSC() == 1, GetChannelIntensity(dmx) * getEmissionColor(), getEmissionColor());
+                float4 DMXcol = float4(0,0,0,0);
+                float4 col = IF(isDMX() == 1, GetChannelIntensity(dmx) * getEmissionColor(), getEmissionColor());
                 half4 e = col;
                 e = clamp(e, half4(0,0,0,1), half4(_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,1));
                 e*= _FixutreIntensityMultiplier;

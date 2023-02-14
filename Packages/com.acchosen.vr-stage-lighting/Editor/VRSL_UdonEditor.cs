@@ -30,10 +30,6 @@ namespace VRSL.EditorScripts
         }
         public static void DrawLogo()
         {
-            ///GUILayout.BeginArea(new Rect(0,0, Screen.width, Screen.height));
-            // GUILayout.FlexibleSpace();
-            //GUI.DrawTexture(pos,logo,ScaleMode.ScaleToFit);
-            //EditorGUI.DrawPreviewTexture(new Rect(0,0,400,150), logo);
             Vector2 contentOffset = new Vector2(0f, -2f);
             GUIStyle style = new GUIStyle(EditorStyles.label);
             style.fixedHeight = 150;
@@ -41,11 +37,7 @@ namespace VRSL.EditorScripts
             style.contentOffset = contentOffset;
             style.alignment = TextAnchor.MiddleCenter;
             var rect = GUILayoutUtility.GetRect(300f, 140f, style);
-            //GUILayout.Label(logo,style, GUILayout.MaxWidth(500), GUILayout.MaxHeight(200));
             GUI.Box(rect, logo,style);
-            //GUILayout.Label(logo);
-            // GUILayout.FlexibleSpace();
-            //GUILayout.EndArea();
         }
         private static Rect DrawShurikenCenteredTitle(string title, Vector2 contentOffset, int HeaderHeight)
         {
@@ -67,30 +59,6 @@ namespace VRSL.EditorScripts
         }
     }
     #endif
-
-    // #if !COMPILER_UDONSHARP && UNITY_EDITOR
-    // [CustomEditor(typeof(VRStageLighting_DMX))]
-    // public class VRStageLighting_DMX_Editor : VRSL_UdonEditor
-    // {
-    //     public override void OnInspectorGUI()
-    //     {
-    //         if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
-    //         DrawLogo();
-    //         ShurikenHeaderCentered(ver);
-    //         EditorGUILayout.Space();
-    //         EditorGUILayout.Space();
-    //         VRStageLighting_DMX fixture = (VRStageLighting_DMX) target;
-    //         //EditorGUILayout.Space();
-    //         EditorGUILayout.Space();
-    //         EditorGUILayout.Space();
-    //         base.OnInspectorGUI();
-    //         if(GUI.changed && Application.isPlaying)
-    //         {
-    //             fixture._UpdateInstancedProperties();
-    //         }
-    //     }
-    // }
-    // #endif
 
 
     #if !COMPILER_UDONSHARP && UNITY_EDITOR
@@ -289,109 +257,6 @@ namespace VRSL.EditorScripts
     }
     #endif
 
-    // #if !COMPILER_UDONSHARP && UNITY_EDITOR
-    // [CustomEditor(typeof(VRStageLighting_RAW))]
-    // public class VRStageLighting_RAW_Editor : VRSL_UdonEditor
-    // {
-    //     public override void OnInspectorGUI()
-    //     {
-    //         if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
-    //         DrawLogo();
-    //         ShurikenHeaderCentered(ver);
-    //         EditorGUILayout.Space();
-    //         EditorGUILayout.Space();
-            
-    //         //EditorGUILayout.Space();
-    //         base.OnInspectorGUI();
-    //         VRStageLighting_RAW fixture = (VRStageLighting_RAW)target;
-    //         if(GUI.changed && Application.isPlaying)
-    //         {
-    //             fixture._UpdateInstancedProperties();
-    //         }
-    //     }
-    // }
-    // #endif
-
-    // #if !COMPILER_UDONSHARP && UNITY_EDITOR
-    // [CustomEditor(typeof(VRStageLighting_RAW_Static))]
-    // public class VRStageLighting_RAW_Static_Editor : VRSL_UdonEditor
-    // {
-    //     public override void OnInspectorGUI()
-    //     {
-    //         if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
-    //         DrawLogo();
-    //         ShurikenHeaderCentered(ver);
-    //         EditorGUILayout.Space();
-    //         EditorGUILayout.Space();
-            
-    //         //EditorGUILayout.Space();
-    //         VRStageLighting_RAW_Static fixture = (VRStageLighting_RAW_Static)target;
-    //         EditorGUI.BeginChangeCheck();
-    //         base.OnInspectorGUI();
-    //         if(EditorGUI.EndChangeCheck())
-    //         {
-    //             if(fixture.objRenderers.Length > 0)
-    //             {
-    //                 bool isEmpty = false;
-    //                 foreach(MeshRenderer rend in fixture.objRenderers)
-    //                 {
-    //                     if(rend == null)
-    //                     {
-    //                         isEmpty = true;
-    //                         break;
-    //                     }
-    //                 }
-    //                 if(!isEmpty)
-    //                 {
-    //                     fixture._SetProps();
-    //                     fixture._UpdateInstancedProperties();
-    //                 }
-    //             }
-    //         } 
-    //     }
-    // }
-    // #endif
-
-    // #if !COMPILER_UDONSHARP && UNITY_EDITOR
-    // [CustomEditor(typeof(VRStageLighting_RAW_Laser))]
-    // public class VRStageLighting_RAW_Laser_Editor : VRSL_UdonEditor
-    // {
-    //     public override void OnInspectorGUI()
-    //     {
-    //         if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
-    //         DrawLogo();
-    //         ShurikenHeaderCentered(ver);
-    //         EditorGUILayout.Space();
-    //         EditorGUILayout.Space();
-            
-    //         //EditorGUILayout.Space();
-    //         VRStageLighting_RAW_Laser fixture = (VRStageLighting_RAW_Laser)target;
-    //         EditorGUI.BeginChangeCheck();
-    //         base.OnInspectorGUI();
-    //         if(EditorGUI.EndChangeCheck())
-    //         {
-    //             if(fixture.objRenderers.Length > 0)
-    //             {
-    //                 bool isEmpty = false;
-    //                 foreach(MeshRenderer rend in fixture.objRenderers)
-    //                 {
-    //                     if(rend == null)
-    //                     {
-    //                         isEmpty = true;
-    //                         break;
-    //                     }
-    //                 }
-    //                 if(!isEmpty)
-    //                 {
-    //                     fixture._SetProps();
-    //                     fixture._UpdateInstancedProperties();
-    //                 }
-    //             }
-    //         } 
-    //     }
-    // }
-    // #endif
-
     #if !COMPILER_UDONSHARP && UNITY_EDITOR
     [CustomEditor(typeof(VRStageLighting_AudioLink_Laser))]
     public class VRStageLighting_AudioLink_Laser_Editor : VRSL_UdonEditor
@@ -467,34 +332,6 @@ namespace VRSL.EditorScripts
     }
     #endif
 
-    // #if !COMPILER_UDONSHARP && UNITY_EDITOR
-    // [CustomEditor(typeof(VRStageLighting_AudioLink))]
-    // public class VRStageLighting_AudioLink_Editor : VRSL_UdonEditor
-    // {
-    //     public override void OnInspectorGUI()
-    //     {
-    //         if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
-    //         DrawLogo();
-    //         ShurikenHeaderCentered(ver);
-    //         EditorGUILayout.Space();
-    //         EditorGUILayout.Space();
-    //         base.OnInspectorGUI();
-    //         VRStageLighting_AudioLink fixture = (VRStageLighting_AudioLink)target;
-    //         if(GUI.changed && Application.isPlaying)
-    //         {
-    //             fixture._UpdateInstancedProperties();
-    //         }
-
-    //         // serializedObject.Update();
-    //         // if(previousColor != lightColor.colorValue)
-    //         // {
-    //         //     fixture.LightColorTint = fixture.LightColorTint;
-    //         // }
-    //         // serializedObject.ApplyModifiedProperties();
-    //     }
-    // }
-    // #endif
-
     #if !COMPILER_UDONSHARP && UNITY_EDITOR
     [InitializeOnLoad]
     [CustomEditor(typeof(VRStageLighting_AudioLink_Static))]
@@ -568,86 +405,9 @@ namespace VRSL.EditorScripts
             {
                 UpdateSettings(fixture);
             }
-
-            //serializedObject.Update();
-            // if(previousColor != lightColor.colorValue)
-            // {
-            //     fixture.LightColorTint = fixture.LightColorTint;
-            // }
-            // serializedObject.ApplyModifiedProperties();
         }
     }
     #endif
-
-
-    // #if !COMPILER_UDONSHARP && UNITY_EDITOR
-    // [CustomEditor(typeof(VRStageLighting_Animated))]
-    // public class VRStageLighting_Animated_Editor : VRSL_UdonEditor
-    // {
-    //     public override void OnInspectorGUI()
-    //     {
-    //         if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
-    //         DrawLogo();
-    //         ShurikenHeaderCentered(ver);
-    //         EditorGUILayout.Space();
-    //         EditorGUILayout.Space();
-    //         //EditorGUILayout.Space();
-    //         base.OnInspectorGUI();
-    //         VRStageLighting_Animated fixture = (VRStageLighting_Animated)target;
-    //         if(GUI.changed && Application.isPlaying)
-    //         {
-    //             fixture._UpdateInstancedProperties();
-    //         }
-    //     }
-    // }
-    // #endif
-
-    // #if !COMPILER_UDONSHARP && UNITY_EDITOR
-    // [CustomEditor(typeof(VRStageLighting_Animated_Static))]
-    // public class VRStageLighting_Animated_Static_Editor : VRSL_UdonEditor
-    // {
-    //     public override void OnInspectorGUI()
-    //     {
-    //         if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
-    //         DrawLogo();
-    //         ShurikenHeaderCentered(ver);
-    //         EditorGUILayout.Space();
-    //         EditorGUILayout.Space();
-    //         //EditorGUILayout.Space();
-    //         VRStageLighting_Animated_Static fixture = (VRStageLighting_Animated_Static)target;
-    //         EditorGUI.BeginChangeCheck();
-    //         base.OnInspectorGUI();
-    //         if(EditorGUI.EndChangeCheck())
-    //         {
-    //             if(fixture.objRenderers.Length > 0)
-    //             {
-    //                 bool isEmpty = false;
-    //                 foreach(MeshRenderer rend in fixture.objRenderers)
-    //                 {
-    //                     if(rend == null)
-    //                     {
-    //                         isEmpty = true;
-    //                         break;
-    //                     }
-    //                 }
-    //                 if(!isEmpty)
-    //                 {
-    //                     fixture._SetProps();
-    //                     if(Application.isPlaying)
-    //                     {
-    //                         fixture._UpdateInstancedProperties();
-    //                     }
-    //                     else
-    //                     {
-    //                         fixture._UpdateInstancedPropertiesSansAudioLink();
-    //                     }
-    //                 }
-    //             }
-    //         }
-            
-    //     }
-    // }
-    // #endif
 
     #if UNITY_EDITOR && !COMPILER_UDONSHARP
     // ensure class initializer is called whenever scripts recompile
@@ -676,13 +436,6 @@ namespace VRSL.EditorScripts
             LoadFixtureSettings();
         }
 
-        // public static void DelayedFixtureLoad()
-        // {    
-        //     //await Task.Delay(1000);
-        //     Thread.Sleep(10000);
-        //     LoadFixtureSettings();
-        //     Debug.Log("Finsihed Loading VRSL!");
-        // }
         private static void LogPlayModeState(PlayModeStateChange state)
         {
     //        Debug.Log(state);
@@ -720,17 +473,6 @@ namespace VRSL.EditorScripts
                 // VRStageLighting_DMX_Static[] dmxLights = obj.GetUdonSharpComponentsInChildren<VRStageLighting_DMX_Static>();
                     VRSL_LocalUIControlPanel[] controlPanels = obj.GetUdonSharpComponentsInChildren<VRSL_LocalUIControlPanel>();
                     #pragma warning restore 0618 //suppressing obsoletion warnings
-                    // if(staticLights != null)
-                    // {
-                    //         foreach(VRStageLighting_RAW_Static fixture in staticLights)
-                    //         {
-                    //             if(fixture.objRenderers.Length > 0 && fixture.objRenderers[0] != null)
-                    //             {
-                    //                 fixture._SetProps();
-                    //                 fixture._UpdateInstancedProperties();
-                    //             }
-                    //         }
-                    // }
                     if(dmxLights != null)
                     {
                         foreach(VRStageLighting_DMX_Static fixture in dmxLights)
@@ -746,17 +488,7 @@ namespace VRSL.EditorScripts
                             }
                         }
                     }
-                    // if(rawLasers != null)
-                    // {
-                    //     foreach(VRStageLighting_RAW_Laser fixture in rawLasers)
-                    //     {
-                    //         if(fixture.objRenderers.Length > 0 && fixture.objRenderers[0] != null)
-                    //         {
-                    //             fixture._SetProps();
-                    //             fixture._UpdateInstancedProperties();
-                    //         }
-                    //     }
-                    // }
+
                     if(audioLinkLasers != null)
                     {
                         foreach(VRStageLighting_AudioLink_Laser fixture in audioLinkLasers)
@@ -803,32 +535,7 @@ namespace VRSL.EditorScripts
                             //Debug.Log("AutoChecking Status");
                         }
                     }
-                    // if(animatedLights != null)
-                    // {
-                    //     foreach(VRStageLighting_Animated_Static fixture in animatedLights)
-                    //     {
-                    //         if(fixture.objRenderers.Length > 0 && fixture.objRenderers[0] != null)
-                    //         {
-                    //             fixture._SetProps();
-                    //             if(Application.isPlaying)
-                    //             {
-                    //                 fixture._UpdateInstancedProperties();
-                    //             }
-                    //             else
-                    //             {
-                    //                 fixture._UpdateInstancedPropertiesSansAudioLink();
-                    //             }
-                    //         }
-                    //     }
-                    // }
-                    // foreach(VRStageLighting_DMX_Static fixture in dmxLights)
-                    // {
-                    //     if(fixture.objRenderers.Length > 0 && fixture.objRenderers[0] != null)
-                    //     {
-                    //         fixture._SetProps();
-                    //         fixture._UpdateInstancedProperties();
-                    //     }
-                    // }
+
                 }
             }
             catch(NullReferenceException e)

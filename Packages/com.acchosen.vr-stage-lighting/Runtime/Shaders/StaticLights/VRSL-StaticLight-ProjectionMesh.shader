@@ -12,12 +12,12 @@
 
 		 [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
 		 [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
-		 [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+		 [Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
 		 [Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Source Blend mode", Float) = 2
 		 [Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Destination Blend mode", Float) = 1
 		 [Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
-		// _BlockLengthX("OSC Block Base Distance X", Float) = 0.019231
-		// _BlockLengthY("OSC Block Base Distance Y", Float) = 0
+		// _BlockLengthX("DMX Block Base Distance X", Float) = 0.019231
+		// _BlockLengthY("DMX Block Base Distance Y", Float) = 0
 		 [HideInInspector]_StrobeFreq("Strobe Frequency", Range(0,25)) = 1
 
 		//[Header(LIGHTING CONTROLS)]
@@ -28,9 +28,9 @@
 		_FixtureMaxIntensity ("Maximum Light Intensity",Range (0,6)) = 1
 		
 		[Toggle] _UseRawGrid("Use Raw Grid For Light Intensity", Int) = 0
-		[NoScaleOffset] _OSCGridRenderTextureRAW("OSC Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
-		[NoScaleOffset] _OSCGridRenderTexture("OSC Grid Render Texture (To Control Lights)", 2D) = "white" {}
-		[NoScaleOffset] _OSCGridStrobeTimer ("OSC Grid Render Texture (For Strobe Timings", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridRenderTexture("DMX Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridRenderTextureMovement("DMX Grid Render Texture (To Control Lights)", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridStrobeTimer("DMX Grid Render Texture (For Strobe Timings", 2D) = "white" {}
 		//[NoScaleOffset] _SceneAlbedo ("Scene Albedo Render Texture", 2D) = "white" {}
 
 
@@ -178,8 +178,8 @@
 		//
 		UNITY_TRANSFER_INSTANCE_ID(v, o);
 		uint dmx = getDMXChannel();
-		o.intensityStrobe = float2(GetOSCIntensity(dmx, 1.0),GetStrobeOutput(dmx));
-		o.rgbColor = GetOSCColor(dmx);
+		o.intensityStrobe = float2(GetDMXIntensity(dmx, 1.0),GetStrobeOutput(dmx));
+		o.rgbColor = GetDMXColor(dmx);
 		o.emissionColor = getEmissionColor();
 		o.globalFinalIntensity.x = getGlobalIntensity();
 		o.globalFinalIntensity.y = getFinalIntensity();
@@ -202,7 +202,7 @@
 		o.worldDirection.xyz = o.worldPos.xyz - _WorldSpaceCameraPos;
 		// pack correction factor into direction w component to save space
 		o.worldDirection.w = dot(o.pos, CalculateFrustumCorrection());
-		if(((all(o.rgbColor <= float4(0.05,0.05,0.05,1)) || o.intensityStrobe.x <= 0.05) && isOSC() == 1) || o.globalFinalIntensity.x <= 0.005 || o.globalFinalIntensity.y <= 0.005 || all(o.emissionColor <= float4(0.005, 0.005, 0.005, 1.0)))
+		if(((all(o.rgbColor <= float4(0.05,0.05,0.05,1)) || o.intensityStrobe.x <= 0.05) && isDMX() == 1) || o.globalFinalIntensity.x <= 0.005 || o.globalFinalIntensity.y <= 0.005 || all(o.emissionColor <= float4(0.005, 0.005, 0.005, 1.0)))
 		{
 			v.vertex = float4(0,0,0,0);
 			o.pos = UnityObjectToClipPos(v.vertex);

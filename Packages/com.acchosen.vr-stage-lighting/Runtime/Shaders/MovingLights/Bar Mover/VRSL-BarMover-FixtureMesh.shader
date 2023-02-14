@@ -16,7 +16,7 @@
 		 [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
 		 [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
 		 [Toggle] _EnableStrobe ("Enable Strobe", Int) = 0
-		 [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+		 [Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
 		 [Toggle] _LegacyGoboRange ("Enable Legacy GOBO Range", Int) = 0
 		 _FixtureRotationX("Mover Tilt Offset (Blue)", Range(-94,4)) = 0
          _FinalIntensity("Final Intensity", Range(0,1)) = 1
@@ -47,9 +47,9 @@
         _FixutreIntensityMultiplier ("Intensity Multipler (For Bloom Scaling)", Range(0,500)) = 1
         _FixtureRotationOrigin("Fixture Pivot Origin", Float) = (0, 0.014709, -1.02868, 0)
 		[Toggle] _UseRawGrid("Use Raw Grid For Light Intensity And Color", Int) = 0
-		[NoScaleOffset] _OSCGridRenderTextureRAW("OSC Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
-		[NoScaleOffset] _OSCGridRenderTexture("OSC Grid Render Texture (To Control Lights)", 2D) = "white" {}
-		[NoScaleOffset] _OSCGridStrobeTimer ("OSC Grid Render Texture (For Strobe Timings", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridRenderTexture("DMX Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridRenderTextureMovement("DMX Grid Render Texture (To Control Lights)", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridStrobeTimer("DMX Grid Render Texture (For Strobe Timings", 2D) = "white" {}
 		_MaxMinPanAngle("Max/Min Pan Angle (-x, x)", Float) = 180
 		_MaxMinTiltAngle("Max/Min Tilt Angle (-y, y)", Float) = 180
 		_FixtureMaxIntensity ("Maximum Cone Intensity",Range (0,0.5)) = 0.5
@@ -67,8 +67,8 @@
         #pragma target 3.0
 
         sampler2D _MainTex, _MetallicMap, _BumpMap, _EmissionMask;
-        sampler2D _OSCGridRenderTexture, _OSCGridRenderTextureRAW, _OSCGridStrobeTimer;
-        uniform float4 _OSCGridRenderTextureRAW_TexelSize;
+        sampler2D _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridStrobeTimer;
+        uniform float4 _Udon_DMXGridRenderTexture_TexelSize;
         float4 _FixtureRotationOrigin;
         float _FixtureMaxIntensity, _FixutreIntensityMultiplier;
         float _MaxMinPanAngle;
@@ -95,7 +95,7 @@
         UNITY_DEFINE_INSTANCED_PROP(uint, _NineUniverseMode)
         UNITY_DEFINE_INSTANCED_PROP(uint, _PanInvert)
         UNITY_DEFINE_INSTANCED_PROP(uint, _TiltInvert)
-        UNITY_DEFINE_INSTANCED_PROP(uint, _EnableOSC)
+        UNITY_DEFINE_INSTANCED_PROP(uint, _EnableDMX)
         UNITY_DEFINE_INSTANCED_PROP(uint, _EnableStrobe)
         UNITY_DEFINE_INSTANCED_PROP(uint, _EnableSpin)
         UNITY_DEFINE_INSTANCED_PROP(float, _StrobeFreq)

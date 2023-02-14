@@ -7,13 +7,13 @@
           [Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
 
 		 [Toggle] _EnableStrobe ("Enable Strobe", Int) = 0
-		 //[HideInInspector][Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+		 //[HideInInspector][Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
 		 [HideInInspector]_StrobeFreq("Strobe Frequency", Range(0,25)) = 1
 		 [HideInInspector][Toggle] _EnableSpin("Enable Auto Spinning", Float) = 0
 
          [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
          [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
-        [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+        [Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
         _FixutreIntensityMultiplier ("Intensity Multipler (For Bloom Scaling)", Range(1,15)) = 1
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
@@ -28,9 +28,9 @@
         _EmissionMask ("Emission Mask", 2D) = "white" {}
         _FixtureMaxIntensity ("Maximum Light Intensity",Range (0,15)) = 1
         [Toggle] _UseRawGrid("Use Raw Grid For Light Intensity", Int) = 0
-		[NoScaleOffset] _OSCGridRenderTextureRAW("OSC Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
-		[NoScaleOffset] _OSCGridRenderTexture("OSC Grid Render Texture (To Control Lights)", 2D) = "white" {}
-		[NoScaleOffset] _OSCGridStrobeTimer ("OSC Grid Render Texture (For Strobe Timings", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridRenderTexture("DMX Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridRenderTextureMovement("DMX Grid Render Texture (To Control Lights)", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridStrobeTimer("DMX Grid Render Texture (For Strobe Timings", 2D) = "white" {}
 		//[NoScaleOffset] _SceneAlbedo ("Scene Albedo Render Texture", 2D) = "white" {}
     }
     SubShader
@@ -71,16 +71,16 @@
 
             uint dmx = getDMXChannel();
             float strobe = IF(isStrobe() == 1, GetStrobeOutput(dmx), 1);
-            float4 OSCcol = getEmissionColor();
-            OSCcol *= GetOSCColor(dmx);
-            float4 col = IF(isOSC() == 1, OSCcol, getEmissionColor());
+            float4 DMXcol = getEmissionColor();
+            DMXcol *= GetDMXColor(dmx);
+            float4 col = IF(isDMX() == 1, DMXcol, getEmissionColor());
             // Albedo comes from a texture tinted by color
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
             half4 e = col * strobe;
             
             o.Albedo = c.rgb;
             o.Normal = UnpackNormal (tex2D (_NormalMap, IN.uv_NormalMap));
-            e = IF(isOSC() == 1,lerp(half4(-_CurveMod,-_CurveMod,-_CurveMod,1), e, pow(GetOSCIntensity(dmx, 1.0), 1.0)), e);
+            e = IF(isDMX() == 1,lerp(half4(-_CurveMod,-_CurveMod,-_CurveMod,1), e, pow(GetDMXIntensity(dmx, 1.0), 1.0)), e);
             e = clamp(e, half4(0,0,0,1), half4(_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,1));
             e *= tex2D(_EmissionMask, IN.uv_MainTex).r;
             e*= _FixutreIntensityMultiplier;

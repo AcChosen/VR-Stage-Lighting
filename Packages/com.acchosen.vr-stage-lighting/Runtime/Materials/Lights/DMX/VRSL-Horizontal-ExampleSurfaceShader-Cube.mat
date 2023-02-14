@@ -87,18 +87,20 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EnableCompatibilityMode: 0
+    - _EnableDMX: 0
     - _EnableOSC: 1
     - _EnableSpin: 0
     - _EnableStrobe: 1
     - _EnableVerticalMode: 0
     - _FinalIntensity: 1
-    - _FixtureMaxIntensity: 1
+    - _FixtureMaxIntensity: 0.1
     - _GlobalIntensity: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
+    - _NineUniverseMode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Saturation: 0.95

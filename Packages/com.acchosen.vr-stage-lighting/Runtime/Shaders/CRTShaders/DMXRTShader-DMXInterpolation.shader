@@ -4,13 +4,13 @@ Shader "VRSL/DMX CRTs/Interpolation"
     {
         _DMXChannel ("DMX Channel (for legacy global movement speed)", Int) = 0
         [Toggle] _EnableLegacyGlobalMovementSpeedChannel ("Enable Legacy Global Movement Speed Channel (disables individiual movement speed per sector)", Int) = 0
-        [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+        [Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
         [Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
-        [Toggle] _EnableCompatibilityMode ("Enable Stream OSC/DMX Control", Int) = 0
-        [NoScaleOffset]_OSCGridRenderTexture("OSC Grid Render Texture (To Control Lights)", 2D) = "white" {}
+        [Toggle] _EnableCompatibilityMode ("Enable Stream DMX/DMX Control", Int) = 0
+        [NoScaleOffset]_DMXTexture("DMX Grid Render Texture (To Control Lights)", 2D) = "white" {}
         _SmoothValue ("Smoothness Level (0 to 1, 0 = max)", Range(0,1)) = 0.5
-        _MinimumSmoothnessOSC ("Minimum Smoothness Value for OSC", Float) = 0
-        _MaximumSmoothnessOSC ("Maximum Smoothness Value for OSc", Float) = 0
+        _MinimumSmoothnessDMX ("Minimum Smoothness Value for DMX", Float) = 0
+        _MaximumSmoothnessDMX ("Maximum Smoothness Value for OSc", Float) = 0
      }
 
      SubShader
@@ -27,11 +27,11 @@ Shader "VRSL/DMX CRTs/Interpolation"
             #pragma fragment frag
             #pragma target 3.0
 
-            float _SmoothValue, _MinimumSmoothnessOSC, _MaximumSmoothnessOSC;
+            float _SmoothValue, _MinimumSmoothnessDMX, _MaximumSmoothnessDMX;
             sampler2D   _Tex;
-            sampler2D _OSCGridRenderTexture;
+            sampler2D _DMXTexture;
             SamplerState sampler_point_repeat;
-            int _IsEven, _DMXChannel, _EnableOSC, _EnableLegacyGlobalMovementSpeedChannel;
+            int _IsEven, _DMXChannel, _EnableDMX, _EnableLegacyGlobalMovementSpeedChannel;
             uint _EnableCompatibilityMode, _NineUniverseMode;
             float oscSmoothnessRAW;
             float3 rgbSmoothnessRaw;
@@ -47,13 +47,13 @@ Shader "VRSL/DMX CRTs/Interpolation"
 
                 //1 sector is every 13 channels
                 //the grid is 26x26 aka 2 sectors per row
-                //TRAVERSING THE Y AXIS OF THE OSC GRID
+                //TRAVERSING THE Y AXIS OF THE DMX GRID
 
                 float ymod = floor(sector / 2);
                 float originalx = x;
                 float originaly = y;       
 
-                //TRAVERSING THE X AXIS OF THE OSC GRID
+                //TRAVERSING THE X AXIS OF THE DMX GRID
                 float xmod = sector % 2;
 
 
@@ -75,7 +75,7 @@ Shader "VRSL/DMX CRTs/Interpolation"
             {
             float2 recoords = getSectorCoordinates(x, y, sector);
             float4 uvcoords = float4(recoords.x, recoords.y, 0,0);
-            float4 c = tex2D(_OSCGridRenderTexture, uvcoords);
+            float4 c = tex2D(_DMXTexture, uvcoords);
             float3 cRGB = float3(c.r, c.g, c.b);
             float value = LinearRgbToLuminance(cRGB);
             value = LinearToGammaSpaceExact(value);
@@ -87,14 +87,14 @@ Shader "VRSL/DMX CRTs/Interpolation"
             {
             float2 recoords = getSectorCoordinates(x, y, sector);
             float4 uvcoords = float4(recoords.x, recoords.y, 0,0);
-            float4 c = tex2D(_OSCGridRenderTexture, uvcoords);
+            float4 c = tex2D(_DMXTexture, uvcoords);
             float3 col = float3(LinearToGammaSpaceExact(c.r), LinearToGammaSpaceExact(c.g), LinearToGammaSpaceExact(c.b));
             return col;
             }
 
             float getValueAtUV(float2 uv)
             {
-                float4 c = tex2D(_OSCGridRenderTexture, uv);
+                float4 c = tex2D(_DMXTexture, uv);
                 float3 cRGB = float3(c.r, c.g, c.b);
                 float value = LinearRgbToLuminance(cRGB);
                 value = LinearToGammaSpaceExact(value);
@@ -104,7 +104,7 @@ Shader "VRSL/DMX CRTs/Interpolation"
 
             float3 getValueAtUVRGB(float2 uv)
             {
-                float4 c = tex2D(_OSCGridRenderTexture, uv);
+                float4 c = tex2D(_DMXTexture, uv);
                 float3 col = float3(LinearToGammaSpaceExact(c.r), LinearToGammaSpaceExact(c.g), LinearToGammaSpaceExact(c.b));
                 return col;
             }
@@ -123,8 +123,8 @@ Shader "VRSL/DMX CRTs/Interpolation"
                 {
                     oscSmoothnessRAW = IF(_EnableCompatibilityMode == 1, getValueAtCoords(0.096151, 0.019231, _DMXChannel), getValueAtUV(float2(0.960, uv.y)));
                 }
-                float oscSmoothness = lerp(_MinimumSmoothnessOSC, _MaximumSmoothnessOSC, oscSmoothnessRAW);
-                return IF(_EnableOSC == 1, oscSmoothness, _SmoothValue);  
+                float oscSmoothness = lerp(_MinimumSmoothnessDMX, _MaximumSmoothnessDMX, oscSmoothnessRAW);
+                return IF(_EnableDMX == 1, oscSmoothness, _SmoothValue);  
             }
 
 
@@ -141,11 +141,11 @@ Shader "VRSL/DMX CRTs/Interpolation"
                     rgbSmoothnessRaw = getValueAtUVRGB(float2(0.960, uv.y));
                 }
 
-                float3 rgbSmoothness = float3(lerp(_MinimumSmoothnessOSC, _MaximumSmoothnessOSC, rgbSmoothnessRaw.r), 
-                lerp(_MinimumSmoothnessOSC, _MaximumSmoothnessOSC, rgbSmoothnessRaw.g), 
-                lerp(_MinimumSmoothnessOSC, _MaximumSmoothnessOSC, rgbSmoothnessRaw.b));
+                float3 rgbSmoothness = float3(lerp(_MinimumSmoothnessDMX, _MaximumSmoothnessDMX, rgbSmoothnessRaw.r), 
+                lerp(_MinimumSmoothnessDMX, _MaximumSmoothnessDMX, rgbSmoothnessRaw.g), 
+                lerp(_MinimumSmoothnessDMX, _MaximumSmoothnessDMX, rgbSmoothnessRaw.b));
 
-                return IF(_EnableOSC == 1, rgbSmoothness, float3(_SmoothValue, _SmoothValue, _SmoothValue));  
+                return IF(_EnableDMX == 1, rgbSmoothness, float3(_SmoothValue, _SmoothValue, _SmoothValue));  
             }
 
 
@@ -154,13 +154,13 @@ Shader "VRSL/DMX CRTs/Interpolation"
                 if (_Time.y > 3.0)
                 {
                     float4 previousFrame = tex2D(_SelfTexture2D, IN.localTexcoord.xy);
-                    float4 currentFrame = tex2D(_OSCGridRenderTexture, IN.localTexcoord.xy);
+                    float4 currentFrame = tex2D(_DMXTexture, IN.localTexcoord.xy);
                     // if(IN.localTexcoord.y > 0.90)
                     // {
                     //     oscSmoothnessRAW = IF(_EnableCompatibilityMode == 1, getValueAtCoords(0.096151, 0.019231, _DMXChannel), getValueAtCoords(0.189936, 0.00762, _DMXChannel));
                     //     return oscSmoothnessRAW;
                     // }
-                    if(_NineUniverseMode && _EnableOSC)
+                    if(_NineUniverseMode && _EnableDMX)
                     {
                         float3 s = getSmoothnessValueRGB(IN.localTexcoord.xy);
                         s = lerp(clamp(lerp(previousFrame.rgb, currentFrame.rgb,smoothstep(0.0, 1.0, clamp(unity_DeltaTime.z,0.0,1.0))) , 0.0, 400.0), currentFrame.rgb, s);
@@ -174,7 +174,7 @@ Shader "VRSL/DMX CRTs/Interpolation"
                 }
                 else
                 {
-                    return tex2D(_OSCGridRenderTexture, IN.localTexcoord.xy);
+                    return tex2D(_DMXTexture, IN.localTexcoord.xy);
                 }
             }
             ENDCG

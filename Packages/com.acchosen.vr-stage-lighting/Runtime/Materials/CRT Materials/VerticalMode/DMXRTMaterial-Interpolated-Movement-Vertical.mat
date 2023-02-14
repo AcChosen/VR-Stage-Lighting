@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: DMXRTMaterial-Interpolated-Movement-Vertical
   m_Shader: {fileID: 4800000, guid: 715ebff4a0305954f96e78ccb3676141, type: 3}
-  m_ShaderKeywords: _ENABLEOSC_ON
+  m_ShaderKeywords: _ENABLEDMX_ON _ENABLEOSC_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -21,6 +21,14 @@ Material:
     m_TexEnvs:
     - _BumpMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DMXGridRenderTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DMXTexture:
+        m_Texture: {fileID: 8400000, guid: 159c71081e572e648a894d41fca32894, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -70,13 +78,16 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EnableCompatibilityMode: 0
+    - _EnableDMX: 1
     - _EnableLegacyGlobalMovementSpeedChannel: 0
     - _EnableOSC: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _MaximumSmoothnessDMX: 0.15
     - _MaximumSmoothnessOSC: 0.15
     - _Metallic: 0
+    - _MinimumSmoothnessDMX: 0.0025
     - _MinimumSmoothnessOSC: 0.0025
     - _Mode: 0
     - _NineUniverseMode: 0

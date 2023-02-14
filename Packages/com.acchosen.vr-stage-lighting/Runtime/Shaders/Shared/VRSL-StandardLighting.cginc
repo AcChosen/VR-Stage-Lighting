@@ -17,7 +17,7 @@ float4 CustomStandardLightingBRDF(
     // {
     //     //Color Light Bulb Itself
     //     float strobe = IF(isStrobe() == 1, GetStrobeOutput(getChannelSectorX()), 1);
-    //     return IF(isOSC() == 1, (getEmissionColor() * GetOSCColor(getChannelSectorX())) * strobe, getEmissionColor() * strobe);
+    //     return IF(isDMX() == 1, (getEmissionColor() * GetDMXColor(getChannelSectorX())) * strobe, getEmissionColor() * strobe);
     // }
 
     if ((((i.uv.x) == 0.9 && (i.uv.y) == 0.9) || (5.0 <= ceil(i.color.g * 10)) <= 7.0 && ceil(i.color.r) != 0 && ceil(i.color.b) != 0))
@@ -104,8 +104,8 @@ float4 CustomStandardLightingBRDF(
             //Color Light Bulb Itself
 
             float strobe = IF(isStrobe() == 1, i.intensityStrobe.y, 1);
-            float4 emission = IF(isOSC() == 1, (getEmissionColor() * i.rgbColor) * strobe, getEmissionColor() * strobe);
-            // if((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobe.x <= 0.01) && isOSC() == 1)
+            float4 emission = IF(isDMX() == 1, (getEmissionColor() * i.rgbColor) * strobe, getEmissionColor() * strobe);
+            // if((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobe.x <= 0.01) && isDMX() == 1)
             // {
             //    return float4(lighting, al);
             // } 
@@ -113,16 +113,16 @@ float4 CustomStandardLightingBRDF(
             emission *=(_FixtureMaxIntensity)*1500;
             emission = clamp(emission, 0, _LensMaxBrightness*100);
             //lighting += emission;
-            //lighting = lerp(lighting, emission, GetOSCIntensity(getChannelSectorX(), _FixtureMaxIntensity));
+            //lighting = lerp(lighting, emission, GetDMXIntensity(getChannelSectorX(), _FixtureMaxIntensity));
             half limit = 0.025;
-            if((all(i.rgbColor >=half4(limit,limit,limit,1)) || i.intensityStrobe.x >= limit) && isOSC() == 1)
+            if((all(i.rgbColor >=half4(limit,limit,limit,1)) || i.intensityStrobe.x >= limit) && isDMX() == 1)
             {
                 float4 potentialBrightness = emission * _FixutreIntensityMultiplier; 
                 emission = lerp(emission, potentialBrightness, pow(i.intensityStrobe.x, 1.9));          
             }
             else
             {
-                if(isOSC() == 1)
+                if(isDMX() == 1)
                 {
                     emission = half4(0,0,0,1.0f);                   
                 }
@@ -132,11 +132,11 @@ float4 CustomStandardLightingBRDF(
             emission = lerp((half4(0,0,0,emission.w)), emission, getFinalIntensity());
             emission = emission * _UniversalIntensity;
             //emission = clamp(emission, half4(0,0,0,1), half4(_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,1));
-            //lighting = IF(isOSC() == 1, lerp(lighting, emission, pow(0.1, (GetOSCIntensity(sector, _FixtureMaxIntensity)))) ,lighting + emission);
+            //lighting = IF(isDMX() == 1, lerp(lighting, emission, pow(0.1, (GetDMXIntensity(sector, _FixtureMaxIntensity)))) ,lighting + emission);
             #ifdef WASH
             emission = i.uv1.y > 0.0 ? saturate(emission) - 0.25 : emission;
             #endif
-            lighting = IF(isOSC() == 1,lerp(lighting, emission, pow(i.intensityStrobe.x, 1.0)), emission);
+            lighting = IF(isDMX() == 1,lerp(lighting, emission, pow(i.intensityStrobe.x, 1.0)), emission);
             
             float lightingAVG = (lighting.x + lighting.y + lighting.z)/3;
             lighting = lerp(lighting,float3(lightingAVG, lightingAVG, lightingAVG), pow(_Saturation,2));

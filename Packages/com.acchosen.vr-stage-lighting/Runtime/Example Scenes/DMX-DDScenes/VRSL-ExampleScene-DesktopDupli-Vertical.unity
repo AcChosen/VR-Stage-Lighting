@@ -238,6 +238,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
         type: 3}
+      propertyPath: globalIntensity
+      value: 0.741
+      objectReference: {fileID: 0}
+    - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
+        type: 3}
       propertyPath: useLegacySectorMode
       value: 1
       objectReference: {fileID: 0}
@@ -349,6 +359,11 @@ PrefabInstance:
         type: 3}
       propertyPath: dmxChannel
       value: 405
+      objectReference: {fileID: 0}
+    - target: {fileID: -1540904920109350075, guid: 51b428740444288448e19c88c64d5311,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -1540904920109350075, guid: 51b428740444288448e19c88c64d5311,
         type: 3}
@@ -534,8 +549,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
         type: 3}
+      propertyPath: invertPan
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
+        type: 3}
       propertyPath: coneLength
       value: 8.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
+        type: 3}
+      propertyPath: globalIntensity
+      value: 0.943
+      objectReference: {fileID: 0}
+    - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
         type: 3}
@@ -607,6 +637,11 @@ PrefabInstance:
         type: 3}
       propertyPath: fixtureID
       value: 402
+      objectReference: {fileID: 0}
+    - target: {fileID: -1099839980980406309, guid: b2a0b640363bc10408fb7a3803939fa0,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -1099839980980406309, guid: b2a0b640363bc10408fb7a3803939fa0,
         type: 3}
@@ -724,6 +759,11 @@ PrefabInstance:
         type: 3}
       propertyPath: fixtureID
       value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 314734411489633854, guid: d7a8bacd5310e8e499962549ef931c57,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 314734411489633854, guid: d7a8bacd5310e8e499962549ef931c57,
         type: 3}
@@ -891,6 +931,11 @@ PrefabInstance:
         type: 3}
       propertyPath: lightColorTint.r
       value: 1.4980392
+      objectReference: {fileID: 0}
+    - target: {fileID: -5868383465523654329, guid: 88bee1a0ddf090d4bb0721b30240c949,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -5868383465523654329, guid: 88bee1a0ddf090d4bb0721b30240c949,
         type: 3}
@@ -1118,6 +1163,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
+        type: 3}
       propertyPath: useLegacySectorMode
       value: 1
       objectReference: {fileID: 0}
@@ -1160,6 +1210,11 @@ PrefabInstance:
         type: 3}
       propertyPath: lightColorTint.r
       value: 1.4980392
+      objectReference: {fileID: 0}
+    - target: {fileID: -189608094357393713, guid: 2ff8eb277ef9d7047b12d127b2eaeb36,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -189608094357393713, guid: 2ff8eb277ef9d7047b12d127b2eaeb36,
         type: 3}
@@ -1312,6 +1367,11 @@ PrefabInstance:
         type: 3}
       propertyPath: fixtureID
       value: 501
+      objectReference: {fileID: 0}
+    - target: {fileID: 314734411489633854, guid: d7a8bacd5310e8e499962549ef931c57,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 314734411489633854, guid: d7a8bacd5310e8e499962549ef931c57,
         type: 3}
@@ -1548,6 +1608,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
+        type: 3}
       propertyPath: useLegacySectorMode
       value: 1
       objectReference: {fileID: 0}
@@ -1684,6 +1749,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
+        type: 3}
       propertyPath: useLegacySectorMode
       value: 1
       objectReference: {fileID: 0}
@@ -1800,6 +1870,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
+        type: 3}
       propertyPath: useLegacySectorMode
       value: 1
       objectReference: {fileID: 0}
@@ -1837,6 +1912,11 @@ PrefabInstance:
         type: 3}
       propertyPath: dmxChannel
       value: 410
+      objectReference: {fileID: 0}
+    - target: {fileID: 5753258519388771502, guid: b8873da88b401dd4ab93b061c5ddf750,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5753258519388771502, guid: b8873da88b401dd4ab93b061c5ddf750,
         type: 3}
@@ -1928,6 +2008,11 @@ PrefabInstance:
         type: 3}
       propertyPath: fixtureID
       value: 403
+      objectReference: {fileID: 0}
+    - target: {fileID: -1099839980980406309, guid: b2a0b640363bc10408fb7a3803939fa0,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -1099839980980406309, guid: b2a0b640363bc10408fb7a3803939fa0,
         type: 3}
@@ -2119,6 +2204,11 @@ PrefabInstance:
         type: 3}
       propertyPath: fixtureID
       value: 203
+      objectReference: {fileID: 0}
+    - target: {fileID: -189608094357393713, guid: 2ff8eb277ef9d7047b12d127b2eaeb36,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -189608094357393713, guid: 2ff8eb277ef9d7047b12d127b2eaeb36,
         type: 3}
@@ -2453,6 +2543,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
+        type: 3}
       propertyPath: useLegacySectorMode
       value: 1
       objectReference: {fileID: 0}
@@ -2516,6 +2611,11 @@ PrefabInstance:
         type: 3}
       propertyPath: fixtureID
       value: 800
+      objectReference: {fileID: 0}
+    - target: {fileID: 4598979384299495407, guid: 55058c5ef8c22d04991b48a99a10acfe,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4598979384299495407, guid: 55058c5ef8c22d04991b48a99a10acfe,
         type: 3}
@@ -2651,6 +2751,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -189608094357393713, guid: 2ff8eb277ef9d7047b12d127b2eaeb36,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -189608094357393713, guid: 2ff8eb277ef9d7047b12d127b2eaeb36,
+        type: 3}
       propertyPath: useLegacySectorMode
       value: 1
       objectReference: {fileID: 0}
@@ -2765,6 +2870,11 @@ PrefabInstance:
         type: 3}
       propertyPath: fixtureID
       value: 201
+      objectReference: {fileID: 0}
+    - target: {fileID: -189608094357393713, guid: 2ff8eb277ef9d7047b12d127b2eaeb36,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -189608094357393713, guid: 2ff8eb277ef9d7047b12d127b2eaeb36,
         type: 3}
@@ -2954,6 +3064,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -189608094357393713, guid: 2ff8eb277ef9d7047b12d127b2eaeb36,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -189608094357393713, guid: 2ff8eb277ef9d7047b12d127b2eaeb36,
+        type: 3}
       propertyPath: useLegacySectorMode
       value: 1
       objectReference: {fileID: 0}
@@ -3068,6 +3183,11 @@ PrefabInstance:
         type: 3}
       propertyPath: fixtureID
       value: 502
+      objectReference: {fileID: 0}
+    - target: {fileID: 314734411489633854, guid: d7a8bacd5310e8e499962549ef931c57,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 314734411489633854, guid: d7a8bacd5310e8e499962549ef931c57,
         type: 3}
@@ -3316,6 +3436,11 @@ PrefabInstance:
         type: 3}
       propertyPath: lightColorTint.r
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7154669077426579507, guid: 9a6d4144bda0d3c4ba95593af446b653,
         type: 3}
@@ -3720,6 +3845,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5595631434132784427, guid: dedfba01424b93148b3d9a42e95ed2f7,
         type: 3}
+      propertyPath: useExtendedUniverses
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5595631434132784427, guid: dedfba01424b93148b3d9a42e95ed2f7,
+        type: 3}
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 5595631434132784427, guid: dedfba01424b93148b3d9a42e95ed2f7,
@@ -3844,6 +3974,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -189608094357393713, guid: 2ff8eb277ef9d7047b12d127b2eaeb36,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -189608094357393713, guid: 2ff8eb277ef9d7047b12d127b2eaeb36,
+        type: 3}
       propertyPath: useLegacySectorMode
       value: 1
       objectReference: {fileID: 0}
@@ -3958,6 +4093,11 @@ PrefabInstance:
         type: 3}
       propertyPath: fixtureID
       value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: -1099839980980406309, guid: b2a0b640363bc10408fb7a3803939fa0,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -1099839980980406309, guid: b2a0b640363bc10408fb7a3803939fa0,
         type: 3}
@@ -4090,6 +4230,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4598979384299495407, guid: 55058c5ef8c22d04991b48a99a10acfe,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4598979384299495407, guid: 55058c5ef8c22d04991b48a99a10acfe,
+        type: 3}
       propertyPath: useLegacySectorMode
       value: 1
       objectReference: {fileID: 0}
@@ -4204,6 +4349,11 @@ PrefabInstance:
         type: 3}
       propertyPath: dmxChannel
       value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: -1540904920109350075, guid: 51b428740444288448e19c88c64d5311,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -1540904920109350075, guid: 51b428740444288448e19c88c64d5311,
         type: 3}
@@ -4700,6 +4850,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5753258519388771502, guid: b8873da88b401dd4ab93b061c5ddf750,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5753258519388771502, guid: b8873da88b401dd4ab93b061c5ddf750,
+        type: 3}
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 5753258519388771502, guid: b8873da88b401dd4ab93b061c5ddf750,
@@ -4834,6 +4989,11 @@ PrefabInstance:
         type: 3}
       propertyPath: fixtureID
       value: 401
+      objectReference: {fileID: 0}
+    - target: {fileID: -1099839980980406309, guid: b2a0b640363bc10408fb7a3803939fa0,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -1099839980980406309, guid: b2a0b640363bc10408fb7a3803939fa0,
         type: 3}
@@ -4979,6 +5139,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -5868383465523654329, guid: 88bee1a0ddf090d4bb0721b30240c949,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5868383465523654329, guid: 88bee1a0ddf090d4bb0721b30240c949,
+        type: 3}
       propertyPath: useLegacySectorMode
       value: 1
       objectReference: {fileID: 0}
@@ -5113,6 +5278,11 @@ PrefabInstance:
         type: 3}
       propertyPath: dmxChannel
       value: 440
+      objectReference: {fileID: 0}
+    - target: {fileID: 5753258519388771502, guid: b8873da88b401dd4ab93b061c5ddf750,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5753258519388771502, guid: b8873da88b401dd4ab93b061c5ddf750,
         type: 3}
@@ -5293,6 +5463,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8781542543671338413, guid: 1c08f57da0cd0414c85f64b373431921,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8781542543671338413, guid: 1c08f57da0cd0414c85f64b373431921,
+        type: 3}
       propertyPath: singleChannelMode
       value: 1
       objectReference: {fileID: 0}
@@ -5427,6 +5602,11 @@ PrefabInstance:
         type: 3}
       propertyPath: fixtureID
       value: 1002
+      objectReference: {fileID: 0}
+    - target: {fileID: 8781542543671338413, guid: 1c08f57da0cd0414c85f64b373431921,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8781542543671338413, guid: 1c08f57da0cd0414c85f64b373431921,
         type: 3}
@@ -5666,6 +5846,11 @@ PrefabInstance:
         type: 3}
       propertyPath: fixtureID
       value: 1001
+      objectReference: {fileID: 0}
+    - target: {fileID: 8781542543671338413, guid: 1c08f57da0cd0414c85f64b373431921,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8781542543671338413, guid: 1c08f57da0cd0414c85f64b373431921,
         type: 3}
@@ -5931,6 +6116,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8781542543671338413, guid: 1c08f57da0cd0414c85f64b373431921,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8781542543671338413, guid: 1c08f57da0cd0414c85f64b373431921,
+        type: 3}
       propertyPath: singleChannelMode
       value: 1
       objectReference: {fileID: 0}
@@ -6074,6 +6264,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7660880176422083061, guid: 8bb1407f1f0e2cc48b9bbf35ca1951a6,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7660880176422083061, guid: 8bb1407f1f0e2cc48b9bbf35ca1951a6,
+        type: 3}
       propertyPath: useLegacySectorMode
       value: 1
       objectReference: {fileID: 0}
@@ -6180,6 +6375,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7506158748614765239, guid: 6b906c7cc969ac346a656210549c02c7,
         type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7506158748614765239, guid: 6b906c7cc969ac346a656210549c02c7,
+        type: 3}
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 7506158748614765239, guid: 6b906c7cc969ac346a656210549c02c7,
@@ -6259,6 +6459,11 @@ PrefabInstance:
         type: 3}
       propertyPath: lightColorTint.r
       value: 1.4980392
+      objectReference: {fileID: 0}
+    - target: {fileID: -5868383465523654329, guid: 88bee1a0ddf090d4bb0721b30240c949,
+        type: 3}
+      propertyPath: nineUniverseMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -5868383465523654329, guid: 88bee1a0ddf090d4bb0721b30240c949,
         type: 3}

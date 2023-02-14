@@ -296,7 +296,7 @@ v2f vert (appdata v)
 
 
 	uint dmx = getDMXChannel();
-	float oscConeWidth = getOSCConeWidth(dmx);
+	float oscConeWidth = getDMXConeWidth(dmx);
 	float oscPanValue = GetPanValue(dmx);
 	float oscTiltValue = GetTiltValue(dmx);
 	v.vertex = CalculateConeWidth(v, v.vertex, oscConeWidth, dmx);
@@ -391,16 +391,16 @@ v2f vert (appdata v)
 		//o.viewDir = normalize(mul(UNITY_MATRIX_MV, v.vertex).xyz); // get normalized view dir
 		o.viewDir = normalize(UnityObjectToViewPos(v.vertex.xyz));
 		o.viewDir /= o.viewDir.z; // rescale vector so z is 1.0
-		//GET OSC/DMX VALUES
-		o.intensityStrobeWidth = float3(GetOSCIntensity(dmx, 1.0), GetStrobeOutput(dmx), oscConeWidth);
+		//GET DMX/DMX VALUES
+		o.intensityStrobeWidth = float3(GetDMXIntensity(dmx, 1.0), GetStrobeOutput(dmx), oscConeWidth);
 		#ifdef WASH
 			float spinSpeed = 0.0;
 		#else
 			float spinSpeed = getGoboSpinSpeed(dmx);
 		#endif
-		o.goboPlusSpinPanTilt = float4(getOSCGoboSelection(dmx), spinSpeed, oscPanValue, oscTiltValue);
-		o.rgbColor = GetOSCColor(dmx);
-		if(((all(o.rgbColor <= float4(0.01,0.01,0.01,1)) || o.intensityStrobeWidth.x <= 0.01) && isOSC() == 1) || getGlobalIntensity() <= 0.005 || getFinalIntensity() <= 0.005 || all(o.emissionColor <= float4(0.005, 0.005, 0.005, 1.0)))
+		o.goboPlusSpinPanTilt = float4(getDMXGoboSelection(dmx), spinSpeed, oscPanValue, oscTiltValue);
+		o.rgbColor = GetDMXColor(dmx);
+		if(((all(o.rgbColor <= float4(0.01,0.01,0.01,1)) || o.intensityStrobeWidth.x <= 0.01) && isDMX() == 1) || getGlobalIntensity() <= 0.005 || getFinalIntensity() <= 0.005 || all(o.emissionColor <= float4(0.005, 0.005, 0.005, 1.0)))
 		{
 			v.vertex = float4(0,0,0,0);
 			o.pos = UnityObjectToClipPos(v.vertex);
@@ -443,15 +443,15 @@ v2f vert (appdata v)
 
 		//o.tan = tangent;
 		//o.norm = worldNormal;
-		//GETTING DATA FROM OSC TEXTURE
-		o.intensityStrobeGOBOSpinSpeed = float4(GetOSCIntensity(dmx, 1.0),GetStrobeOutput(dmx), getGoboSpinSpeed(dmx), getOSCGoboSelection(dmx));
-		o.intensityStrobeGOBOSpinSpeed.x = isOSC() == 1 ? o.intensityStrobeGOBOSpinSpeed.x : 1.0;
+		//GETTING DATA FROM DMX TEXTURE
+		o.intensityStrobeGOBOSpinSpeed = float4(GetDMXIntensity(dmx, 1.0),GetStrobeOutput(dmx), getGoboSpinSpeed(dmx), getDMXGoboSelection(dmx));
+		o.intensityStrobeGOBOSpinSpeed.x = isDMX() == 1 ? o.intensityStrobeGOBOSpinSpeed.x : 1.0;
 		#if !defined(WASH)
-		uint gobo = isOSC() > 0 ? ceil(o.intensityStrobeGOBOSpinSpeed.w) : instancedGOBOSelection();
+		uint gobo = isDMX() > 0 ? ceil(o.intensityStrobeGOBOSpinSpeed.w) : instancedGOBOSelection();
 		o.stripeInfo = GetStripeInfo(gobo);
 		#endif
-		o.rgbColor = GetOSCColor(dmx);
-		if(((all(o.rgbColor <= float4(0.005,0.005,0.005,1)) || o.intensityStrobeGOBOSpinSpeed.x <= 0.01) && isOSC() == 1) || getGlobalIntensity() <= 0.005 || getFinalIntensity() <= 0.005)
+		o.rgbColor = GetDMXColor(dmx);
+		if(((all(o.rgbColor <= float4(0.005,0.005,0.005,1)) || o.intensityStrobeGOBOSpinSpeed.x <= 0.01) && isDMX() == 1) || getGlobalIntensity() <= 0.005 || getFinalIntensity() <= 0.005)
 		{
 			v.vertex = float4(0,0,0,0);
 			o.pos = UnityObjectToClipPos(v.vertex);
@@ -470,8 +470,8 @@ v2f vert (appdata v)
     o.worldPos = mul(unity_ObjectToWorld, v.vertex);
     o.objPos = v.vertex;
     o.objNormal = v.normal;
-	o.intensityStrobe = float2(GetOSCIntensity(dmx, 1.0),GetStrobeOutput(dmx));
-	o.rgbColor = GetOSCColor(dmx);
+	o.intensityStrobe = float2(GetDMXIntensity(dmx, 1.0),GetStrobeOutput(dmx));
+	o.rgbColor = GetDMXColor(dmx);
 	o.btn[0] = bitangent;
     o.btn[1] = tangent;
     o.btn[2] = worldNormal;

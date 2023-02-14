@@ -23,6 +23,14 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DMXGridRenderTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DMXTexture:
+        m_Texture: {fileID: 8400000, guid: 87c3021d20ea2004cad2ca0d2dd14d07, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -70,13 +78,16 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EnableCompatibilityMode: 0
+    - _EnableDMX: 0
     - _EnableLegacyGlobalMovementSpeedChannel: 0
     - _EnableOSC: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _MaximumSmoothnessDMX: 0
     - _MaximumSmoothnessOSC: 0
     - _Metallic: 0
+    - _MinimumSmoothnessDMX: 0
     - _MinimumSmoothnessOSC: 0
     - _Mode: 0
     - _NineUniverseMode: 0

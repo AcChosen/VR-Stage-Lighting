@@ -3,7 +3,7 @@
     //THIS IS A TIMER, TO KEEP TRACK OF HOW MUCH TIME HAS PASSED FOR THE STROBE
     Properties
     {
-        [NoScaleOffset]_OSCGridRenderTexture("OSC Grid Render Texture (To Control Lights)", 2D) = "white" {}
+        [NoScaleOffset]_DMXTexture("DMX Grid Render Texture (To Control Lights)", 2D) = "white" {}
         _MaxStrobeFreq("Maximum Strobe Frequency", Range(1,100)) = 25
         [Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
      }
@@ -23,8 +23,8 @@
             #pragma target 4.5
 
             sampler2D   _Tex;
-            Texture2D _OSCGridRenderTexture;
-            uniform float4 _OSCGridRenderTexture_TexelSize;
+            Texture2D _DMXTexture;
+            uniform float4 _DMXTexture_TexelSize;
             SamplerState sampler_point_repeat;
             half _MaxStrobeFreq;
             uint _NineUniverseMode;
@@ -68,7 +68,7 @@
                 if (_Time.y > 1.0)
                 {
                     float4 previousFrame = tex2D(_SelfTexture2D, IN.localTexcoord.xy);
-                    float4 currentFrame = _OSCGridRenderTexture.SampleLevel(sampler_point_repeat, IN.localTexcoord.xy, 0);
+                    float4 currentFrame = _DMXTexture.SampleLevel(sampler_point_repeat, IN.localTexcoord.xy, 0);
 
                     float dt = clamp(unity_DeltaTime.x, 0.0, 2.0);
                     //T = CURRENT PHASE
@@ -110,7 +110,7 @@
 
                 else
                 {
-                    return _OSCGridRenderTexture.SampleLevel(sampler_point_repeat, IN.localTexcoord.xy, 0);
+                    return _DMXTexture.SampleLevel(sampler_point_repeat, IN.localTexcoord.xy, 0);
                 }
             }
             ENDCG

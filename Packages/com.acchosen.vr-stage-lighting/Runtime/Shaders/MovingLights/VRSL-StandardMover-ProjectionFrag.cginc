@@ -95,7 +95,7 @@ inline float CorrectedLinearEyeDepth(float z, float B)
 
         float4 ChooseProjection(float2 uv, float projChooser)
         {
-            //float chooser = IF(isOSC() == 1, selection, instancedGOBOSelection());
+            //float chooser = IF(isDMX() == 1, selection, instancedGOBOSelection());
             float2 addition = float2(0.0, 0.0);
             uv*= float2(0.25, 0.5);
             //uv.x+= getOffsetX();
@@ -121,7 +121,7 @@ inline float CorrectedLinearEyeDepth(float z, float B)
         }
         float ChooseProjectionScalar(float coneWidth, float projChooser)
         {
-            //float chooser = IF(isOSC() == 1, selection, instancedGOBOSelection());
+            //float chooser = IF(isDMX() == 1, selection, instancedGOBOSelection());
             float result = _ProjectionUVMod;
             result = IF((projChooser) == 1.0, _ProjectionUVMod, result);
             #if !defined(WASH)
@@ -155,7 +155,7 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 float gi = getGlobalIntensity();
                 float fi = getFinalIntensity();
                 float4 emissionTint = i.emissionColor;
-                if(((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobeWidth.x <= 0.01) && isOSC() == 1) || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1)))
+                if(((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobeWidth.x <= 0.01) && isDMX() == 1) || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1)))
                 {
                     return half4(0,0,0,0);
                 }
@@ -216,7 +216,7 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 }
 
                 float distanceFromOrigin = abs(distance(objectOrigin , wpos));
-                float projChooser = IF(isOSC() == 1, selection, instancedGOBOSelection());
+                float projChooser = IF(isDMX() == 1, selection, instancedGOBOSelection());
                 //Get distance of intersection from the origin in world space
                 float UVscale = 1/(0 + (distanceFromOrigin * ChooseProjectionScalar(i.intensityStrobeWidth.z, projChooser) + (0 * (distanceFromOrigin * distanceFromOrigin))));
                 distanceFromOrigin = lerp(distanceFromOrigin*0.6 +0.65,distanceFromOrigin, saturate(i.intensityStrobeWidth.z));
@@ -237,7 +237,7 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 
 
                 _SpinSpeed = IF(checkPanInvertY() == 1, -_SpinSpeed, _SpinSpeed);
-                _SpinSpeed = IF(isOSC() == 1, _SpinSpeed, _SpinSpeed);
+                _SpinSpeed = IF(isDMX() == 1, _SpinSpeed, _SpinSpeed);
 
                // uvCoords = IF(isGOBOSpin() == 1 && projChooser > 1.0, RotateUV(uvCoords, _Time.w * ( 10* _SpinSpeed)), RotateUV(uvCoords, _ProjectionRotation));
                 uvCoords = IF(isGOBOSpin() == 1 && projChooser > 1.0, RotateUV(uvCoords,  degrees(i.goboPlusSpinPanTilt.y)), RotateUV(uvCoords, _ProjectionRotation));
@@ -261,7 +261,7 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 col = lerp(col, float4(0,0,0,0), clamp(pow(distFromUVOrigin * _ProjectionFade,_ProjectionFadeCurve),0.0,1.0));
                 float strobe = IF(isStrobe() == 1, i.intensityStrobeWidth.y, 1);
 
-                col = IF(isOSC() == 1 & _EnableStaticEmissionColor == 0, col * i.rgbColor, col);
+                col = IF(isDMX() == 1 & _EnableStaticEmissionColor == 0, col * i.rgbColor, col);
                 //col = IF(_EnableStaticEmissionColor == 1, col * float4(_StaticEmission.r * _RedMultiplier,_StaticEmission.g * _GreenMultiplier,_StaticEmission.b * _BlueMultiplier,_StaticEmission.a), col);
                 
                   

@@ -9,6 +9,12 @@ using UnityEditor;
 using UdonSharpEditor;
 #endif
 
+#if UDONSHARP
+using static VRC.SDKBase.VRCShader;
+#else
+    using static UnityEngine.Shader;
+    using UnityEngine.Rendering;
+#endif
 namespace VRSL
 {
 
@@ -16,6 +22,9 @@ namespace VRSL
 
     public class VRSL_LocalUIControlPanel : UdonSharpBehaviour
     {
+
+        
+
         public Texture videoSampleTargetTexture;
 
         [Header("Materials")]
@@ -73,6 +82,7 @@ namespace VRSL
 
         [FieldChangeCallback(nameof(VolumetricNoise)), SerializeField]
         private bool _volumetricNoise = true;
+        int _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridSpinTimer, _Udon_DMXGridStrobeTimer;
 
         public bool VolumetricNoise
         {
@@ -97,6 +107,15 @@ namespace VRSL
             }
             get => _requireDepthLight;
         }
+        
+        void _SetTextureIDS()
+        {
+            _Udon_DMXGridRenderTexture = PropertyToID("_Udon_DMXGridRenderTexture");
+            _Udon_DMXGridRenderTextureMovement = PropertyToID("_Udon_DMXGridRenderTextureMovement");
+            _Udon_DMXGridSpinTimer = PropertyToID("_Udon_DMXGridSpinTimer");
+            _Udon_DMXGridStrobeTimer = PropertyToID("_Udon_DMXGridStrobeTimer");
+        }
+
 
         public void OnEnable() 
         {
@@ -104,6 +123,7 @@ namespace VRSL
         }
         void Start()
         {
+            _SetTextureIDS();
             _CheckDepthLightStatus();
             _SetFinalIntensity();
             _SetFixtureIntensity();
@@ -161,6 +181,38 @@ namespace VRSL
             foreach(CustomRenderTexture rt in rtArray)
             {
                 rt.updateMode = CustomRenderTextureUpdateMode.Realtime;
+                if(rt.name.Contains("Color"))
+                {
+                    #if UDONSHARP
+                    VRCShader.SetGlobalTexture(_Udon_DMXGridRenderTexture, rt);
+                    #else
+                    Shader.SetGlobalTexture(_Udon_DMXGridRenderTexture, rt, RenderTextureSubElement.Default);
+                    #endif
+                }
+                else if(rt.name.Contains("Movement"))
+                {
+                    #if UDONSHARP
+                    VRCShader.SetGlobalTexture(_Udon_DMXGridRenderTextureMovement, rt);
+                    #else
+                    Shader.SetGlobalTexture(_Udon_DMXGridRenderTextureMovement, rt, RenderTextureSubElement.Default);
+                    #endif
+                }
+                else if(rt.name.Contains("Spin"))
+                {
+                    #if UDONSHARP
+                    VRCShader.SetGlobalTexture(_Udon_DMXGridSpinTimer, rt);
+                    #else
+                    Shader.SetGlobalTexture(_Udon_DMXGridSpinTimer, rt, RenderTextureSubElement.Default);
+                    #endif
+                }
+                else if(rt.name.Contains("Strobe"))
+                {
+                    #if UDONSHARP
+                    VRCShader.SetGlobalTexture(_Udon_DMXGridStrobeTimer, rt);
+                    #else
+                    Shader.SetGlobalTexture(_Udon_DMXGridStrobeTimer, rt, RenderTextureSubElement.Default);
+                    #endif
+                }
             }
         }
         void DisableCRTS(CustomRenderTexture[] rtArray)

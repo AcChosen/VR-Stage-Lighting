@@ -4,7 +4,7 @@
     {
         //[Header (INSTANCED PROPERITES)]
 		 _Sector ("DMX Fixture Number/Sector (Per 13 Channels)", Int) = 0
-        [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+        [Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
         [Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
         [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
          [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
@@ -21,7 +21,7 @@
         _CurveMod ("Light Intensity Curve Modifier", Range (-3,8)) = 5.0
        // _EmissionMask ("Emission Mask", 2D) = "white" {}
         _FixtureMaxIntensity ("Maximum Light Intensity",Range (0,15)) = 1
-		[NoScaleOffset] _OSCGridRenderTextureRAW("OSC Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridRenderTexture("DMX Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
     }
     SubShader
     {
@@ -50,11 +50,11 @@
          #include "../Shared/VRSL-DMXFunctions.cginc"
         // float GetTextureSampleScrollValue(uint dmx)
         // {
-        //     return getValueAtCoords(0.960, standardSampleYAxis, dmx, _OSCGridRenderTextureRAW); 
+        //     return getValueAtCoords(0.960, standardSampleYAxis, dmx, _Udon_DMXGridRenderTexture); 
         // }
             float GetChannelIntensity(uint DMXChannel)
             {
-                float value = getValueAtCoords(DMXChannel, _OSCGridRenderTextureRAW);
+                float value = getValueAtCoords(DMXChannel, _Udon_DMXGridRenderTexture);
                 value = IF(value <= 0.1, 0.0, value);
                 return value;
             }
@@ -65,13 +65,13 @@
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             uint dmx = getDMXChannel();
-            float4 OSCcol = float4(0,0,0,0);
-            float4 col = IF(isOSC() == 1, GetChannelIntensity(dmx) * getEmissionColor(), getEmissionColor());
+            float4 DMXcol = float4(0,0,0,0);
+            float4 col = IF(isDMX() == 1, GetChannelIntensity(dmx) * getEmissionColor(), getEmissionColor());
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
             half4 e = col;
             o.Albedo = c.rgb;
             o.Normal = UnpackNormal (tex2D (_NormalMap, IN.uv_NormalMap));
-            //e = IF(isOSC() == 1,lerp(half4(-_CurveMod,-_CurveMod,-_CurveMod,1), e, pow(GetOSCIntensity(dmx, 1.0), 1.0)), e);
+            //e = IF(isDMX() == 1,lerp(half4(-_CurveMod,-_CurveMod,-_CurveMod,1), e, pow(GetDMXIntensity(dmx, 1.0), 1.0)), e);
             e = clamp(e, half4(0,0,0,1), half4(_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,1));
             float2 maskUVs = float2(IN.uv_MainTex.x + (_Time.y * _ScrollIncrement), IN.uv_MainTex.y);
             float mask = IF(IN.uv_MainTex.y > 0.5, 1, 0);

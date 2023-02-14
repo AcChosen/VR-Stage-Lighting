@@ -7,8 +7,8 @@
 
          [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
          [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
-         [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
-         [NoScaleOffset] _OSCGridRenderTextureRAW("OSC Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
+         [Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
+        //  [NoScaleOffset] _Udon_DMXGridRenderTexture("DMX Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
          _GlobalIntensity("Global Intensity", Range(0,1)) = 1
          _FinalIntensity("Final Intensity", Range(0,1)) = 1
          _UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
@@ -113,8 +113,8 @@
                 // pack correction factor into direction w component to save space
                 o.worldDirection.w = dot(o.vertex, CalculateFrustumCorrection());
                 uint dmx = getDMXChannel();
-                o.dmxIntensity = IF(_EnableCompatibilityMode == 1, float2(dmx, getValueAtCoords(dmx, _OSCGridRenderTextureRAW)), float2(dmx, getValueAtCoords(dmx, _OSCGridRenderTextureRAW)));
-                if(o.dmxIntensity.y <= 0.05 && _EnableOSC == 1)
+                o.dmxIntensity = IF(_EnableCompatibilityMode == 1, float2(dmx, getValueAtCoords(dmx, _Udon_DMXGridRenderTexture)), float2(dmx, getValueAtCoords(dmx, _Udon_DMXGridRenderTexture)));
+                if(o.dmxIntensity.y <= 0.05 && _EnableDMX == 1)
                 {
                     v.vertex = float4(0,0,0,0);
                     o.vertex = UnityObjectToClipPos(v.vertex);
@@ -128,7 +128,7 @@
 
              fixed4 frag(v2f i) : SV_Target
              {
-                if(i.dmxIntensity.y <= 0.05 && _EnableOSC == 1)
+                if(i.dmxIntensity.y <= 0.05 && _EnableDMX == 1)
                 {
                     return half4(0,0,0,0);
                 }
@@ -154,7 +154,7 @@
                 projPos = Rotation(float4(projPos, 0)).xyz;
                 float4 col = (texCUBE (_Cube, projPos));
                 col = col *(_Emission * (4*UVscale));
-                col = IF(_EnableOSC == 1, col * i.dmxIntensity.y, col);
+                col = IF(_EnableDMX == 1, col * i.dmxIntensity.y, col);
                 col = (col * _Multiplier)*((col * getGlobalIntensity()) * getFinalIntensity());
                 col = col * _UniversalIntensity;
                 return col;

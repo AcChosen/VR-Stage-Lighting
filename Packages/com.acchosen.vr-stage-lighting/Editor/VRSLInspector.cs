@@ -15,12 +15,13 @@ public class VRSLInspector : ShaderGUI
                                 BindingFlags.Static;
     MaterialProperty _DMXChannel = null;
     MaterialProperty _NineUniverseMode = null;
-    MaterialProperty _EnableOSC = null;
+    MaterialProperty _EnableDMX = null;
     MaterialProperty _EnableExtraChannels = null;
-    MaterialProperty _OSCGridRenderTextureRAW = null;
-    MaterialProperty _OSCGridRenderTexture = null;
-    MaterialProperty _OSCGridStrobeTimer = null;
-    MaterialProperty _OSCGridSpinTimer = null;
+    // MaterialProperty _Udon_DMXGridRenderTextureMovement = null;
+    // MaterialProperty _Udon_DMXGridRenderTexture = null;
+    // MaterialProperty _Udon_DMXGridStrobeTimer = null;
+    // MaterialProperty _Udon_DMXGridSpinTimer = null;
+    MaterialProperty  _DMXTexture = null;
     MaterialProperty _UseRawGrid = null;
     MaterialProperty _EnableCompatibilityMode = null;
     MaterialProperty _EnableVerticalMode = null;
@@ -162,8 +163,8 @@ public class VRSLInspector : ShaderGUI
 
     //Interpolation Render Texture
     MaterialProperty _SmoothValue = null;
-    MaterialProperty _MinimumSmoothnessOSC = null;
-    MaterialProperty _MaximumSmoothnessOSC = null;
+    MaterialProperty _MinimumSmoothnessDMX = null;
+    MaterialProperty _MaximumSmoothnessDMX = null;
 
     //Strobe RenderTexture
     MaterialProperty _MaxStrobeFreq = null;
@@ -356,7 +357,7 @@ public class VRSLInspector : ShaderGUI
                 GUILayout.Space(5);
                 EditorGUILayout.HelpBox("''Sector'' and ''Enable DMX'' are usually overridden by their corresponding Udon Script. \nAdjust these at your own risk.", MessageType.Info,true);
                 EditorGUI.indentLevel++;
-                matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
+                matEditor.ShaderProperty(_EnableDMX, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
                 matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
                 matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
@@ -367,9 +368,9 @@ public class VRSLInspector : ShaderGUI
                 EditorGUILayout.HelpBox("These are the render texture grids used to read DMX signals from a video panel.", MessageType.None,true);
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_UseRawGrid, new GUIContent("Use Seperate Grid for Light Intensity and Color", "Use this to switch to the normal grid for light/color if smooothed is too slow"));
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid", "The DMX Render Texture to read from for color and intensity. Slightly smoothed."),_OSCGridRenderTextureRAW);
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Smoothed", "DMX Render Texture smoothed out by a custom render texture."),_OSCGridRenderTexture);
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Strobe Timer", "DMX Grid with strobe timings embedded."),_OSCGridStrobeTimer);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid", "The DMX Render Texture to read from for color and intensity. Slightly smoothed."),_Udon_DMXGridRenderTexture);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Smoothed", "DMX Render Texture smoothed out by a custom render texture."),_Udon_DMXGridRenderTextureMovement);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Strobe Timer", "DMX Grid with strobe timings embedded."),_Udon_DMXGridStrobeTimer);
                 EditorGUI.indentLevel--;
                 GUILayout.Space(5);
             }
@@ -459,7 +460,7 @@ public class VRSLInspector : ShaderGUI
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
                 matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
-                matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
+                matEditor.ShaderProperty(_EnableDMX, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
                 matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
                 matEditor.ShaderProperty(_DMXChannel, new GUIContent("DMX Channel","Chooses the DMX Address to start this fixture at."));
                 EditorGUI.indentLevel--;   
@@ -467,9 +468,9 @@ public class VRSLInspector : ShaderGUI
                 EditorGUILayout.HelpBox("These are the render texture grids used to read DMX signals from a video panel.", MessageType.None,true);
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_UseRawGrid, new GUIContent("Use Seperate Grid for Light Intensity and Color", "Use this to switch to the normal grid for light/color if smooothed is too slow"));
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid", "The DMX Render Texture to read from for color and intensity. Slightly smoothed."),_OSCGridRenderTextureRAW);
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Smoothed", "DMX Render Texture smoothed out by a custom render texture."),_OSCGridRenderTexture);
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Strobe Timer", "DMX Grid with strobe timings embedded."),_OSCGridStrobeTimer);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid", "The DMX Render Texture to read from for color and intensity. Slightly smoothed."),_Udon_DMXGridRenderTexture);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Smoothed", "DMX Render Texture smoothed out by a custom render texture."),_Udon_DMXGridRenderTextureMovement);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Strobe Timer", "DMX Grid with strobe timings embedded."),_Udon_DMXGridStrobeTimer);
                 EditorGUI.indentLevel--;
                 GUILayout.Space(5);
             }
@@ -534,7 +535,7 @@ public class VRSLInspector : ShaderGUI
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
                 matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
-                matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
+                matEditor.ShaderProperty(_EnableDMX, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
                 matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
                 matEditor.ShaderProperty(_DMXChannel, new GUIContent("DMX Channel","Chooses the DMX Address to start this fixture at."));
                 EditorGUI.indentLevel--;   
@@ -543,10 +544,10 @@ public class VRSLInspector : ShaderGUI
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_UseRawGrid, new GUIContent("Use Seperate Grid for Light Intensity and Color", "Use this to switch to the normal grid for light/color if smooothed is too slow"));
                 matEditor.ShaderProperty(_LegacyGoboRange, new GUIContent("Enable Legacy Gobo Range", "Use Only the first 6 gobos instead of all. This is for legacy content where only 6 gobos were originally supported and the channel range was different."));
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid", "The DMX Render Texture to read from for color and intensity. Slightly smoothed."),_OSCGridRenderTextureRAW);
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Smoothed", "DMX Render Texture smoothed out heavily by a custom render texture. Used for movement."),_OSCGridRenderTexture);
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Strobe Timer", "DMX Grid with strobe timings embedded."),_OSCGridStrobeTimer);
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Spin Timer", "DMX Grid with GOBO Spin timings embedded"),_OSCGridSpinTimer);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid", "The DMX Render Texture to read from for color and intensity. Slightly smoothed."),_Udon_DMXGridRenderTexture);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Smoothed", "DMX Render Texture smoothed out heavily by a custom render texture. Used for movement."),_Udon_DMXGridRenderTextureMovement);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Strobe Timer", "DMX Grid with strobe timings embedded."),_Udon_DMXGridStrobeTimer);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Spin Timer", "DMX Grid with GOBO Spin timings embedded"),_Udon_DMXGridSpinTimer);
                 EditorGUI.indentLevel--;
                 GUILayout.Space(5);
             }
@@ -678,7 +679,7 @@ public class VRSLInspector : ShaderGUI
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
                 matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
-                matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
+                matEditor.ShaderProperty(_EnableDMX, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
                 matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
                 matEditor.ShaderProperty(_DMXChannel, new GUIContent("DMX Channel","Chooses the DMX Address to start this fixture at."));
                 matEditor.ShaderProperty(_EnableExtraChannels, new GUIContent("Enable Cone Length DMX Controls","Enable this if you want to be able to extend the lenghth of the cone on Channel 2!"));
@@ -687,10 +688,10 @@ public class VRSLInspector : ShaderGUI
                 EditorGUILayout.HelpBox("These are the render texture grids used to read DMX signals from a video panel.", MessageType.None,true);
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_UseRawGrid, new GUIContent("Use Seperate Grid for Light Intensity and Color", "Use this to switch to the normal grid for light/color if smooothed is too slow"));
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid", "The DMX Render Texture to read from for color and intensity. Slightly smoothed."),_OSCGridRenderTextureRAW);
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Smoothed", "DMX Render Texture smoothed out heavily by a custom render texture. Used for movement."),_OSCGridRenderTexture);
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Strobe Timer", "DMX Grid with strobe timings embedded."),_OSCGridStrobeTimer);
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Spin Timer", "DMX Grid with GOBO Spin timings embedded"),_OSCGridSpinTimer);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid", "The DMX Render Texture to read from for color and intensity. Slightly smoothed."),_Udon_DMXGridRenderTexture);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Smoothed", "DMX Render Texture smoothed out heavily by a custom render texture. Used for movement."),_Udon_DMXGridRenderTextureMovement);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Strobe Timer", "DMX Grid with strobe timings embedded."),_Udon_DMXGridStrobeTimer);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Spin Timer", "DMX Grid with GOBO Spin timings embedded"),_Udon_DMXGridSpinTimer);
                 EditorGUI.indentLevel--;
                 GUILayout.Space(5);
             }
@@ -845,7 +846,7 @@ public class VRSLInspector : ShaderGUI
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
                 matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
-                matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
+                matEditor.ShaderProperty(_EnableDMX, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
                 matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
                 matEditor.ShaderProperty(_DMXChannel, new GUIContent("DMX Channel","Chooses the DMX Address to start this fixture at."));
                 EditorGUI.indentLevel--;   
@@ -853,9 +854,9 @@ public class VRSLInspector : ShaderGUI
                 EditorGUILayout.HelpBox("These are the render texture grids used to read DMX signals from a video panel.", MessageType.None,true);
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_UseRawGrid, new GUIContent("Use Seperate Grid for Light Intensity and Color", "Use this to switch to the normal grid for light/color if smooothed is too slow"));
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid", "The DMX Render Texture to read from for color and intensity. Slightly smoothed."),_OSCGridRenderTextureRAW);
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Smoothed", "DMX Render Texture smoothed out by a custom render texture."),_OSCGridRenderTexture);
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Strobe Timer", "DMX Grid with strobe timings embedded."),_OSCGridStrobeTimer);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid", "The DMX Render Texture to read from for color and intensity. Slightly smoothed."),_Udon_DMXGridRenderTexture);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Smoothed", "DMX Render Texture smoothed out by a custom render texture."),_Udon_DMXGridRenderTextureMovement);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Strobe Timer", "DMX Grid with strobe timings embedded."),_Udon_DMXGridStrobeTimer);
                 EditorGUI.indentLevel--;
                 GUILayout.Space(5);
             }
@@ -953,11 +954,11 @@ public class VRSLInspector : ShaderGUI
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
                 matEditor.ShaderProperty(_EnableVerticalMode, new GUIContent("Enable Vertical Mode", "Switches this material to read from the vertical grid instead of the horizontal when not in legacy mode."));
-                matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
+                matEditor.ShaderProperty(_EnableDMX, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
                 matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
                 matEditor.ShaderProperty(_DMXChannel, new GUIContent("DMX Channel","Chooses the DMX Address to start this fixture at."));
                 VRSLStyles.PartingLine();
-                matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid", "The DMX Render Texture to read from for color and intensity. Slightly smoothed."),_OSCGridRenderTextureRAW);
+                // matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid", "The DMX Render Texture to read from for color and intensity. Slightly smoothed."),_Udon_DMXGridRenderTexture);
                 GUILayout.Space(5);
                 EditorGUI.indentLevel--;
                 GUILayout.Space(5);
@@ -999,13 +1000,13 @@ public class VRSLInspector : ShaderGUI
         EditorGUI.indentLevel++;
         matEditor.ShaderProperty(_EnableLegacyGlobalMovementSpeedChannel, new GUIContent("Enable Legacy Global Movement Speed", "Enables the use of the old Global Movement Speed Channel (DMX Channel 511) instead of having each sector have its own movement speed control. /nThis will always be true when compatibility mode is enabled"));
         matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
-        matEditor.ShaderProperty(_EnableOSC, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
+        matEditor.ShaderProperty(_EnableDMX, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));
         matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
         matEditor.ShaderProperty(_DMXChannel, new GUIContent("Sector","for legacy global movement speed"));
-        matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Raw", "The raw DMX Render texture from the camera."),_OSCGridRenderTexture);
+        matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Raw", "The raw DMX Render texture from the camera."),_DMXTexture);
         matEditor.ShaderProperty(_SmoothValue, new GUIContent("Smoothness Level", "Changes how much interpolated smoothing is applied to the texture. The closer to 0, the more smoothing applied, the closer to 1, the less smoothing applied. \nThis value is usually controlled by a seperate DMX signal to control the movement speed of the movers. "));
-        matEditor.ShaderProperty(_MinimumSmoothnessOSC, new GUIContent("Minimum Smoothness Value", "Sets the minimum amount of smoothing applied to the texture by default."));
-        matEditor.ShaderProperty(_MaximumSmoothnessOSC, new GUIContent("Maximum Smoothness Value", "Sets the maximum amount of smoothing applied to the texture by default."));
+        matEditor.ShaderProperty(_MinimumSmoothnessDMX, new GUIContent("Minimum Smoothness Value", "Sets the minimum amount of smoothing applied to the texture by default."));
+        matEditor.ShaderProperty(_MaximumSmoothnessDMX, new GUIContent("Maximum Smoothness Value", "Sets the maximum amount of smoothing applied to the texture by default."));
         matEditor.RenderQueueField();
         EditorGUI.indentLevel--;
         GUILayout.Space(5);
@@ -1014,7 +1015,7 @@ public class VRSLInspector : ShaderGUI
     {
         GUILayout.Space(5);
         EditorGUI.indentLevel++;
-        matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Raw", "The raw DMX Render texture from the camera."),_OSCGridRenderTexture);
+        matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Raw", "The raw DMX Render texture from the camera."),_DMXTexture);
         matEditor.ShaderProperty(_MaxStrobeFreq, new GUIContent("Maximum Strobe Frequency", "The maximum strobing frequency of all fixtures."));
         matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
         matEditor.RenderQueueField();
@@ -1026,7 +1027,7 @@ public class VRSLInspector : ShaderGUI
     {
         GUILayout.Space(5);
         EditorGUI.indentLevel++;
-        matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Raw", "The raw DMX Render texture from the camera."),_OSCGridRenderTexture);
+        matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Raw", "The raw DMX Render texture from the camera."),_DMXTexture);
         matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
         matEditor.RenderQueueField();
         EditorGUI.indentLevel--;

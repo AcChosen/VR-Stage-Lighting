@@ -2,6 +2,9 @@
 {
     Properties
     {
+        [Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
+        [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
+        [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
         _DMXChannel ("DMX Channel Number)", Int) = 0
         [HideInInspector][Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
         _UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
@@ -25,12 +28,12 @@
         _InternalShine ("Internal Shine Strength", Range(0,5)) = 1
          _InternalShineLength ("Internal Shine Length", Range(0.001,500)) = 12.1
         _Scroll ("Scroll", Range(-1, 1)) = 1
-        [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+        _ScrollOffset ("Scroll Offset", Range(0.00001, 0.00003)) = 0.00001
         
-        [NoScaleOffset] _OSCGridRenderTextureRAW("OSC Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
-		[NoScaleOffset] _OSCGridRenderTexture("OSC Grid Render Texture (To Control Lights)", 2D) = "white" {}
-        [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
-        [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
+        
+        // [NoScaleOffset] _Udon_DMXGridRenderTexture("DMX Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridRenderTextureMovement("DMX Grid Render Texture (To Control Lights)", 2D) = "white" {}
+
 
     }
     SubShader
@@ -78,9 +81,9 @@
                 float4 vertex : SV_POSITION;
                 float4 worldPos : TEXCOORD3;
                 float3 viewDir : TEXCOORD4;
-                float4 panTiltLengthWidth : TEXCOORD5; //ch 1,2,3,4
-                float4 flatnessBeamCountSpinThickness : TEXCOORD6; //ch 5,6,7,12
-                float4 rgbIntensity : TEXCOORD7;// ch 8,9,10,11
+                nointerpolation float4 panTiltLengthWidth : TEXCOORD5; //ch 1,2,3,4
+                nointerpolation float4 flatnessBeamCountSpinThickness : TEXCOORD6; //ch 5,6,7,12
+                nointerpolation float4 rgbIntensity : TEXCOORD7;// ch 8,9,10,11
                 UNITY_VERTEX_INPUT_INSTANCE_ID
                 UNITY_VERTEX_OUTPUT_STEREO
             };
@@ -89,9 +92,10 @@
             float4 _MainTex_ST, _MainColor;
             half _XConeFlatness, _ZRotation, _UniversalIntensity;
             half _EndFade, _FadeStrength, _InternalShine, _LaserSoftening, _InternalShineLength;
+            float _ScrollOffset;
             uint _EnableCompatibilityMode, _EnableVerticalMode;
-            sampler2D _OSCGridRenderTexture, _OSCGridRenderTextureRAW;
-            uniform float4 _OSCGridRenderTextureRAW_TexelSize;
+            sampler2D _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridSpinTimer;
+            uniform float4 _Udon_DMXGridRenderTexture_TexelSize;
             uniform const half compatSampleYAxis = 0.019231;
             uniform const half standardSampleYAxis = 0.00762;
 
@@ -100,7 +104,7 @@
                 UNITY_DEFINE_INSTANCED_PROP(uint, _NineUniverseMode)
                 UNITY_DEFINE_INSTANCED_PROP(uint, _EnableColorTextureSample)
                 UNITY_DEFINE_INSTANCED_PROP(uint, _LaserCount)
-                UNITY_DEFINE_INSTANCED_PROP(uint, _EnableOSC)
+                UNITY_DEFINE_INSTANCED_PROP(uint, _EnableDMX)
                 UNITY_DEFINE_INSTANCED_PROP(float, _Scroll)
                 UNITY_DEFINE_INSTANCED_PROP(float, _XRotation)
                 UNITY_DEFINE_INSTANCED_PROP(float, _YRotation)
@@ -208,6 +212,14 @@
                 //LOCALROTXY IS COMBINED ROTATION
             }
 
+            float GetSpin(uint DMXChannel)
+            {
+                float status = getValueAtCoords(DMXChannel, _Udon_DMXGridRenderTexture);
+                float phase = getValueAtCoordsRaw(DMXChannel, _Udon_DMXGridSpinTimer);
+                //phase = checkPanInvertY() == 1 ? -phase : phase;
+                return status > 0.5 ? -phase : phase;
+            }
+
             v2f vert (appdata v)
             {
                 v2f o;
@@ -217,17 +229,17 @@
                 UNITY_TRANSFER_INSTANCE_ID(v, o);
 
                 uint dmx = getDMXChannel();
-                o.rgbIntensity.w = getValueAtCoords(dmx + (uint) 10, _OSCGridRenderTexture);
-                o.rgbIntensity.w = IF(isOSC() > 0, o.rgbIntensity.w, 1);
+                o.rgbIntensity.w = getValueAtCoords(dmx + (uint) 10, _Udon_DMXGridRenderTexture);
+                o.rgbIntensity.w = IF(isDMX() > 0, o.rgbIntensity.w, 1);
                 if(getGlobalIntensity() <= 0.01 || getFinalIntensity() <= 0.05 || _UniversalIntensity <= 0.05 || o.rgbIntensity.w <= 0.05)
                 {
                     o.vertex = UnityObjectToClipPos(float4(0,0,0,0));
                     return o;
                 }
-                o.panTiltLengthWidth.x = lerp(-90,90,clamp(getValueAtCoords(dmx, _OSCGridRenderTexture), 0.0,0.9999)); // ch 1
-                o.panTiltLengthWidth.y = lerp(-90,90,clamp(getValueAtCoords(dmx + (uint) 1, _OSCGridRenderTexture), 0.0,0.9999)); // ch 2
-                o.panTiltLengthWidth.z = lerp(-0.5,5,clamp(getValueAtCoords(dmx + (uint) 2, _OSCGridRenderTextureRAW), 0.0,0.9999)); // ch 3
-                o.panTiltLengthWidth.w = lerp(-3.75,20,clamp(getValueAtCoords(dmx + (uint) 3, _OSCGridRenderTextureRAW), 0.0,0.9999)); // ch 4
+                o.panTiltLengthWidth.x = lerp(-90,90,clamp(getValueAtCoords(dmx, _Udon_DMXGridRenderTextureMovement), 0.0,0.9999)); // ch 1
+                o.panTiltLengthWidth.y = lerp(-90,90,clamp(getValueAtCoords(dmx + (uint) 1, _Udon_DMXGridRenderTextureMovement), 0.0,0.9999)); // ch 2
+                o.panTiltLengthWidth.z = lerp(-0.5,5,clamp(getValueAtCoords(dmx + (uint) 2, _Udon_DMXGridRenderTexture), 0.0,0.9999)); // ch 3
+                o.panTiltLengthWidth.w = lerp(-3.75,20,clamp(getValueAtCoords(dmx + (uint) 3, _Udon_DMXGridRenderTexture), 0.0,0.9999)); // ch 4
 
 
     
@@ -242,22 +254,22 @@
                  
                 
                 //Cone Length
-                float length = IF(isOSC() > 0, o.panTiltLengthWidth.z, getConeLength());
+                float length = IF(isDMX() > 0, o.panTiltLengthWidth.z, getConeLength());
                 v.vertex.y = lerp(v.vertex.y, v.vertex.y *2, length);
                 
 
                 //Cone Width
-                float width = IF(isOSC() > 0, o.panTiltLengthWidth.w, getConeWidth());
+                float width = IF(isDMX() > 0, o.panTiltLengthWidth.w, getConeWidth());
                 float4 vert = lerp(v.vertex ,float4(v.vertex.xyz + v.normal * width, 1), v.uv2.y);
                 vert.y = v.vertex.y; //Prevent the cone from elongating when changing width.
 
                 // Cone Flatness for X and Z
-                float flatness = lerp(0,1.999,getValueAtCoords(dmx+ (uint) 4, _OSCGridRenderTextureRAW));
-                flatness = IF(isOSC() > 0, flatness, getConeFlatness());
+                float flatness = lerp(0,1.999,getValueAtCoords(dmx+ (uint) 4, _Udon_DMXGridRenderTexture));
+                flatness = IF(isDMX() > 0, flatness, getConeFlatness());
                 vert.z = lerp(vert.z, vert.z/2, flatness);
               //  vert.x = lerp(vert.x, vert.x/2, _XConeFlatness);
-                float xRot = IF(isOSC() > 0, o.panTiltLengthWidth.x, getPan());
-                float yRot = IF(isOSC() > 0, o.panTiltLengthWidth.y, getTilt());
+                float xRot = IF(isDMX() > 0, o.panTiltLengthWidth.x, getPan());
+                float yRot = IF(isDMX() > 0, o.panTiltLengthWidth.y, getTilt());
                 vert = CalculateRotations(v, vert, _ZRotation, xRot, yRot);
 
                 o.viewDir = normalize(wpos - mul(unity_ObjectToWorld, vert).xyz);
@@ -265,6 +277,16 @@
                 o.normal = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
                 o.worldPos = mul(unity_ObjectToWorld, vert);
                 o.vertex = UnityObjectToClipPos(vert);
+
+                o.flatnessBeamCountSpinThickness.x = lerp(0,1.999,getValueAtCoords(dmx+ (uint) 4, _Udon_DMXGridRenderTexture)); //5
+                o.flatnessBeamCountSpinThickness.y = lerp(4,68,getValueAtCoords(dmx+ (uint) 5, _Udon_DMXGridRenderTexture));//6
+                o.flatnessBeamCountSpinThickness.z = GetSpin(dmx+ (uint) 6) * _ScrollOffset; //7
+                o.flatnessBeamCountSpinThickness.w = lerp(0.001, 0.05,getValueAtCoords(dmx+ (uint) 11, _Udon_DMXGridRenderTexture)); //12
+                o.rgbIntensity.x = getValueAtCoords(dmx+ (uint) 7, _Udon_DMXGridRenderTexture); //8 
+                o.rgbIntensity.y = getValueAtCoords(dmx+ (uint) 8, _Udon_DMXGridRenderTexture); //9
+                o.rgbIntensity.z = getValueAtCoords(dmx+ (uint) 9, _Udon_DMXGridRenderTexture); //10
+                o.rgbIntensity.w = getValueAtCoords(dmx+ (uint) 10, _Udon_DMXGridRenderTexture); //11
+
                 return o;
             }
             
@@ -274,15 +296,8 @@
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
                 UNITY_SETUP_INSTANCE_ID(i);
                 uint dmx = getDMXChannel();
-                i.flatnessBeamCountSpinThickness.x = lerp(0,1.999,getValueAtCoords(dmx+ (uint) 4, _OSCGridRenderTextureRAW)); //5
-                i.flatnessBeamCountSpinThickness.y = lerp(4,68,getValueAtCoords(dmx+ (uint) 5, _OSCGridRenderTextureRAW));//6
-                i.flatnessBeamCountSpinThickness.z = lerp(0,1,getValueAtCoords(dmx+ (uint) 6, _OSCGridRenderTextureRAW)); //7
-                i.flatnessBeamCountSpinThickness.w = lerp(0.003, 0.1,getValueAtCoords(dmx+ (uint) 11, _OSCGridRenderTextureRAW)); //12
-                i.rgbIntensity.x = getValueAtCoords(dmx+ (uint) 7, _OSCGridRenderTextureRAW); //8 
-                i.rgbIntensity.y = getValueAtCoords(dmx+ (uint) 8, _OSCGridRenderTextureRAW); //9
-                i.rgbIntensity.z = getValueAtCoords(dmx+ (uint) 9, _OSCGridRenderTextureRAW); //10
-                i.rgbIntensity.w = getValueAtCoords(dmx+ (uint) 10, _OSCGridRenderTextureRAW); //11
-                i.rgbIntensity.w = IF(isOSC() > 0, i.rgbIntensity.w, 1);
+
+                i.rgbIntensity.w = IF(isDMX() > 0, i.rgbIntensity.w, 1);
                 if(getGlobalIntensity() <= 0.001 || getFinalIntensity() <= 0.001 || _UniversalIntensity <= 0.001 || i.rgbIntensity.w <= 0.001)
                 {
                     return half4(0,0,0,0);
@@ -293,7 +308,7 @@
                // fade = pow(fade, pow(_FadeStrength, _FadeAmt)) * fade;
                 // sample the texture
                 float4 dmxcol = float4(i.rgbIntensity.x,i.rgbIntensity.y, i.rgbIntensity.z, _MainColor.a);
-                float4 actualcolor = IF(isOSC() > 0, dmxcol *_MainColor * getEmissionColor(), _MainColor * getEmissionColor());
+                float4 actualcolor = IF(isDMX() > 0, dmxcol *_MainColor * getEmissionColor(), _MainColor * getEmissionColor());
                 float4 color = lerp(float4(0,0,0,_MainColor.a), actualcolor, getGlobalIntensity());
                 // float3 newColor = RGB2HSV(color.rgb);
                 // newColor.y -= 0.1;
@@ -308,12 +323,12 @@
                 col *= color;
 
                 //Draw Beams
-                float scroll = IF(isOSC() > 0, i.flatnessBeamCountSpinThickness.z, getScrollSpeed());
-                laserUV.x = laserUV.x += _Time.y * scroll;  
-                float beamcount = IF(isOSC() > 0, round(i.flatnessBeamCountSpinThickness.y), getLaserCount());
+                float scroll = IF(isDMX() > 0, i.flatnessBeamCountSpinThickness.z, getScrollSpeed());
+                laserUV.x += _Time.y * scroll;  
+                float beamcount = IF(isDMX() > 0, round(i.flatnessBeamCountSpinThickness.y), getLaserCount());
                 laserUV.x = frac(laserUV.x * beamcount);
                 laserUV.x = laserUV.x - 0.5;
-                float thiknes = IF(isOSC() > 0, i.flatnessBeamCountSpinThickness.w, getLaserThickness());
+                float thiknes = IF(isDMX() > 0, i.flatnessBeamCountSpinThickness.w, getLaserThickness());
                 
                 
                 // Transparency (with gradation)
@@ -352,7 +367,7 @@
                 
                 // col = col * col *;
                // float4 flatCol = col * flatEdgeMask.r;
-               float flatness = IF(isOSC() > 0, i.flatnessBeamCountSpinThickness.x, getConeFlatness());
+               float flatness = IF(isDMX() > 0, i.flatnessBeamCountSpinThickness.x, getConeFlatness());
               
                float4 flatCol = col * edgeMask;
                 col = lerp(flatCol, col, pow(((flatness/2.0) - 1.0)*-1, 0.95));

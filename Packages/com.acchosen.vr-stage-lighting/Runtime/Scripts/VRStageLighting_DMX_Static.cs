@@ -263,7 +263,7 @@ namespace VRSL
             props.SetInt("_TiltInvert", invertTilt == true ? 1 : 0);
             props.SetInt("_EnableStrobe", enableStrobe == true ? 1 : 0);
             props.SetInt("_EnableSpin", enableAutoSpin == true ? 1 : 0);
-            props.SetInt("_EnableOSC", enableDMXChannels == true ? 1 : 0);
+            props.SetInt("_EnableDMX", enableDMXChannels == true ? 1 : 0);
             props.SetInt("_ProjectionSelection", selectGOBO);
             props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
             props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
@@ -360,7 +360,7 @@ namespace VRSL
             props.SetInt("_LegacyGoboRange", legacyGoboRange == true ? 1 : 0);
             props.SetInt("_EnableStrobe", 0);
             props.SetInt("_EnableSpin", enableAutoSpin == true ? 1 : 0);
-            props.SetInt("_EnableOSC", 0);
+            props.SetInt("_EnableDMX", 0);
             props.SetInt("_ProjectionSelection", selectGOBO);
             props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
             props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);

@@ -2,19 +2,19 @@
 {
     Properties
     {
-         [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+         [Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
         _DMXChannel ("DMX Fixture Number/Sector (Per 13 Channels)", Int) = 0 
         [HideInInspector][Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
         [Toggle] _UseRawGrid("Use Raw Grid For Light Intensity", Int) = 0
-		[NoScaleOffset] _OSCGridRenderTextureRAW("OSC Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
-		[NoScaleOffset] _OSCGridRenderTexture("OSC Grid Render Texture (To Control Lights)", 2D) = "white" {}
-		[NoScaleOffset] _OSCGridStrobeTimer ("OSC Grid Render Texture (For Strobe Timings", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridRenderTexture("DMX Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridRenderTextureMovement("DMX Grid Render Texture (To Control Lights)", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridStrobeTimer("DMX Grid Render Texture (For Strobe Timings", 2D) = "white" {}
         [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
         [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
         [Toggle] _EnableDMXAlpha ("Allow Alpha to be controlled by DMX (Channel 6)", Int) = 0
        
 		[Toggle] _EnableStrobe ("Enable Strobe", Int) = 0
-		 //[HideInInspector][Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+		 //[HideInInspector][Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
 		[HideInInspector]_StrobeFreq("Strobe Frequency", Range(0,25)) = 1
 		[HideInInspector][Toggle] _EnableSpin("Enable Auto Spinning", Float) = 0  
 
@@ -86,7 +86,7 @@
             o.Emission = GetDMXEmission(IN.uv_EmissionMask);
 
 
-          // o.Emission = OSCcol;
+          // o.Emission = DMXcol;
             fixed4 ms = tex2D (_MetallicSmoothness, IN.uv_MetallicSmoothness);
 
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;

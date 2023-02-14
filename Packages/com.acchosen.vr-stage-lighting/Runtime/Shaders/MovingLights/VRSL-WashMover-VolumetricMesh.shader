@@ -14,7 +14,7 @@
 		 [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
 		 [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
 		 [Toggle] _EnableStrobe ("Enable Strobe", Int) = 0
-		 [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
+		 [Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
 		 [HideInInspector]_FixtureBaseRotationY("Mover Pan Offset (Blue + Green)", Range(-540,540)) = 0
 		 [HideInInspector]_FixtureRotationX("Mover Tilt Offset (Blue)", Range(-180,180)) = 0
 		 [HideInInspector]_ProjectionSelection ("GOBO Selection", Range(0,6)) = 0
@@ -34,8 +34,8 @@
 		_ConeLength("Cone Length", Range(1,10)) = 1
 		_MaxConeLength("Max Cone Length", Range(1,10)) = 1
 		_ConeSync ("Cone Scale Sync", Range(0,1)) = 0.2
-		// _BlockLengthX("OSC Block Base Distance X", Float) = 0.019231
-		// _BlockLengthY("OSC Block Base Distance Y", Float) = 0
+		// _BlockLengthX("DMX Block Base Distance X", Float) = 0.019231
+		// _BlockLengthY("DMX Block Base Distance Y", Float) = 0
 		[Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Source Blend mode", Float) = 2
 		[Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Destination Blend mode", Float) = 1
 		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
@@ -46,10 +46,10 @@
 
 		_FixtureRotationOrigin("Fixture Pivot Origin", Float) = (0, 0.014709, -1.02868, 0)
 		[Toggle] _UseRawGrid("Use Raw Grid For Light Intensity And Color", Int) = 0
-		[NoScaleOffset] _OSCGridRenderTextureRAW("OSC Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
-		[NoScaleOffset] _OSCGridRenderTexture("OSC Grid Render Texture (To Control Lights)", 2D) = "white" {}
-		[NoScaleOffset] _OSCGridStrobeTimer ("OSC Grid Render Texture (For Strobe Timings", 2D) = "white" {}
-		[NoScaleOffset] _OSCGridSpinTimer ("OSC Grid Render Texture (For GOBO Spin Timings", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridRenderTexture("DMX Grid Render Texture (RAW Unsmoothed)", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridRenderTextureMovement("DMX Grid Render Texture (To Control Lights)", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridStrobeTimer("DMX Grid Render Texture (For Strobe Timings", 2D) = "white" {}
+		// [NoScaleOffset] _Udon_DMXGridSpinTimer("DMX Grid Render Texture (For GOBO Spin Timings", 2D) = "white" {}
 		_MaxMinPanAngle("Max/Min Pan Angle (-x, x)", Float) = 180
 		_MaxMinTiltAngle("Max/Min Tilt Angle (-y, y)", Float) = 180
 
