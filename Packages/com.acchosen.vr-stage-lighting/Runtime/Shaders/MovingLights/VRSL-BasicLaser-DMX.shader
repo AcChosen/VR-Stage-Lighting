@@ -281,7 +281,7 @@
                 o.flatnessBeamCountSpinThickness.x = lerp(0,1.999,getValueAtCoords(dmx+ (uint) 4, _Udon_DMXGridRenderTexture)); //5
                 o.flatnessBeamCountSpinThickness.y = lerp(4,68,getValueAtCoords(dmx+ (uint) 5, _Udon_DMXGridRenderTexture));//6
                 o.flatnessBeamCountSpinThickness.z = GetSpin(dmx+ (uint) 6) * _ScrollOffset; //7
-                o.flatnessBeamCountSpinThickness.w = lerp(0.001, 0.05,getValueAtCoords(dmx+ (uint) 11, _Udon_DMXGridRenderTexture)); //12
+                o.flatnessBeamCountSpinThickness.w = lerp(0.0005, 0.05,getValueAtCoords(dmx+ (uint) 11, _Udon_DMXGridRenderTexture)); //12
                 o.rgbIntensity.x = getValueAtCoords(dmx+ (uint) 7, _Udon_DMXGridRenderTexture); //8 
                 o.rgbIntensity.y = getValueAtCoords(dmx+ (uint) 8, _Udon_DMXGridRenderTexture); //9
                 o.rgbIntensity.z = getValueAtCoords(dmx+ (uint) 9, _Udon_DMXGridRenderTexture); //10
@@ -340,7 +340,7 @@
                 float transv = pow((-i.uv2.y + 1), _EndFade) ;
                 col = col * beams;
 
-                col += pow(-laserUV.y+1,_InternalShineLength) * 3 * _InternalShine * color;
+                col += pow(-laserUV.y+1,_InternalShineLength*1.5) * _InternalShine * color;
 
                 // float beamGradCorrect = .2 / (1.-laserUV.y);
                 // col *= beamGradCorrect;

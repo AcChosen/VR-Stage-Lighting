@@ -147,6 +147,7 @@ namespace VRSL
 
         private void Update()
         {
+            try{
             Color[] data = new Color[256];
             int index = 0;
             if (_IsVertical)
@@ -181,6 +182,13 @@ namespace VRSL
                 }
             }
             _DataBuffer.Apply();
+            }
+            catch(Exception e)
+            {
+                Debug.LogError("GridReader failed to run.");
+                Debug.LogError(e.Message);
+                gameObject.SetActive(false);
+            }
         }
 
     }
