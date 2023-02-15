@@ -1,4 +1,16 @@
 # VR Stage Lighting - Changelog
+
+## v2.3.0 - February 15th, 2023
+### New Features
+- All DMX Grid textures are now global textures set with VRCShader.SetGlobalTexture(), which gives all shaders in a scene/instance access to all 4 DMX Grid textures at all times. This allows for custom VRSL shaders to be created without having to manage a bunch of render textures in the material's inspector. This also allows avatar shaders to have a wider range of channels to read from and allows a much more performant way of getting the textures to the avatars without relying on a grabpass.
+- Avatar testing scenes have been created to test your VRSL DMX compatible avatar using pre-recorded video of arbitrary 5-channel dmx data. This should make it easier to test things without having to run a full DMX setup.
+
+### Changes and Bugfixes
+- The UsharpVideo DMX reader used a version of standard shader on the reading screen that was slightly affected by enviormental lighting, which sometimes affected the data the camera was trying to read. This has been fixed by replacing the shader with a properly unlit one.
+
+
+
+
 ## v2.2.0 - November 30th, 2022
 ### New Features
 - Created this changelog!
