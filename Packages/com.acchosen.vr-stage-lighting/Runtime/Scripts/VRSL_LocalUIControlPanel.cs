@@ -258,6 +258,31 @@ namespace VRSL
             }
         }
 
+        public void _SetDMXHorizontal()
+        {
+            if(isUsingDMX)
+            {
+                DMXMode = HORIZONTAL_MODE;
+                _CheckDMX();
+            }
+        }
+        public void _SetDMXVertical()
+        {
+            if(isUsingDMX)
+            {
+                DMXMode = VERTICAL_MODE;
+                _CheckDMX();
+            }
+        }
+        public void _SetDMXLegacy()
+        {
+            if(isUsingDMX)
+            {
+                DMXMode = LEGACY_MODE;
+                _CheckDMX();
+            }
+        }
+
 
         public void _CheckAudioLink()
         {
