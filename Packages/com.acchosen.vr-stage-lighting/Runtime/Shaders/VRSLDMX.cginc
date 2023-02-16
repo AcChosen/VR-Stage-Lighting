@@ -56,6 +56,11 @@ uint GetDMXChannel()
     return (uint) round(UNITY_ACCESS_INSTANCED_PROP(Props, _DMXChannel));  
 }
 
+int ConvertToRawDMXChannel(int chan, int universe)
+{
+    return abs(chan + ((universe-1) * 512) + ((universe-1) * 8));
+}
+
 uint getNineUniverseMode()
 {
     return (uint) UNITY_ACCESS_INSTANCED_PROP(Props, _NineUniverseMode);
