@@ -15,14 +15,14 @@ sampler2D _Udon_DMXGridStrobeTimer, _Udon_DMXGridSpinTimer;
 uniform float4 _Udon_DMXGridStrobeTimer_TexelSize, _Udon_DMXGridSpinTimer_TexelSize;
 uint _EnableCompatibilityMode, _EnableVerticalMode;
 
-float invLerp(float from, float to, float value)
+float VRSL_invLerp(float from, float to, float value)
 {
   return (value - from) / (to - from);
 }
 
-float remap(float origFrom, float origTo, float targetFrom, float targetTo, float value)
+float VRSL_remap(float origFrom, float origTo, float targetFrom, float targetTo, float value)
 {
-  float rel = invLerp(origFrom, origTo, value);
+  float rel = VRSL_invLerp(origFrom, origTo, value);
   return lerp(targetFrom, targetTo, rel);
 }
 
