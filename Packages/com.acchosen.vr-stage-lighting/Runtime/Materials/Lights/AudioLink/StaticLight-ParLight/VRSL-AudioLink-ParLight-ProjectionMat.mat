@@ -13,8 +13,9 @@ Material:
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 3001
+  stringTagMap:
+    RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -89,6 +90,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FinalStrobeFreq: 0
+    - _AlphaProjectionIntensity: 0.5
+    - _AlphaToCoverage: 0
     - _Band: 0
     - _BandMultiplier: 1
     - _BlendDst: 1
@@ -99,6 +102,8 @@ Material:
     - _BlueMultiplier: 1
     - _BulbMaxIntensity: 1
     - _BumpScale: 1
+    - _ChannelMode: 0
+    - _ClippingThreshold: 0.05
     - _ConeWidth: 0
     - _Delay: 0
     - _DistFade: 0.7
@@ -108,6 +113,7 @@ Material:
     - _EnableOSC: 0
     - _EnableSpin: 0
     - _EnableStrobe: 0
+    - _EnableThemeColorSampling: 0
     - _Fade: 0.83
     - _FadeAmt: 0.1
     - _FadeStrength: 1
@@ -145,6 +151,7 @@ Material:
     - _PulseSpeed: 0
     - _RTLMStrength: 1
     - _RedMultiplier: 1
+    - _RenderMode: 1
     - _Sector: 0
     - _SpecLMOcclusionAdjust: 0.2
     - _SpecularLMOcclusion: 0
@@ -153,12 +160,14 @@ Material:
     - _TextureColorSampleX: 0.5
     - _TextureColorSampleY: 0.5
     - _TextureSampleMode: 0
+    - _ThemeColorTarget: 0
     - _TriplanarFalloff: 1
     - _UniversalIntensity: 1
     - _UseRawGrid: 1
     - _UseWorldNorm: 0
     - _XOffset: -4.21
     - _YOffset: 2.14
+    - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 18.164822, g: 18.164822, b: 18.164822, a: 1}

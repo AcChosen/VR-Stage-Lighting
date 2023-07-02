@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-BasicLaser-DMX-Horizontal
   m_Shader: {fileID: 4800000, guid: 95349cd3a2b52c5428761b3034abda38, type: 3}
-  m_ShaderKeywords: _USE_DEPTH_LIGHT
+  m_ShaderKeywords: _BEAMSTRENGTH_ON _USEDEPTHLIGHT_ON _USE_DEPTH_LIGHT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -41,6 +41,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _FlatEdgeMask:
         m_Texture: {fileID: 2800000, guid: 03fd724ff01d02048a0f2ec00fdd84af, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MagicNoiseTexture:
+        m_Texture: {fileID: 2800000, guid: a1743aa18bc963146add4b61267cf038, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -76,35 +80,46 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _BeamStrength: 1
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DMXChannel: 0
     - _DetailNormalMapScale: 1
+    - _DistFade: 0
     - _DstBlend: 0
     - _EnableCompatibilityMode: 0
     - _EnableDMX: 0
     - _EnableOSC: 0
     - _EnableVerticalMode: 0
     - _EndFade: 3
-    - _FadeAmt: 1
-    - _FadeStrength: 1.873
+    - _FadeAmt: 4.3
+    - _FadeStrength: 10
     - _FinalIntensity: 1
     - _FlatEdgeFadeStrength: 2.55
     - _GlobalIntensity: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InternalShine: 1
-    - _InternalShineLength: 64
+    - _InnerFadeStrength: 3.59
+    - _InnerIntensityCurve: 0.00001
+    - _InternalShine: 0.78
+    - _InternalShineLength: 419
     - _LaserCount: 8
     - _LaserSoftening: 7.2
     - _LaserThickness: 0.1
+    - _MAGIC_NOISE_ON: 1
     - _Metallic: 0
     - _Mode: 0
     - _Modx: 12.5
     - _Mody: 4.75
     - _Modz: 5.75
     - _NineUniverseMode: 0
+    - _Noise2Power: 1
+    - _Noise2Stretch: 1
+    - _Noise2StretchInside: 1
+    - _Noise2X: 1
+    - _Noise2Y: 3.32
+    - _Noise2Z: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Scroll: 0.092
@@ -121,6 +136,7 @@ Material:
     - _UVx: 0
     - _UVy: 0
     - _UniversalIntensity: 1
+    - _UseDepthLight: 1
     - _VertexConeFlatness: 1
     - _VertexConeLength: 1
     - _VertexConeWidth: -3.62
@@ -134,5 +150,5 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _MainColor: {r: 1.4980392, g: 1.4980392, b: 1.4980392, a: 1}
+    - _MainColor: {r: 10.432951, g: 10.432951, b: 10.432951, a: 1}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}

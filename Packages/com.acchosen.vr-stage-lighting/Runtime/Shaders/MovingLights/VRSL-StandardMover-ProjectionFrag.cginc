@@ -29,10 +29,15 @@ inline float CorrectedLinearEyeDepth(float z, float B)
 //Huge, huge thanks and shoutout to Uncomfy on the VRC Shader Discord for helping me figure this out <3
         float4 InvertRotations (float4 input, float panValue, float tiltValue)
         {
-
-
             float sX, cX, sY, cY;
-            float angleY = radians(getOffsetY() + (panValue));
+
+            #ifdef VRSL_DMX
+                float angleY = radians(getOffsetY() + (panValue));
+            #endif
+            #ifdef VRSL_AUDIOLINK
+                float angleY = radians(0);
+            #endif
+
             sY = sin(angleY);
             cY = cos(angleY);
             float4x4 rotateYMatrix = float4x4(cY, sY, 0, 0,
@@ -54,8 +59,12 @@ inline float CorrectedLinearEyeDepth(float z, float B)
             float4 newOrigin = input.w * _FixtureRotationOrigin;
             input.xyz -= newOrigin;
 
-
-            float angleX = radians(getOffsetX() + (tiltValue + tiltOffset));
+            #ifdef VRSL_DMX
+                float angleX = radians(getOffsetX() + (tiltValue + tiltOffset));
+            #endif
+            #ifdef VRSL_AUDIOLINK
+                float angleX = radians(0 + (tiltOffset));
+            #endif
             sX = sin((angleX));
             cX = cos((angleX));
 
@@ -95,25 +104,22 @@ inline float CorrectedLinearEyeDepth(float z, float B)
 
         float4 ChooseProjection(float2 uv, float projChooser)
         {
-            //float chooser = IF(isDMX() == 1, selection, instancedGOBOSelection());
             float2 addition = float2(0.0, 0.0);
             uv*= float2(0.25, 0.5);
-            //uv.x+= getOffsetX();
-            //uv.y+= getOffsetY();
-            //uv-= float2(0.1,0.1);
+
             #ifdef WASH
             projChooser = 1.0;
             #endif
             
             addition = IF(projChooser == 1.0, float2(0.0, 0.5) , addition);
             #if !defined(WASH)
-            addition = IF(projChooser == 2.0, float2(0.25, 0.5), addition);
-            addition = IF(projChooser == 3.0, float2(0.5, 0.5), addition);
-            addition = IF(projChooser == 4.0, float2(0.75, 0.5), addition);
-            addition = IF(projChooser == 5.0, float2(0.0, 0.0) , addition);
-            addition = IF(projChooser == 6.0, float2(0.25, 0.0), addition);
-            addition = IF(projChooser == 7.0, float2(0.5, 0.0), addition);
-            addition = IF(projChooser == 8.0, float2(0.75, 0.0), addition);
+                addition = IF(projChooser == 2.0, float2(0.25, 0.5), addition);
+                addition = IF(projChooser == 3.0, float2(0.5, 0.5), addition);
+                addition = IF(projChooser == 4.0, float2(0.75, 0.5), addition);
+                addition = IF(projChooser == 5.0, float2(0.0, 0.0) , addition);
+                addition = IF(projChooser == 6.0, float2(0.25, 0.0), addition);
+                addition = IF(projChooser == 7.0, float2(0.5, 0.0), addition);
+                addition = IF(projChooser == 8.0, float2(0.75, 0.0), addition);
             #endif
             uv.x += addition.x;
             uv.y += addition.y;
@@ -123,23 +129,29 @@ inline float CorrectedLinearEyeDepth(float z, float B)
         {
             //float chooser = IF(isDMX() == 1, selection, instancedGOBOSelection());
             float result = _ProjectionUVMod;
-            result = IF((projChooser) == 1.0, _ProjectionUVMod, result);
+            result = IF((projChooser) == 1.0, (_ProjectionUVMod * _MinimumBeamRadius), result);
             #if !defined(WASH)
-            result = IF((projChooser) == 2.0, _ProjectionUVMod2, result);
-            result = IF((projChooser) == 3.0, _ProjectionUVMod3, result);
-            result = IF((projChooser) == 4.0, _ProjectionUVMod4, result);
-            result = IF((projChooser) == 5.0, _ProjectionUVMod5, result);
-            result = IF((projChooser) == 6.0, _ProjectionUVMod6, result);
-            result = IF((projChooser) == 7.0, _ProjectionUVMod7, result);
-            result = IF((projChooser) == 8.0, _ProjectionUVMod8, result);
+            result = IF((projChooser) == 2.0, _ProjectionUVMod2 * _MinimumBeamRadius, result);
+            result = IF((projChooser) == 3.0, _ProjectionUVMod3 * _MinimumBeamRadius, result);
+            result = IF((projChooser) == 4.0, _ProjectionUVMod4 * _MinimumBeamRadius, result);
+            result = IF((projChooser) == 5.0, _ProjectionUVMod5 * _MinimumBeamRadius, result);
+            result = IF((projChooser) == 6.0, _ProjectionUVMod6 * _MinimumBeamRadius, result);
+            result = IF((projChooser) == 7.0, _ProjectionUVMod7 * _MinimumBeamRadius, result);
+            result = IF((projChooser) == 8.0, _ProjectionUVMod8 * _MinimumBeamRadius, result);
             #endif
+
+
             // float a = 1.8;
             // #ifdef WASH
             //     a = 3.0;
             // #endif
             // return result * (clamp(coneWidth, -2.0, 4) + a);
             float conewidthControl = coneWidth/4.25;
-            return result * lerp(0.325, 1, (conewidthControl));
+            #ifndef WASH
+                return result * lerp(0.325, 1, (conewidthControl));
+            #else
+                return result * lerp(0.4, 1, (conewidthControl));
+            #endif
         }  
 
 
@@ -152,18 +164,53 @@ inline float CorrectedLinearEyeDepth(float z, float B)
             UNITY_SETUP_INSTANCE_ID(i);
             if(i.color.g > 0.5)
             {
-                float gi = getGlobalIntensity();
-                float fi = getFinalIntensity();
+
                 float4 emissionTint = i.emissionColor;
-                if(((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobeWidth.x <= 0.01) && isDMX() == 1) || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1)))
-                {
-                    return half4(0,0,0,0);
-                }
-                //float oscPanValue = GetPanValue(sector);
-               // float oscTiltValue = GetTiltValue(sector);
-                float panValue = i.goboPlusSpinPanTilt.z;
-                float tiltValue = i.goboPlusSpinPanTilt.w;
-                uint selection = round(i.goboPlusSpinPanTilt.x);
+
+                #ifdef VRSL_DMX
+                    float gi = getGlobalIntensity();
+                    float fi = getFinalIntensity();
+                    float coneWidth = i.intensityStrobeWidth.z;
+                    if(((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobeWidth.x <= 0.01) && isDMX() == 1) || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1)))
+                    {
+                        return half4(0,0,0,0);
+                    }
+                #endif
+                #ifdef VRSL_AUDIOLINK
+                    float audioReaction = i.audioGlobalFinalConeIntensity.x;
+                    float gi = i.audioGlobalFinalConeIntensity.y;
+                    float fi = i.audioGlobalFinalConeIntensity.z;
+                    float coneWidth = i.audioGlobalFinalConeIntensity.w;
+                    // if((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobeWidth.x <= 0.01) && isOSC() == 1)
+                    // {
+                    //     return (0,0,0,0);
+                    // }
+                    if(audioReaction <= 0.005 || gi <= 0.005 || fi <= 0.005 || all(emissionTint<= float4(0.005, 0.005, 0.005, 1.0)))
+                    {
+                        return half4(0,0,0,0);
+                    }
+                #endif
+
+
+                #if _ALPHATEST_ON
+                    float2 pos = i.screenPos.xy / i.screenPos.w;
+                    pos *= _ScreenParams.xy;
+                    float DITHER_THRESHOLDS[16] =
+                    {
+                        1.0 / 17.0,  9.0 / 17.0,  3.0 / 17.0, 11.0 / 17.0,
+                        13.0 / 17.0,  5.0 / 17.0, 15.0 / 17.0,  7.0 / 17.0,
+                        4.0 / 17.0, 12.0 / 17.0,  2.0 / 17.0, 10.0 / 17.0,
+                        16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0
+                    };
+                    int index = (int(pos.x) % 4) * 4 + int(pos.y) % 4;
+		        #endif
+
+
+                #ifdef VRSL_DMX
+                    float panValue = i.goboPlusSpinPanTilt.z;
+                    float tiltValue = i.goboPlusSpinPanTilt.w;
+                    uint selection = round(i.goboPlusSpinPanTilt.x);
+                #endif
 
                  //Calculating projection
                 i.ray = i.ray * (_ProjectionParams.z / i.ray.z);
@@ -216,15 +263,39 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 }
 
                 float distanceFromOrigin = abs(distance(objectOrigin , wpos));
-                float projChooser = IF(isDMX() == 1, selection, instancedGOBOSelection());
+
+
+                #ifdef VRSL_DMX
+                    float projChooser = IF(isDMX() == 1, selection, instancedGOBOSelection());
+                #endif
+                #ifdef VRSL_AUDIOLINK
+                    float projChooser = round(instancedGOBOSelection());
+                #endif
+
+
                 //Get distance of intersection from the origin in world space
-                float UVscale = 1/(0 + (distanceFromOrigin * ChooseProjectionScalar(i.intensityStrobeWidth.z, projChooser) + (0 * (distanceFromOrigin * distanceFromOrigin))));
-                distanceFromOrigin = lerp(distanceFromOrigin*0.6 +0.65,distanceFromOrigin, saturate(i.intensityStrobeWidth.z));
+                #ifdef VRSL_DMX
+                    float UVscale = 1/(0 + (distanceFromOrigin * (ChooseProjectionScalar(coneWidth, projChooser)) + (0 * (distanceFromOrigin * distanceFromOrigin))));
+                    distanceFromOrigin = lerp(distanceFromOrigin*0.6 +0.65,distanceFromOrigin, saturate(coneWidth));
+                #endif
+                #ifdef VRSL_AUDIOLINK
+                    distanceFromOrigin = lerp(distanceFromOrigin*0.6 +0.65,distanceFromOrigin, saturate(coneWidth));
+                    float UVscale = 1/(0 + ((distanceFromOrigin) * ChooseProjectionScalar(coneWidth, projChooser)));
+                #endif
                 // inverse that distance so that it gets smaller as it gets closer, 
                 // multiply it by modifier parameter incase things get wonky.
                 float3 projPos = getProjPos(wpos);
+
+
                 //position of the intersection fragment in the cone's object space
-                projPos = InvertRotations(float4(projPos,1.0), panValue, tiltValue);
+                #ifdef VRSL_DMX
+                    projPos = InvertRotations(float4(projPos,1.0), panValue, tiltValue);
+                #endif
+                #ifdef VRSL_AUDIOLINK
+                    projPos = InvertRotations(float4(projPos,1.0), 0, 0);
+                #endif
+
+
 
                 float2 uvCoords = (((float2((projPos.x), projPos.y) * UVscale)));
 
@@ -233,14 +304,20 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 //Get coordinate plane
 
                 half2 uvOrigin = half2(0,0);
-                uvOrigin = (half2(0,0) * UVscale) * (clamp(i.intensityStrobeWidth.z+0.5, -1.0, 4) + 1.6) + 0.5;
+                uvOrigin = (half2(0,0) * UVscale) * (clamp(coneWidth+0.5, -1.0, 4) + 1.6) + 0.5;
                 
-
-                _SpinSpeed = IF(checkPanInvertY() == 1, -_SpinSpeed, _SpinSpeed);
-                _SpinSpeed = IF(isDMX() == 1, _SpinSpeed, _SpinSpeed);
+                #ifdef VRSL_DMX
+                    _SpinSpeed = IF(checkPanInvertY() == 1, -_SpinSpeed, _SpinSpeed);
+                    _SpinSpeed = IF(isDMX() == 1, _SpinSpeed, _SpinSpeed);
+                    uvCoords = IF(isGOBOSpin() == 1 && projChooser > 1.0, RotateUV(uvCoords,  degrees(i.goboPlusSpinPanTilt.y)), RotateUV(uvCoords, _ProjectionRotation));
+                #endif
+                #ifdef VRSL_AUDIOLINK
+                    float goboSpinSpeed = IF(checkPanInvertY() == 1, -getGoboSpinSpeed(), getGoboSpinSpeed());
+                    uvCoords = IF(isGOBOSpin() == 1 && projChooser > 1.0, RotateUV(uvCoords, _Time.w * ( 10* goboSpinSpeed)), RotateUV(uvCoords, _ProjectionRotation));
+                #endif
 
                // uvCoords = IF(isGOBOSpin() == 1 && projChooser > 1.0, RotateUV(uvCoords, _Time.w * ( 10* _SpinSpeed)), RotateUV(uvCoords, _ProjectionRotation));
-                uvCoords = IF(isGOBOSpin() == 1 && projChooser > 1.0, RotateUV(uvCoords,  degrees(i.goboPlusSpinPanTilt.y)), RotateUV(uvCoords, _ProjectionRotation));
+                
                 clip(uvCoords);
 
                 //Discard any pixels that are outside of the traditional 0-1 UV bounds.
@@ -258,25 +335,50 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 float projectionDistance = abs(distance(i.projectionorigin.xyz, projPos.xyz));
 
                 //Projection Fade
-                col = lerp(col, float4(0,0,0,0), clamp(pow(distFromUVOrigin * _ProjectionFade,_ProjectionFadeCurve),0.0,1.0));
-                float strobe = IF(isStrobe() == 1, i.intensityStrobeWidth.y, 1);
+                #ifdef _ALPHATEST_ON
+                    col = lerp(col, float4(0,0,0,0), clamp(pow(distFromUVOrigin * (_ProjectionFade-1.0),_ProjectionFadeCurve),0.0,1.0));
+                #else
+                    col = lerp(col, float4(0,0,0,0), clamp(pow(distFromUVOrigin * _ProjectionFade,_ProjectionFadeCurve),0.0,1.0));
+                #endif
 
-                col = IF(isDMX() == 1 & _EnableStaticEmissionColor == 0, col * i.rgbColor, col);
+
+                #ifdef VRSL_DMX
+                    float strobe = IF(isStrobe() == 1, i.intensityStrobeWidth.y, 1);
+                    col = IF(isDMX() == 1 & _EnableStaticEmissionColor == 0, col * i.rgbColor, col);
+                #endif
+                #ifdef VRSL_AUDIOLINK
+                    float strobe = 1.0;
+                #endif
+
+                
                 //col = IF(_EnableStaticEmissionColor == 1, col * float4(_StaticEmission.r * _RedMultiplier,_StaticEmission.g * _GreenMultiplier,_StaticEmission.b * _BlueMultiplier,_StaticEmission.a), col);
                 
                   
                 
 
                 // project plane on to the world normals in object space in the z direction of the object origin.
-                col = ((col * emissionTint * UVscale * _ProjectionIntensity)) * strobe; 
+                float projectionIntesnity = _ProjectionIntensity;
+                #ifdef _ALPHATEST_ON
+                    projectionIntesnity +=4.0;
+                #endif
+                col = ((col * emissionTint * UVscale * projectionIntesnity)) * strobe; 
                 col = col * (1/(_ProjectionDistanceFallOff * (distanceFromOrigin * distanceFromOrigin)));
+                #ifdef VRSL_AUDIOLINK
+                     col = col * audioReaction;
+                #endif
                 col = lerp(half4(0,0,0,col.w), col, gi);
                 col = lerp(half4(0,0,0,col.w), col, fi);
                 //float saturation = saturate(RGB2HSV(col)).y;  
                 //col = IF(_EnableStaticEmissionColor == 1, lerp(float4(0,0,0,0), col, saturation), col);
                 col = IF( _EnableStaticEmissionColor == 1, float4(col.r * _RedMultiplier, col.g * _GreenMultiplier, col.b * _BlueMultiplier, col.a), col);
-                col = col * _UniversalIntensity;
-                return col;
+                col *= _UniversalIntensity;
+                #ifdef _ALPHATEST_ON
+                    clip(col.a - DITHER_THRESHOLDS[index]);
+                    clip((((col.r + col.g + col.b)/3) * (_ClippingThreshold)) - DITHER_THRESHOLDS[index]);
+                    return col;
+                #else
+                    return col;
+                #endif
             }
             else
             {

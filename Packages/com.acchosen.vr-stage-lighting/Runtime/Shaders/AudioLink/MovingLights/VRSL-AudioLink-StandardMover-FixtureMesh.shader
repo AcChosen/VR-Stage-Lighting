@@ -2,6 +2,7 @@
 {
 	Properties
 	{
+		[Enum(Legacy, 0, GGX, 1)]_LightingModel("Lighting Model", Int) = 0
 		//[Header (INSTANCED PROPERITES)]
 		 [HideInInspector][Toggle] _PanInvert ("Invert Mover Pan", Int) = 0
 		 [HideInInspector][Toggle] _TiltInvert ("Invert Mover Tilt", Int) = 0
@@ -99,8 +100,11 @@
 	//[Header(METALLIC)]
 	_MetallicGlossMap("Metallic Map", 2D) = "white" {}
 	_Metallic("Metallic", Range(0,1)) = 0
-		_Glossiness("Smoothness", Range(0,1)) = 0
-
+	_Glossiness("Smoothness", Range(0,1)) = 0
+	_OcclusionMap("Occlusion Map", 2D) = "white" {}
+	_OcclusionStrength("Occlusion Strength", Range(0,1)) = 0
+	_DecorativeEmissiveMap("Decorative Emissive Map", 2D) = "black" {}
+	_DecorativeEmissiveMapStrength("Decorative Emissive Map Strength", Range(0,1)) = 0
 
 
 	}
@@ -123,26 +127,27 @@
 	{
 		Tags{ "LightMode" = "ForwardBase" }
 		CGPROGRAM
-#pragma vertex vert
-#pragma fragment frag
-#pragma multi_compile_fwdbase
-#pragma multi_compile_instancing
+	#pragma vertex vert
+	#pragma fragment frag
+	#pragma multi_compile_fwdbase
+	#pragma multi_compile_instancing
+	#pragma shader_feature_local _LIGHTING_MODEL
+	//REMOVE THIS WHEN FINISHED DEBUGGING
+	//#pragma target 4.5
 
-//REMOVE THIS WHEN FINISHED DEBUGGING
-//#pragma target 4.5
+	#define GEOMETRY
+	#define FIXTURE_EMIT
+	#define VRSL_AUDIOLINK
+	#ifndef UNITY_PASS_FORWARDBASE
+	#define UNITY_PASS_FORWARDBASE
+	#endif
+	//DEBUGGING BUFFER
+	RWStructuredBuffer<float> buffer : register(u1);
+	RWStructuredBuffer<float4> buffer4 : register(u2);
 
-#define GEOMETRY
-
-#ifndef UNITY_PASS_FORWARDBASE
-#define UNITY_PASS_FORWARDBASE
-#endif
-//DEBUGGING BUFFER
-RWStructuredBuffer<float> buffer : register(u1);
-RWStructuredBuffer<float4> buffer4 : register(u2);
-
-#include "UnityCG.cginc"
-#include "Lighting.cginc"
-#include "AutoLight.cginc"
+	#include "UnityCG.cginc"
+	#include "Lighting.cginc"
+	#include "AutoLight.cginc"
 
 		struct appdata
 	{
@@ -164,19 +169,27 @@ RWStructuredBuffer<float4> buffer4 : register(u2);
 		float2 uv2 : TEXCOORD2;
 		float3 btn[3] : TEXCOORD3; //TEXCOORD2, TEXCOORD3 | bitangent, tangent, worldNormal
 		float3 worldPos : TEXCOORD6;
-		float3 objPos : TEXCOORD7;
-		float3 objNormal : TEXCOORD8;
+		#ifdef _LIGHTING_MODEL
+			UNITY_LIGHTING_COORDS(7,8)
+			float4 eyeVec : TEXCOORD12;
+			half4 ambientOrLightmapUV : TEXCOORD13;
+		#else
+			float3 objPos : TEXCOORD7;
+			float3 objNormal : TEXCOORD8;
+			SHADOW_COORDS(11)
+		#endif
 		float4 color : COLOR;
 		UNITY_VERTEX_INPUT_INSTANCE_ID
-		SHADOW_COORDS(11)
+//		SHADOW_COORDS(11)
 		UNITY_VERTEX_OUTPUT_STEREO
 	};
 
-#include "../Shared/VRSL-AudioLink-Defines.cginc"
+//#include "../Shared/VRSL-AudioLink-Defines.cginc"
+#include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-Defines.cginc"
 #include "../Shared/VRSL-AudioLink-Functions.cginc"
-#include "../Shared/VRSL-AudioLink-LightingFunctions.cginc"
-#include "../Shared/VRSL-AudioLink-StandardLighting.cginc"
-#include "VRSL-AudioLink-StandardMover-Vertex.cginc"
+#include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-LightingFunctions.cginc"
+#include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-StandardLighting.cginc"
+#include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/MovingLights/VRSL-StandardMover-Vertex.cginc"
 
 	ENDCG
 	}

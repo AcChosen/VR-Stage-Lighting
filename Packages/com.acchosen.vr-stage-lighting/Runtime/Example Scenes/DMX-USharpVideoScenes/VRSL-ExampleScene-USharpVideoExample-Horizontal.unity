@@ -5027,7 +5027,7 @@ PrefabInstance:
     - target: {fileID: 5530545822544342663, guid: dedfba01424b93148b3d9a42e95ed2f7,
         type: 3}
       propertyPath: m_RootOrder
-      value: 15
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 5530545822544342663, guid: dedfba01424b93148b3d9a42e95ed2f7,
         type: 3}
@@ -5777,7 +5777,7 @@ PrefabInstance:
     - target: {fileID: 1094421957795580606, guid: 8894fa7e4588a5c4fab98453e558847d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 14
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 1094421957795580606, guid: 8894fa7e4588a5c4fab98453e558847d,
         type: 3}
@@ -6692,82 +6692,3 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 2063092867}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &5921148734992428816
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2684871316319513457, guid: b653493b355906847b7f804be7ccf1ca,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 2684871316319513457, guid: b653493b355906847b7f804be7ccf1ca,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -5.97
-      objectReference: {fileID: 0}
-    - target: {fileID: 2684871316319513457, guid: b653493b355906847b7f804be7ccf1ca,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 4.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2684871316319513457, guid: b653493b355906847b7f804be7ccf1ca,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 2684871316319513457, guid: b653493b355906847b7f804be7ccf1ca,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: -0.7071054
-      objectReference: {fileID: 0}
-    - target: {fileID: 2684871316319513457, guid: b653493b355906847b7f804be7ccf1ca,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2684871316319513457, guid: b653493b355906847b7f804be7ccf1ca,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.70710826
-      objectReference: {fileID: 0}
-    - target: {fileID: 2684871316319513457, guid: b653493b355906847b7f804be7ccf1ca,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2684871316319513457, guid: b653493b355906847b7f804be7ccf1ca,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2684871316319513457, guid: b653493b355906847b7f804be7ccf1ca,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -90.00001
-      objectReference: {fileID: 0}
-    - target: {fileID: 2684871316319513457, guid: b653493b355906847b7f804be7ccf1ca,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3308865973477397566, guid: b653493b355906847b7f804be7ccf1ca,
-        type: 3}
-      propertyPath: m_Name
-      value: VRSL-DMX-UnityVideoReader
-      objectReference: {fileID: 0}
-    - target: {fileID: 3308865973477397566, guid: b653493b355906847b7f804be7ccf1ca,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5921148735097637106, guid: b653493b355906847b7f804be7ccf1ca,
-        type: 3}
-      propertyPath: m_PlayOnAwake
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: b653493b355906847b7f804be7ccf1ca, type: 3}

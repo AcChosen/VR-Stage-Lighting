@@ -8,9 +8,9 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-ParLight-FixtureMat-Horizontal
-  m_Shader: {fileID: 4800000, guid: 75766aa491bc3034791ba036cd616ea7, type: 3}
-  m_ShaderKeywords: _EMISSION _FORWARD_Y _METALLICGLOSSMAP _NORMALMAP _USERAWGRID_ON
-    _USE_DEPTH_LIGHT
+  m_Shader: {fileID: 4800000, guid: f23016ddcd834d84c92028d893fd6558, type: 3}
+  m_ShaderKeywords: _13CH_MODE _EMISSION _FORWARD_Y _METALLICGLOSSMAP _NORMALMAP
+    _USERAWGRID_ON _USE_DEPTH_LIGHT
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -53,6 +53,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicSmoothness:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -114,6 +118,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FinalStrobeFreq: 0
+    - _AlphaProjectionIntensity: 0.5
+    - _AlphaToCoverage: 0
     - _BlendDst: 1
     - _BlendOp: 0
     - _BlendSrc: 1
@@ -121,14 +127,17 @@ Material:
     - _BlockLengthY: 0
     - _BulbMaxIntensity: 1
     - _BumpScale: 1
+    - _ChannelMode: 3
+    - _ClippingThreshold: 0.5
     - _ConeWidth: 0
-    - _CurveMod: 0.06
+    - _CurveMod: 3.5
     - _Cutoff: 0.5
     - _DMXChannel: 0
     - _DetailNormalMapScale: 1
     - _DistFade: 0.7
     - _DstBlend: 0
     - _EnableCompatibilityMode: 0
+    - _EnableDMX: 0
     - _EnableOSC: 0
     - _EnableSpin: 0
     - _EnableStrobe: 0
@@ -175,6 +184,8 @@ Material:
     - _ProjectionUVMod6: 0
     - _PulseSpeed: 0
     - _RTLMStrength: 1
+    - _RenderMode: 1
+    - _Saturation: 0.95
     - _Sector: 0
     - _SmoothnessTextureChannel: 0
     - _SpecLMOcclusionAdjust: 0.359
@@ -188,6 +199,7 @@ Material:
     - _TriplanarFalloff: 1
     - _UVSec: 0
     - _UniversalIntensity: 1
+    - _UseDepthLight: 1
     - _UseRawGrid: 1
     - _UseWorldNorm: 0
     - _XOffset: -4.21

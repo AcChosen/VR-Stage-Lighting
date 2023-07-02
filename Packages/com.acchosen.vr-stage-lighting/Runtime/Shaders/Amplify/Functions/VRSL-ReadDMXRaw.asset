@@ -13,27 +13,28 @@ MonoBehaviour:
   m_Name: VRSL-ReadDMXRaw
   m_EditorClassIdentifier: 
   m_functionInfo: "// Made with Amplify Shader Editor\n// Available at the Unity
-    Asset Store - http://u3d.as/y3X \n/*ASEBEGIN\nVersion=18935\n71;190;1658;989;918.7893;759.4574;1;True;False\nNode;AmplifyShaderEditor.IntNode;83;-25.40576,-510.0674;Inherit;False;Constant;_Int0;Int
+    Asset Store - http://u3d.as/y3X \n/*ASEBEGIN\nVersion=18935\n0;0;2194;1172;1186.789;847.9574;1;True;False\nNode;AmplifyShaderEditor.IntNode;83;-25.40576,-510.0674;Inherit;False;Constant;_Int0;Int
     0;0;0;Create;True;0;0;0;False;0;False;1;0;False;0;1;INT;0\nNode;AmplifyShaderEditor.FunctionInput;80;-47.40576,-586.0674;Inherit;False;LegacyMode;0;1;False;1;0;INT;0;False;1;INT;0\nNode;AmplifyShaderEditor.TexelSizeNode;87;-113.2081,-266.7121;Inherit;False;-1;1;0;SAMPLER2D;;False;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4\nNode;AmplifyShaderEditor.Compare;82;619.5942,-516.0674;Inherit;False;0;4;0;INT;0;False;1;INT;0;False;2;FLOAT2;0,0;False;3;FLOAT2;0,0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.SamplerNode;93;844.1604,-297.7689;Inherit;True;Property;_TextureSample0;Texture
     Sample 0;1;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4\nNode;AmplifyShaderEditor.FunctionInput;77;-606.2667,-420.4579;Inherit;False;DMX
     Channel;0;2;False;1;0;INT;0;False;1;INT;0\nNode;AmplifyShaderEditor.AbsOpNode;94;-429.3547,-431.7595;Inherit;False;1;0;INT;0;False;1;INT;0\nNode;AmplifyShaderEditor.BreakToComponentsNode;95;-219.9075,-443.9388;Inherit;False;FLOAT2;1;0;FLOAT2;0,0;False;16;FLOAT;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT;5;FLOAT;6;FLOAT;7;FLOAT;8;FLOAT;9;FLOAT;10;FLOAT;11;FLOAT;12;FLOAT;13;FLOAT;14;FLOAT;15\nNode;AmplifyShaderEditor.FunctionInput;96;-610.546,-263.0571;Inherit;False;DMX
-    Grid IN;9;0;False;1;0;SAMPLER2D;0;False;1;SAMPLER2D;0\nNode;AmplifyShaderEditor.WireNode;98;667.6951,-142.8712;Inherit;False;1;0;SAMPLER2D;;False;1;SAMPLER2D;0\nNode;AmplifyShaderEditor.WireNode;97;-403.7713,-116.0654;Inherit;False;1;0;SAMPLER2D;;False;1;SAMPLER2D;0\nNode;AmplifyShaderEditor.CustomExpressionNode;84;142.5942,-342.0674;Inherit;False;y
-    = y + 1@$$float resMultiplierX = (_OSCGridRenderTextureRAW_TexelSize.z / 13)@$float2
-    xyUV = float2(0.0,0.0)@$$xyUV.x = ((x * resMultiplierX) * _OSCGridRenderTextureRAW_TexelSize.x)@$xyUV.y
-    = (y * resMultiplierX) * _OSCGridRenderTextureRAW_TexelSize.y@$xyUV.y -= 0.001@$xyUV.x
-    -= 0.015@$$return xyUV@$;2;Create;3;False;_OSCGridRenderTextureRAW_TexelSize;FLOAT4;0,0,0,0;In;;Inherit;False;True;x;INT;0;In;;Inherit;False;True;y;INT;0;In;;Inherit;False;Industry
-    Read;False;False;0;;False;3;0;FLOAT4;0,0,0,0;False;1;INT;0;False;2;INT;0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.CustomExpressionNode;79;190.2844,-442.7575;Inherit;False;channel
+    Grid IN;9;0;False;1;0;SAMPLER2D;0;False;1;SAMPLER2D;0\nNode;AmplifyShaderEditor.WireNode;98;667.6951,-142.8712;Inherit;False;1;0;SAMPLER2D;;False;1;SAMPLER2D;0\nNode;AmplifyShaderEditor.WireNode;97;-403.7713,-116.0654;Inherit;False;1;0;SAMPLER2D;;False;1;SAMPLER2D;0\nNode;AmplifyShaderEditor.CustomExpressionNode;78;-338.7133,-616.052;Inherit;False;uint
+    ch = abs(DMXChannel)@$uint x = ch % 13@$x = x == 0.0 ? 13.0 : x@$$float y = DMXChannel
+    / 13.0@$y = frac(y)== 0.00000 ? y - 1 : y@$$if(x == 13.0)${$y = DMXChannel >=
+    90 && DMXChannel <= 101 ? y - 1 : y@$        y = DMXChannel >= 160 && DMXChannel
+    <= 205 ? y - 1 : y@$        y = DMXChannel >= 326 && DMXChannel <= 404 ? y -
+    1 : y@$        y = DMXChannel >= 676 && DMXChannel <= 819 ? y - 1 : y@$       
+    y = DMXChannel >= 1339 ? y - 1 : y@$    }$$$float2 xAndy = float2(x,y)@$$return
+    xAndy@;2;Create;1;True;DMXChannel;INT;0;In;;Float;False;Base Read;False;False;0;;False;1;0;INT;0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.CustomExpressionNode;79;190.2844,-442.7575;Inherit;False;channel
     = channel - 1@$$float x = 0.02000@$float y = 0.02000@$$float ymod = floor(sector
     / 2.0)@ $$float xmod = sector % 2.0@$$x+= (xmod * 0.50)@$y+= (ymod * 0.04)@$$x+=
     (channel * 0.04)@$$return float2(x,y)@$$;2;Create;2;True;channel;INT;0;In;;Inherit;False;True;sector;INT;0;In;;Inherit;False;Legacy
-    Read;False;False;0;;False;2;0;INT;0;False;1;INT;0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.CustomExpressionNode;78;-338.7133,-616.052;Inherit;False;uint
-    ch = abs(DMXChannel)@$uint x = ch % 13@$x = x == 0.0 ? 13.0 : x@$$float y = DMXChannel
-    / 13.0@$y = frac(y)== 0.00000 ? y - 1 : y@$$if(x == 13.0)${$    y = DMXChannel
-    >= 90 && DMXChannel <= 404 ? y - 1 : y@$    y = DMXChannel >= 676 && DMXChannel
-    <= 819 ? y - 1 : y@$    y = DMXChannel >= 1339 ? y - 1 : y@$}$$float2 xAndy =
-    float2(x,y)@$$return xAndy@;2;Create;1;True;DMXChannel;INT;0;In;;Float;False;Base
-    Read;False;False;0;;False;1;0;INT;0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.FunctionOutput;0;1186.409,-284.8898;Inherit;False;True;-1;Channel
-    Value;0;False;1;0;FLOAT;0;False;1;FLOAT;0\nWireConnection;87;0;96;0\nWireConnection;82;0;80;0\nWireConnection;82;1;83;0\nWireConnection;82;2;79;0\nWireConnection;82;3;84;0\nWireConnection;93;0;98;0\nWireConnection;93;1;82;0\nWireConnection;94;0;77;0\nWireConnection;95;0;78;0\nWireConnection;98;0;97;0\nWireConnection;97;0;96;0\nWireConnection;84;0;87;0\nWireConnection;84;1;95;0\nWireConnection;84;2;95;1\nWireConnection;79;0;95;0\nWireConnection;79;1;95;1\nWireConnection;78;0;94;0\nWireConnection;0;0;93;1\nASEEND*/\n//CHKSM=FCC07908F772689962C1253149198E4D809D26B9"
+    Read;False;False;0;;False;2;0;INT;0;False;1;INT;0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.CustomExpressionNode;84;142.5942,-342.0674;Inherit;False;y
+    = y + 1@$$float resMultiplierX = (_OSCGridRenderTextureRAW_TexelSize.z / 13)@$float2
+    xyUV = float2(0.0,0.0)@$$xyUV.x = ((x * resMultiplierX) * _OSCGridRenderTextureRAW_TexelSize.x)@$xyUV.y
+    = (y * resMultiplierX) * _OSCGridRenderTextureRAW_TexelSize.y@$xyUV.y -= 0.001915@$
+    xyUV.x -= 0.015@$$return xyUV@$;2;Create;3;False;_OSCGridRenderTextureRAW_TexelSize;FLOAT4;0,0,0,0;In;;Inherit;False;True;x;INT;0;In;;Inherit;False;True;y;INT;0;In;;Inherit;False;Industry
+    Read;False;False;0;;False;3;0;FLOAT4;0,0,0,0;False;1;INT;0;False;2;INT;0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.FunctionOutput;0;1186.409,-284.8898;Inherit;False;True;-1;Channel
+    Value;0;False;1;0;FLOAT;0;False;1;FLOAT;0\nWireConnection;87;0;96;0\nWireConnection;82;0;80;0\nWireConnection;82;1;83;0\nWireConnection;82;2;79;0\nWireConnection;82;3;84;0\nWireConnection;93;0;98;0\nWireConnection;93;1;82;0\nWireConnection;94;0;77;0\nWireConnection;95;0;78;0\nWireConnection;98;0;97;0\nWireConnection;97;0;96;0\nWireConnection;78;0;94;0\nWireConnection;79;0;95;0\nWireConnection;79;1;95;1\nWireConnection;84;0;87;0\nWireConnection;84;1;95;0\nWireConnection;84;2;95;1\nWireConnection;0;0;93;1\nASEEND*/\n//CHKSM=E83F8E67185F2935E5ACE949268F8F36E6BF2149"
   m_functionName: 
   m_description: A general purpose function for reading the DMX Grid from VRSL. Input
     the DMX Channel and grid texture to read from. If you are using legacy mode,

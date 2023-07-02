@@ -24,6 +24,13 @@
 		 _SamplingTexture ("Texture To Sample From for Color", 2D) = "white" {}
          [Toggle] _EnableColorChord ("Enable Color Chord Tinting", Int) = 0
 
+                  [Enum(Transparent,1,AlphaToCoverage,2)] _RenderMode ("Render Mode", Int) = 1
+        [Enum(Off,0,On,1)] _ZWrite ("Z Write", Int) = 0
+		[Enum(Off,0,On,1)] _AlphaToCoverage ("Alpha To Coverage", Int) = 0
+        [Enum(Off,0,One,1)] _BlendDst ("Destination Blend mode", Float) = 1
+		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
+        _ClippingThreshold ("Clipping Threshold", Range (0,1)) = 0.5
+
      }
      SubShader
      {
@@ -38,16 +45,19 @@
 
          Pass
          {
-            Cull Off
+            AlphaToMask [_AlphaToCoverage]
+            Cull Front
             Ztest Greater
-            ZWrite Off
-            Blend DstColor One 
+            ZWrite  Off
+            Blend DstColor [_BlendDst]
             Lighting Off
 		    SeparateSpecular Off
              CGPROGRAM
              #pragma vertex vert
              #pragma fragment frag
             uniform samplerCUBE _Cube;
+            #define VRSL_AUDIOLINK
+            #pragma multi_compile_local _ _ALPHATEST_ON
             float4 _Cube_ST;
             float _RotationSpeed;
             #include "UnityCG.cginc"
@@ -68,7 +78,7 @@
                  float4 outColor : TEXCOORD7;
                  UNITY_VERTEX_OUTPUT_STEREO 
              };
-            #include "../Shared/VRSL-AudioLink-Defines.cginc"
+            #include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-Defines.cginc"
             
             half _Multiplier;
 			#include "../Shared/VRSL-AudioLink-Functions.cginc"
@@ -133,6 +143,18 @@
                 {
                     return half4(0,0,0,0);
                 }
+                #if _ALPHATEST_ON
+                    float2 pos = i.screenPos.xy / i.screenPos.w;
+                    pos *= _ScreenParams.xy;
+                    float DITHER_THRESHOLDS[16] =
+                    {
+                        1.0 / 17.0,  9.0 / 17.0,  3.0 / 17.0, 11.0 / 17.0,
+                        13.0 / 17.0,  5.0 / 17.0, 15.0 / 17.0,  7.0 / 17.0,
+                        4.0 / 17.0, 12.0 / 17.0,  2.0 / 17.0, 10.0 / 17.0,
+                        16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0
+                    };
+                    int index = (int(pos.x) % 4) * 4 + int(pos.y) % 4;
+		        #endif
                 float4 depthdirect = i.worldDirection * (1.0f / i.vertex.w);
                 float sceneZ = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.screenPos.xy / i.screenPos.w);
                 #if UNITY_REVERSED_Z
@@ -158,7 +180,13 @@
                 col = (col * _Multiplier) * GetAudioReactAmplitude();
                 col = ((col * globalintensity) * finalintensity);
                 col = col * _UniversalIntensity;
+                #ifdef _ALPHATEST_ON
+                    clip(col.a - DITHER_THRESHOLDS[index]);
+                    clip((((col.r + col.g + col.b)/3) * (_ClippingThreshold)) - DITHER_THRESHOLDS[index]);
+                    return col;
+                #else
                 return col;
+                #endif
              }
              ENDCG
          }//end color pass

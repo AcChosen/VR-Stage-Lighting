@@ -9,7 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-WashMover-HQ-FixtureMat-Horizontal
   m_Shader: {fileID: 4800000, guid: c8623e92e9e6857439b5241760cfb4d9, type: 3}
-  m_ShaderKeywords: _DNENABLER_NONE _ENABLESPIN_ON _FORWARD_Y _USERAWGRID_ON _USE_DEPTH_LIGHT
+  m_ShaderKeywords: _DNENABLER_NONE _ENABLESPIN_ON _FORWARD_Y _LIGHTING_MODEL _USERAWGRID_ON
+    _USE_DEPTH_LIGHT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -21,6 +22,10 @@ Material:
     m_TexEnvs:
     - _BumpMap:
         m_Texture: {fileID: 2800000, guid: 032a687341cf2b946b195188cd391c7e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DecorativeEmissiveMap:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _InsideConeNormalMap:
@@ -53,6 +58,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _OSCGridStrobeTimer:
         m_Texture: {fileID: 8600000, guid: fbbd57abbf5ece54c9996e59beb3dac1, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ProjectionMainTex:
@@ -106,10 +115,12 @@ Material:
     - _ConeWidth: 4.13
     - _DMXChannel: 0
     - _DNEnabler: 0
+    - _DecorativeEmissiveMapStrength: 0
     - _DistFade: 1.31
     - _Divide: 11.6
     - _DividePower: 0.079
     - _EnableCompatibilityMode: 0
+    - _EnableDMX: 0
     - _EnableOSC: 0
     - _EnableSpin: 1
     - _EnableStrobe: 0
@@ -133,6 +144,7 @@ Material:
     - _LMStrength: 1
     - _LensMaxBrightness: 9.31
     - _LightProbeMethod: 0
+    - _LightingModel: 1
     - _MaxMinPanAngle: 90
     - _MaxMinTiltAngle: -90
     - _Metallic: 0.803
@@ -141,6 +153,7 @@ Material:
     - _NineUniverseMode: 0
     - _NoisePower: 0.333
     - _NoiseSeed: 420
+    - _OcclusionStrength: 0
     - _PanInvert: 0
     - _ProjectionDistanceFallOff: 0.01
     - _ProjectionFade: 2.35

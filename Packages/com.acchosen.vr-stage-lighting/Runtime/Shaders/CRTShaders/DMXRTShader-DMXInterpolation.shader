@@ -27,6 +27,8 @@ Shader "VRSL/DMX CRTs/Interpolation"
             #pragma fragment frag
             #pragma target 3.0
 
+            #define VRSL_DMX
+
             float _SmoothValue, _MinimumSmoothnessDMX, _MaximumSmoothnessDMX;
             sampler2D   _Tex;
             sampler2D _DMXTexture;

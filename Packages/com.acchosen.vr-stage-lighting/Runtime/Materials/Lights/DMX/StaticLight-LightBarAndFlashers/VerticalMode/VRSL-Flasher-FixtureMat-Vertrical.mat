@@ -8,9 +8,10 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-Flasher-FixtureMat-Vertrical
-  m_Shader: {fileID: 4800000, guid: 44e7ffffd1ad9bc4e8e83fe424795fcb, type: 3}
-  m_ShaderKeywords: _EMISSION _ENABLESCROLL_ON _ENABLEVERTICALMODE_ON _FORWARD_Y
-    _METALLICGLOSSMAP _NORMALMAP _USERAWGRID_ON _USE_DEPTH_LIGHT
+  m_Shader: {fileID: 4800000, guid: f23016ddcd834d84c92028d893fd6558, type: 3}
+  m_ShaderKeywords: _1CH_MODE _EMISSION _ENABLESCROLL_ON _ENABLEVERTICALMODE_ON _FORWARD_Y
+    _METALLICGLOSSMAP _NORMALMAP _SHOULDDOFLICKER_ON _USEDEPTHLIGHT_ON _USERAWGRID_ON
+    _USE_DEPTH_LIGHT
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -61,6 +62,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicSmoothness:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -126,26 +131,35 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FinalStrobeFreq: 0
+    - _AlphaProjectionIntensity: 0.5
+    - _AlphaToCoverage: 0
     - _BlendDst: 1
     - _BlendOp: 0
     - _BlendSrc: 1
     - _BulbMaxIntensity: 1
     - _BumpScale: 1
     - _Channel: 0
+    - _ChannelMode: 0
+    - _ClippingThreshold: 0.5
+    - _ColorSat: 1
     - _ConeWidth: 0
     - _CurveMod: 5
     - _Cutoff: 0.5
+    - _DMXChannel: 0
+    - _DepthOcclusionTestZBias: -0.001
     - _DetailNormalMapScale: 1
     - _DistFade: 0.7
     - _DstBlend: 0
     - _EnableAudioReact: 0
     - _EnableColorTextureSample: 0
     - _EnableCompatibilityMode: 0
+    - _EnableDMX: 0
     - _EnableOSC: 0
     - _EnableScroll: 1
     - _EnableSpin: 0
     - _EnableStrobe: 0
     - _EnableVerticalMode: 1
+    - _EndFadeinDistanceWorldUnit: 0.5
     - _Fade: 0.83
     - _FadeAmt: 0.1
     - _FadeStrength: 1
@@ -156,12 +170,15 @@ Material:
     - _FixtureMaxIntensity: 12.79
     - _FixtureRotationX: 0
     - _FixutreIntensityMultiplier: 15
+    - _FlickResultIntensityLowestPoint: 0.5
+    - _FlickerAnimSpeed: 5
     - _GlobalIntensity: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.554
     - _GlossyReflections: 1
     - _LMStrength: 1
     - _LightProbeMethod: 0
+    - _LightSourceViewSpaceRadius: 0.05
     - _MaxMinPanAngle: 180
     - _MaxMinTiltAngle: 180
     - _Metallic: 0.348
@@ -188,28 +205,38 @@ Material:
     - _ProjectionUVMod6: 0
     - _PulseSpeed: 0
     - _RTLMStrength: 1
+    - _ReferenceDistance: 2
+    - _RemoveTextureArtifact: 0
+    - _RenderMode: 1
+    - _Saturation: 0.95
+    - _ScaleFactor: 1
     - _ScrollIncrement: 1.4
     - _Sector: 0
+    - _ShouldDoFlicker: 1
     - _SmoothnessTextureChannel: 0
     - _SpecLMOcclusionAdjust: 0.359
     - _SpecularHighlights: 1
     - _SpecularLMOcclusion: 0
     - _SpinSpeed: 0
     - _SrcBlend: 1
+    - _StartFadeinDistanceWorldUnit: 0.05
     - _StrobeFreq: 12.76
     - _TextureColorSampleX: 0.5
     - _TextureColorSampleY: 0.5
     - _TextureSampleMode: 0
     - _TiltInvert: 0
     - _TriplanarFalloff: 1
+    - _UVScale: 1
     - _UVScroll: 0
     - _UVSec: 0
     - _UniversalIntensity: 1
+    - _UseDepthLight: 1
+    - _UsePreMultiplyAlpha: 0
     - _UseRawGrid: 1
     - _UseWorldNorm: 0
     - _XOffset: -4.21
     - _YOffset: 2.14
-    - _ZWrite: 1
+    - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 8, g: 8, b: 8, a: 3}

@@ -113,6 +113,8 @@ MonoBehaviour:
   lightColorTint: {r: 1, g: 1, b: 1, a: 2}
   enableColorTextureSampling: 0
   textureSamplingCoordinates: {x: 0.5, y: 0.5}
+  enableThemeColorSampling: 0
+  themeColorTarget: 1
   coneWidth: -0.4
   coneLength: 0.25
   coneFlatness: 0
@@ -120,7 +122,7 @@ MonoBehaviour:
   coneYRotation: 3.1
   coneZRotation: 0
   laserCount: 14
-  laserThickness: 0.117
+  laserThickness: 0.0251
   laserScroll: -0.145
   objRenderers:
   - {fileID: 884494163452217086}

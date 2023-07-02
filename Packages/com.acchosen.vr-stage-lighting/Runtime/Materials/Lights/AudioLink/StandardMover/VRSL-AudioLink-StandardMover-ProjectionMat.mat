@@ -13,8 +13,9 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 3001
+  stringTagMap:
+    RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -105,13 +106,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FinalStrobeFreq: 0
+    - _AlphaToCoverage: 0
     - _Band: 0
     - _BandMultiplier: 1
     - _BlendDst: 1
     - _BlendOp: 0
     - _BlendSrc: 2
-    - _BlueMultiplier: 2.51
+    - _BlueMultiplier: 1
     - _BumpScale: 1
+    - _ClippingThreshold: 0.05
     - _ConeLength: 3.62
     - _ConeSync: 1.7
     - _ConeWidth: 2.5
@@ -128,6 +131,7 @@ Material:
     - _EnableSpin: 0
     - _EnableStaticEmissionColor: 0
     - _EnableStrobe: 0
+    - _EnableThemeColorSampling: 0
     - _Fade: 1.5
     - _FadeAmt: 0
     - _FadeStrength: 3.72
@@ -150,16 +154,19 @@ Material:
     - _MaxMinPanAngle: 0
     - _MaxMinTiltAngle: 0
     - _Metallic: 0.501
+    - _MinimumBeamRadius: 0.94
     - _ModX: 0
     - _ModY: 0
     - _NoisePower: 0.333
     - _NoiseSeed: 420
     - _NumBands: 4
     - _PanInvert: 0
-    - _ProjectionDistanceFallOff: 0.0075
-    - _ProjectionFade: 2.4
-    - _ProjectionFadeCurve: 1.62
-    - _ProjectionIntensity: 8
+    - _ProjectionCutoff: 0.25
+    - _ProjectionDistanceFallOff: 0.006
+    - _ProjectionFade: 2.35
+    - _ProjectionFadeCurve: 1.99
+    - _ProjectionIntensity: 3
+    - _ProjectionOriginCutoff: 0.25
     - _ProjectionRange: 8
     - _ProjectionRotation: -180
     - _ProjectionSelection: 1
@@ -175,16 +182,18 @@ Material:
     - _PulseSpeed: 0
     - _RTLMStrength: 1
     - _RedMultiplier: 1
+    - _RenderMode: 1
     - _Saturation: 0.5
     - _SaturationLength: 0.1
     - _Sector: 0
     - _SpecLMOcclusionAdjust: 0.2
     - _SpecularLMOcclusion: 0
-    - _SpinSpeed: 4
+    - _SpinSpeed: 2.1
     - _StrobeFreq: 16.61
     - _TextureColorSampleX: 0.334
     - _TextureColorSampleY: 0.5
     - _TextureSampleMode: 0
+    - _ThemeColorTarget: 0
     - _TiltInvert: 0
     - _TriplanarFalloff: 1
     - _UniversalIntensity: 1
@@ -192,6 +201,7 @@ Material:
     - _UseWorldNorm: 0
     - _XOffset: 0
     - _YOffset: 0
+    - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 7.8000345, g: 7.8000345, b: 7.8000345, a: 1}

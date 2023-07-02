@@ -9,14 +9,15 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-AudioLink-StandardMover-VolumetricMat
   m_Shader: {fileID: 4800000, guid: a9ae9924e60e8b04293b700af7aba257, type: 3}
-  m_ShaderKeywords: _DNENABLER_NONE _ENABLEOSC_ON _ENABLESPIN_ON _GOBOBEAMSPLITENABLE_ON
+  m_ShaderKeywords: _2D_NOISE_ON _DNENABLER_NONE _ENABLEOSC_ON _ENABLESPIN_ON _GOBOBEAMSPLITENABLE_ON
     _MAGIC_NOISE_ON _MAGIC_NOISE_ON_ON _TOGGLEMAGICNOISE_ON _USEDEPTHLIGHT_ON _USERAWGRID_ON
     _USE_DEPTH_LIGHT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 3002
+  stringTagMap:
+    RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -107,11 +108,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FinalStrobeFreq: 0
+    - _2D_NOISE_ON: 1
+    - _AlphaToCoverage: 0
     - _Band: 0
     - _BandMultiplier: 1
     - _BlendDst: 1
     - _BlendOp: 0
     - _BlendSrc: 1
+    - _BlindingAngleMod: 0.25
     - _BlueMultiplier: 1
     - _BumpScale: 1
     - _ConeLength: 2.13
@@ -119,7 +123,7 @@ Material:
     - _ConeWidth: 3.38
     - _DNEnabler: 0
     - _Delay: 0
-    - _DistFade: 9
+    - _DistFade: 0.5
     - _Divide: 11.6
     - _DividePower: 0.043
     - _EnableAudioLink: 0
@@ -131,27 +135,28 @@ Material:
     - _EnableStrobe: 0
     - _EnableThemeColorSampling: 0
     - _Fade: 1.5
-    - _FadeAmt: 75
-    - _FadeStrength: 5
+    - _FadeAmt: 35
+    - _FadeStrength: 10
     - _FeatherOffset: 0.5
     - _FinalIntensity: 1
     - _FinalStrobeFreq: 0
     - _FixtureBaseRotationY: 0
-    - _FixtureMaxIntensity: 0.55
+    - _FixtureMaxIntensity: 0.4
     - _FixtureRotationX: 0
     - _GlobalIntensity: 1
     - _Glossiness: 1
     - _GoboBeamSplitEnable: 1
-    - _GradientMod: 2.5
+    - _GradientMod: 2.248
     - _GradientModGOBO: 2.25
     - _GreenMultiplier: 1
-    - _InnerFadeStrength: 5
-    - _InnerIntensityCurve: 20
+    - _HQMode: 0
+    - _InnerFadeStrength: 7
+    - _InnerIntensityCurve: 12
     - _IntensityCutoff: 0
     - _IntersectionMod: 10
     - _IsEven: 0
     - _LMStrength: 1
-    - _LensMaxBrightness: 2
+    - _LensMaxBrightness: 3.66
     - _LightProbeMethod: 0
     - _MAGIC_NOISE_ON: 1
     - _MagicNoiseScale: 2.5
@@ -159,15 +164,28 @@ Material:
     - _MaxMinPanAngle: 0
     - _MaxMinTiltAngle: 0
     - _Metallic: 0.501
+    - _MinimumBeamRadius: 0.96
     - _ModX: 0
     - _ModY: 0
-    - _Noise2Power: 0.856
-    - _Noise2Stretch: 2.5
-    - _Noise2StretchInside: 2.5
+    - _Noise2Power: 0.85
+    - _Noise2PowerDefault: 0.856
+    - _Noise2PowerPotato: 1
+    - _Noise2Stretch: 2
+    - _Noise2StretchDefault: 2.5
+    - _Noise2StretchInside: 1.75
+    - _Noise2StretchInsideDefault: 2.5
+    - _Noise2StretchInsidePotato: 1
+    - _Noise2StretchPotato: 1
     - _Noise2X: 0
-    - _Noise2Y: 7.5
+    - _Noise2XDefault: 1
+    - _Noise2XPotato: 1
+    - _Noise2Y: 0.2
+    - _Noise2YDefault: 5
+    - _Noise2YPotato: 1
     - _Noise2Z: 1
-    - _NoisePower: 0.797
+    - _Noise2ZDefault: 1
+    - _Noise2ZPotato: 1
+    - _NoisePower: 0.75
     - _NoiseSeed: 420
     - _NumBands: 4
     - _PanInvert: 0
@@ -189,12 +207,13 @@ Material:
     - _PulseSpeed: 0
     - _RTLMStrength: 1
     - _RedMultiplier: 1
-    - _Saturation: 0.25
-    - _SaturationLength: 10
+    - _RenderMode: 1
+    - _Saturation: 1
+    - _SaturationLength: 14.91
     - _Sector: 0
     - _SpecLMOcclusionAdjust: 0.2
     - _SpecularLMOcclusion: 0
-    - _SpinSpeed: 4
+    - _SpinSpeed: 2
     - _StripeSplit: 9.1
     - _StripeSplit2: 16.4
     - _StripeSplit3: 5.2
@@ -225,6 +244,7 @@ Material:
     - _UseWorldNorm: 0
     - _XOffset: 0
     - _YOffset: 0
+    - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 2.354159, g: 2.354159, b: 2.354159, a: 2}

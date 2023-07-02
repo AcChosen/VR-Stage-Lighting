@@ -1,4 +1,4 @@
-﻿Shader "VRSL/Surface Shaders/Opaque 12 Chanel Bar"
+﻿Shader "VRSL/Standard Static/Surface Shaders/Opaque Multi-Channel Bar"
 {
     Properties
     {
@@ -11,6 +11,7 @@
 		//[NoScaleOffset] _Udon_DMXGridStrobeTimer("DMX Grid Render Texture (For Strobe Timings", 2D) = "white" {}
         [Toggle] _EnableCompatibilityMode ("Enable Compatibility Mode", Int) = 0
         [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
+        [Enum(15CH,0,48CH,1)] _ChannelMode ("Channel Mode", Int) = 0
        
 		[Toggle] _EnableStrobe ("Enable Strobe", Int) = 0
 		 //[HideInInspector][Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
@@ -35,6 +36,7 @@
         _Metallic ("Metallic Blend", Range(0,1)) = 0.0
         _Glossiness ("Smoothness Blend", Range(0,1)) = 0.5
 
+
     }
     SubShader
     {
@@ -46,7 +48,9 @@
         // Physically based Standard lighting model, and enable shadows on all light types
        #pragma surface surf StandardDefaultGI
         #include "UnityPBSLighting.cginc"
-
+        #pragma shader_feature_local _CHANNEL_MODE
+        #define VRSL_DMX
+        #define VRSL_SURFACE
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.5
         struct Input
@@ -57,8 +61,8 @@
             float2 uv_MetallicSmoothness;
 
         };
-        #include "../StaticLights/VRSL-StaticLight-FixtureMesh-Defines.cginc"
-        half _CurveMod, _FixutreIntensityMultiplier;
+        #include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-Defines.cginc"
+        half _CurveMod;
         sampler2D _EmissionMask, _NormalMap, _MetallicSmoothness;
          #include "../Shared/VRSL-DMXFunctions.cginc"
 
@@ -97,5 +101,6 @@
         }
         ENDCG
     }
+    CustomEditor "VRSLInspector"
     FallBack "Diffuse"
 }

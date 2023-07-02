@@ -9,12 +9,14 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-StandardMover-ProjectionMat-HQ-Horizontal
   m_Shader: {fileID: 4800000, guid: e923d97391d92af458ef6f59e8f0963b, type: 3}
-  m_ShaderKeywords: _DNENABLER_NONE _ENABLESPIN_ON _USERAWGRID_ON
+  m_ShaderKeywords: _DNENABLER_NONE _ENABLEDMX_ON _ENABLESPIN_ON _ENABLESTROBE_ON
+    _LEGACYGOBORANGE_ON _NINEUNIVERSEMODE_ON _USERAWGRID_ON
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 1
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 3001
+  stringTagMap:
+    RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -105,11 +107,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FinalStrobeFreq: 0
+    - _AlphaToCoverage: 0
     - _BlendDst: 1
     - _BlendOp: 0
     - _BlendSrc: 2
     - _BlueMultiplier: 1
     - _BumpScale: 1
+    - _ClippingThreshold: 0.05
     - _ConeLength: 3.62
     - _ConeSync: 0.2
     - _ConeWidth: 2.5
@@ -120,10 +124,11 @@ Material:
     - _DividePower: 0.079
     - _EnableAudioReact: 0
     - _EnableCompatibilityMode: 0
+    - _EnableDMX: 1
     - _EnableOSC: 0
     - _EnableSpin: 1
     - _EnableStaticEmissionColor: 0
-    - _EnableStrobe: 0
+    - _EnableStrobe: 1
     - _EnableVerticalMode: 0
     - _Fade: 1.5
     - _FadeAmt: 0
@@ -131,9 +136,9 @@ Material:
     - _FeatherOffset: 0.5
     - _FinalIntensity: 1
     - _FinalStrobeFreq: 0
-    - _FixtureBaseRotationY: 0
+    - _FixtureBaseRotationY: 89
     - _FixtureMaxIntensity: 0.393
-    - _FixtureRotationX: 180
+    - _FixtureRotationX: -13
     - _GlobalIntensity: 1
     - _Glossiness: 1
     - _GreenMultiplier: 1
@@ -142,22 +147,24 @@ Material:
     - _IntensityCutoff: 0.2
     - _IsEven: 0
     - _LMStrength: 1
-    - _LegacyGoboRange: 0
+    - _LegacyGoboRange: 1
     - _LensMaxBrightness: 5
     - _LightProbeMethod: 0
     - _MaxMinPanAngle: 90
     - _MaxMinTiltAngle: -90
     - _Metallic: 0.501
+    - _MinimumBeamRadius: 0.94
     - _ModX: 0
     - _ModY: 0
+    - _NineUniverseMode: 1
     - _NoisePower: 0.333
     - _NoiseSeed: 420
     - _PanInvert: 0
     - _ProjectionCutoff: 0.165
-    - _ProjectionDistanceFallOff: 0.0075
+    - _ProjectionDistanceFallOff: 0.006
     - _ProjectionFade: 2.35
     - _ProjectionFadeCurve: 1.99
-    - _ProjectionIntensity: 4.8
+    - _ProjectionIntensity: 3
     - _ProjectionOriginCutoff: 0.19
     - _ProjectionRange: 6.5
     - _ProjectionRotation: -180
@@ -174,6 +181,7 @@ Material:
     - _PulseSpeed: 0
     - _RTLMStrength: 1
     - _RedMultiplier: 1
+    - _RenderMode: 1
     - _Saturation: 0.5
     - _SaturationLength: 0.1
     - _Sector: 0
@@ -189,6 +197,7 @@ Material:
     - _UseWorldNorm: 0
     - _XOffset: 0
     - _YOffset: 0
+    - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 7.8000345, g: 7.8000345, b: 7.8000345, a: 1}

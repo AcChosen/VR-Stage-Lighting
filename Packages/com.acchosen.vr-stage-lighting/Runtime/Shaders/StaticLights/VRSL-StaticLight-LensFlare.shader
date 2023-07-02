@@ -50,6 +50,15 @@
         _FlickResultIntensityLowestPoint("FlickResultIntensityLowestPoint", range(0,1)) = 0.5
 
         [Toggle]_UseDepthLight("Toggle The Requirement of the depth light to function.", Int) = 1
+
+        [Enum(Transparent,1,AlphaToCoverage,2)] _RenderMode ("Render Mode", Int) = 1
+        [Enum(Off,0,On,1)] _ZWrite ("Z Write", Int) = 0
+		[Enum(Off,0,On,1)] _AlphaToCoverage ("Alpha To Coverage", Int) = 0
+        [Enum(Off,0,One,1)] _BlendDst ("Destination Blend mode", Float) = 1
+		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
+        _ClippingThreshold ("Clipping Threshold", Range (0,1)) = 0.5
+		_AlphaProjectionIntensity ("Alpha Projection Intesnity", Range (0,1)) = 0.5
+        [Enum(1CH,0,4CH,1,5CH,2,13CH,3)] _ChannelMode ("Channel Mode", Int) = 2
     }
     SubShader
     {
@@ -58,10 +67,11 @@
 
         Pass
         {
+            AlphaToMask [_AlphaToCoverage]
             Zwrite Off
             ZTest Off
-            Blend One One
-            Cull Off
+            Blend One [_BlendDst]
+            Cull Back
             Lighting Off
 			Tags{ "LightMode" = "Always" }
             Stencil
@@ -74,6 +84,11 @@
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_local _ _ALPHATEST_ON
+            #pragma multi_compile_local _ _USE_DEPTH_LIGHT
+            #pragma shader_feature _1CH_MODE _4CH_MODE _5CH_MODE _13CH_MODE
+            #define VRSL_DMX
+            #define VRSL_FLARE
             // make fog work
            // #pragma multi_compile_fog
             #pragma multi_compile_instancing
@@ -98,6 +113,7 @@
                 float4 vertexWorldPos : TEXCOORD3;
                 half4 color : TEXCOORD4;
                 float maskX : TEXCOORD5;
+                float4 dmx : TEXCOORD6;
 
                 UNITY_VERTEX_INPUT_INSTANCE_ID  // will turn into this in non OpenGL / non PSSL -> uint instanceID : SV_InstanceID;
                 UNITY_VERTEX_OUTPUT_STEREO 
@@ -107,11 +123,11 @@
             #define COUNT 8 //you can edit to any number(e.g. 1~32), the lower the faster. Keeping this number a const can enable many compiler optimizations
 
             //sampler2D _CameraDepthTexture;
-            #include "VRSL-StaticLight-FixtureMesh-Defines.cginc"
+            #include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-Defines.cginc"
            // sampler2D _MainTex;
-            float4 _MainTex_ST;
+//            float4 _MainTex_ST;
             //half4 _Emission;
-            half _ColorSat, _ScaleFactor, _ReferenceDistance, _UVScale, _FixutreIntensityMultiplier;
+            half _ColorSat, _ScaleFactor, _ReferenceDistance, _UVScale;
             float _LightSourceViewSpaceRadius;
             float _DepthOcclusionTestZBias;
             
@@ -169,6 +185,7 @@
                 float e = 1.0e-10;
                 return float3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
             }
+            //#include "../Basic Surface Shaders/VRSL-StandardSurface-Functions.cginc"
 
             v2f vert (appdata v)
             {
@@ -178,16 +195,39 @@
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o); //Insert
 
                 uint dmx = getDMXChannel();
-                float strobe = IF(isStrobe() == 1, GetStrobeOutput(dmx), 1);
-                float4 DMXcol = getEmissionColor();
-                DMXcol *= GetDMXColor(dmx);
-                float4 coll = IF(isDMX() == 1, DMXcol, getEmissionColor());
-                half4 e = coll * strobe;
+
+                #if _1CH_MODE
+                    half4 e =IF(isDMX() == 1, getValueAtCoords(dmx+1, _Udon_DMXGridRenderTexture) * getEmissionColor(), getEmissionColor());
+                #elif _4CH_MODE
+                    float4 DMXcol = getEmissionColor();
+                    DMXcol *= float4(getValueAtCoords(dmx+1, _Udon_DMXGridRenderTexture), getValueAtCoords(dmx+2, _Udon_DMXGridRenderTexture), getValueAtCoords(dmx+3, _Udon_DMXGridRenderTexture), 1);
+                    float4 coll = IF(isDMX() == 1, DMXcol, getEmissionColor());
+                    half4 e = coll;
+                #elif _5CH_MODE
+                    float strobe = IF(isStrobe() == 1, GetStrobeOutputFiveCH(dmx), 1);
+                    float4 DMXcol = getEmissionColor();
+                    DMXcol *= float4(getValueAtCoords(dmx+1, _Udon_DMXGridRenderTexture), getValueAtCoords(dmx+2, _Udon_DMXGridRenderTexture), getValueAtCoords(dmx+3, _Udon_DMXGridRenderTexture), 1);
+                    float4 coll = IF(isDMX() == 1, DMXcol, getEmissionColor());
+                    half4 e = coll * strobe;
+                #elif _13CH_MODE
+                    float strobe = IF(isStrobe() == 1, GetStrobeOutput(dmx), 1);
+                    float4 DMXcol = getEmissionColor();
+                    DMXcol *= GetDMXColor(dmx);
+                    float4 coll = IF(isDMX() == 1, DMXcol, getEmissionColor());
+                    half4 e = coll * strobe;
+                #endif
+
                 e = IF(isDMX() == 1,lerp(half4(-_CurveMod,-_CurveMod,-_CurveMod,1), e, pow(GetDMXIntensity(dmx, 1.0), 1.0)), e);
                 e = clamp(e, half4(0,0,0,1), half4(_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,1));
-                e*= _FixutreIntensityMultiplier;
+                
+                #ifdef _ALPHATEST_ON
+                    e*= (_FixutreIntensityMultiplier*0.25);
+                #else
+                    e*= _FixutreIntensityMultiplier;    
+                #endif
                 e = float4(((e.rgb * _FixtureMaxIntensity) * getGlobalIntensity()) * getFinalIntensity(), e.w);
                 e*= _UniversalIntensity;
+                o.dmx = e;
                 float3 eHSV = RGB2HSV(e.rgb);
                 if(eHSV.z <= 0.01)
                 {
@@ -232,8 +272,8 @@
                 //Test for n*n grid in view space, where quad pivot is grid's center.
                 //For each iteration,
                 //if that test point passed the scene depth occlusion test, we add 1 to visibilityTestPassedCount
-                if(_UseDepthLight)
-                {
+                #if _USE_DEPTH_LIGHT
+                
                     for(int x = -COUNT; x <= COUNT; x++)
                     {
                         for(int y = -COUNT; y <= COUNT ; y++)
@@ -268,7 +308,7 @@
                     visibilityResult01 *= smoothstep(_StartFadeinDistanceWorldUnit,_EndFadeinDistanceWorldUnit,linearEyeDepthOfFlarePivot);
                     o.vertex = visibilityResult01 < divider ? 0 : o.vertex;
                     o.color.a *= visibilityResult01;
-                }
+                #endif
                 // if(_ShouldDoFlicker)
                 // {
                 //     float flickerMul = 0;
@@ -308,8 +348,9 @@
                 
 
 
-
-                
+                #if _ALPHATEST_ON
+                    o.screenPos = ComputeScreenPos(o.vertex);
+                #endif
               //  UNITY_TRANSFER_FOG(o,o.vertex);
                 return o;
             }
@@ -320,31 +361,34 @@
 
             fixed4 frag (v2f i) : SV_Target
             {
-                //UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
-                // float2 screenposUV = i.screenPos.xy / i.screenPos.w;
-                //     //CREDIT TO DJ LUKIS FOR MIRROR DEPTH CORRECTION
-                // float perspectiveDivide = 1.0f / i.vertex.w;
-                // float4 depthdirect = i.worldDirection * perspectiveDivide;
-                // float sceneZ = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenposUV);
-                // #if UNITY_REVERSED_Z
-                //     if (sceneZ == 0)
-                // #else
-                //     if (sceneZ == 1)
-                // #endif
-                // return float4(0,0,0,1);
-                // float depth = CorrectedLinearEyeDepth(sceneZ, depthdirect.w);
-                // //Convert from Corrected Linear Eye Depth to Linear01Depth
-                // //Credit: https://www.cyanilux.com/tutorials/depth/#eye-depth
-                // depth = (1.0 - (depth * _ZBufferParams.w)) / (depth * _ZBufferParams.z);
-                // depth = Linear01Depth(depth);
-                fixed4 col = saturate(tex2D(_MainTex, i.uv )-_RemoveTextureArtifact) * i.color;
-                // apply fog
-               // UNITY_APPLY_FOG(i.fogCoord, col);
-                
-                col *= i.maskX;
-                return col;
+                #if _ALPHATEST_ON
+                    float2 pos = i.screenPos.xy / i.screenPos.w;
+                    pos *= _ScreenParams.xy;
+                    float DITHER_THRESHOLDS[16] =
+                    {
+                        1.0 / 17.0,  9.0 / 17.0,  3.0 / 17.0, 11.0 / 17.0,
+                        13.0 / 17.0,  5.0 / 17.0, 15.0 / 17.0,  7.0 / 17.0,
+                        4.0 / 17.0, 12.0 / 17.0,  2.0 / 17.0, 10.0 / 17.0,
+                        16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0
+                    };
+                    int index = (int(pos.x) % 4) * 4 + int(pos.y) % 4;
+                    float4 col = saturate(tex2D(_MainTex, i.uv ));
+                   // col *= i.maskX;
+                    //clip((col.a) - DITHER_THRESHOLDS[index]);
+                    clip((((col.r + col.g + col.b)/3) * (_ClippingThreshold * 10)) - DITHER_THRESHOLDS[index]);
+                    UNITY_APPLY_FOG(i.fogCoord, col);
+                    return col * i.dmx;
+                #else
+                    fixed4 col = saturate(tex2D(_MainTex, i.uv )-_RemoveTextureArtifact) * i.color;
+                    // apply fog
+                    UNITY_APPLY_FOG(i.fogCoord, col);
+                    
+                    col *= i.maskX;
+                    return col;
+                #endif
             }
             ENDCG
         }
     }
+    CustomEditor "VRSLInspector"
 }

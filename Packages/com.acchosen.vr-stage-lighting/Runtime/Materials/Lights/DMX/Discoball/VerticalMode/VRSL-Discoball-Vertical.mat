@@ -9,12 +9,13 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-Discoball-Vertical
   m_Shader: {fileID: 4800000, guid: ab365740313f68e4c9b46ea0f93ba4b3, type: 3}
-  m_ShaderKeywords: _ENABLEVERTICALMODE_ON
+  m_ShaderKeywords: _ALPHATEST_ON _ENABLEVERTICALMODE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2451
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -69,13 +70,18 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _Alpha: 0.66
+    - _AlphaToCoverage: 1
+    - _BlendDst: 0
+    - _BlendOp: 0
     - _Border: 1
     - _BumpScale: 1
+    - _ClippingThreshold: 0.5
     - _Cutoff: 0.5
     - _DMXChannel: 0
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EnableCompatibilityMode: 0
+    - _EnableDMX: 0
     - _EnableOSC: 0
     - _EnableVerticalMode: 1
     - _FinalIntensity: 1
@@ -92,10 +98,12 @@ Material:
     - _Mod: 1
     - _Mode: 0
     - _Multiplier: 4.5499997
+    - _NineUniverseMode: 0
     - _OcclusionStrength: 1
     - _Offset: 0
     - _OuterRadius: 0.495
     - _Parallax: 0.02
+    - _RenderMode: 2
     - _RotationSpeed: 8.2
     - _Sector: 0
     - _SmoothnessTextureChannel: 0

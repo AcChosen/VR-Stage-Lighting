@@ -8,9 +8,9 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-Flasher-FixtureMat-Legacy
-  m_Shader: {fileID: 4800000, guid: 44e7ffffd1ad9bc4e8e83fe424795fcb, type: 3}
-  m_ShaderKeywords: _EMISSION _ENABLECOMPATIBILITYMODE_ON _ENABLESCROLL_ON _FORWARD_Y
-    _METALLICGLOSSMAP _NORMALMAP _USERAWGRID_ON _USE_DEPTH_LIGHT
+  m_Shader: {fileID: 4800000, guid: f23016ddcd834d84c92028d893fd6558, type: 3}
+  m_ShaderKeywords: _1CH_MODE _EMISSION _ENABLECOMPATIBILITYMODE_ON _ENABLESCROLL_ON
+    _FORWARD_Y _METALLICGLOSSMAP _NORMALMAP _USERAWGRID_ON _USE_DEPTH_LIGHT
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -61,6 +61,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicSmoothness:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -132,15 +136,18 @@ Material:
     - _BulbMaxIntensity: 1
     - _BumpScale: 1
     - _Channel: 0
+    - _ChannelMode: 0
     - _ConeWidth: 0
     - _CurveMod: 5
     - _Cutoff: 0.5
+    - _DMXChannel: 0
     - _DetailNormalMapScale: 1
     - _DistFade: 0.7
     - _DstBlend: 0
     - _EnableAudioReact: 0
     - _EnableColorTextureSample: 0
     - _EnableCompatibilityMode: 1
+    - _EnableDMX: 0
     - _EnableOSC: 0
     - _EnableScroll: 1
     - _EnableSpin: 0
@@ -188,6 +195,7 @@ Material:
     - _ProjectionUVMod6: 0
     - _PulseSpeed: 0
     - _RTLMStrength: 1
+    - _Saturation: 0.95
     - _ScrollIncrement: 1.4
     - _Sector: 0
     - _SmoothnessTextureChannel: 0

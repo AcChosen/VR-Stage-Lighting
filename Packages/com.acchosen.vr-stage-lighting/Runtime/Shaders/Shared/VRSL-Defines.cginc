@@ -1,12 +1,40 @@
 ﻿//MOVER LIGHT SYSTEM DEFINES
-sampler2D _MainTex; float4 _MainTex_ST;
-sampler2D _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridStrobeTimer, _Udon_DMXGridSpinTimer;
+float _BlindingAngleMod;
+sampler2D _MainTex; 
+
+#ifndef VRSL_SURFACE
+    float4 _MainTex_ST;
+// #else
+//     float _MaxMinPanAngle;
+//     float _MaxMinTiltAngle;
+#endif
+
+#ifdef VRSL_DMX
+    uint _UseRawGrid, _EnableExtraChannels;
+    uniform float4 _Udon_DMXGridRenderTexture_TexelSize;
+    sampler2D _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridStrobeTimer, _Udon_DMXGridSpinTimer;
+    float _SpinSpeed;
+#endif
+#ifdef VRSL_AUDIOLINK
+    uniform float4 _AudioSpectrum_TexelSize; 
+    uniform sampler2D _AudioSpectrum;
+    sampler2D _SamplingTexture;
+#endif
+
 //SamplerState sampler_point_repeat;
 int _IsEven;
 #if !defined(VOLUMETRIC_YES) && !defined(PROJECTION_YES)
     sampler2D _MetallicGlossMap;
     sampler2D _BumpMap, _InsideConeNormalMap, _SceneAlbedo;
 #endif
+
+#ifdef FIXTURE_EMIT
+    sampler2D _DecorativeEmissiveMap;
+    half _DecorativeEmissiveMapStrength;
+    float4 _DecorativeEmissiveMap_ST;
+#endif
+
+
 float4 _Color;
 float _Metallic;
 float _Glossiness;
@@ -22,13 +50,36 @@ float4 _FixtureLensOrigin;
 //float _ProjectionNormalBlur;
 
 float4x4 _viewToWorld;
+float _MinimumBeamRadius;
+
 
 #if defined(VOLUMETRIC_YES)
     sampler2D _NoiseTex;
     float _Noise2StretchInside;
+    float _Noise2Stretch;
+    float _Noise2X;
+    float _Noise2Y;
+    float _Noise2Z;
+    float _Noise2Power;
+
+    float _Noise2StretchInsideDefault;
+    float _Noise2StretchDefault;
+    float _Noise2XDefault;
+    float _Noise2YDefault;
+    float _Noise2ZDefault;
+    float _Noise2PowerDefault;
+
+    float _Noise2StretchInsidePotato;
+    float _Noise2StretchPotato;
+    float _Noise2XPotato;
+    float _Noise2YPotato;
+    float _Noise2ZPotato;
+    float _Noise2PowerPotato;
+    
+    
 #endif
 float4 _NoiseTex_ST;
-float _NoisePower, _NoiseSeed, _Noise2Stretch, _Noise2X, _Noise2Y, _Noise2Z, _Noise2Power;
+float _NoisePower, _NoiseSeed;
 uint _ToggleMagicNoise;
 
 
@@ -39,14 +90,13 @@ float _LMStrength;
 float _RTLMStrength;
 int _TextureSampleMode;
 int _LightProbeMethod;
-uint _UseRawGrid, _EnableExtraChannels;
 half _Saturation, _SaturationLength, _LensMaxBrightness, _UniversalIntensity;
 uint _EnableCompatibilityMode, _EnableVerticalMode;
 uint _GoboBeamSplitEnable;
 
+
 uniform const half compatSampleYAxis = 0.019231;
 uniform const half standardSampleYAxis = 0.00762;
-uniform float4 _Udon_DMXGridRenderTexture_TexelSize;
 //float _FixtureRotationX;
 //float _FixtureBaseRotationY;
 float4 _FixtureRotationOrigin;
@@ -57,6 +107,7 @@ float _ProjectionIntensity;
 float _ProjectionRange;
 float4 _ProjectionRangeOrigin;
 float _ProjectionFade, _ProjectionFadeCurve, _ProjectionDistanceFallOff;
+float _AlphaProjectionIntensity;
 
 //float _FinalStrobeFreq, _NewTimer;
 
@@ -65,7 +116,7 @@ float _ProjectionFade, _ProjectionFadeCurve, _ProjectionDistanceFallOff;
 UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 sampler2D _LightMainTex, _ProjectionMainTex;
 float4 _LightMainTex_ST;
-float _ProjectionUVMod, _UseWorldNorm, _ProjectionRotation, _SpinSpeed, _ProjectionUVMod2, _ProjectionUVMod3, _ProjectionUVMod4, _ProjectionUVMod5, _ProjectionUVMod6, _ProjectionUVMod7, _ProjectionUVMod8;
+float _ProjectionUVMod, _UseWorldNorm, _ProjectionRotation, _ProjectionUVMod2, _ProjectionUVMod3, _ProjectionUVMod4, _ProjectionUVMod5, _ProjectionUVMod6, _ProjectionUVMod7, _ProjectionUVMod8;
 //half _ProjectionSelection;
 float4 _ProjectionMainTex_ST;
 float _ModX;
@@ -81,15 +132,32 @@ half _RedMultiplier, _GreenMultiplier, _BlueMultiplier;
 int _EnableStaticEmissionColor;
 float4 _StaticEmission;
 half _ProjectionCutoff, _ProjectionOriginCutoff, _GradientMod, _GradientModGOBO;
-
+half _ClippingThreshold;
 //Instanced Properties
 
 UNITY_INSTANCING_BUFFER_START(Props)
-    UNITY_DEFINE_INSTANCED_PROP(uint, _DMXChannel)
-    UNITY_DEFINE_INSTANCED_PROP(uint, _NineUniverseMode)
+    #ifdef VRSL_DMX
+        UNITY_DEFINE_INSTANCED_PROP(uint, _DMXChannel)
+        UNITY_DEFINE_INSTANCED_PROP(uint, _NineUniverseMode)
+        UNITY_DEFINE_INSTANCED_PROP(uint, _EnableDMX)
+        UNITY_DEFINE_INSTANCED_PROP(uint, _LegacyGoboRange)
+    #endif
+    #ifdef VRSL_AUDIOLINK
+        UNITY_DEFINE_INSTANCED_PROP(float, _EnableAudioLink)
+        UNITY_DEFINE_INSTANCED_PROP(float, _EnableColorChord)
+        UNITY_DEFINE_INSTANCED_PROP(float, _NumBands)
+        UNITY_DEFINE_INSTANCED_PROP(float, _Band)
+        UNITY_DEFINE_INSTANCED_PROP(float, _BandMultiplier)
+        UNITY_DEFINE_INSTANCED_PROP(float, _Delay)
+        UNITY_DEFINE_INSTANCED_PROP(uint, _EnableColorTextureSample)
+        UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleX)
+        UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleY)
+        UNITY_DEFINE_INSTANCED_PROP(float, _SpinSpeed)
+        UNITY_DEFINE_INSTANCED_PROP(float, _ThemeColorTarget)
+        UNITY_DEFINE_INSTANCED_PROP(uint, _EnableThemeColorSampling)
+    #endif
     UNITY_DEFINE_INSTANCED_PROP(uint, _PanInvert)
     UNITY_DEFINE_INSTANCED_PROP(uint, _TiltInvert)
-    UNITY_DEFINE_INSTANCED_PROP(uint, _EnableDMX)
     UNITY_DEFINE_INSTANCED_PROP(uint, _EnableStrobe)
     UNITY_DEFINE_INSTANCED_PROP(uint, _EnableSpin)
     UNITY_DEFINE_INSTANCED_PROP(float, _StrobeFreq)
@@ -102,7 +170,6 @@ UNITY_INSTANCING_BUFFER_START(Props)
     UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
     UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
     UNITY_DEFINE_INSTANCED_PROP(float, _MaxConeLength)
-    UNITY_DEFINE_INSTANCED_PROP(uint, _LegacyGoboRange)
     UNITY_DEFINE_INSTANCED_PROP(float, _MaxMinPanAngle)
     UNITY_DEFINE_INSTANCED_PROP(float, _MaxMinTiltAngle)
 UNITY_INSTANCING_BUFFER_END(Props)

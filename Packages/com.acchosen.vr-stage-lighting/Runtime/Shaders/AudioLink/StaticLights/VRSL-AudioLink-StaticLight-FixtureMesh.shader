@@ -64,12 +64,14 @@
         sampler2D _EmissionMask;
         sampler2D _NormalMap;
         #define STATIC_FIXTURE
+        #define VRSL_AUDIOLINK
+        #define VRSL_SURFACE
         struct Input
         {
             float2 uv_MainTex;
             float2 uv_NormalMap;
         };
-         #include "../Shared/VRSL-AudioLink-Defines.cginc" //Property Defines are here
+         #include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-Defines.cginc"
          half _CurveMod;
          #include "../Shared/VRSL-AudioLink-Functions.cginc"
 

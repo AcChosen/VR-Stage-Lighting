@@ -9,8 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-Blinder-FixtureMat-Horizontal-5CH
   m_Shader: {fileID: 4800000, guid: f23016ddcd834d84c92028d893fd6558, type: 3}
-  m_ShaderKeywords: _EMISSION _ENABLEOSC_ON _ENABLESTROBE_ON _FORWARD_Y _METALLICGLOSSMAP
-    _NORMALMAP _USERAWGRID_ON _USE_DEPTH_LIGHT
+  m_ShaderKeywords: _5CH_MODE _EMISSION _ENABLEDMX_ON _ENABLEOSC_ON _ENABLESTROBE_ON
+    _FORWARD_Y _METALLICGLOSSMAP _NORMALMAP _USERAWGRID_ON _USE_DEPTH_LIGHT
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -123,6 +123,7 @@ Material:
     - _BlendSrc: 1
     - _BulbMaxIntensity: 1
     - _BumpScale: 1
+    - _ChannelMode: 2
     - _ConeWidth: 0
     - _CurveMod: 5
     - _Cutoff: 0.5
@@ -131,6 +132,7 @@ Material:
     - _DistFade: 0.7
     - _DstBlend: 0
     - _EnableCompatibilityMode: 0
+    - _EnableDMX: 1
     - _EnableOSC: 1
     - _EnableSpin: 0
     - _EnableStrobe: 1
@@ -142,7 +144,7 @@ Material:
     - _FinalIntensity: 1
     - _FinalStrobeFreq: 0
     - _FixtureBaseRotationY: 0
-    - _FixtureMaxIntensity: 15
+    - _FixtureMaxIntensity: 5
     - _FixtureRotationX: 0
     - _FixutreIntensityMultiplier: 5
     - _GlobalIntensity: 1
@@ -177,7 +179,7 @@ Material:
     - _ProjectionUVMod6: 0
     - _PulseSpeed: 0
     - _RTLMStrength: 1
-    - _Saturation: 0.95
+    - _Saturation: 1
     - _Sector: 0
     - _SmoothnessTextureChannel: 0
     - _SpecLMOcclusionAdjust: 0.359

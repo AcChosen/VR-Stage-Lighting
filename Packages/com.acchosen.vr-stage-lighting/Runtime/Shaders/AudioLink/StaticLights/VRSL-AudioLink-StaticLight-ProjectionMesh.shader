@@ -6,7 +6,7 @@
 		
 		//[Header (INSTANCED PROPERITES)]
 		 [Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Source Blend mode", Float) = 2
-		 [Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Destination Blend mode", Float) = 1
+		 //[Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Destination Blend mode", Float) = 1
 		 [Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
 		// _BlockLengthX("OSC Block Base Distance X", Float) = 0.019231
 		// _BlockLengthY("OSC Block Base Distance Y", Float) = 0
@@ -96,6 +96,14 @@
 
 			[Toggle] _EnableThemeColorSampling ("Enable Theme Color Sampling", Int) = 0
 		 _ThemeColorTarget ("Choose Theme Color", Int) = 0
+		[Enum(Transparent,1,AlphaToCoverage,2)] _RenderMode ("Render Mode", Int) = 1
+        [Enum(Off,0,On,1)] _ZWrite ("Z Write", Int) = 0
+		[Enum(Off,0,On,1)] _AlphaToCoverage ("Alpha To Coverage", Int) = 0
+        [Enum(Off,0,One,1)] _BlendDst ("Destination Blend mode", Float) = 1
+		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
+        _ClippingThreshold ("Clipping Threshold", Range (0,1)) = 0.5
+		_AlphaProjectionIntensity ("Alpha Projection Intesnity", Range (0,1)) = 0.5
+		[Enum(13CH,0,5CH,1)] _ChannelMode ("Channel Mode", Int) = 0
 
 
 
@@ -128,8 +136,9 @@
             #pragma fragment frag
 			#pragma multi_compile_fog
 			#pragma multi_compile_instancing
-
+			#pragma multi_compile_local _ _ALPHATEST_ON
 			#define PROJECTION_YES
+			#define VRSL_AUDIOLINK
 
             #include "UnityCG.cginc"
 
@@ -161,9 +170,9 @@
 				 float3 audioGlobalFinalIntensity: TEXCOORD1;
 				 UNITY_VERTEX_INPUT_INSTANCE_ID
              };
-			#include "../Shared/VRSL-AudioLink-Defines.cginc"
+			#include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-Defines.cginc"
 			#include "../Shared/VRSL-AudioLink-Functions.cginc"
-			#include "VRSL-AudioLink-StaticLight-ProjectionFrag.cginc"
+			#include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/StaticLights/VRSL-StaticLight-ProjectionFrag.cginc"
 
 	#define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
 

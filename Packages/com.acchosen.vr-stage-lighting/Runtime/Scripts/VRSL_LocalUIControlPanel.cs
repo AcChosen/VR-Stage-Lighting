@@ -16,15 +16,52 @@ using static VRC.SDKBase.VRCShader;
     using UnityEngine.Rendering;
 #endif
 namespace VRSL
-{
+{    
+    public enum VolumetricQualityModes
+    {
+        High,
+        Medium,
+        Low
+    }
+    public enum DefaultQualityModes
+    {
+        High,
+        Low
+    }
 
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 
+
+
     public class VRSL_LocalUIControlPanel : UdonSharpBehaviour
     {
+        [SerializeField, HideInInspector]
+        private VRStageLighting_AudioLink_Laser[] audioLinkLasers;
+        [SerializeField, HideInInspector]
+        private VRStageLighting_AudioLink_Static[] audiolinkLights;
+        [SerializeField, HideInInspector]
+        private VRStageLighting_DMX_Static[] dmxLights;
+        [Header("Quality Modes")]
+        public VolumetricQualityModes volumetricQuality;
+        public bool lockVolumetricQualityMode;
+        [Space(5.0f)]
+        public DefaultQualityModes blinderProjectionQuality;
+        public bool lockBlinderProjectionQualityMode;
+        [Space(5.0f)]
 
-        
-
+        public DefaultQualityModes parProjectionQuality;
+        public bool lockParProjectionQualityMode;
+        [Space(5.0f)]
+        public DefaultQualityModes otherProjectionQuality;
+        public bool lockOtherProjectionQualityMode;
+        [Space(5.0f)]
+        public DefaultQualityModes discoballQuality;
+        public bool lockDiscoballQualityMode;
+        [Space(5.0f)]
+        public DefaultQualityModes lensFlareQuality;
+        public bool lockLensFlareQualityMode;
+       // [Space(20.0f)]
+        [Header("Video Sampling")]
         public Texture videoSampleTargetTexture;
 
         [Header("Materials")]
@@ -51,6 +88,22 @@ namespace VRSL
         public float fixtureIntensityMax = 1.0f, volumetricIntensityMax = 1.0f, projectionIntensityMax = 1.0f, discoballIntensityMax = 1.0f, laserIntensityMax = 1.0f;
 
         public UnityEngine.UI.Toggle volumetricNoiseToggle;
+        public UnityEngine.UI.Button volumetricHighButton,volumetricMedButton, volumetricLowButton;
+        public UnityEngine.UI.Text volumetricHighText, volumetricMedText, volumetricLowText;
+        public UnityEngine.UI.Button blinderProjectionHighButton,  blinderProjectionLowButton;
+        public UnityEngine.UI.Text  blinderProjectionHighText,  blinderProjectionLowText;
+        
+        public UnityEngine.UI.Button parProjectionHighButton,  parProjectionLowButton;
+        public UnityEngine.UI.Text  parProjectionHighText,  parProjectionLowText;
+        public UnityEngine.UI.Button otherProjectionHighButton,  otherProjectionLowButton;
+        public UnityEngine.UI.Text  otherProjectionHighText,  otherProjectionLowText;
+        
+        public UnityEngine.UI.Button discoballHighButton,  discoballLowButton;
+        public UnityEngine.UI.Text  discoballHighText,  discoballLowText;
+        public UnityEngine.UI.Button lensFlareHighButton,  lensFlareLowButton;
+        public UnityEngine.UI.Text lensFlareHighText, lensFlareLowText;
+        UnityEngine.UI.ColorBlock defaultColorBlock;
+        UnityEngine.UI.ColorBlock cbOn;
         public bool isUsingDMX = true;
         public bool isUsingAudioLink = true;
         [Space(10)]
@@ -123,6 +176,11 @@ namespace VRSL
         }
         void Start()
         {
+            if(volumetricHighButton){
+                defaultColorBlock = volumetricHighButton.colors;
+                cbOn = defaultColorBlock;
+                cbOn.normalColor = new Color(cbOn.normalColor.r + 0.35f, cbOn.normalColor.r + 0.35f, cbOn.normalColor.g + 0.35f, 1.0f);
+                }
             _SetTextureIDS();
             _CheckDepthLightStatus();
             _SetFinalIntensity();
@@ -135,6 +193,91 @@ namespace VRSL
             _CheckAudioLink();
             _CheckkExtendedUniverses();
             _ForceUpdateVideoSampleTexture();
+            _SetVolumetricQualityMode();
+            _SetBlinderProjectionQualityMode();
+            _SetParProjectionQualityMode();
+            _SetOtherProjectionQualityMode();
+            _SetDiscoBallQualityMode();
+            _SetLensFlareQualtiyMode();
+            _CheckButtonLockStatus();
+        }
+
+        void _CheckButtonLockStatus()
+        {
+            Color disableColor = new Color(0.25f, 0.25f, 0.25f, 1.0f);
+            Color disableButEnabledColor = new Color(0.4f, 0.4f, 0.4f, 1.0f);
+            Color disabledTextColor = new Color(1.0f, 1.0f, 1.0f, 0.045f);
+            if(lockVolumetricQualityMode)
+            {
+                if(volumetricHighButton){
+                    volumetricHighButton.image.color = volumetricQuality == VolumetricQualityModes.High ? disableButEnabledColor : disableColor;
+                    volumetricHighButton.interactable = false;}
+                if(volumetricMedButton){
+                    volumetricMedButton.image.color = volumetricQuality == VolumetricQualityModes.Medium ? disableButEnabledColor : disableColor;
+                    volumetricMedButton.interactable = false;}
+                if(volumetricLowButton){
+                    volumetricLowButton.image.color = volumetricQuality == VolumetricQualityModes.Low ? disableButEnabledColor : disableColor;
+                    volumetricLowButton.interactable = false;}
+                if(volumetricHighText){volumetricHighText.color = disabledTextColor;}
+                if(volumetricMedText){volumetricMedText.color = disabledTextColor;}
+                if(volumetricLowText){volumetricLowText.color = disabledTextColor;}
+            }
+            if(lockBlinderProjectionQualityMode)
+            {
+                if(blinderProjectionHighButton){
+                    blinderProjectionHighButton.image.color = blinderProjectionQuality == DefaultQualityModes.High ? disableButEnabledColor : disableColor;
+                    blinderProjectionHighButton.interactable = false;}
+                if(blinderProjectionLowButton){
+                    blinderProjectionLowButton.image.color = blinderProjectionQuality == DefaultQualityModes.Low ? disableButEnabledColor : disableColor;
+                    blinderProjectionLowButton.interactable = false;}
+                if(blinderProjectionHighText){blinderProjectionHighText.color = disabledTextColor;}
+                if(blinderProjectionLowText){blinderProjectionLowText.color = disabledTextColor;}
+            }
+            if(lockLensFlareQualityMode)
+            {
+                if(lensFlareHighButton){
+                    lensFlareHighButton.image.color = lensFlareQuality == DefaultQualityModes.High ? disableButEnabledColor : disableColor;
+                    lensFlareHighButton.interactable = false;}
+                if(lensFlareLowButton){
+                    lensFlareLowButton.image.color = lensFlareQuality == DefaultQualityModes.Low ? disableButEnabledColor : disableColor;
+                    lensFlareLowButton.interactable = false;}
+                if(lensFlareHighText){lensFlareHighText.color = disabledTextColor;}
+                if(lensFlareLowText){lensFlareLowText.color = disabledTextColor;}
+            }
+
+            if(lockParProjectionQualityMode)
+            {
+                if(parProjectionHighButton){
+                    parProjectionHighButton.image.color = parProjectionQuality == DefaultQualityModes.High ? disableButEnabledColor : disableColor;
+                    parProjectionHighButton.interactable = false;}
+                if(parProjectionLowButton){
+                    parProjectionLowButton.image.color = parProjectionQuality == DefaultQualityModes.Low ? disableButEnabledColor : disableColor;
+                    parProjectionLowButton.interactable = false;}
+                if(parProjectionHighText){parProjectionHighText.color = disabledTextColor;}
+                if(parProjectionLowText){parProjectionLowText.color = disabledTextColor;}
+            }
+            if(lockOtherProjectionQualityMode)
+            {
+                if(otherProjectionHighButton){
+                    otherProjectionHighButton.image.color = otherProjectionQuality == DefaultQualityModes.High ? disableButEnabledColor : disableColor;
+                    otherProjectionHighButton.interactable = false;}
+                if(otherProjectionLowButton){
+                    otherProjectionLowButton.image.color = otherProjectionQuality == DefaultQualityModes.Low ? disableButEnabledColor : disableColor;
+                    otherProjectionLowButton.interactable = false;}
+                if(otherProjectionHighText){otherProjectionHighText.color = disabledTextColor;}
+                if(otherProjectionLowText){otherProjectionLowText.color = disabledTextColor;}
+            }
+            if(lockDiscoballQualityMode)
+            {
+                if(discoballHighButton){
+                    discoballHighButton.image.color = discoballQuality == DefaultQualityModes.High ? disableButEnabledColor : disableColor;
+                    discoballHighButton.interactable = false;}
+                if(discoballLowButton){
+                    discoballLowButton.image.color = discoballQuality == DefaultQualityModes.Low ? disableButEnabledColor : disableColor;
+                    discoballLowButton.interactable = false;}
+                if(discoballHighText){discoballHighText.color = disabledTextColor;}
+                if(discoballLowText){discoballLowText.color = disabledTextColor;}
+            }
         }
 
         public void _Test()
@@ -142,6 +285,208 @@ namespace VRSL
             Debug.Log("This is a test");
         }
 
+
+    public void _SetVolumetricHigh()
+    {
+        if(lockVolumetricQualityMode){return;}
+        volumetricQuality = VolumetricQualityModes.High;
+        _SetVolumetricQualityMode();
+    }
+    public void _SetVolumetricMed()
+    {
+        if(lockVolumetricQualityMode){return;}
+        volumetricQuality = VolumetricQualityModes.Medium;
+        _SetVolumetricQualityMode();
+    }
+    public void _SetVolumetricLow()
+    {
+        if(lockVolumetricQualityMode){return;}
+        volumetricQuality = VolumetricQualityModes.Low;
+        _SetVolumetricQualityMode();
+    }
+    public void _SetProjectionBlindersHigh()
+    {
+        if(lockBlinderProjectionQualityMode){return;}
+        blinderProjectionQuality = DefaultQualityModes.High;
+        _SetBlinderProjectionQualityMode();
+    }
+    public void _SetProjectionBlindersLow()
+    {
+        if(lockBlinderProjectionQualityMode){return;}
+        blinderProjectionQuality = DefaultQualityModes.Low;
+        _SetBlinderProjectionQualityMode();
+    }
+    public void _SetProjectionParsHigh()
+    {
+        if(lockParProjectionQualityMode){return;}
+        parProjectionQuality = DefaultQualityModes.High;
+        _SetParProjectionQualityMode();
+    }
+    public void _SetProjectionParsLow()
+    {
+        if(lockParProjectionQualityMode){return;}
+        parProjectionQuality = DefaultQualityModes.Low;
+        _SetParProjectionQualityMode();
+    }
+    public void _SetProjectionOtherHigh()
+    {
+        if(lockOtherProjectionQualityMode){return;}
+        otherProjectionQuality = DefaultQualityModes.High;
+        _SetOtherProjectionQualityMode();
+    }
+    public void _SetProjectionOtherLow()
+    {
+        if(lockOtherProjectionQualityMode){return;}
+        otherProjectionQuality = DefaultQualityModes.Low;
+        _SetOtherProjectionQualityMode();
+    }
+    public void _SetDiscoballHigh()
+    {
+        if(lockDiscoballQualityMode){return;}
+        discoballQuality = DefaultQualityModes.High;
+        _SetDiscoBallQualityMode();
+    }
+    public void _SetDiscoballLow()
+    {
+        if(lockDiscoballQualityMode){return;}
+        discoballQuality = DefaultQualityModes.Low;
+        _SetDiscoBallQualityMode();
+    }
+    public void _SetLensFlareHigh()
+    {
+        if(lockLensFlareQualityMode){return;}
+        lensFlareQuality = DefaultQualityModes.High;
+        _SetLensFlareQualtiyMode();
+    }
+    public void _SetLensFlareLow()
+    {
+        if(lockLensFlareQualityMode){return;}
+        lensFlareQuality = DefaultQualityModes.Low;
+        _SetLensFlareQualtiyMode();
+    }
+    public void _UpdateAllQualityModes()
+    {
+        _SetDiscoBallQualityMode();
+        _SetVolumetricQualityMode();
+        _SetParProjectionQualityMode();
+        _SetOtherProjectionQualityMode();
+        _SetBlinderProjectionQualityMode();
+        _SetLensFlareQualtiyMode();
+    }
+    public void _SetVolumetricQualityMode()
+    {
+        switch(volumetricQuality)
+        {
+            case VolumetricQualityModes.High:
+                if(volumetricHighButton){volumetricHighButton.colors = cbOn;}
+                if(volumetricMedButton){volumetricMedButton.colors = defaultColorBlock;}
+                if(volumetricLowButton){volumetricLowButton.colors = defaultColorBlock;}
+                break;
+            case VolumetricQualityModes.Medium:
+                if(volumetricHighButton){volumetricHighButton.colors = defaultColorBlock;}
+                if(volumetricMedButton){volumetricMedButton.colors = cbOn;}
+                if(volumetricLowButton){volumetricLowButton.colors = defaultColorBlock;}
+                break;
+            case VolumetricQualityModes.Low:
+                if(volumetricHighButton){volumetricHighButton.colors = defaultColorBlock;}
+                if(volumetricMedButton){volumetricMedButton.colors = defaultColorBlock;}
+                if(volumetricLowButton){volumetricLowButton.colors = cbOn;}
+                break;
+            default:
+                break;
+        }
+        SetVolumetricQuality();
+    }
+    public void _SetBlinderProjectionQualityMode()
+    {
+        
+        switch(blinderProjectionQuality)
+        {
+            case DefaultQualityModes.High:
+                if(blinderProjectionHighButton){blinderProjectionHighButton.colors = cbOn;}
+                if(blinderProjectionLowButton){blinderProjectionLowButton.colors = defaultColorBlock;}
+                break;
+            case DefaultQualityModes.Low:
+                if(blinderProjectionHighButton){blinderProjectionHighButton.colors = defaultColorBlock;}
+                if(blinderProjectionLowButton){blinderProjectionLowButton.colors = cbOn;}
+                break;
+            default:
+                break;
+        }
+        SetBlinderProjectionQuality();
+    }
+
+    public void _SetParProjectionQualityMode()
+    {
+        
+        switch(parProjectionQuality)
+        {
+            case DefaultQualityModes.High:
+                if(parProjectionHighButton){parProjectionHighButton.colors = cbOn;}
+                if(parProjectionLowButton){parProjectionLowButton.colors = defaultColorBlock;}
+                break;
+            case DefaultQualityModes.Low:
+                if(parProjectionHighButton){parProjectionHighButton.colors = defaultColorBlock;}
+                if(parProjectionLowButton){parProjectionLowButton.colors = cbOn;}
+                break;
+            default:
+                break;
+        }
+        SetParProjectionQuality();
+    }
+    public void _SetOtherProjectionQualityMode()
+    {
+        
+        switch(otherProjectionQuality)
+        {
+            case DefaultQualityModes.High:
+                if(otherProjectionHighButton){otherProjectionHighButton.colors = cbOn;}
+                if(otherProjectionLowButton){otherProjectionLowButton.colors = defaultColorBlock;}
+                break;
+            case DefaultQualityModes.Low:
+                if(otherProjectionHighButton){otherProjectionHighButton.colors = defaultColorBlock;}
+                if(otherProjectionLowButton){otherProjectionLowButton.colors = cbOn;}
+                break;
+            default:
+                break;
+        }
+        SetOtherProjectionQuality();
+    }
+    public void _SetDiscoBallQualityMode()
+    {
+        
+        switch(discoballQuality)
+        {
+            case DefaultQualityModes.High:
+                if(discoballHighButton){discoballHighButton.colors = cbOn;}
+                if(discoballLowButton){discoballLowButton.colors = defaultColorBlock;}
+                break;
+            case DefaultQualityModes.Low:
+                if(discoballHighButton){discoballHighButton.colors = defaultColorBlock;}
+                if(discoballLowButton){discoballLowButton.colors = cbOn;}
+                break;
+            default:
+                break;
+        }
+        SetDiscoballQuality();
+    }
+    public void _SetLensFlareQualtiyMode()
+    {
+        switch(lensFlareQuality)
+        {
+            case DefaultQualityModes.High:
+                if(lensFlareHighButton){lensFlareHighButton.colors = cbOn;}
+                if(lensFlareLowButton){lensFlareLowButton.colors = defaultColorBlock;}
+                break;
+            case DefaultQualityModes.Low:
+                if(lensFlareHighButton){lensFlareHighButton.colors = defaultColorBlock;}
+                if(lensFlareLowButton){lensFlareLowButton.colors = cbOn;}
+                break;
+            default:
+                break;
+        }
+        SetLensFlareQuality();
+    }
         public void _CheckDepthLightStatus()
         {
 
@@ -157,10 +502,16 @@ namespace VRSL
             {
                 mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
             }
-            foreach(Material mat in fixtureMaterials)
+            if(fixtureMaterials != null)
             {
-                mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
-                SetKeyword(mat, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(mat.GetInt("_UseDepthLight"))) == 1 ? true : false);
+                foreach(Material mat in fixtureMaterials)
+                {
+                    if(mat != null)
+                    {
+                        mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
+                        SetKeyword(mat, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(mat.GetInt("_UseDepthLight"))) == 1 ? true : false);
+                    }
+                }
             }
             
         }
@@ -370,7 +721,10 @@ namespace VRSL
         {
             foreach(Material mat in fixtureMaterials)
             {
-                mat.SetFloat("_UniversalIntensity", Mathf.Lerp(0.0f, fixtureIntensityMax, fixtureSlider.value));
+                if(mat != null)
+                {
+                    mat.SetFloat("_UniversalIntensity", Mathf.Lerp(0.0f, fixtureIntensityMax, fixtureSlider.value));
+                }
             }
             fixtureSliderText.text = Mathf.Round(fixtureSlider.value * 100.0f).ToString();
         }
@@ -379,7 +733,10 @@ namespace VRSL
         {
             foreach(Material mat in volumetricMaterials)
             {
-                mat.SetFloat("_UniversalIntensity", Mathf.Lerp(0.0f, volumetricIntensityMax, volumetricSlider.value));
+                if(mat != null)
+                {
+                    mat.SetFloat("_UniversalIntensity", Mathf.Lerp(0.0f, volumetricIntensityMax, volumetricSlider.value));
+                }
             }
             volumetricSliderText.text = Mathf.Round(volumetricSlider.value * 100.0f).ToString();
         }
@@ -388,7 +745,10 @@ namespace VRSL
         {
             foreach(Material mat in projectionMaterials)
             {
-                mat.SetFloat("_UniversalIntensity", Mathf.Lerp(0.0f, projectionIntensityMax, projectionSlider.value));
+                if(mat != null)
+                {
+                    mat.SetFloat("_UniversalIntensity", Mathf.Lerp(0.0f, projectionIntensityMax, projectionSlider.value));
+                }
             }
             projectionSliderText.text = Mathf.Round(projectionSlider.value * 100.0f).ToString();
         }
@@ -397,7 +757,10 @@ namespace VRSL
         {
             foreach(Material mat in discoBallMaterials)
             {
-                mat.SetFloat("_UniversalIntensity", Mathf.Lerp(0.0f, discoballIntensityMax, discoBallSlider.value));
+                if(mat != null)
+                {
+                    mat.SetFloat("_UniversalIntensity", Mathf.Lerp(0.0f, discoballIntensityMax, discoBallSlider.value));
+                }
             }
             discoBallSliderText.text = Mathf.Round(discoBallSlider.value * 100.0f).ToString();
         }
@@ -406,7 +769,10 @@ namespace VRSL
         {
             foreach(Material mat in laserMaterials)
             {
-                mat.SetFloat("_UniversalIntensity", Mathf.Lerp(0.0f, laserIntensityMax, laserSlider.value));
+                if(mat != null)
+                {
+                    mat.SetFloat("_UniversalIntensity", Mathf.Lerp(0.0f, laserIntensityMax, laserSlider.value));
+                }
             }
             laserSliderText.text = Mathf.Round(laserSlider.value * 100.0f).ToString();
         }
@@ -430,6 +796,224 @@ namespace VRSL
                 mat.DisableKeyword(keyword);
             }
         }
+
+        void SetVolumetricQuality()
+        {
+            foreach(Material target in volumetricMaterials)
+            {
+                if(target == null){continue;}
+                if(volumetricQuality == VolumetricQualityModes.High)
+                {
+                    target.SetOverrideTag("RenderType", "Transparent");
+                    target.DisableKeyword("_ALPHATEST_ON");  
+                    //target.SetInt("_BlendSrc", 1);
+                    target.SetInt("_BlendDst", 1);
+                    target.SetInt("_ZWrite", 0);
+                    target.SetInt("_AlphaToCoverage", 0);
+                    target.SetInt("_HQMode", 1);
+                    target.SetInt("_RenderMode", 0);
+                    SetKeyword(target, "_MAGIC_NOISE_ON", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON"))) == 1 ? true : false);
+                    SetKeyword(target, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(target.GetInt("_UseDepthLight"))) == 1 ? true : false);
+                    SetKeyword(target, "_POTATO_MODE_ON", (Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 ? true : false);
+                    SetKeyword(target, "_HQ_MODE", (Mathf.FloorToInt(target.GetInt("_HQMode"))) == 1 ? true : false);
+                    //SetKeyword(target, "_2D_NOISE_ON", (Mathf.FloorToInt(target.GetInt("_2D_NOISE_ON"))) == 1 ? true : false);
+                    target.renderQueue = 3002;
+                }
+                else if(volumetricQuality == VolumetricQualityModes.Medium) 
+                {
+                    target.SetOverrideTag("RenderType", "Transparent");
+                    target.DisableKeyword("_ALPHATEST_ON");  
+                    //target.SetInt("_BlendSrc", 1);
+                    target.SetInt("_BlendDst", 1);
+                    target.SetInt("_ZWrite", 0);
+                    target.SetInt("_AlphaToCoverage", 0);
+                    target.SetInt("_HQMode", 0);
+                    target.SetInt("_RenderMode", 1);
+                    SetKeyword(target, "_MAGIC_NOISE_ON", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON"))) == 1 ? true : false);
+                    SetKeyword(target, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(target.GetInt("_UseDepthLight"))) == 1 ? true : false);
+                    SetKeyword(target, "_POTATO_MODE_ON", (Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 ? true : false);
+                    SetKeyword(target, "_HQ_MODE", (Mathf.FloorToInt(target.GetInt("_HQMode"))) == 1 ? true : false);
+                    //SetKeyword(target, "_2D_NOISE_ON", (Mathf.FloorToInt(target.GetInt("_2D_NOISE_ON"))) == 1 ? true : false);
+                    target.renderQueue = 3002;
+                }
+                else
+                {
+                    target.SetOverrideTag("RenderType", "Opaque");
+                    target.EnableKeyword("_ALPHATEST_ON");
+                    //target.SetInt("_BlendSrc", 0);
+                    target.SetInt("_BlendDst", 0);
+                    target.SetInt("_ZWrite", 1);
+                    target.SetInt("_AlphaToCoverage", 1);
+                    target.SetInt("_HQMode", 0);
+                    target.SetInt("_RenderMode", 2);
+                    SetKeyword(target, "_MAGIC_NOISE_ON", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON"))) == 1 ? true : false);
+                    SetKeyword(target, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(target.GetInt("_UseDepthLight"))) == 1 ? true : false);
+                    SetKeyword(target, "_POTATO_MODE_ON", (Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 ? true : false);
+                    SetKeyword(target, "_HQ_MODE", (Mathf.FloorToInt(target.GetInt("_HQMode"))) == 1 ? true : false);
+                    //SetKeyword(target, "_2D_NOISE_ON", (Mathf.FloorToInt(target.GetInt("_2D_NOISE_ON"))) == 1 ? true : false);
+                    target.renderQueue = 2452;
+                }
+            }
+        }
+        void SetBlinderProjectionQuality()
+        {
+            foreach(Material target in projectionMaterials)
+            {
+                if(target == null){continue;}
+                if(target.name.Contains("Blinder"))
+                {
+                    if(blinderProjectionQuality == DefaultQualityModes.High) 
+                    {
+                        target.SetOverrideTag("RenderType", "Transparent");
+                        target.DisableKeyword("_ALPHATEST_ON");  
+                        //target.SetInt("_BlendSrc", 1);
+                        target.SetInt("_BlendDst", 1);
+                        target.SetInt("_ZWrite", 0);
+                        target.SetInt("_AlphaToCoverage", 0);
+                        target.SetInt("_RenderMode", 1);
+                        target.renderQueue = 3001;
+                    }
+                    else
+                    {
+                        target.SetOverrideTag("RenderType", "Opaque");
+                        target.EnableKeyword("_ALPHATEST_ON");
+                        //target.SetInt("_BlendSrc", 0);
+                        target.SetInt("_BlendDst", 0);
+                        target.SetInt("_ZWrite", 1);
+                        target.SetInt("_AlphaToCoverage", 1);
+                        target.SetInt("_RenderMode", 2);
+                        target.renderQueue = 2451;
+                    }
+                }
+            }
+        }
+        void SetParProjectionQuality()
+        {
+            foreach(Material target in projectionMaterials)
+            {
+                if(target == null){continue;}
+                if(target.name.Contains("Par"))
+                {
+                    if(parProjectionQuality == DefaultQualityModes.High) 
+                    {
+                        target.SetOverrideTag("RenderType", "Transparent");
+                        target.DisableKeyword("_ALPHATEST_ON");  
+                        //target.SetInt("_BlendSrc", 1);
+                        target.SetInt("_BlendDst", 1);
+                        target.SetInt("_ZWrite", 0);
+                        target.SetInt("_AlphaToCoverage", 0);
+                        target.SetInt("_RenderMode", 1);
+                        target.renderQueue = 3001;
+                    }
+                    else
+                    {
+                        target.SetOverrideTag("RenderType", "Opaque");
+                        target.EnableKeyword("_ALPHATEST_ON");
+                        //target.SetInt("_BlendSrc", 0);
+                        target.SetInt("_BlendDst", 0);
+                        target.SetInt("_ZWrite", 1);
+                        target.SetInt("_AlphaToCoverage", 1);
+                        target.SetInt("_RenderMode", 2);
+                        target.renderQueue = 2451;
+                    }
+                }
+            }
+        }
+        void SetOtherProjectionQuality()
+        {
+            foreach(Material target in projectionMaterials)
+            {
+                if(target == null){continue;}
+                if(target.name.Contains("Par") == false && target.name.Contains("Blinder")==false)
+                {
+                    if(otherProjectionQuality == DefaultQualityModes.High) 
+                    {
+                        target.SetOverrideTag("RenderType", "Transparent");
+                        target.DisableKeyword("_ALPHATEST_ON");  
+                        //target.SetInt("_BlendSrc", 1);
+                        target.SetInt("_BlendDst", 1);
+                        target.SetInt("_ZWrite", 0);
+                        target.SetInt("_AlphaToCoverage", 0);
+                        target.SetInt("_RenderMode", 1);
+                        target.renderQueue = 3001;
+                    }
+                    else
+                    {
+                        target.SetOverrideTag("RenderType", "Opaque");
+                        target.EnableKeyword("_ALPHATEST_ON");
+                        //target.SetInt("_BlendSrc", 0);
+                        target.SetInt("_BlendDst", 0);
+                        target.SetInt("_ZWrite", 1);
+                        target.SetInt("_AlphaToCoverage", 1);
+                        target.SetInt("_RenderMode", 2);
+                        target.renderQueue = 2451;
+                    }
+                }
+            }
+        }
+
+        void SetDiscoballQuality()
+        {
+            foreach(Material target in discoBallMaterials)
+            {
+                if(target == null){continue;}
+                if(discoballQuality == DefaultQualityModes.High) 
+                {
+                    target.SetOverrideTag("RenderType", "Transparent");
+                    target.DisableKeyword("_ALPHATEST_ON");  
+                    //target.SetInt("_BlendSrc", 1);
+                    target.SetInt("_BlendDst", 1);
+                    target.SetInt("_ZWrite", 0);
+                    target.SetInt("_AlphaToCoverage", 0);
+                    target.SetInt("_RenderMode", 1);
+                    target.renderQueue = 3001;
+                }
+                else
+                {
+                    target.SetOverrideTag("RenderType", "Opaque");
+                    target.EnableKeyword("_ALPHATEST_ON");
+                    //target.SetInt("_BlendSrc", 0);
+                    target.SetInt("_BlendDst", 0);
+                    target.SetInt("_ZWrite", 1);
+                    target.SetInt("_AlphaToCoverage", 1);
+                    target.SetInt("_RenderMode", 2);
+                    target.renderQueue = 2451;
+                }
+            }
+        }
+        void SetLensFlareQuality()
+        {
+            foreach(Material target in fixtureMaterials)
+            {
+                if(target == null){continue;}
+                if(target.name.Contains("Flare"))
+                {
+                    if(lensFlareQuality == DefaultQualityModes.High) 
+                    {
+                        target.SetOverrideTag("RenderType", "Transparent");
+                        target.DisableKeyword("_ALPHATEST_ON");  
+                        //target.SetInt("_BlendSrc", 1);
+                        target.SetInt("_BlendDst", 1);
+                        target.SetInt("_ZWrite", 0);
+                        target.SetInt("_AlphaToCoverage", 0);
+                        target.SetInt("_RenderMode", 1);
+                        target.renderQueue = 3001;
+                    }
+                    else
+                    {
+                        target.SetOverrideTag("RenderType", "Opaque");
+                        target.EnableKeyword("_ALPHATEST_ON");
+                        //target.SetInt("_BlendSrc", 0);
+                        target.SetInt("_BlendDst", 0);
+                        target.SetInt("_ZWrite", 1);
+                        target.SetInt("_AlphaToCoverage", 1);
+                        target.SetInt("_RenderMode", 2);
+                        target.renderQueue = 2451;
+                    }
+                }
+            }
+        }
+
     }
 
         #if !COMPILER_UDONSHARP && UNITY_EDITOR
@@ -438,10 +1022,40 @@ namespace VRSL
     {
         public static Texture logo;
         public static string ver = "VR Stage Lighting ver:" + " <b><color=#6a15ce> 2.1</color></b>";
+        SerializedProperty audioLinkLasers, audiolinkLights, dmxLights, isUsingDMX,isUsingAudioLink;
 
         public void OnEnable() 
         {
             logo = Resources.Load("VRStageLighting-Logo") as Texture;
+            audioLinkLasers = serializedObject.FindProperty("audioLinkLasers");
+            audiolinkLights = serializedObject.FindProperty("audiolinkLights");
+            dmxLights = serializedObject.FindProperty("dmxLights");
+            isUsingDMX = serializedObject.FindProperty("isUsingDMX");
+            isUsingAudioLink = serializedObject.FindProperty("isUsingAudioLink");
+        }
+        public void _RemoveEmptyMaterials()
+        {
+            VRSL_LocalUIControlPanel controlPanel = (VRSL_LocalUIControlPanel)target;
+            int count = 0;
+            for(int i = 0; i < controlPanel.fixtureMaterials.Length; i++)
+            {
+                if(controlPanel.fixtureMaterials[i] == null)
+                {
+                    count++;
+                }
+            }
+            Material[] newArray = new Material[controlPanel.fixtureMaterials.Length - count];
+            int otherCount = 0;
+            for(int i = 0; i < controlPanel.fixtureMaterials.Length; i++)
+            {
+                if(controlPanel.fixtureMaterials[i] != null)
+                {
+                    newArray[otherCount] = controlPanel.fixtureMaterials[i];
+                    otherCount++;
+                }
+            }
+            controlPanel.fixtureMaterials = newArray;
+
         }
         public static void DrawLogo()
         {
@@ -480,16 +1094,56 @@ namespace VRSL
         {
             DrawShurikenCenteredTitle(title, new Vector2(0f, -2f), 22);
         }
+        GUIContent Label(string label)
+        {
+            GUIContent content = new GUIContent();
+            content.text = label;
+            return content;
+        }
         public override void OnInspectorGUI()
         {
             if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
+
+            EditorGUI.BeginChangeCheck();
+            serializedObject.Update();
             DrawLogo();
             ShurikenHeaderCentered(ver);
             EditorGUILayout.Space();
             VRSL_LocalUIControlPanel controlPanel = (VRSL_LocalUIControlPanel)target;
             if (GUILayout.Button(new GUIContent("Force Update Target AudioLink Sample Texture", "Updates all AudioLink VRSL Fixtures to sample from the selected target texture when texture sampling is enabled on the fixture."))) { controlPanel._ForceUpdateVideoSampleTexture(); }
             EditorGUILayout.Space();
+            if (GUILayout.Button(new GUIContent("Apply Quality Modes to All Materials", "Applies currently set quality modes to all materials."))) { controlPanel._UpdateAllQualityModes(); }
+            EditorGUILayout.Space();
+
+            if (GUILayout.Button(new GUIContent("Remove Empty Materials", "Applies currently set quality modes to all materials."))) {_RemoveEmptyMaterials(); }
+            EditorGUILayout.Space();
+            if(isUsingDMX.boolValue)
+            {
+                // EditorGUILayout.PropertyField(dmxLights,true);
+                for(int i = 0; i < dmxLights.arraySize; i++)
+                {
+                    EditorGUILayout.PropertyField(dmxLights.GetArrayElementAtIndex(i));
+                }
+            }
+            if(isUsingAudioLink.boolValue)
+            {
+                for(int i = 0; i < dmxLights.arraySize; i++)
+                {
+                    EditorGUILayout.PropertyField(audiolinkLights.GetArrayElementAtIndex(i));
+                    EditorGUILayout.PropertyField(audioLinkLasers.GetArrayElementAtIndex(i));
+                // EditorGUILayout.PropertyField(audiolinkLights, true);
+                // EditorGUILayout.PropertyField(audioLinkLasers,true);
+                }
+            }
+
             base.OnInspectorGUI();
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Debug.Log("Found changes");
+                serializedObject.ApplyModifiedProperties();
+                Repaint();
+            }
         }
     }
     #endif

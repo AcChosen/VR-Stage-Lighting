@@ -13,8 +13,9 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 3001
+  stringTagMap:
+    RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -129,7 +130,7 @@ Material:
     - _UseDepthLight: 1
     - _UsePreMultiplyAlpha: 0
     - _UseRawGrid: 1
-    - _ZWrite: 1
+    - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 23.968628, g: 23.968628, b: 23.968628, a: 1}

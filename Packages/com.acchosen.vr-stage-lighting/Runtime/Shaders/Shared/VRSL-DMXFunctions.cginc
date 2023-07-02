@@ -142,7 +142,7 @@ float getValueAtCoordsRaw(uint DMXChannel, sampler2D _Tex)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if defined(VOLUMETRIC_YES) || defined(PROJECTION_YES) || defined(FIXTURE_EMIT) || defined(FIXTURE_SHADOWCAST)
+#if defined(VOLUMETRIC_YES) || defined(PROJECTION_YES) || defined(FIXTURE_EMIT) || defined(FIXTURE_SHADOWCAST) || defined(VRSL_SURFACE) || defined(VRSL_FLARE)
     float getMinMaxPan()
     {
         return UNITY_ACCESS_INSTANCED_PROP(Props,_MaxMinPanAngle);
@@ -300,7 +300,7 @@ float GetPanValue(uint DMXChannel)
 {
     float inputValue = getValueAtCoords(DMXChannel, _Udon_DMXGridRenderTextureMovement);
     //inputValue = (inputValue + (GetFinePanValue(DMXChannel) * 0.01));
-    #if defined(VOLUMETRIC_YES) || defined(PROJECTION_YES) || defined(FIXTURE_EMIT) || defined(FIXTURE_SHADOWCAST)
+    #if defined(VOLUMETRIC_YES) || defined(PROJECTION_YES) || defined(FIXTURE_EMIT) || defined(FIXTURE_SHADOWCAST) || defined(VRSL_SURFACE) || defined(VRSL_FLARE)
         return IF(isDMX() == 1, ((getMinMaxPan() * 2) * (inputValue)) - getMinMaxPan(), 0.0);
     #else
         return IF(isDMX() == 1, ((_MaxMinPanAngle * 2) * (inputValue)) - _MaxMinPanAngle, 0.0);
@@ -318,7 +318,7 @@ float GetTiltValue(uint DMXChannel)
 {
     float inputValue = getValueAtCoords(DMXChannel + 2, _Udon_DMXGridRenderTextureMovement);
     //inputValue = (inputValue + (GetFineTiltValue(DMXChannel) * 0.01));
-    #if defined(VOLUMETRIC_YES) || defined(PROJECTION_YES) || defined(FIXTURE_EMIT) || defined(FIXTURE_SHADOWCAST)
+    #if defined(VOLUMETRIC_YES) || defined(PROJECTION_YES) || defined(FIXTURE_EMIT) || defined(FIXTURE_SHADOWCAST) || defined(VRSL_SURFACE) || defined(VRSL_FLARE)
         return IF(isDMX() == 1, ((getMinMaxTilt() * 2) * (inputValue)) - getMinMaxTilt(), 0.0);
     #else
         return IF(isDMX() == 1, ((_MaxMinTiltAngle * 2) * (inputValue)) - _MaxMinTiltAngle, 0.0);

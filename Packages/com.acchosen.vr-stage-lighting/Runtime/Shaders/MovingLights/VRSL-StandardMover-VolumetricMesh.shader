@@ -37,9 +37,12 @@
 		_ConeSync ("Cone Scale Sync", Range(0,1)) = 0.2
 		// _BlockLengthX("DMX Block Base Distance X", Float) = 0.019231
 		// _BlockLengthY("DMX Block Base Distance Y", Float) = 0
-		[Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Source Blend mode", Float) = 2
-		[Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Destination Blend mode", Float) = 1
+		//[Enum(Off,0,One,1)] _BlendSrc ("Source Blend mode", Float) = 1
+		[Enum(Off,0,One,1)] _BlendDst ("Destination Blend mode", Float) = 1
 		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
+		[Enum(HQTransparent,0,Transparent,1,AlphaToCoverage,2)] _RenderMode ("Render Mode", Int) = 1
+		[Enum(Off,0,On,1)] _ZWrite ("Z Write", Int) = 0
+		[Enum(Off,0,On,1)] _AlphaToCoverage ("Alpha To Coverage", Int) = 0
 		//[Space(16)]
 
 
@@ -61,21 +64,41 @@
 		_NoisePower("Noise Strength", Range(0, 1)) = 1
 		_NoiseSeed ("Noise Seed", float) = 0
 		[Toggle]_MAGIC_NOISE_ON ("Toggle Magic Noise", Int) = 1
+		[Toggle]_2D_NOISE_ON ("Toggle 2D Noise", Int) = 1
+
+
 		_Noise2Stretch ("Outside Magic Noise Scale", Range(-10, 10)) = 1
 		_Noise2StretchInside ("Inside Magic Noise Scale", Range(-10, 10)) = 1
 		_Noise2X ("Magic Noise X Scroll", Range(-10, 10)) = 1
 		_Noise2Y ("Magic Noise Y Scroll", Range(-10, 10)) = 1
 		_Noise2Z ("Magic Noise Y Scroll", Range(-10, 10)) = 1
 		_Noise2Power("Magic Noise Strength", Range(0, 1)) = 1
+
+		_Noise2StretchDefault ("Outside Magic Noise Scale", Range(-10, 10)) = 1
+		_Noise2StretchInsideDefault ("Inside Magic Noise Scale", Range(-10, 10)) = 1
+		_Noise2XDefault ("Magic Noise X Scroll", Range(-10, 10)) = 1
+		_Noise2YDefault ("Magic Noise Y Scroll", Range(-10, 10)) = 1
+		_Noise2ZDefault ("Magic Noise Y Scroll", Range(-10, 10)) = 1
+		_Noise2PowerDefault("Magic Noise Strength", Range(0, 1)) = 1
+
+		_Noise2StretchPotato ("Outside Magic Noise Scale", Range(-10, 10)) = 1
+		_Noise2StretchInsidePotato ("Inside Magic Noise Scale", Range(-10, 10)) = 1
+		_Noise2XPotato ("Magic Noise X Scroll", Range(-10, 10)) = 1
+		_Noise2YPotato ("Magic Noise Y Scroll", Range(-10, 10)) = 1
+		_Noise2ZPotato ("Magic Noise Y Scroll", Range(-10, 10)) = 1
+		_Noise2PowerPotato("Magic Noise Strength", Range(0, 1)) = 1
+
+
 		//[NoScaleOffset]_InsideConeNormalMap("Inside Cone Normal Map", 2D) = "bump" {}
 
 		_FixtureMaxIntensity ("Maximum Cone Intensity",Range (0,5)) = 1
 		_PulseSpeed("Pulse Speed", Range(0,2)) = 0
-		_FadeStrength("Edge Fade", Range(0.00001,10)) = 1
+		_FadeStrength("Edge Fade", Range(0.00001,20)) = 1
 		_InnerFadeStrength("Inner Fade Strength", Range(0.00001,10)) = 0
 		_InnerIntensityCurve("Inner Intensity Curve", Range(0.00001,20)) = 1
 		_DistFade("Distance Fade", Range(0,1)) = 0.1
 		_FadeAmt("Depth Blending", Range(0, 100)) = 0.1
+		_BlindingAngleMod("Blinding Angle Modification", Range(0, 1)) = 1
 		//_IntensityCutoff("Intensity Minimum Cut Off", Range (0, 1)) = 0.2
 		[Toggle]_GoboBeamSplitEnable("Enable Splitting the beam on Gobos 2-6", Int) = 0
 		_StripeSplit ("Stripe Split GOBO2", Range(0, 30)) = 0
@@ -99,9 +122,11 @@
 		_GradientMod ("Gradient Modifier", Range(1, 4)) = 2.25
 		_GradientModGOBO ("Gradient Modifier GOBO", Range(1, 4)) = 2.25
 
+		_MinimumBeamRadius ("Minimum Beam Radius", Range(0.001,1)) = 1
+
 		[Toggle]_UseDepthLight("Toggle The Requirement of the depth light to function.", Int) = 1
 		[Toggle]_PotatoMode("Reduces the overhead on the fragment shader by removing both noise components to extra texture sampling", Int) = 0
-
+		[Toggle]_HQMode("A higher quality volumetric mode (Experimental)", Int) = 0
 
 
 
@@ -121,7 +146,8 @@
 
 	Pass
 		{
-			Blend One One
+			AlphaToMask [_AlphaToCoverage]
+			Blend One [_BlendDst]
 			Cull Off
 			ZWrite Off
 			Lighting Off
@@ -138,14 +164,17 @@
 			//#pragma multi_compile_fog
 			#pragma multi_compile_instancing
 			#pragma instancing_options assumeuniformscaling
-			#pragma shader_feature_local _MAGIC_NOISE_ON
-			#pragma shader_feature_local _USE_DEPTH_LIGHT
-			#pragma shader_feature_local _POTATO_MODE_ON
+			#pragma multi_compile_local _ _MAGIC_NOISE_ON
+			#pragma multi_compile_local _ _USE_DEPTH_LIGHT
+			#pragma multi_compile_local _ _POTATO_MODE_ON
+			#pragma multi_compile_local _ _HQ_MODE
+			#pragma multi_compile_local _ _2D_NOISE_ON
+			#pragma multi_compile_local _ _ALPHATEST_ON
 			#define VOLUMETRIC_YES //To identify the pass in the vert/frag
+			#define VRSL_DMX
 
 			#include "UnityCG.cginc"
 			#include "../Shared/VRSL-Defines.cginc" //Property Defines are here
-			float3 thisIsAChange;
 			#include "../Shared/VRSL-DMXFunctions.cginc" //Custom Functions
 
 			struct appdata

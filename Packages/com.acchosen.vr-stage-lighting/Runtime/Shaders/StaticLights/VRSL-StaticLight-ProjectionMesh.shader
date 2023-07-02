@@ -14,7 +14,7 @@
 		 [Toggle] _EnableVerticalMode ("Enable Vertical Mode", Int) = 0
 		 [Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
 		 [Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Source Blend mode", Float) = 2
-		 [Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Destination Blend mode", Float) = 1
+		 //[Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Destination Blend mode", Float) = 1
 		 [Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
 		// _BlockLengthX("DMX Block Base Distance X", Float) = 0.019231
 		// _BlockLengthY("DMX Block Base Distance Y", Float) = 0
@@ -68,6 +68,15 @@
 		_GreenMultiplier ("Green Channel Multiplier", Range(1, 5)) = 1
 		_BlueMultiplier ("Blue Channel Multiplier", Range(1,5)) = 1
 
+		[Enum(Transparent,1,AlphaToCoverage,2)] _RenderMode ("Render Mode", Int) = 1
+        [Enum(Off,0,On,1)] _ZWrite ("Z Write", Int) = 0
+		[Enum(Off,0,On,1)] _AlphaToCoverage ("Alpha To Coverage", Int) = 0
+        [Enum(Off,0,One,1)] _BlendDst ("Destination Blend mode", Float) = 1
+		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
+        _ClippingThreshold ("Clipping Threshold", Range (0,1)) = 0.5
+		_AlphaProjectionIntensity ("Alpha Projection Intesnity", Range (0,1)) = 0.5
+		[Enum(13CH,0,5CH,1)] _ChannelMode ("Channel Mode", Int) = 0
+
 
 
 	}
@@ -79,11 +88,12 @@
          {
 
 			Tags{ "ForceNoShadowCasting"="True" "IgnoreProjector"="True" "LightMode" = "Always"}
+			AlphaToMask [_AlphaToCoverage]
             Cull Front
             Ztest GEqual
             ZWrite Off
-            Blend  [_BlendSrc] [_BlendDst]	
-            BlendOp [_BlendOp]
+            Blend  DstColor [_BlendDst]	
+            BlendOp Add
             Lighting Off
 		    //SeparateSpecular Off
 			
@@ -96,10 +106,13 @@
 			
             #pragma vertex vert
             #pragma fragment frag
+			#pragma multi_compile_local _ _ALPHATEST_ON
+			#pragma shader_feature_local _CHANNEL_MODE
 			//#pragma multi_compile_fog
 			#pragma multi_compile_instancing
 
 			#define PROJECTION_YES
+			#define VRSL_DMX
 
             #include "UnityCG.cginc"
 
@@ -138,6 +151,7 @@
 			#include "../Shared/VRSL-Defines.cginc"
 			#include "../Shared/VRSL-DMXFunctions.cginc"
 			#include "VRSL-StaticLight-ProjectionFrag.cginc"
+			//float _AlphaProjectionIntensity;
 
 	#define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
 
@@ -178,9 +192,16 @@
 		//
 		UNITY_TRANSFER_INSTANCE_ID(v, o);
 		uint dmx = getDMXChannel();
-		o.intensityStrobe = float2(GetDMXIntensity(dmx, 1.0),GetStrobeOutput(dmx));
-		o.rgbColor = GetDMXColor(dmx);
-		o.emissionColor = getEmissionColor();
+		#ifdef _CHANNEL_MODE
+			o.intensityStrobe = float2(getValueAtCoords(dmx, _Udon_DMXGridRenderTexture),GetStrobeOutputFiveCH(dmx));
+			o.rgbColor = float4(getValueAtCoords(dmx+1, _Udon_DMXGridRenderTexture), getValueAtCoords(dmx+2, _Udon_DMXGridRenderTexture), getValueAtCoords(dmx+3, _Udon_DMXGridRenderTexture), 1);
+			o.rgbColor *= o.intensityStrobe.x;
+			o.emissionColor = getEmissionColor();
+		#else
+			o.intensityStrobe = float2(GetDMXIntensity(dmx, 1.0),GetStrobeOutput(dmx));
+			o.rgbColor = GetDMXColor(dmx);
+			o.emissionColor = getEmissionColor();
+		#endif
 		o.globalFinalIntensity.x = getGlobalIntensity();
 		o.globalFinalIntensity.y = getFinalIntensity();
 

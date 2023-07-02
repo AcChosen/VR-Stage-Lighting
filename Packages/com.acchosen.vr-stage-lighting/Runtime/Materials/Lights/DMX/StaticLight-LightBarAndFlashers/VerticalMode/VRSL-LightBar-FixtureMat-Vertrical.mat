@@ -8,8 +8,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-LightBar-FixtureMat-Vertrical
-  m_Shader: {fileID: 4800000, guid: 75766aa491bc3034791ba036cd616ea7, type: 3}
-  m_ShaderKeywords: _EMISSION _ENABLEVERTICALMODE_ON _FORWARD_Y _METALLICGLOSSMAP
+  m_Shader: {fileID: 4800000, guid: f23016ddcd834d84c92028d893fd6558, type: 3}
+  m_ShaderKeywords: _13CH_MODE _EMISSION _ENABLEVERTICALMODE_ON _FORWARD_Y _METALLICGLOSSMAP
     _NORMALMAP _USERAWGRID_ON _USE_DEPTH_LIGHT
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
@@ -57,6 +57,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicSmoothness:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -123,6 +127,7 @@ Material:
     - _BlendSrc: 1
     - _BulbMaxIntensity: 1
     - _BumpScale: 1
+    - _ChannelMode: 3
     - _ConeWidth: 0
     - _CurveMod: 5
     - _Cutoff: 0.5
@@ -132,6 +137,7 @@ Material:
     - _DstBlend: 0
     - _EnableAudioReact: 0
     - _EnableCompatibilityMode: 0
+    - _EnableDMX: 0
     - _EnableOSC: 0
     - _EnableSpin: 0
     - _EnableStrobe: 0
@@ -178,6 +184,7 @@ Material:
     - _ProjectionUVMod6: 0
     - _PulseSpeed: 0
     - _RTLMStrength: 1
+    - _Saturation: 0.95
     - _Sector: 0
     - _SmoothnessTextureChannel: 0
     - _SpecLMOcclusionAdjust: 0.359

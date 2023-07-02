@@ -9,8 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-AudioLink-StandardMover-FixtureMat
   m_Shader: {fileID: 4800000, guid: ec0e56fb8480191448eedfb15961ac64, type: 3}
-  m_ShaderKeywords: _DNENABLER_NONE _ENABLEOSC_ON _ENABLESPIN_ON _FORWARD_Y _USERAWGRID_ON
-    _USE_DEPTH_LIGHT
+  m_ShaderKeywords: _DNENABLER_NONE _ENABLEOSC_ON _ENABLESPIN_ON _FORWARD_Y _LIGHTING_MODEL
+    _USERAWGRID_ON _USE_DEPTH_LIGHT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -26,6 +26,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 2800000, guid: 0d549127d526cab4fb5696782ef99e7a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DecorativeEmissiveMap:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _InsideConeNormalMap:
@@ -58,6 +62,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _OSCGridStrobeTimer:
         m_Texture: {fileID: 8600000, guid: a0e2ea8d6ec133f4fb7ad6f74d904820, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ProjectionMainTex:
@@ -116,6 +124,7 @@ Material:
     - _ConeSync: 0.2
     - _ConeWidth: 4.13
     - _DNEnabler: 0
+    - _DecorativeEmissiveMapStrength: 0
     - _Delay: 0
     - _DistFade: 1.31
     - _Divide: 11.6
@@ -146,6 +155,7 @@ Material:
     - _LMStrength: 1
     - _LensMaxBrightness: 0.1
     - _LightProbeMethod: 0
+    - _LightingModel: 1
     - _MaxMinPanAngle: 0
     - _MaxMinTiltAngle: 0
     - _Metallic: 0.908
@@ -154,6 +164,7 @@ Material:
     - _NoisePower: 0.333
     - _NoiseSeed: 420
     - _NumBands: 4
+    - _OcclusionStrength: 1
     - _PanInvert: 0
     - _ProjectionDistanceFallOff: 0.01
     - _ProjectionFade: 2.35

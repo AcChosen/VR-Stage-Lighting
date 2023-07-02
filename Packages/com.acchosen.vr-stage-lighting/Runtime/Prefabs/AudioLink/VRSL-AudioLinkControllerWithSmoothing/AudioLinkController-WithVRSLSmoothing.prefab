@@ -3550,7 +3550,7 @@ ParentConstraint:
   m_Enabled: 1
   m_Weight: 1
   m_TranslationAtRest: {x: 0, y: 0, z: 0}
-  m_RotationAtRest: {x: 0, y: 0, z: 0}
+  m_RotationAtRest: {x: 0, y: -179.99998, z: 0}
   m_TranslationOffsets:
   - {x: 0, y: 0, z: 0}
   m_RotationOffsets:
@@ -3564,7 +3564,7 @@ ParentConstraint:
   m_IsContraintActive: 1
   m_IsLocked: 1
   m_Sources:
-  - sourceTransform: {fileID: 1988341089373119180}
+  - sourceTransform: {fileID: 449882877420595720}
     weight: 1
 --- !u!1 &7729686114298455019
 GameObject:
@@ -4850,6 +4850,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 385ac04e8d2b6f84ea93cb8392fad970, type: 3}
+--- !u!4 &449882877420595720 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7888919541545043625, guid: 385ac04e8d2b6f84ea93cb8392fad970,
+    type: 3}
+  m_PrefabInstance: {fileID: 7729686115376000161}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1988341089373119180 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8132759026596613741, guid: 385ac04e8d2b6f84ea93cb8392fad970,

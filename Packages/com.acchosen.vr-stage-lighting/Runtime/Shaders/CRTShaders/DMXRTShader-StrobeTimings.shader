@@ -22,6 +22,8 @@
             #pragma fragment frag
             #pragma target 4.5
 
+            #define VRSL_DMX
+
             sampler2D   _Tex;
             Texture2D _DMXTexture;
             uniform float4 _DMXTexture_TexelSize;

@@ -9,12 +9,13 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-AudioLink-Blinder-LensFlareMat
   m_Shader: {fileID: 4800000, guid: 04f8767eab35c0141aff7e2be3e10e5e, type: 3}
-  m_ShaderKeywords: _USERAWGRID_ON _USE_DEPTH_LIGHT
+  m_ShaderKeywords: _USEDEPTHLIGHT_ON _USERAWGRID_ON _USE_DEPTH_LIGHT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 3001
+  stringTagMap:
+    RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -76,9 +77,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AlphaProjectionIntensity: 0.5
+    - _AlphaToCoverage: 0
     - _Band: 0
     - _BandMultiplier: 1
+    - _BlendDst: 1
+    - _BlendOp: 0
     - _BumpScale: 1
+    - _ClippingThreshold: 0.15
     - _ColorSat: 0
     - _CurveMod: 5
     - _Cutoff: 0.5
@@ -94,11 +100,11 @@ Material:
     - _EnableStrobe: 0
     - _EnableThemeColorSampling: 0
     - _EndFadeinDistanceWorldUnit: 0.5
-    - _FadeAmt: 0.02
+    - _FadeAmt: 0.215
     - _FinalIntensity: 1
-    - _FixtureMaxIntensity: 4.54
-    - _FixutreIntensityMultiplier: 1.25
-    - _FlickResultIntensityLowestPoint: 0.5
+    - _FixtureMaxIntensity: 6
+    - _FixutreIntensityMultiplier: 1
+    - _FlickResultIntensityLowestPoint: 0.506
     - _FlickerAnimSpeed: 5
     - _GlobalIntensity: 1
     - _GlossMapScale: 1
@@ -112,6 +118,7 @@ Material:
     - _Parallax: 0.02
     - _ReferenceDistance: 10
     - _RemoveTextureArtifact: 0.0045
+    - _RenderMode: 1
     - _ScaleFactor: 0
     - _Sector: 0
     - _ShouldDoFlicker: 0
@@ -129,7 +136,7 @@ Material:
     - _UseDepthLight: 1
     - _UsePreMultiplyAlpha: 0
     - _UseRawGrid: 1
-    - _ZWrite: 1
+    - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 23.968628, g: 23.968628, b: 23.968628, a: 1}

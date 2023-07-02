@@ -44,29 +44,39 @@
         _StartFadeinDistanceWorldUnit("StartFadeinDistanceWorldUnit",Float) = 0.05
         _EndFadeinDistanceWorldUnit("EndFadeinDistanceWorldUnit", Float) = 0.5
 
-        // [Header(Optional Flicker animation)]
-        // [Toggle]_ShouldDoFlicker("ShouldDoFlicker", FLoat) = 1
-        // _FlickerAnimSpeed("FlickerAnimSpeed", Float) = 5
-        // _FlickResultIntensityLowestPoint("FlickResultIntensityLowestPoint", range(0,1)) = 0.5
+        [Header(Optional Flicker animation)]
+        [Toggle]_ShouldDoFlicker("ShouldDoFlicker", FLoat) = 1
+        _FlickerAnimSpeed("FlickerAnimSpeed", Float) = 5
+        _FlickResultIntensityLowestPoint("FlickResultIntensityLowestPoint", range(0,1)) = 0.5
 
         [Toggle]_UseDepthLight("Toggle The Requirement of the depth light to function.", Int) = 1
 
         		[Toggle] _EnableThemeColorSampling ("Enable Theme Color Sampling", Int) = 0
 		 _ThemeColorTarget ("Choose Theme Color", Int) = 0
+
+         
+        [Enum(Transparent,1,AlphaToCoverage,2)] _RenderMode ("Render Mode", Int) = 1
+        [Enum(Off,0,On,1)] _ZWrite ("Z Write", Int) = 0
+		[Enum(Off,0,On,1)] _AlphaToCoverage ("Alpha To Coverage", Int) = 0
+        [Enum(Off,0,One,1)] _BlendDst ("Destination Blend mode", Float) = 1
+		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
+        _ClippingThreshold ("Clipping Threshold", Range (0,1)) = 0.5
+		_AlphaProjectionIntensity ("Alpha Projection Intesnity", Range (0,1)) = 0.5
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue" = "Transparent" }
+        Tags { "RenderType"="Transparent" "Queue" = "Transparent+200" }
         LOD 100
 
         Pass
         {
+            AlphaToMask [_AlphaToCoverage]
             Zwrite Off
             ZTest Off
-            //Offset 1, 1
-            Blend One One
-            Cull Off
-
+            Blend One [_BlendDst]
+            Cull Back
+            Lighting Off
+			Tags{ "LightMode" = "Always" }
             Stencil
 			{
 				Ref 142
@@ -74,14 +84,17 @@
 				Pass Keep
 			}
 
+
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             // make fog work
-            #pragma shader_feature_local _USE_DEPTH_LIGHT
+            #pragma multi_compile_local _ _USE_DEPTH_LIGHT
+            #pragma multi_compile_local _ _ALPHATEST_ON
             #pragma multi_compile_fog
             #pragma multi_compile_instancing
-            
+            #define VRSL_AUDIOLINK
+            #define VRSL_FLARE
 
             #include "UnityCG.cginc"
 
@@ -127,7 +140,7 @@
             float _FlickResultIntensityLowestPoint;
             //float _ShouldDoFlicker;
              half _RemoveTextureArtifact, _CurveMod;
-            #include "../Shared/VRSL-AudioLink-Defines.cginc"
+            #include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-Defines.cginc"
             #include "../Shared/VRSL-AudioLink-Functions.cginc"
 
             float4x4 GetWorldToViewMatrix()
@@ -201,7 +214,11 @@
 
                 half4 e = getEmissionColor();
                 e = clamp(e, half4(0,0,0,1), half4(_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,1));
-                e*= (_FixutreIntensityMultiplier);
+                #ifdef _ALPHATEST_ON
+                    e*= (_FixutreIntensityMultiplier*0.25);
+                #else
+                    e*= _FixutreIntensityMultiplier;    
+                #endif
                 e*= GetAudioReactAmplitude();
                 e = float4(((e.rgb * _FixtureMaxIntensity) * getGlobalIntensity()) * getFinalIntensity(), e.w);
                 e*= _UniversalIntensity;
@@ -214,6 +231,7 @@
 
                 }
 
+        
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.color = v.color * e;
                 float3 quadPivotPosOS = float3(0,0,0);
@@ -301,7 +319,7 @@
                 //premultiply alpha to rgb after alpha's calculation is done
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
                 o.color.rgb *= o.color.a;                 
-                o.color.a = _UsePreMultiplyAlpha? o.color.a : 0;
+                //o.color.a = _UsePreMultiplyAlpha? o.color.a : 0;
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //pure optimization:
@@ -318,6 +336,10 @@
                 o.maskX = lerp(1, 0, pow(distance(half2(0.5, 0.5), o.uv), _FadeAmt));
                 float satMask = lerp(1, 0, pow(distance(half2(0.5, 0.5), o.uv), _ColorSat));
                 o.color = lerp(o.color, e2, satMask);
+
+                #if _ALPHATEST_ON
+                    o.screenPos = ComputeScreenPos(o.vertex);
+                #endif
                 
               //  UNITY_TRANSFER_FOG(o,o.vertex);
                 return o;
@@ -325,12 +347,42 @@
 
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 col = saturate(tex2D(_MainTex, i.uv )-_RemoveTextureArtifact) * i.color;
-                UNITY_APPLY_FOG(i.fogCoord, col);            
-                col *= i.maskX;
-                return col;
+
+                #if _ALPHATEST_ON
+                    float2 pos = i.screenPos.xy / i.screenPos.w;
+                    pos *= _ScreenParams.xy;
+                    float DITHER_THRESHOLDS[16] =
+                    {
+                        1.0 / 17.0,  9.0 / 17.0,  3.0 / 17.0, 11.0 / 17.0,
+                        13.0 / 17.0,  5.0 / 17.0, 15.0 / 17.0,  7.0 / 17.0,
+                        4.0 / 17.0, 12.0 / 17.0,  2.0 / 17.0, 10.0 / 17.0,
+                        16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0
+                    };
+                    int index = (int(pos.x) % 4) * 4 + int(pos.y) % 4;
+                    float4 col = saturate(tex2D(_MainTex, i.uv ));
+                   // col *= i.maskX;
+                    //clip((col.a) - DITHER_THRESHOLDS[index]);
+                    // apply fog
+                    UNITY_APPLY_FOG(i.fogCoord, col);
+                    clip((((col.r + col.g + col.b)/3) * (_ClippingThreshold * 10)) - DITHER_THRESHOLDS[index]);
+                    return col * i.color;
+                #else
+                    fixed4 col = saturate(tex2D(_MainTex, i.uv )-_RemoveTextureArtifact) * i.color;
+                    // apply fog
+                    UNITY_APPLY_FOG(i.fogCoord, col);
+                    
+                    col *= i.maskX;
+                    return col;
+                #endif
+                // fixed4 col = saturate(tex2D(_MainTex, i.uv )-_RemoveTextureArtifact) * i.color;
+                // UNITY_APPLY_FOG(i.fogCoord, col);
+
+
+                // col *= i.maskX;
+                // return col;
             }
             ENDCG
         }
     }
+    CustomEditor "VRSLInspector"
 }

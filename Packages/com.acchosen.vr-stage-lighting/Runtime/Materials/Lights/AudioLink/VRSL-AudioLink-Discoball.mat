@@ -9,12 +9,13 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-AudioLink-Discoball
   m_Shader: {fileID: 4800000, guid: 29ef7182cec5f7740971f3c2e3e326c0, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: _ALPHATEST_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2451
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -77,10 +78,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _Alpha: 0.66
+    - _AlphaToCoverage: 1
     - _Band: 0
     - _BandMultiplier: 1
+    - _BlendDst: 0
+    - _BlendOp: 0
     - _Border: 1
     - _BumpScale: 1
+    - _ClippingThreshold: 0.114
     - _Cutoff: 0.5
     - _Delay: 0
     - _DetailNormalMapScale: 1
@@ -109,6 +114,7 @@ Material:
     - _Offset: 0
     - _OuterRadius: 0.495
     - _Parallax: 0.02
+    - _RenderMode: 2
     - _RotationSpeed: 8.2
     - _Sector: 0
     - _SmoothnessTextureChannel: 0

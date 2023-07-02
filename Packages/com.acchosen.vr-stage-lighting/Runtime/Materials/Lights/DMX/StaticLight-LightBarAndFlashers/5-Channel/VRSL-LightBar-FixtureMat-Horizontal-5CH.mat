@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-LightBar-FixtureMat-Horizontal-5CH
   m_Shader: {fileID: 4800000, guid: f23016ddcd834d84c92028d893fd6558, type: 3}
-  m_ShaderKeywords: _EMISSION _FORWARD_Y _METALLICGLOSSMAP _NORMALMAP _USERAWGRID_ON
+  m_ShaderKeywords: _5CH_MODE _EMISSION _FORWARD_Y _METALLICGLOSSMAP _NORMALMAP _USERAWGRID_ON
     _USE_DEPTH_LIGHT
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
@@ -127,6 +127,7 @@ Material:
     - _BlendSrc: 1
     - _BulbMaxIntensity: 1
     - _BumpScale: 1
+    - _ChannelMode: 2
     - _ConeWidth: 0
     - _CurveMod: 5
     - _Cutoff: 0.5
@@ -136,6 +137,7 @@ Material:
     - _DstBlend: 0
     - _EnableAudioReact: 0
     - _EnableCompatibilityMode: 0
+    - _EnableDMX: 0
     - _EnableOSC: 0
     - _EnableSpin: 0
     - _EnableStrobe: 0

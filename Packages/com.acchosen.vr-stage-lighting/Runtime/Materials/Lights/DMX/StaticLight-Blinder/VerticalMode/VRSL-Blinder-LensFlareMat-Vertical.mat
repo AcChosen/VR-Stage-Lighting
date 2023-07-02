@@ -9,12 +9,13 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-Blinder-LensFlareMat-Vertical
   m_Shader: {fileID: 4800000, guid: 60294fccbdbda8341904c957e9d4b8b9, type: 3}
-  m_ShaderKeywords: _ENABLEVERTICALMODE_ON _USERAWGRID_ON _USE_DEPTH_LIGHT
+  m_ShaderKeywords: _13CH_MODE _ENABLEVERTICALMODE_ON _USERAWGRID_ON _USE_DEPTH_LIGHT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3200
-  stringTagMap: {}
+  stringTagMap:
+    RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -68,7 +69,13 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AlphaProjectionIntensity: 0.5
+    - _AlphaToCoverage: 0
+    - _BlendDst: 1
+    - _BlendOp: 0
     - _BumpScale: 1
+    - _ChannelMode: 3
+    - _ClippingThreshold: 0.5
     - _ColorSat: 0
     - _CurveMod: 5
     - _Cutoff: 0.5
@@ -77,6 +84,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EnableCompatibilityMode: 0
+    - _EnableDMX: 0
     - _EnableOSC: 0
     - _EnableStrobe: 0
     - _EnableVerticalMode: 1
@@ -99,6 +107,7 @@ Material:
     - _Parallax: 0.02
     - _ReferenceDistance: 10
     - _RemoveTextureArtifact: 0.0045
+    - _RenderMode: 1
     - _ScaleFactor: 0
     - _Sector: 0
     - _ShouldDoFlicker: 0
@@ -113,7 +122,7 @@ Material:
     - _UseDepthLight: 1
     - _UsePreMultiplyAlpha: 0
     - _UseRawGrid: 1
-    - _ZWrite: 1
+    - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 23.968628, g: 23.968628, b: 23.968628, a: 1}

@@ -1,4 +1,4 @@
-﻿Shader "VRSL/AudioLink/Standard Mover/Projection"
+Shader "VRSL/AudioLink/Standard Mover/Projection"
 {
 
 	Properties
@@ -41,7 +41,7 @@
 		// _BlockLengthY("OSC Block Base Distance Y", Float) = 0
 
 		[Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Source Blend mode", Float) = 2
-		[Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Destination Blend mode", Float) = 1
+		//[Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Destination Blend mode", Float) = 1
 		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
 		//[Space(16)]
 
@@ -100,44 +100,25 @@
 
 		_RedMultiplier ("Red Channel Multiplier", Range(0, 5)) = 1
 		_GreenMultiplier ("Green Channel Multiplier", Range(0, 5)) = 1
-		_BlueMultiplier ("Blue Channel Multiplier", Range(0,5)) = 1
-		//_Fade ("Fade mod", Range(0, 6)) = 1.5
 
 
-	// 	[Space(16)]
 		
+		_BlueMultiplier ("Blue Channel Multiplier", Range(0,5)) = 1
 
-
-	// 	[Space(48)]
-	// 	[Header(MAIN)]
-	// [Enum(Unity Default, 0, Non Linear, 1)]_LightProbeMethod("Light Probe Sampling", Int) = 0
-	// 	[Enum(UVs, 0, Triplanar World, 1, Triplanar Object, 2)]_TextureSampleMode("Texture Mode", Int) = 0
-	// 	_TriplanarFalloff("Triplanar Blend", Range(0.5,1)) = 1
-	// 	_MainTex("Main Texture", 2D) = "white" {}
-	// _Color("Color", Color) = (1,1,1,1)
-
-	// 	[Space(16)]
-	// [Header(NORMALS)]
-	// _BumpMap("Normal Map", 2D) = "bump" {}
-	// _BumpScale("Normal Scale", Range(-1,1)) = 1
-
-	// 	[Space(16)]
-	// [Header(METALLIC)]
-	// _MetallicGlossMap("Metallic Map", 2D) = "white" {}
-	// _Metallic("Metallic", Range(0,1)) = 0
-	// 	_Glossiness("Smoothness", Range(0,1)) = 0
-
-	// 	[Space(16)]
-	// [Header(LIGHTMAPPING HACKS)]
-	// _SpecularLMOcclusion("Specular Occlusion", Range(0,1)) = 0
-	// 	_SpecLMOcclusionAdjust("Spec Occlusion Sensitiviy", Range(0,1)) = 0.2
-	// 	_LMStrength("Lightmap Strength", Range(0,1)) = 1
-	// 	_RTLMStrength("Realtime Lightmap Strength", Range(0,1)) = 1
+		_ProjectionCutoff("Projection Cutoff Point", Range(0,1)) = 0.25
+		_ProjectionOriginCutoff("Projection Origin Cutoff Point", Range(0,3)) = 0.25
 
 
 		[Toggle] _EnableThemeColorSampling ("Enable Theme Color Sampling", Int) = 0
 		 _ThemeColorTarget ("Choose Theme Color", Int) = 0
 
+		[Enum(Transparent,1,AlphaToCoverage,2)] _RenderMode ("Render Mode", Int) = 1
+        [Enum(Off,0,On,1)] _ZWrite ("Z Write", Int) = 0
+		[Enum(Off,0,On,1)] _AlphaToCoverage ("Alpha To Coverage", Int) = 0
+        [Enum(Off,0,One,1)] _BlendDst ("Destination Blend mode", Float) = 1
+		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
+        _ClippingThreshold ("Clipping Threshold", Range (0,1)) = 0.5
+		_MinimumBeamRadius ("Minimum Beam Radius", Range(0.001,1)) = 1
 
 
 	}
@@ -148,12 +129,12 @@
 
 		Pass
          {
-			 
+			AlphaToMask [_AlphaToCoverage] 
             Cull Front
             Ztest GEqual
             ZWrite Off
-            Blend  [_BlendSrc] [_BlendDst]
-            BlendOp [_BlendOp]	
+            Blend  DstColor [_BlendDst]
+            BlendOp Add	
 			Offset -1, -1
 			Lighting Off
 
@@ -168,14 +149,17 @@
 			
             #pragma vertex vert
             #pragma fragment frag
+			#pragma multi_compile_local _ _ALPHATEST_ON
 			//#pragma multi_compile_fog
 			#pragma multi_compile_instancing
 			#pragma instancing_options assumeuniformscaling
-			#pragma multi_compile _DNENABLER_NONE _DNENABLER_USEDNTEXTURE
+			//#pragma multi_compile _DNENABLER_NONE _DNENABLER_USEDNTEXTURE
 			#define PROJECTION_YES //To identify the pass in the vert/frag shaders
+			#define PROJECTION_MOVER
+			#define VRSL_AUDIOLINK
 
             #include "UnityCG.cginc"
-			#include "../Shared/VRSL-AudioLink-Defines.cginc" //Property Defines are here
+			#include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-Defines.cginc" //Property Defines are here
 			
 
              struct appdata
@@ -211,8 +195,8 @@
 				 UNITY_VERTEX_OUTPUT_STEREO
              };
 			#include "../Shared/VRSL-AudioLink-Functions.cginc" //Custom Functions
-			#include "VRSL-AudioLink-StandardMover-ProjectionFrag.cginc" //Fragment Shader is here
-			#include "VRSL-AudioLink-StandardMover-Vertex.cginc" //Vertex Shader is here
+			#include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/MovingLights/VRSL-StandardMover-ProjectionFrag.cginc" //Fragment Shader is here
+			#include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/MovingLights/VRSL-StandardMover-Vertex.cginc" //Vertex Shader is here
 
 			 ENDCG
 

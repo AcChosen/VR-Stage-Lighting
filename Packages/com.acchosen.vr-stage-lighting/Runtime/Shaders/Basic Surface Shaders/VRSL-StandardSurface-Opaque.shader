@@ -1,4 +1,4 @@
-﻿Shader "VRSL/Surface Shaders/Opaque"
+﻿Shader "VRSL/Standard Static/Surface Shaders/Opaque"
 {
     Properties
     {
@@ -19,14 +19,14 @@
 
         [HDR]_Emission("Light Color Tint", Color) = (1,1,1,1)     
         _EmissionMask ("Emission Mask", 2D) = "white" {}   
-        _FixtureMaxIntensity ("Maximum Light Intensity",Range (0,15)) = 1
+        _FixtureMaxIntensity ("Maximum Light Intensity",Range (0,55)) = 1
         _Saturation ("Color Saturation", Range (0,1)) = 0.95
         _GlobalIntensity("Global Intensity", Range(0,1)) = 1
         _FinalIntensity("Final Intensity", Range(0,1)) = 1
         _UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
         
         
-        _CurveMod ("Light Intensity Multiplier", Range (1,8)) = 5.0
+        _CurveMod ("Light Intensity Multiplier", Range (1,50)) = 5.0
         
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
@@ -34,6 +34,7 @@
         _NormalMap ("Normal Map", 2D) = "white" {}
         _Metallic ("Metallic Blend", Range(0,1)) = 0.0
         _Glossiness ("Smoothness Blend", Range(0,1)) = 0.5
+        [Enum(1CH,0,4CH,1,5CH,2,13CH,3)] _ChannelMode ("Channel Mode", Int) = 2
 
     }
     SubShader
@@ -44,7 +45,10 @@
 
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
-       #pragma surface surf StandardDefaultGI
+        #pragma surface surf StandardDefaultGI
+        #define VRSL_DMX
+        #define VRSL_SURFACE
+        #pragma shader_feature _1CH_MODE _4CH_MODE _5CH_MODE _13CH_MODE
         #include "UnityPBSLighting.cginc"
 
         // Use shader model 3.0 target, to get nicer looking lighting
@@ -57,8 +61,8 @@
             float2 uv_MetallicSmoothness;
 
         };
-        #include "../StaticLights/VRSL-StaticLight-FixtureMesh-Defines.cginc"
-        half _CurveMod, _FixutreIntensityMultiplier;
+        #include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-Defines.cginc"
+        half _CurveMod;
         sampler2D _EmissionMask, _NormalMap, _MetallicSmoothness;
          #include "../Shared/VRSL-DMXFunctions.cginc"
 
@@ -80,9 +84,15 @@
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             // Albedo comes from a texture tinted by color
-
-            o.Emission = GetDMXEmission(IN.uv_EmissionMask) * _CurveMod;
-
+            #if _1CH_MODE
+                o.Emission = GetDMXEmission1CH(IN.uv_EmissionMask) * _CurveMod;
+            #elif _4CH_MODE
+                o.Emission = GetDMXEmission4CH(IN.uv_EmissionMask) * _CurveMod;
+            #elif _5CH_MODE
+                o.Emission = GetDMXEmission5CH(IN.uv_EmissionMask) * _CurveMod;
+            #elif _13CH_MODE
+                o.Emission = GetDMXEmission13CH(IN.uv_EmissionMask) * _CurveMod;
+            #endif
 
           // o.Emission = DMXcol;
             fixed4 ms = tex2D (_MetallicSmoothness, IN.uv_MetallicSmoothness);
@@ -97,5 +107,6 @@
         }
         ENDCG
     }
+    CustomEditor "VRSLInspector"
     FallBack "Diffuse"
 }

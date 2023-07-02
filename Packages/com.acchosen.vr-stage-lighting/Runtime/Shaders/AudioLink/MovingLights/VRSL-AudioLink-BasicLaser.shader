@@ -68,6 +68,7 @@
             // make fog work
             #pragma multi_compile_fog
             #pragma multi_compile_instancing
+            #define VRSL_AUDIOLINK
 
             #include "UnityCG.cginc"
 

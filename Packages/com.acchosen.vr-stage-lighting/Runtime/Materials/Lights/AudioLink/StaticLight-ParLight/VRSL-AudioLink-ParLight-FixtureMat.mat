@@ -157,13 +157,13 @@ Material:
     - _FixutreIntensityMultiplier: 4
     - _GlobalIntensity: 1
     - _GlossMapScale: 1
-    - _Glossiness: 0.609
+    - _Glossiness: 0.563
     - _GlossyReflections: 1
     - _LMStrength: 1
     - _LightProbeMethod: 0
     - _MaxMinPanAngle: 180
     - _MaxMinTiltAngle: 180
-    - _Metallic: 0.375
+    - _Metallic: 0.445
     - _ModX: -0.12
     - _ModY: -0.37
     - _Mode: 0

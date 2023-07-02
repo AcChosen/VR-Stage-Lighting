@@ -30,19 +30,43 @@
         {
             //UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
             UNITY_SETUP_INSTANCE_ID(i);
-            float gi = i.globalFinalIntensity.x;
-            float fi = i.globalFinalIntensity.y;
             float4 emissionTint = i.emissionColor;
-            #ifdef FIVECH
-            if(((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobe.x <= 0.01) && isDMX() == 1) || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1.0)))
-            {
-                return float4(0,0,0,0);
-            }
-            #else
-            if(((all(i.rgbColor <= float4(0.05,0.05,0.05,1)) || i.intensityStrobe.x <= 0.05) && isDMX() == 1) || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1.0)))
-            {
-                return float4(0,0,0,0);
-            }
+            #ifdef VRSL_DMX
+                float gi = i.globalFinalIntensity.x;
+                float fi = i.globalFinalIntensity.y;
+                #ifdef FIVECH
+                    if(((all(i.rgbColor <= float4(0.01,0.01,0.01,1)) || i.intensityStrobe.x <= 0.01) && isDMX() == 1) || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1.0)))
+                    {
+                        return float4(0,0,0,0);
+                    }
+                #else
+                    if(((all(i.rgbColor <= float4(0.05,0.05,0.05,1)) || i.intensityStrobe.x <= 0.05) && isDMX() == 1) || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1.0)))
+                    {
+                        return float4(0,0,0,0);
+                    }
+                #endif
+            #endif
+            #ifdef VRSL_AUDIOLINK
+                float audioReaction = i.audioGlobalFinalIntensity.x;
+                float gi = i.audioGlobalFinalIntensity.y;
+                float fi = i.audioGlobalFinalIntensity.z;
+                if(audioReaction <= 0.005 || gi <= 0.005 || fi <= 0.005 || all(emissionTint <= float4(0.005, 0.005, 0.005, 1.0)))
+                {
+                    return half4(0,0,0,0);
+                }
+            #endif
+
+            #if _ALPHATEST_ON
+                float2 pos = i.screenPos.xy / i.screenPos.w;
+                pos *= _ScreenParams.xy;
+                float DITHER_THRESHOLDS[16] =
+                {
+                    1.0 / 17.0,  9.0 / 17.0,  3.0 / 17.0, 11.0 / 17.0,
+                    13.0 / 17.0,  5.0 / 17.0, 15.0 / 17.0,  7.0 / 17.0,
+                    4.0 / 17.0, 12.0 / 17.0,  2.0 / 17.0, 10.0 / 17.0,
+                    16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0
+                };
+                int index = (int(pos.x) % 4) * 4 + int(pos.y) % 4;
             #endif
             
             if(i.color.g != 0)
@@ -82,7 +106,11 @@
                 float3 projPos = getProjPos(wpos);
                 float distanceFromOrigin = length(objectOrigin - wpos);
                 float attenuationDist = length(objectOrigin - wpos);
-                float attenuation = 1.0 / (_ProjectionDistanceFallOff + _Fade * attenuationDist + _FeatherOffset * (attenuationDist * attenuationDist));
+                float f = _Fade;
+                #if _ALPHATEST_ON
+                    f += 1.0;
+                #endif
+                float attenuation = 1.0 / (_ProjectionDistanceFallOff + f * attenuationDist + _FeatherOffset * (attenuationDist * attenuationDist));
 
                 float UVscale = 1/(_ProjectionDistanceFallOff + (distanceFromOrigin * _ProjectionUVMod) + (_FeatherOffset * (distanceFromOrigin * distanceFromOrigin)));
 
@@ -115,17 +143,31 @@
                  //float4 col = tex * float4(n,1);
 
                 //clip(projPos.z);
-                float strobe = IF(isStrobe() == 1, i.intensityStrobe.y, 1);
+                #ifdef VRSL_AUDIOLINK
+                    float strobe = 1.0;
+                    col *= audioReaction;
+                #endif
+                #ifdef VRSL_DMX
+                    float strobe = IF(isStrobe() == 1, i.intensityStrobe.y, 1);    
+                    float4 DMXcol = col;
+                    DMXcol *= i.rgbColor;
+                    col = IF(isDMX() == 1, DMXcol, col);
+                #endif
 
-
-                float4 DMXcol = col;
-                DMXcol *= i.rgbColor;
-                col = IF(isDMX() == 1, DMXcol, col);
 
                 
                 float4 result = ((col * UVscale  * _ProjectionMaxIntensity) * emissionTint) * strobe;
                 float fadeRange = (saturate(1-(pow(10, distanceFromOrigin - 2))));
-                return (((lerp(result,float4(0,0,0,0), smoothstep(distanceFromOrigin, 0, _Fade))) * gi) * fi) * _UniversalIntensity;
+                col = (((lerp(result,float4(0,0,0,0), smoothstep(distanceFromOrigin, 0, f))) * gi) * fi) * _UniversalIntensity;
+                
+                #ifdef _ALPHATEST_ON
+                    col *= _AlphaProjectionIntensity;
+                    clip(col.a - DITHER_THRESHOLDS[index]);
+                    clip((((col.r + col.g + col.b)/3) * (_ClippingThreshold)) - DITHER_THRESHOLDS[index]);
+                    return col;
+                #else
+                    return col;
+                #endif
             }
             else
             {

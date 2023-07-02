@@ -39,7 +39,7 @@
 		// _BlockLengthY("DMX Block Base Distance Y", Float) = 0
 
 		[Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Source Blend mode", Float) = 2
-		[Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Destination Blend mode", Float) = 1
+		//[Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Destination Blend mode", Float) = 1
 		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
 		//[Space(16)]
 
@@ -75,6 +75,8 @@
 		_ProjectionRangeOrigin ("Projection Drawing Range Scale Origin", Float) = (0, -0.07535, 0.12387, 0)
 		_ProjectionShadowHarshness("Projection Shadow Harshness", Range(0,1)) = 0
 
+		_MinimumBeamRadius ("Minimum Beam Radius", Range(0.001,1)) = 1
+
 
 		[NoScaleOffset] _ProjectionMainTex ("Projection Texture GOBO 1", 2D) = "white"{}
 		_ProjectionUVMod ("Projection UV Scale Modifier 1", Range(0,2)) = 0
@@ -98,6 +100,13 @@
 
 		_ProjectionCutoff("Projection Cutoff Point", Range(0,1)) = 0.25
 		_ProjectionOriginCutoff("Projection Origin Cutoff Point", Range(0,3)) = 0.25
+
+		[Enum(Transparent,1,AlphaToCoverage,2)] _RenderMode ("Render Mode", Int) = 1
+        [Enum(Off,0,On,1)] _ZWrite ("Z Write", Int) = 0
+		[Enum(Off,0,On,1)] _AlphaToCoverage ("Alpha To Coverage", Int) = 0
+        [Enum(Off,0,One,1)] _BlendDst ("Destination Blend mode", Float) = 1
+		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
+        _ClippingThreshold ("Clipping Threshold", Range (0,1)) = 0.5
 		//_Fade ("Fade mod", Range(0, 6)) = 1.5
 
 
@@ -142,12 +151,12 @@
 
 		Pass
          {
-			 
+			AlphaToMask [_AlphaToCoverage] 
             Cull Front
             Ztest GEqual
             ZWrite Off
-            Blend  [_BlendSrc] [_BlendDst]
-            BlendOp [_BlendOp]	
+            Blend  DstColor [_BlendDst]
+            BlendOp Add	
 			Offset -1, -1
 			Lighting Off
 
@@ -162,12 +171,14 @@
 			
             #pragma vertex vert
             #pragma fragment frag
+			#pragma multi_compile_local _ _ALPHATEST_ON
 			//#pragma multi_compile_fog
 			#pragma multi_compile_instancing
 			#pragma instancing_options assumeuniformscaling
 			//#pragma multi_compile _DNENABLER_NONE _DNENABLER_USEDNTEXTURE
 			#define PROJECTION_YES //To identify the pass in the vert/frag shaders
 			#define PROJECTION_MOVER
+			#define VRSL_DMX
 
             #include "UnityCG.cginc"
 			#include "../Shared/VRSL-Defines.cginc" //Property Defines are here
