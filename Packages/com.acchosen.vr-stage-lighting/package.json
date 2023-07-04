@@ -5,13 +5,13 @@
   "description": "A collection of HLSL shaders, UdonSharp scripts, 3D models, prefabs, and assets designed to emulate the real control, quality, and complexity of professional stage lighting into VRChat in as many ways as possible.",
   "gitDependencies": {},
   "vpmDependencies": {
-    "com.llealloo.audiolink": "0.3.1"
+    "com.llealloo.audiolink": "0.3.2"
   },
   "legacyFolders": {
     "Assets\\VR-Stage-Lighting": ""
   },
   "legacyFiles": {},
   "dependencies": {
-    "com.llealloo.audiolink": "0.3.1"
+    "com.llealloo.audiolink": "0.3.2"
   }
 }
