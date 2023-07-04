@@ -14,7 +14,7 @@
           "gitDependencies": {
           },
           "vpmDependencies": {
-            "com.llealloo.audiolink": "0.3.1"
+            "com.llealloo.audiolink": "0.3.2"
           },
           "hideInEditor":false,
           "zipSHA256":"9C976F48EFA71766C0BB22397FAF5F79845E12A85C09D943245A20B3CAB01207",
