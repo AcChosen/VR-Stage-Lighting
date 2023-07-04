@@ -1,0 +1,56 @@
+{
+  "name":"VR Stage Lighting VPM",
+  "author":"AcChosen",
+  "url":"https://vpm.vrsl.dev/index.json",
+  "id":"dev.vrsl.vpm",
+  "packages":{
+    "com.acchosen.vr-stage-lighting":{
+      "versions":{
+        "2.4.0":{
+          "name":"com.acchosen.vr-stage-lighting",
+          "displayName":"VR Stage Lighting",
+          "version":"2.4.0",
+          "description":"A collection of HLSL shaders, UdonSharp scripts, 3D models, prefabs, and assets designed to emulate the real control, quality, and complexity of professional stage lighting into VRChat in as many ways as possible.",
+          "gitDependencies":{
+          },
+          "vpmDependencies":{
+            "com.llealloo.audiolink": "0.3.1"
+          },
+          "hideInEditor":false,
+          "zipSHA256":"9C976F48EFA71766C0BB22397FAF5F79845E12A85C09D943245A20B3CAB01207",
+          "url":"https://github.com/AcChosen/VR-Stage-Lighting/releases/download/v2.4.0/com.acchosen.vr-stage-lighting.zip",
+          "legacyFolders":{
+            "Assets\\VR-Stage-Lighting": ""
+          },
+          "legacyFiles":{
+          },
+          "dependencies": {
+            "com.llealloo.audiolink": "0.3.1"
+          }
+       },
+        "2.2.1":{
+          "name":"com.acchosen.vr-stage-lighting",
+          "displayName": "VR Stage Lighting",
+          "version": "2.4.0",
+          "description": "A collection of HLSL shaders, UdonSharp scripts, 3D models, prefabs, and assets designed to emulate the real control, quality, and complexity of professional stage lighting into VRChat in as many ways as possible.",
+          "gitDependencies": {
+          },
+          "vpmDependencies": {
+            "com.llealloo.audiolink": "0.3.1"
+          },
+          "hideInEditor":false,
+          "zipSHA256": "359A6D750327D669B38A00FC75C9EEB076EBEAB0C523413D0590F9E39A1FFFB1",
+          "url":"https://github.com/AcChosen/VR-Stage-Lighting/releases/download/v2.2.0/com.acchosen.vr-stage-lighting.zip",
+          "legacyFolders": {
+            "Assets\\VR-Stage-Lighting": ""
+          },
+          "legacyFiles":{
+          },
+          "dependencies": {
+            "com.llealloo.audiolink": "0.3.1"
+          }
+        }
+      }
+    }
+  }
+}
