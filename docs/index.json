@@ -1,8 +1,8 @@
 {
   "name":"VR Stage Lighting VPM",
   "author":"AcChosen",
-  "url":"https://vpm.vrsl.dev/index.json",
-  "id":"dev.vrsl.vpm",
+  "url":"https://acchosen.github.io/VR-Stage-Lighting/index.json",
+  "id":"io.github.acchosen",
   "packages": {
     "com.acchosen.vr-stage-lighting": {
       "versions": {
