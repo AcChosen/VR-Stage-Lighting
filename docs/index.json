@@ -14,7 +14,7 @@
           "gitDependencies": {
           },
           "vpmDependencies": {
-            "com.llealloo.audiolink": "0.3.2"
+            "com.llealloo.audiolink": ">=0.3.1"
           },
           "hideInEditor": false,
           "zipSHA256": "FA7A57F7F1ABF43D5E082C3A4A76CA2A95FC312AA58ECA000102FD3DE2918E83",
@@ -33,7 +33,7 @@
           "gitDependencies": {
           },
           "vpmDependencies": {
-            "com.llealloo.audiolink": "0.3.1"
+            "com.llealloo.audiolink": ">=0.3.1"
           },
           "hideInEditor": false,
           "zipSHA256": "94A95B6BD084B0751DFB73CAEE997058CC2D5FAAEA73E49996852944F8F46239",
