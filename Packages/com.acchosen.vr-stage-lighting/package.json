@@ -5,7 +5,7 @@
   "description":"A collection of HLSL shaders, UdonSharp scripts, 3D models, prefabs, and assets designed to emulate the real control, quality, and complexity of professional stage lighting into VRChat in as many ways as possible.",
   "url":"https://github.com/AcChosen/VR-Stage-Lighting",
   "author":{
-    "name":"AcChosen",
+    "name":"AcChosen"
   },
   "gitDependencies":{},
   "vpmDependencies":{
