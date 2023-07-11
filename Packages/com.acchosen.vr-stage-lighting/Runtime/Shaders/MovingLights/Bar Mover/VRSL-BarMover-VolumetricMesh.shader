@@ -124,7 +124,7 @@
                         float4 _Emission1, _Emission2, _Emission3, _Emission4, _Emission5,
         _Emission6, _Emission7, _Emission8, _Emission9, _Emission10;
         half _EStart1, _EStart2, _EStart3, _EStart4, _EStart5, _EStart6, _EStart7, _EStart8, _EStart9, _Offset;
-        sampler2D _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridStrobeTimer;
+        sampler2D _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridStrobeOutput;
         uniform float4 _Udon_DMXGridRenderTexture_TexelSize;
         float4 _FixtureLensCenter;
         float4 _FixtureRotationOrigin;

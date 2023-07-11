@@ -67,7 +67,7 @@
         #pragma target 3.0
 
         sampler2D _MainTex, _MetallicMap, _BumpMap, _EmissionMask;
-        sampler2D _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridStrobeTimer;
+        sampler2D _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridStrobeOutput;
         uniform float4 _Udon_DMXGridRenderTexture_TexelSize;
         float4 _FixtureRotationOrigin;
         float _FixtureMaxIntensity, _FixutreIntensityMultiplier;

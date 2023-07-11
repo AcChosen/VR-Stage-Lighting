@@ -1,14 +1,16 @@
 float GetSurfaceStrobe(uint DMXChannel)
 {
     
-    float phase = getValueAtCoordsRaw(DMXChannel + 4, _Udon_DMXGridStrobeTimer);
-    float status = getValueAtCoords(DMXChannel + 4, _Udon_DMXGridRenderTexture);
+    // float phase = getValueAtCoordsRaw(DMXChannel + 4, _Udon_DMXGridStrobeTimer);
+    // float status = getValueAtCoords(DMXChannel + 4, _Udon_DMXGridRenderTexture);
 
-    half strobe = (sin(phase));//Get sin wave
-    strobe = IF(strobe > 0.0, 1.0, 0.0);//turn to square wave
-    //strobe = saturate(strobe);
+    half strobe = getValueAtCoords(DMXChannel + 4, _Udon_DMXGridStrobeOutput);
 
-    strobe = IF(status > 0.2, strobe, 1); //minimum channel threshold set
+    // half strobe = (sin(phase));//Get sin wave
+    // strobe = IF(strobe > 0.0, 1.0, 0.0);//turn to square wave
+    // //strobe = saturate(strobe);
+
+    // strobe = IF(status > 0.2, strobe, 1); //minimum channel threshold set
     
     //check if we should even be strobing at all.
     strobe = IF(isDMX() == 1, strobe, 1);

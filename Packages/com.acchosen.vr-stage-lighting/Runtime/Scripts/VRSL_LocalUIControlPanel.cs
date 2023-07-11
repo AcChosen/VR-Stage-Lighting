@@ -135,7 +135,7 @@ namespace VRSL
 
         [FieldChangeCallback(nameof(VolumetricNoise)), SerializeField]
         private bool _volumetricNoise = true;
-        int _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridSpinTimer, _Udon_DMXGridStrobeTimer;
+        int _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridSpinTimer, _Udon_DMXGridStrobeTimer, _Udon_DMXGridStrobeOutput;
 
         public bool VolumetricNoise
         {
@@ -167,6 +167,7 @@ namespace VRSL
             _Udon_DMXGridRenderTextureMovement = PropertyToID("_Udon_DMXGridRenderTextureMovement");
             _Udon_DMXGridSpinTimer = PropertyToID("_Udon_DMXGridSpinTimer");
             _Udon_DMXGridStrobeTimer = PropertyToID("_Udon_DMXGridStrobeTimer");
+            _Udon_DMXGridStrobeOutput = PropertyToID("_Udon_DMXGridStrobeOutput");
         }
 
 
@@ -558,11 +559,24 @@ namespace VRSL
                 }
                 else if(rt.name.Contains("Strobe"))
                 {
-                    #if UDONSHARP
-                    VRCShader.SetGlobalTexture(_Udon_DMXGridStrobeTimer, rt);
-                    #else
-                    Shader.SetGlobalTexture(_Udon_DMXGridStrobeTimer, rt, RenderTextureSubElement.Default);
-                    #endif
+                    if(rt.name.Contains("Timings"))
+                    {
+                        Debug.Log("Setting Strobe Timer");
+                        #if UDONSHARP
+                        VRCShader.SetGlobalTexture(_Udon_DMXGridStrobeTimer, rt);
+                        #else
+                        Shader.SetGlobalTexture(_Udon_DMXGridStrobeTimer, rt, RenderTextureSubElement.Default);
+                        #endif
+                    }
+                    else
+                    {
+                        Debug.Log("Setting Strobe Output");
+                        #if UDONSHARP
+                        VRCShader.SetGlobalTexture(_Udon_DMXGridStrobeOutput, rt);
+                        #else
+                        Shader.SetGlobalTexture(_Udon_DMXGridStrobeOutput, rt, RenderTextureSubElement.Default);
+                        #endif
+                    }
                 }
             }
         }

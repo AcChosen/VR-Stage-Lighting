@@ -12,6 +12,7 @@ UNITY_INSTANCING_BUFFER_START(Props)
     UNITY_DEFINE_INSTANCED_PROP(uint, _EnableStrobe)
     UNITY_DEFINE_INSTANCED_PROP(uint, _FixtureRotationX)
     UNITY_DEFINE_INSTANCED_PROP(uint, _FixtureBaseRotationY)
+    UNITY_DEFINE_INSTANCED_PROP(float, _ConeWidth)
 UNITY_INSTANCING_BUFFER_END(Props)
 
 #ifdef _VRSL_LEGACY_TEXTURES
@@ -21,8 +22,8 @@ UNITY_INSTANCING_BUFFER_END(Props)
 #else
     Texture2D _Udon_DMXGridRenderTexture;
     uniform float4 _Udon_DMXGridRenderTexture_TexelSize;
-    Texture2D _Udon_DMXGridStrobeTimer, _Udon_DMXGridSpinTimer, _Udon_DMXGridRenderTextureMovement;
-    uniform float4 _Udon_DMXGridStrobeTimer_TexelSize, _Udon_DMXGridSpinTimer_TexelSize, _Udon_DMXGridRenderTextureMovement_TexelSize;
+    Texture2D _Udon_DMXGridStrobeOutput, _Udon_DMXGridSpinTimer, _Udon_DMXGridRenderTextureMovement;
+    uniform float4 _Udon_DMXGridStrobeOutput_TexelSize, _Udon_DMXGridSpinTimer_TexelSize, _Udon_DMXGridRenderTextureMovement_TexelSize;
     SamplerState VRSL_PointClampSampler;
 #endif
 
@@ -240,22 +241,31 @@ float GetStrobeOutput(uint DMXChannel)
     #ifdef _VRSL_LEGACY_TEXTURES
         float phase = ReadDMXRaw(DMXChannel, _OSCGridStrobeTimer);
         float status = ReadDMX(DMXChannel, _OSCGridRenderTextureRAW);
+        half strobe = (sin(phase));//Get sin wave
+        strobe = IF(strobe > 0.0, 1.0, 0.0);//turn to square wave
+        //strobe = saturate(strobe);
+
+        strobe = IF(status > 0.2, strobe, 1); //minimum channel threshold set
+        
+        //check if we should even be strobing at all.
+        strobe = IF(isDMX() == 1, strobe, 1);
+        strobe = IF(isStrobe() == 1, strobe, 1);
+        
+        return strobe;
+        
     #else
-        float phase = ReadDMXRaw(DMXChannel, _Udon_DMXGridStrobeTimer);
-        float status = ReadDMX(DMXChannel, _Udon_DMXGridRenderTexture);
+        //float phase = ReadDMXRaw(DMXChannel, _Udon_DMXGridStrobeTimer);
+        half strobe = ReadDMX(DMXChannel, _Udon_DMXGridStrobeOutput);
+
+        //check if we should even be strobing at all.
+        strobe = IF(isDMX() == 1, strobe, 1);
+        strobe = IF(isStrobe() == 1, strobe, 1);
+        
+        return strobe;
+        
     #endif
 
-    half strobe = (sin(phase));//Get sin wave
-    strobe = IF(strobe > 0.0, 1.0, 0.0);//turn to square wave
-    //strobe = saturate(strobe);
 
-    strobe = IF(status > 0.2, strobe, 1); //minimum channel threshold set
-    
-    //check if we should even be strobing at all.
-    strobe = IF(isDMX() == 1, strobe, 1);
-    strobe = IF(isStrobe() == 1, strobe, 1);
-    
-    return strobe;
 
 }
 
@@ -265,17 +275,17 @@ float GetImmediateStrobeOutput(uint DMXChannel)
     #ifdef _VRSL_LEGACY_TEXTURES
         float phase = ReadDMXRaw(DMXChannel, _OSCGridStrobeTimer);
         float status = ReadDMX(DMXChannel, _OSCGridRenderTextureRAW);
+        half strobe = (sin(phase));//Get sin wave
+        strobe = IF(strobe > 0.0, 1.0, 0.0);//turn to square wave
+        //strobe = saturate(strobe);
+
+        strobe = IF(status > 0.2, strobe, 1); //minimum channel threshold set
+        return strobe;
     #else
-        float phase = ReadDMXRaw(DMXChannel, _Udon_DMXGridStrobeTimer);
-        float status = ReadDMX(DMXChannel, _Udon_DMXGridRenderTexture);
+        return ReadDMX(DMXChannel, _Udon_DMXGridStrobeOutput);
     #endif
 
-    half strobe = (sin(phase));//Get sin wave
-    strobe = IF(strobe > 0.0, 1.0, 0.0);//turn to square wave
-    //strobe = saturate(strobe);
 
-    strobe = IF(status > 0.2, strobe, 1); //minimum channel threshold set
-    return strobe;
 
 }
 

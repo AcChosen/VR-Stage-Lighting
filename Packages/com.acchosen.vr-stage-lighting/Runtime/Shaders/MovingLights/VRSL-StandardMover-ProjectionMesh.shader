@@ -71,7 +71,7 @@
 		_ProjectionFade("Projection Edge Fade", Range(0,10)) = 0
 		_ProjectionFadeCurve("Projection Edge Fade Harshness", Range(0, 10)) = 1
 		_ProjectionDistanceFallOff("Projection Distance Fallof Strength", Range(0.001,0.5)) = 0.05
-		_ProjectionRange ("Projection Drawing Range", Range(0,10)) = 0
+		_ProjectionRange ("Projection Drawing Range", Range(0,100)) = 0
 		_ProjectionRangeOrigin ("Projection Drawing Range Scale Origin", Float) = (0, -0.07535, 0.12387, 0)
 		_ProjectionShadowHarshness("Projection Shadow Harshness", Range(0,1)) = 0
 

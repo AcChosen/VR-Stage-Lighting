@@ -166,7 +166,7 @@ Material:
     - _ProjectionFadeCurve: 1.99
     - _ProjectionIntensity: 3
     - _ProjectionOriginCutoff: 0.19
-    - _ProjectionRange: 6.5
+    - _ProjectionRange: 10
     - _ProjectionRotation: -180
     - _ProjectionSelection: 0
     - _ProjectionShadowHarshness: 0.9

@@ -12,8 +12,18 @@ sampler2D _MainTex;
 #ifdef VRSL_DMX
     uint _UseRawGrid, _EnableExtraChannels;
     uniform float4 _Udon_DMXGridRenderTexture_TexelSize;
-    sampler2D _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridStrobeTimer, _Udon_DMXGridSpinTimer;
+    sampler2D _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridStrobeOutput, _Udon_DMXGridSpinTimer;
     float _SpinSpeed;
+
+    #ifdef FIXTURE_EMIT
+        Texture2D   _Udon_VRSL_GI_LightTexture;
+        uniform float4  _Udon_VRSL_GI_LightTexture_TexelSize;
+        SamplerState    VRSL_PointClampSampler;
+        int     _Udon_VRSL_GI_LightCount;
+        float _VRSLSpecularStrength;
+        float _VRSLGlossiness;
+    #endif
+
 #endif
 #ifdef VRSL_AUDIOLINK
     uniform float4 _AudioSpectrum_TexelSize; 
