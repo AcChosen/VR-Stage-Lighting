@@ -13,20 +13,20 @@
     "com.llealloo.audiolink" : ">=0.3.1"
   },
   "vpmDependencies" : {
-    "com.llealloo.audiolink" : ">=0.3.1"
+	"com.llealloo.audiolink" : ">=0.3.1"
   },
   "samples" : [
-    {
-      "displayName" : "VRSL AudioLink Example Scene",
-			"description" : "An example scene showing off VRSL fixtures reacting with AudioLink.",
-			"path" : "Samples~/VRSL-AudioLink-ExampleScene"
-		},
-    {
-      "displayName" : "VRSL DMX Example Scenes",
-			"description" : "Example scenes showing off VRSL fixtures reacting with DMX.",
-			"path" : "Samples~/VRSL-DMX-ExampleScenes"
-		},
-	],
+	{
+		"displayName" : "VRSL AudioLink Example Scene",
+		"description" : "An example scene showing off VRSL fixtures reacting with AudioLink.",
+		"path" : "Samples~/VRSL-AudioLink-ExampleScene"
+	},
+	{
+		"displayName" : "VRSL DMX Example Scenes",
+		"description" : "Example scenes showing off VRSL fixtures reacting with DMX.",
+		"path" : "Samples~/VRSL-DMX-ExampleScenes"
+	},
+  ],
   "legacyFolders" : {
     "Assets\\VR-Stage-Lighting" : ""
   }
