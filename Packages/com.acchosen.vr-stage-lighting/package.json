@@ -17,9 +17,9 @@
   },
   "samples" : [
 	{
-		"displayName" : "VRSL AudioLink Example Scene",
-		"description" : "An example scene showing off VRSL fixtures reacting with AudioLink.",
-		"path" : "Samples~/VRSL-AudioLink-ExampleScene"
+		"displayName" : "VRSL AudioLink Example Scenes",
+		"description" : "Example scenes showing off VRSL fixtures reacting with AudioLink.",
+		"path" : "Samples~/VRSL-AudioLink-ExampleScenes"
 	},
 	{
 		"displayName" : "VRSL DMX Example Scenes",
