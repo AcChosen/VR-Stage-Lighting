@@ -9,9 +9,7 @@
     "name" : "AcChosen",
     "url" : "https://github.com/AcChosen/VR-Stage-Lighting"
   },
-  "dependencies" : {
-    "com.llealloo.audiolink" : ">=0.3.1"
-  },
+  "dependencies" : {},
   "vpmDependencies" : {
 	"com.llealloo.audiolink" : ">=0.3.1"
   },
