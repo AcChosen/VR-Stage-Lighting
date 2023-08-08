@@ -32,7 +32,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _HighFrequency: 75
+    - _LowFrequency: 25
     - _MaxStrobeFreq: 100
+    - _MedFrequency: 50
     - _NineUniverseMode: 0
     - _SmoothValue: 0.5
+    - _StrobeType: 0
     m_Colors: []

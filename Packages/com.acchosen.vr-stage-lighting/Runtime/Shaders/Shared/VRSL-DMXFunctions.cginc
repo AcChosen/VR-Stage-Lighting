@@ -292,6 +292,11 @@ float GetDMXIntensity(uint DMXChannel, float multiplier)
     return getValueAtCoords(DMXChannel + 5, _Udon_DMXGridRenderTexture) * multiplier;
 }
 
+float GetDMXChannel(uint DMXChannel)
+{
+    return getValueAtCoords(DMXChannel, _Udon_DMXGridRenderTexture);
+}
+
 //function for getting the Pan Value (Channel 2)
 float GetFinePanValue(uint DMXChannel)
 {

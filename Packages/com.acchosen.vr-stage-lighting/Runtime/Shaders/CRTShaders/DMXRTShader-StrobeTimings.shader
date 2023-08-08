@@ -4,8 +4,12 @@
     Properties
     {
         [NoScaleOffset]_DMXTexture("DMX Grid Render Texture (To Control Lights)", 2D) = "white" {}
-        _MaxStrobeFreq("Maximum Strobe Frequency", Range(1,100)) = 25
+        _MaxStrobeFreq("Maximum Strobe Frequency", Range(1,1000)) = 25
         [Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
+        [Enum(Dyanmic Strobe Rate,0,Static Strobe Rate,1)] _StrobeType ("Strobe Type", Int) = 0
+        _LowFrequency("Low Frequency", Range(1,100)) = 25
+        _MedFrequency("Medium Frequency", Range(1,100)) = 50
+        _HighFrequency("High Frequency", Range(1,100)) = 75
      }
 
      SubShader
@@ -30,6 +34,9 @@
             SamplerState sampler_point_repeat;
             half _MaxStrobeFreq;
             uint _NineUniverseMode;
+            half _LowFrequency, _MedFrequency, _HighFrequency;
+
+            #pragma shader_feature_local _VRSL_STATICFREQUENCIES
 
             
 
@@ -76,37 +83,58 @@
                     //T = CURRENT PHASE
                     if(_NineUniverseMode)
                     {
-                        float3 t = float3(previousFrame.r, previousFrame.g, previousFrame.b);
-                        //INCREMENT CURRENT PHASE CLOSER TO 2PI
-                        t = t + (float3(dt, dt, dt) * (GetDMXValueRGB(currentFrame) * float3(_MaxStrobeFreq, _MaxStrobeFreq, _MaxStrobeFreq)));
+                        #if _VRSL_STATICFREQUENCIES
 
-                        //IF PHASE IS GREATER THAN OR EQUAL TO 2PI, RETURN TO 0, CAUSE SIN(2PI) == SIN(0)
-                        // if (t >= 2*3.14159265) 
-                        // {
-                        //     t -= 2*3.14159265; 
-                        // }
-                        t.r -= t.r >= 2*3.14159265 ? 2*3.14159265 : 0.0;
-                        t.g -= t.g >= 2*3.14159265 ? 2*3.14159265 : 0.0;
-                        t.b -= t.b >= 2*3.14159265 ? 2*3.14159265 : 0.0;
+                            float3 t = float3(currentFrame.r, currentFrame.g, currentFrame.b);
+                            float sinTime = sin(_Time.y);
+                            float speed = (sinTime) * _LowFrequency;
+                            t *= (GetDMXValueRGB(currentFrame) * float3(speed, speed, speed));
+                            return float4(t, currentFrame.a);
+                        #else
+                            float3 t = float3(previousFrame.r, previousFrame.g, previousFrame.b);
+                            //INCREMENT CURRENT PHASE CLOSER TO 2PI
+                            t = t + (float3(dt, dt, dt) * (GetDMXValueRGB(currentFrame) * float3(_MaxStrobeFreq, _MaxStrobeFreq, _MaxStrobeFreq)));
 
-                        t = float3(clamp(t.r, 0.0, 1000000.0), clamp(t.g, 0.0, 1000000.0), clamp(t.b, 0.0, 1000000.0));
-                        //EZ CLAP
-                        return float4(t, currentFrame.a);
+                            //IF PHASE IS GREATER THAN OR EQUAL TO 2PI, RETURN TO 0, CAUSE SIN(2PI) == SIN(0)
+                            // if (t >= 2*3.14159265) 
+                            // {
+                            //     t -= 2*3.14159265; 
+                            // }
+                            t.r -= t.r >= 2*3.14159265 ? 2*3.14159265 : 0.0;
+                            t.g -= t.g >= 2*3.14159265 ? 2*3.14159265 : 0.0;
+                            t.b -= t.b >= 2*3.14159265 ? 2*3.14159265 : 0.0;
+
+                            t = float3(clamp(t.r, 0.0, 1000000.0), clamp(t.g, 0.0, 1000000.0), clamp(t.b, 0.0, 1000000.0));
+                            //EZ CLAP
+                            return float4(t, currentFrame.a);
+                        #endif
                     }
                     else
                     {
-                        float t = previousFrame.r;
-                        //INCREMENT CURRENT PHASE CLOSER TO 2PI
-                        t = t + (dt * (GetDMXValue(currentFrame) * _MaxStrobeFreq));
+                        #if _VRSL_STATICFREQUENCIES
+                            float dmx = currentFrame.r;
+                            float sinTime = _Time.y;
+                            //sinTime -= sinTime >= 2*3.14159265 ? 2*3.14159265 : 0.0;
 
-                        //IF PHASE IS GREATER THAN OR EQUAL TO 2PI, RETURN TO 0, CAUSE SIN(2PI) == SIN(0)
-                        // if (t >= 2*3.14159265) 
-                        // {
-                        //     t -= 2*3.14159265; 
-                        // }
-                        t -= t >= 2*3.14159265 ? 2*3.14159265 : 0.0;
-                        //EZ CLAP
-                        return clamp(t, 0.0, 1000000.0);
+                            float speed = dmx > 0.2 ? _MedFrequency : _LowFrequency;
+                            speed = dmx > 0.5 ? _HighFrequency : speed;
+                            float t =((sinTime) * speed);
+                            
+                            return clamp(t, 0.0, 1000000.0);
+                        #else
+                            float t = previousFrame.r;
+                            //INCREMENT CURRENT PHASE CLOSER TO 2PI
+                            t = t + (dt * (GetDMXValue(currentFrame) * _MaxStrobeFreq));
+
+                            //IF PHASE IS GREATER THAN OR EQUAL TO 2PI, RETURN TO 0, CAUSE SIN(2PI) == SIN(0)
+                            // if (t >= 2*3.14159265) 
+                            // {
+                            //     t -= 2*3.14159265; 
+                            // }
+                            t -= t >= 2*3.14159265 ? 2*3.14159265 : 0.0;
+                            //EZ CLAP
+                            return clamp(t, 0.0, 1000000.0);
+                        #endif
                     }
                 }
 

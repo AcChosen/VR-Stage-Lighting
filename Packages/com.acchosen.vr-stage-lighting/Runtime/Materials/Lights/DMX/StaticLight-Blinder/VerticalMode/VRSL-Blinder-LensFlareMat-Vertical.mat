@@ -91,7 +91,7 @@ Material:
     - _EndFadeinDistanceWorldUnit: 0.5
     - _FadeAmt: 0.216
     - _FinalIntensity: 1
-    - _FixtureMaxIntensity: 6
+    - _FixtureMaxIntensity: 2
     - _FixutreIntensityMultiplier: 1
     - _FlickResultIntensityLowestPoint: 0.5
     - _FlickerAnimSpeed: 5

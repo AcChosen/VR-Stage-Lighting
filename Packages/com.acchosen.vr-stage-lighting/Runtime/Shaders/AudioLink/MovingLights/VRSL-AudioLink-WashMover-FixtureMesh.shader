@@ -177,11 +177,11 @@
 		#else
 			float3 objPos : TEXCOORD7;
 			float3 objNormal : TEXCOORD8;
-			//SHADOW_COORDS(11)
+			SHADOW_COORDS(11)
 		#endif
 		float4 color : COLOR;
 		UNITY_VERTEX_INPUT_INSTANCE_ID
-		SHADOW_COORDS(11)
+		// SHADOW_COORDS(11)
 		UNITY_VERTEX_OUTPUT_STEREO
 	};
 

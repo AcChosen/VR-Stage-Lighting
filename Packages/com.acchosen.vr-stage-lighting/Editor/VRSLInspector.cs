@@ -104,6 +104,7 @@ public class VRSLInspector : ShaderGUI
 
 
     MaterialProperty _NoiseTex = null;
+    MaterialProperty _NoiseTexHigh = null;
     MaterialProperty _NoisePower = null;
     MaterialProperty _Noise2X = null;
     MaterialProperty _Noise2Y = null;
@@ -135,7 +136,8 @@ public class VRSLInspector : ShaderGUI
 
 
 
-    MaterialProperty _MAGIC_NOISE_ON = null;
+    MaterialProperty _MAGIC_NOISE_ON_HIGH = null;
+    MaterialProperty _MAGIC_NOISE_ON_MED = null;
     MaterialProperty _2D_NOISE_ON = null;
     MaterialProperty _UseDepthLight = null;
     MaterialProperty _PotatoMode = null;
@@ -238,6 +240,10 @@ public class VRSLInspector : ShaderGUI
 
     //Strobe RenderTexture
     MaterialProperty _MaxStrobeFreq = null;
+    MaterialProperty _LowFrequency = null;
+    MaterialProperty _MedFrequency = null;
+    MaterialProperty _HighFrequency = null;
+    MaterialProperty _StrobeType = null;
 
     //Texture Color Sampling Stuff
     MaterialProperty _TextureColorSampleX = null;
@@ -1297,8 +1303,17 @@ public class VRSLInspector : ShaderGUI
             if((Mathf.FloorToInt(target.GetInt("_2D_NOISE_ON"))) == 1)
             {
                 EditorGUI.indentLevel++;  
-                matEditor.TexturePropertySingleLine(new GUIContent("Noise Texture", "Alpha Noise Texture used for adding variation to the cone."), _NoiseTex);
-                matEditor.TextureScaleOffsetProperty(_NoiseTex);
+                if(target.GetInt("_RenderMode") == 0)
+                {
+                    matEditor.TexturePropertySingleLine(new GUIContent("Noise Texture HQ", "Alpha Noise Texture used for adding variation to the cone."), _NoiseTexHigh);
+                    matEditor.TextureScaleOffsetProperty(_NoiseTexHigh);
+                }
+                else
+                {
+                    matEditor.TexturePropertySingleLine(new GUIContent("Noise Texture", "Alpha Noise Texture used for adding variation to the cone."), _NoiseTex);
+                    matEditor.TextureScaleOffsetProperty(_NoiseTex);                   
+                }
+
                 matEditor.ShaderProperty(_NoisePower, new GUIContent("Noise Strength", "Controls how much the noise texture affects the cone"));
                 EditorGUI.indentLevel--;  
             }
@@ -1308,13 +1323,26 @@ public class VRSLInspector : ShaderGUI
             
             //if(!isDMXCompatible)
             //{
-                
-                if((Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON"))) == 1)
+                string magicNoiseString = "_MAGIC_NOISE_ON_MED";
+                MaterialProperty magicNoiseProp = _MAGIC_NOISE_ON_MED;
+                string magicNoiseSuffix = "Transparent";
+                if(target.GetInt("_RenderMode") == 0)
+                {
+                    magicNoiseString = "_MAGIC_NOISE_ON_HIGH";
+                    magicNoiseProp = _MAGIC_NOISE_ON_HIGH;
+                    magicNoiseSuffix = "HQTransparent";
+
+                }
+
+
+                if((Mathf.FloorToInt(target.GetInt(magicNoiseString))) == 1 && target.GetInt("_RenderMode") != 2)
                 {  
-                    matEditor.ShaderProperty(_MAGIC_NOISE_ON, new GUIContent("Enable Magic 3D Noise", "Enable Second layer of world space, faux 3D Noise"));
+                    
+                    matEditor.ShaderProperty(magicNoiseProp, new GUIContent("Enable Magic 3D Noise For:  " + magicNoiseSuffix, "Enable Second layer of world space, faux 3D Noise"));
                     EditorGUILayout.LabelField("Potato Mode is unavailable. Disable Magic 3D Noise to enable Potato Mode.");
+                     
+                    matEditor.TexturePropertySingleLine(new GUIContent("Magic 3D Noise Texture", "A magical texture for generating 3D Perlin Noise at runtime! Code and texture based on https://www.shadertoy.com/view/4sfGzS by iq!"), _LightMainTex);
                     EditorGUI.indentLevel++;   
-                    matEditor.TexturePropertySingleLine(new GUIContent("Magic 3D Noise Texture", "A magical texture for generating 3D Perlin Noise at runtime! Code and texture based on https://www.shadertoy.com/view/4sfGzS by iq!"), _LightMainTex); 
                     // if((Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1)
                     // {
                     //     EditorGUILayout.LabelField("HQ Mode is unavailable. Disable Potato Mode to enable Potato HQ.");
@@ -1384,18 +1412,25 @@ public class VRSLInspector : ShaderGUI
                     }
                     EditorGUI.indentLevel--;
                 }
-                else if((Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1)
+                else if((Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 && target.GetInt("_RenderMode") != 2)
                 {
                     EditorGUILayout.LabelField("Magic 3D Noise is unavailable. Disable Potato Mode to enable Magic 3D Noise.");
                     matEditor.ShaderProperty(_PotatoMode, new GUIContent("Potato Mode", "Reduces the overhead on the fragment shader by removing both noise components to extra texture sampling."));
                 }
+                else if(target.GetInt("_RenderMode") ==2)
+                {
+                    EditorGUILayout.LabelField("Magic 3D Noise is unavailable. Use Transparent or HQTransparent Render Mode to enable Magic 3D Noise.");
+                }
                 else
                 {
-                    matEditor.ShaderProperty(_MAGIC_NOISE_ON, new GUIContent("Enable Magic 3D Noise", "Enable Second layer of world space, faux 3D Noise"));
+                    matEditor.ShaderProperty(magicNoiseProp, new GUIContent("Enable Magic 3D Noise For:  " + magicNoiseSuffix, "Enable Second layer of world space, faux 3D Noise"));
                     matEditor.ShaderProperty(_PotatoMode, new GUIContent("Potato Mode", "Reduces the overhead on the fragment shader by removing both noise components to extra texture sampling."));
                 }
                 
-                SetKeyword(target, "_MAGIC_NOISE_ON", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON"))) == 1 ? true : false);
+                SetKeyword(target, "_MAGIC_NOISE_ON_HIGH", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_HIGH"))) == 1 ? true : false);
+                SetKeyword(target, "_MAGIC_NOISE_ON_MED", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_MED"))) == 1 ? true : false);
+
+
                 SetKeyword(target, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(target.GetInt("_UseDepthLight"))) == 1 ? true : false);
                 SetKeyword(target, "_POTATO_MODE_ON", (Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 ? true : false);
                 SetKeyword(target, "_HQ_MODE", (Mathf.FloorToInt(target.GetInt("_HQMode"))) == 1 ? true : false);
@@ -1739,7 +1774,22 @@ public class VRSLInspector : ShaderGUI
         GUILayout.Space(5);
         EditorGUI.indentLevel++;
         matEditor.TexturePropertySingleLine(new GUIContent("DMX Grid Raw", "The raw DMX Render texture from the camera."),_DMXTexture);
-        matEditor.ShaderProperty(_MaxStrobeFreq, new GUIContent("Maximum Strobe Frequency", "The maximum strobing frequency of all fixtures."));
+        matEditor.ShaderProperty(_StrobeType, new GUIContent("Strobe Mode", "Choose between a smooth dynamic strobe rate or static pre set rates. Static rates are frame rate independent."));
+        SetKeyword(target, "_VRSL_STATICFREQUENCIES",target.GetInt("_StrobeType") == 1);
+        if(target.GetInt("_StrobeType") == 1)
+        {
+            EditorGUI.indentLevel++;
+            matEditor.ShaderProperty(_LowFrequency, new GUIContent("Low Frequency"));
+            matEditor.ShaderProperty(_MedFrequency, new GUIContent("Medium Frequency"));
+            matEditor.ShaderProperty(_HighFrequency, new GUIContent("High Frequency"));
+            EditorGUI.indentLevel--;
+        }
+        else
+        {
+            EditorGUI.indentLevel++;
+            matEditor.ShaderProperty(_MaxStrobeFreq, new GUIContent("Maximum Strobe Frequency", "The maximum strobing frequency of all fixtures."));
+            EditorGUI.indentLevel--;
+        }
         matEditor.ShaderProperty(_NineUniverseMode, new GUIContent("Enable Extended Universe Mode", "Enables or Disables extended universe mode (9-universes via RGB)"));
         matEditor.RenderQueueField();
         EditorGUI.indentLevel--;

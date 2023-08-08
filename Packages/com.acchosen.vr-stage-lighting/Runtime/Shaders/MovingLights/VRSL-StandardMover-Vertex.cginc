@@ -497,7 +497,11 @@ v2f vert (appdata v)
 		//	o.viewDir = ObjSpaceViewDir(v.vertex);
 			o.screenPos = ComputeScreenPos (o.pos);
 			//o.uvClone = v.uv2;
-			o.uv2 = TRANSFORM_TEX(v.uv2, _NoiseTex);
+			#ifdef _HQ_MODE
+				o.uv2 = TRANSFORM_TEX(v.uv2, _NoiseTexHigh);
+			#else
+				o.uv2 = TRANSFORM_TEX(v.uv2, _NoiseTex);
+			#endif
 			o.uv = TRANSFORM_TEX(v.uv, _LightMainTex);
 			//o.uv = UnityStereoScreenSpaceUVAdjust(uv, sb)
 			COMPUTE_EYEDEPTH(o.screenPos.z);
@@ -718,7 +722,11 @@ v2f vert (appdata v)
 				o.screenPos = float4(0,0,0,0);
 			#endif
 			o.uvClone = v.uv2;
-			o.uv2 = TRANSFORM_TEX(v.uv2, _NoiseTex);
+			#ifdef _HQ_MODE
+				o.uv2 = TRANSFORM_TEX(v.uv2, _NoiseTexHigh);
+			#else
+				o.uv2 = TRANSFORM_TEX(v.uv2, _NoiseTex);
+			#endif
 			o.uv = TRANSFORM_TEX(v.uv, _LightMainTex);
 			//o.uv = UnityStereoScreenSpaceUVAdjust(uv, sb)
 			#if _USE_DEPTH_LIGHT

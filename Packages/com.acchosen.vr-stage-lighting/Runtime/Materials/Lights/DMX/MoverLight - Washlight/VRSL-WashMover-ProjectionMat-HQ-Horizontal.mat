@@ -159,7 +159,7 @@ Material:
     - _NoisePower: 0.333
     - _NoiseSeed: 420
     - _PanInvert: 0
-    - _ProjectionCutoff: 0.12
+    - _ProjectionCutoff: 0.13
     - _ProjectionDistanceFallOff: 0.01
     - _ProjectionFade: 2.35
     - _ProjectionFadeCurve: 1.99

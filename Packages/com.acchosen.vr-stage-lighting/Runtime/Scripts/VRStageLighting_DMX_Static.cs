@@ -268,6 +268,7 @@ namespace VRSL
             props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
             props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
             props.SetColor("_Emission", lightColorTint);
+            props.SetColor("_EmissionDMX", lightColorTint);
             props.SetFloat("_ConeWidth", coneWidth);
             props.SetFloat("_GlobalIntensity", globalIntensity);
             props.SetFloat("_FinalIntensity", finalIntensity);
@@ -318,7 +319,7 @@ namespace VRSL
                         objRenderers[4].SetPropertyBlock(props);
                     break;
                 default:
-                    Debug.Log("Too many mesh renderers for this fixture!");
+                    Debug.Log("Too many mesh renderers for this fixture! " + objRenderers.Length);
                     break;   
             }
         }
@@ -365,6 +366,7 @@ namespace VRSL
             props.SetFloat("_FixtureRotationX", tiltOffsetBlue);
             props.SetFloat("_FixtureBaseRotationY", panOffsetBlueGreen);
             props.SetColor("_Emission", lightColorTint);
+            props.SetColor("_EmissionDMX", lightColorTint);
             props.SetFloat("_ConeWidth", coneWidth);
             props.SetFloat("_GlobalIntensity", globalIntensity);
             props.SetFloat("_FinalIntensity", finalIntensity);
@@ -415,7 +417,7 @@ namespace VRSL
                         objRenderers[4].SetPropertyBlock(props);
                     break;
                 default:
-                    Debug.Log("Too many mesh renderers for this fixture!");
+                    Debug.Log("Too many mesh renderers for this fixture! " + objRenderers.Length);
                     break;  
             }
         }

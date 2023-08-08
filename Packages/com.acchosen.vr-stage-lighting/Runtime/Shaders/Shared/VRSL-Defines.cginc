@@ -64,7 +64,13 @@ float _MinimumBeamRadius;
 
 
 #if defined(VOLUMETRIC_YES)
-    sampler2D _NoiseTex;
+
+    #ifdef _HQ_MODE
+        sampler2D _NoiseTexHigh;
+    #else
+        sampler2D _NoiseTex;
+    #endif
+
     float _Noise2StretchInside;
     float _Noise2Stretch;
     float _Noise2X;
@@ -88,7 +94,13 @@ float _MinimumBeamRadius;
     
     
 #endif
-float4 _NoiseTex_ST;
+
+    #ifdef _HQ_MODE
+        float4 _NoiseTexHigh_ST;
+    #else
+        float4 _NoiseTex_ST;
+    #endif
+
 float _NoisePower, _NoiseSeed;
 uint _ToggleMagicNoise;
 

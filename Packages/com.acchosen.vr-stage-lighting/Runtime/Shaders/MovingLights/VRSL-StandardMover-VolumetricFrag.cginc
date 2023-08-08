@@ -85,7 +85,7 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 				4.0 / 17.0, 12.0 / 17.0,  2.0 / 17.0, 10.0 / 17.0,
 				16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0
 			};
-			int index = (int(pos.x) % 4) * 4 + int(pos.y) % 4;
+			int index = (int)((uint(pos.x) % 4) * 4 + uint(pos.y) % 4);
 		#endif
 
 
@@ -262,7 +262,11 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 					texUV.x = (_Time.y*0.1) * 0.75f + texUV.x;
 					texUV.y = (_Time.y*0.1) * 0.10f + texUV.y;
 					
-					float4 tex = tex2D(_NoiseTex, texUV);
+					#ifdef _HQ_MODE
+						float4 tex = tex2D(_NoiseTexHigh, texUV);
+					#else
+						float4 tex = tex2D(_NoiseTex, texUV);
+					#endif
 				#else
 					float4 tex = float4(1,1,1,1);
 				#endif
@@ -272,7 +276,7 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 				half np = 0.0f;
 
 				//If we are using 3D noise...
-				#ifdef _MAGIC_NOISE_ON
+				#if (defined(_MAGIC_NOISE_ON_HIGH) && defined(_HQ_MODE)) || (defined(_MAGIC_NOISE_ON_MED) && !defined(_HQ_MODE))
 				//if(_ToggleMagicNoise > 0)
 				//{
 					//Get vertex/frag position in worldspace

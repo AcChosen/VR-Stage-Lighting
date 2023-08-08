@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using UnityEngine.UIElements;
 #endif
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 
@@ -262,6 +263,10 @@ public class DMXListItem
         #pragma warning disable 0618 //suppressing obsoletion warnings
         light.ApplyProxyModifications();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+        if(PrefabUtility.IsPartOfAnyPrefab(light))
+        {
+            PrefabUtility.RecordPrefabInstancePropertyModifications(light);
+        }
         }
         catch(Exception e)
         {
@@ -501,6 +506,10 @@ public class AudioLinkListItem
         #pragma warning disable 0618 //suppressing obsoletion warnings
         light.ApplyProxyModifications();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+        if(PrefabUtility.IsPartOfAnyPrefab(light))
+        {
+            PrefabUtility.RecordPrefabInstancePropertyModifications(light);
+        }
     }
 
     public void ApplyChanges(VRStageLighting_AudioLink_Laser li)
@@ -566,6 +575,11 @@ public class AudioLinkListItem
         #pragma warning disable 0618 //suppressing obsoletion warnings
         laser.ApplyProxyModifications();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+
+        if(PrefabUtility.IsPartOfAnyPrefab(light))
+        {
+            PrefabUtility.RecordPrefabInstancePropertyModifications(light);
+        }
     }
 
 
@@ -607,6 +621,7 @@ public class VRSL_ManagerWindow : EditorWindow {
     private static bool[] bandFold = new bool[4];
     static GUIContent colorLabel;
     private string[] dmxModes = new string[]{"Horizontal", "Vertical", "Legacy"};
+    private string[] materialChooserList = new string[]{"Off","Intensity+Color", "Movement", "Spin", "Strobe Timing", "Strobe Output", "AudioLink Interpolation"};
     private string [] dmxGizmoInfo = new string[]{"None", "Channel Only", "Universe + Channel"};
     private static UnityEngine.Object controlPanelUiPrefab, directionalLightPrefab, uDesktopHorizontalPrefab, uDesktopVerticalPrefab, uDesktopLegacyPrefab, uVidHorizontalPrefab, uVidVerticalPrefab, uVidLegacyPrefab,
     audioLinkPrefab, audioLinkControllerPrefab, standardAudioLinkControllerPrefab, oscGridReaderHorizontalPrefab, oscGridReaderVerticalPrefab, audioLinkVRSLPrefab, cubeMask, cylinderMask, capsuleMask, sphereMask;
@@ -626,9 +641,23 @@ public class VRSL_ManagerWindow : EditorWindow {
     private static UnityEngine.Object laser_h, laser_v, laser_l, laser_a;
     private static UnityEngine.Object sixFour_h, sixFour_v, sixFour_l;
     private static UnityEngine.Object multiLightbar_h, multiLightbar_v, multiLightbar_l;
+    private Material dmx_H_CRT_Color_Mat, dmx_V_CRT_Color_Mat, dmx_L_CRT_Color_Mat,
+    dmx_H_CRT_Mvmt_Mat, dmx_V_CRT_Mvmt_Mat, dmx_L_CRT_Mvmt_Mat,
+    dmx_H_CRT_Spin_Mat,dmx_V_CRT_Spin_Mat,dmx_L_CRT_Spin_Mat,
+    dmx_H_CRT_StrobeTime_Mat, dmx_V_CRT_StrobeTime_Mat, dmx_L_CRT_StrobeTime_Mat,
+    dmx_H_CRT_StrobeOut_Mat, dmx_V_CRT_StrobeOut_Mat, dmx_L_CRT_StrobeOut_Mat,
+    audiolink_CRT_InterpolationMat;
+
+    private MaterialEditor _materialEditor; 
+    private bool showMaterialEditor;
 
     private static DMXListItem copyDMXListProx;
     private static AudioLinkListItem copyAudioLinkListProx;
+
+    private static Shader GIDMXLightTextureShader;
+    private static bool hasDMXGI;
+
+    private int materialChooser;
     // private float panRangeTarget = 90f; 
     // private float tiltRangeTarget = -90f;
 
@@ -660,6 +689,7 @@ public class VRSL_ManagerWindow : EditorWindow {
             ApplyChangesToFixtures(true, true, false);
         }
 
+        hasDMXGI = CheckIfDMXGIAvailable();
 
 
         window.minSize = new Vector2(925f, 700f);
@@ -669,6 +699,21 @@ public class VRSL_ManagerWindow : EditorWindow {
         //EditorApplication.playModeStateChanged += LogPlayModeState;
         
 
+    }
+
+    static bool CheckIfDMXGIAvailable()
+    {
+        string path = "Packages/com.acchosen.vrsl-dmx-gi/Runtime/Shaders/VRSL_GI_LightTexture.shader";
+        bool wasSuccessful = false;
+        try{
+            GIDMXLightTextureShader = (Shader)AssetDatabase.LoadAssetAtPath(path, typeof(Shader));
+            wasSuccessful = true;
+        }
+        catch(Exception e)
+        {
+            wasSuccessful = false;
+        }
+        return wasSuccessful;
     }
 
 
@@ -1273,6 +1318,8 @@ public class VRSL_ManagerWindow : EditorWindow {
      EditorApplication.hierarchyChanged += HierarchyChanged;
    //  EditorApplication.playModeStateChanged += LogPlayModeState;
      SceneView.duringSceneGui += this.OnSceneGUI;
+     LoadMaterials();
+     hasDMXGI = CheckIfDMXGIAvailable();
     }
     void OnDisable( )
     {
@@ -1283,6 +1330,11 @@ public class VRSL_ManagerWindow : EditorWindow {
         {
             if(panel.fixtureGizmos == 0)
                 SceneView.duringSceneGui -= this.OnSceneGUI;
+        }
+                if (_materialEditor != null) 
+                {
+            // Free the memory used by default MaterialEditor
+                DestroyImmediate (_materialEditor);
         }
     }
     private void HierarchyChanged()
@@ -1889,6 +1941,101 @@ public class VRSL_ManagerWindow : EditorWindow {
         Repaint();
     }
 
+    private void LoadMaterials()
+    {
+        string dmx_H_CRT_Color_Mat_path = AssetDatabase.GUIDToAssetPath("c23ee34d1d3977548829651c8cceea33");
+        string dmx_V_CRT_Color_Mat_path = AssetDatabase.GUIDToAssetPath("d2a0ea204b6092d49971eacf996dcec3");
+        string dmx_L_CRT_Color_Mat_path = AssetDatabase.GUIDToAssetPath("9a42fdd188c84e542be2a455485423a8");
+
+        string dmx_H_CRT_Mvmt_Mat_path = AssetDatabase.GUIDToAssetPath("144ac9f77364a7d4ea6e607f40c31505");
+        string dmx_V_CRT_Mvmt_Mat_path = AssetDatabase.GUIDToAssetPath("a949afd894bf9384bb57422931f130fc");
+        string dmx_L_CRT_Mvmt_Mat_path = AssetDatabase.GUIDToAssetPath("e79b2b00c4751b74ea6dacd87a9f41dd");
+
+        string dmx_H_CRT_Spin_Mat_path = AssetDatabase.GUIDToAssetPath("0de093d844c8ac146b98341787214c64");
+        string dmx_V_CRT_Spin_Mat_path = AssetDatabase.GUIDToAssetPath("1e05cea1a32288a47b1612ca4725ae2e");
+        string dmx_L_CRT_Spin_Mat_path = AssetDatabase.GUIDToAssetPath("d80a528643bc1c2418a6986cd3cf0141");
+
+        string dmx_H_CRT_StrobeTime_Mat_path = AssetDatabase.GUIDToAssetPath("742ce52797fea8948a8f4c438b0c3b69");
+        string dmx_V_CRT_StrobeTime_Mat_path = AssetDatabase.GUIDToAssetPath("05d3c32dd6873684283c962951dc067a");
+        string dmx_L_CRT_StrobeTime_Mat_path = AssetDatabase.GUIDToAssetPath("0f235f1aadc897344a6c8b3301b6f79e");
+
+        string dmx_H_CRT_StrobeOut_Mat_path = AssetDatabase.GUIDToAssetPath("038cddd0ea70e1d41ad37272c1e7c31c");
+        string dmx_V_CRT_StrobeOut_Mat_path = AssetDatabase.GUIDToAssetPath("fafb9a56ddc548e4dafd9cb0befa0e2e");
+        string dmx_L_CRT_StrobeOut_Mat_path = AssetDatabase.GUIDToAssetPath("8af3b80e2a7dd3e458aacc6701d4c657");
+
+        string audiolink_CRT_InterpolationMat_path = AssetDatabase.GUIDToAssetPath("91f76b2e00433a141b2ad6ada0c59a80");
+
+        //  switch(a)
+        // {
+            //horizontal
+            // case 0:
+                try{
+
+                    dmx_H_CRT_Color_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_H_CRT_Color_Mat_path, typeof(Material));
+                    dmx_H_CRT_Mvmt_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_H_CRT_Mvmt_Mat_path, typeof(Material));
+                    dmx_H_CRT_Spin_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_H_CRT_Spin_Mat_path, typeof(Material));
+                    dmx_H_CRT_StrobeTime_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_H_CRT_StrobeTime_Mat_path, typeof(Material));
+                    dmx_H_CRT_StrobeOut_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_H_CRT_StrobeOut_Mat_path, typeof(Material));
+                }
+                catch(Exception e)      
+                {
+                    // loadSuccessful = false;
+                    Debug.Log("Could not load fixture prefab!");
+                    e.ToString();
+                }
+                // break;
+            //vertical
+            // case 1:
+                try{
+
+                    dmx_V_CRT_Color_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_V_CRT_Color_Mat_path, typeof(Material));
+                    dmx_V_CRT_Mvmt_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_V_CRT_Mvmt_Mat_path, typeof(Material));
+                    dmx_V_CRT_Spin_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_V_CRT_Spin_Mat_path, typeof(Material));
+                    dmx_V_CRT_StrobeTime_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_V_CRT_StrobeTime_Mat_path, typeof(Material));
+                    dmx_V_CRT_StrobeOut_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_V_CRT_StrobeOut_Mat_path, typeof(Material));
+                }
+                catch(Exception e)
+                {
+                    // loadSuccessful = false;
+                    Debug.Log("Could not load fixture prefab!");
+                    e.ToString();                    
+                }
+                // break;
+            //legacy
+            // case 2:
+                try{
+
+                    dmx_L_CRT_Color_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_L_CRT_Color_Mat_path, typeof(Material));
+                    dmx_L_CRT_Mvmt_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_L_CRT_Mvmt_Mat_path, typeof(Material));
+                    dmx_L_CRT_Spin_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_L_CRT_Spin_Mat_path, typeof(Material));
+                    dmx_L_CRT_StrobeTime_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_L_CRT_StrobeTime_Mat_path, typeof(Material));
+                    dmx_L_CRT_StrobeOut_Mat = (Material)AssetDatabase.LoadAssetAtPath(dmx_L_CRT_StrobeOut_Mat_path, typeof(Material));
+                }
+                catch(Exception e)
+                {
+                    // loadSuccessful = false;
+                    Debug.Log("Could not load fixture prefab!");
+                    e.ToString();                    
+                }
+                // break;
+            //audiolink
+            // case 3:
+                try{
+
+                    audiolink_CRT_InterpolationMat = (Material)AssetDatabase.LoadAssetAtPath(audiolink_CRT_InterpolationMat_path, typeof(Material));
+                }
+                catch(Exception e)
+                {
+                    // loadSuccessful = false;
+                    Debug.Log("Could not load fixture prefab!");
+                    e.ToString();                    
+                }
+            //     break;
+            // default:
+            //     break;
+        // }
+    }
+
     private bool LoadFixturePrefabs(int a)
     {
         bool loadSuccessful = true;
@@ -2078,7 +2225,10 @@ public class VRSL_ManagerWindow : EditorWindow {
         string laser_v_path = AssetDatabase.GUIDToAssetPath("55058c5ef8c22d04991b48a99a10acfe");
         string laser_l_path = AssetDatabase.GUIDToAssetPath("55ac9bf95dc63bb4fb6ba2095d73cde2");
         string laser_a_path = AssetDatabase.GUIDToAssetPath("75c269de381facb4cae616c67f83f519");
-        
+
+
+
+
 
         switch(a)
         {
@@ -2168,6 +2318,68 @@ public class VRSL_ManagerWindow : EditorWindow {
                 break;
         }
         return loadSuccessful;
+    }
+
+
+    public void CreateMaterialGUI(Material _material)
+    {
+        //_material = AssetDatabase.LoadAssetAtPath<Material>("Assets/Material.mat");
+        // if(_material == null)
+        // {
+        //     Debug.Log("Material is empty!");
+        // }
+        // else
+        // {
+        //     Debug.Log("Material found!");
+        // }
+        if (_materialEditor != null) 
+        {
+            DestroyImmediate(_materialEditor);
+        }
+        _materialEditor = (MaterialEditor)Editor.CreateEditor(_material);
+        // if(_materialEditor != e)
+        // {
+        //   //  DestroyImmediate (_materialEditor);
+        //     _materialEditor = e;
+        // }
+        // else
+        // {
+        //     DestroyImmediate (e);
+        // }
+        if (_materialEditor != null) 
+        {
+            // _container = new IMGUIContainer(() =>
+            // {
+                _materialEditor.DrawHeader();
+
+                // bool isDefaultMaterial = false;
+
+                // if(_material != null)
+                // {
+                //     isDefaultMaterial = !AssetDatabase.GetAssetPath (_material).StartsWith ("Assets");
+                // }
+
+
+                EditorGUILayout.BeginVertical();
+                // using (new EditorGUI.DisabledGroupScope(isDefaultMaterial)) 
+                // {
+                    _materialEditor.OnInspectorGUI();
+                // }
+                EditorGUILayout.EndVertical();
+            // });
+            // rootVisualElement.Add(_container);
+        }
+    }
+    GUIStyle LongLabel(int m)
+    {
+       GUIStyle output = new GUIStyle("Label");
+    //    output.margin.left += m;
+    //    output.margin.right += m;
+    //    output.padding.left += m;
+    //    output.padding.right += m;
+        output.clipping = TextClipping.Overflow;
+       return output;
+
     }
 
     void OnGUI() {
@@ -2261,9 +2473,11 @@ public class VRSL_ManagerWindow : EditorWindow {
             EditorGUI.BeginDisabledGroup(!panel.isUsingDMX);
             var so = new SerializedObject(panel);
             so.FindProperty("DMXMode").intValue = EditorGUILayout.Popup(Label("DMX Grid Mode", "Choose what grid type textures should be enabled for DMX mode. Unused textures will be disabled to save editor performance!"),panel.DMXMode, dmxModes);
+
             so.FindProperty("fixtureGizmos").intValue = EditorGUILayout.Popup(Label("Show DMX Info In Scene", "Display DMX Channel and/or Universe information above each fixture in the scene view!"), panel.fixtureGizmos, dmxGizmoInfo);
             so.FindProperty("useExtendedUniverses").boolValue = EditorGUILayout.ToggleLeft(Label("Use RGB Extended Universes (9-Universe Mode)", "Enable Extended Universe Mode. This will convert all fixtures to read an RGB grid that contains 9 universes of information instead a grayscale grid with 3 universes." + 
             "This only applies to the Vertical and Horizontal grid modes."),panel.useExtendedUniverses);
+
             so.ApplyModifiedProperties();
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndVertical();
@@ -2421,6 +2635,136 @@ public class VRSL_ManagerWindow : EditorWindow {
 
                     EditorGUILayout.EndHorizontal();
                 }
+                
+
+            EditorGUILayout.Space(4);
+            string matEditorPrefix = showMaterialEditor ? "Hide " : "Show ";
+            showMaterialEditor = EditorGUILayout.BeginFoldoutHeaderGroup(showMaterialEditor,Label(matEditorPrefix + "CRT Material Editor", "Show/Hide VRSL CRT Material Editors. "));
+            EditorGUILayout.EndFoldoutHeaderGroup();
+            if(showMaterialEditor)
+            {
+                EditorGUILayout.Space(4);
+                EditorGUILayout.BeginVertical("box");
+                EditorGUI.indentLevel++;
+                EditorGUILayout.PrefixLabel("Select A Custom Render Texture",followingStyle: "Popup", labelStyle: LongLabel(-10));
+                materialChooser = EditorGUILayout.Popup(materialChooser,materialChooserList, GUILayout.MaxWidth(350f));
+                switch(so.FindProperty("DMXMode").intValue)
+                {
+                    default:
+                            switch(materialChooser)
+                            {
+                                default:
+                                    break;
+                                case 1:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_H_CRT_Color_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;
+                                case 2:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_H_CRT_Mvmt_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;
+                                case 3:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_H_CRT_Spin_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;
+                                case 4:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_H_CRT_StrobeTime_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;
+                                case 5:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_H_CRT_StrobeOut_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;      
+                                case 6:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(audiolink_CRT_InterpolationMat);
+                                    EditorGUILayout.EndVertical();
+                                    break;                                                           
+                            }
+                        break;
+                    case 1:
+                            switch(materialChooser)
+                            {
+                                default:
+                                    break;
+                                case 1:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_V_CRT_Color_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;
+                                case 2:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_V_CRT_Mvmt_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;
+                                case 3:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_V_CRT_Spin_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;
+                                case 4:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_V_CRT_StrobeTime_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;
+                                case 5:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_V_CRT_StrobeOut_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;      
+                                case 6:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(audiolink_CRT_InterpolationMat);
+                                    EditorGUILayout.EndVertical();
+                                    break;                                                           
+                            }
+                        break;
+                    case 2:
+                            switch(materialChooser)
+                            {
+                                default:
+                                    break;
+                                case 1:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_L_CRT_Color_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;
+                                case 2:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_L_CRT_Mvmt_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;
+                                case 3:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_L_CRT_Spin_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;
+                                case 4:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_L_CRT_StrobeTime_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;
+                                case 5:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(dmx_L_CRT_StrobeOut_Mat);
+                                    EditorGUILayout.EndVertical();
+                                    break;      
+                                case 6:
+                                    EditorGUILayout.BeginVertical();
+                                    CreateMaterialGUI(audiolink_CRT_InterpolationMat);
+                                    EditorGUILayout.EndVertical();
+                                    break;                                                           
+                            }
+                        break;
+                }
+                EditorGUI.indentLevel--;
+                EditorGUILayout.EndVertical();
+            }
                 
                 EditorGUILayout.EndVertical();
                 //EditorGUILayout.Space();
@@ -2838,7 +3182,14 @@ public class VRSL_ManagerWindow : EditorWindow {
                     EditorGUILayout.EndHorizontal();
                   //  panel.useLegacyStaticLights = so.FindProperty("useLegacyStaticLights").boolValue;
                  //   panel.useLegacyStaticLights = EditorGUILayout.Toggle("Use Legacy Static Lights", panel.useLegacyStaticLights);
+                    EditorGUILayout.BeginHorizontal();
                     soptr.FindProperty("useLegacyStaticLights").boolValue = EditorGUILayout.ToggleLeft("Use Old 13 Channel Static Lights (Not Recommended)", panel.useLegacyStaticLights);
+
+                    // if(hasDMXGI)
+                    // {
+                    //     soptr.FindProperty("useDMXGI").boolValue = EditorGUILayout.ToggleLeft("Enable DMX GI Prefabs", panel.useDMXGI);
+                    // }
+                    EditorGUILayout.EndHorizontal();
 
 
                     
@@ -3281,7 +3632,10 @@ public class VRSL_ManagerWindow : EditorWindow {
                             EditorGUILayout.EndFoldoutHeaderGroup();
 
                             //GUILayout.Space(2.0f);
-
+                            if(PrefabUtility.IsPartOfAnyPrefab(fixture.light))
+                            {
+                                PrefabUtility.RecordPrefabInstancePropertyModifications(fixture.light);
+                            }
                         }
                             // EditorGUILayout.EndVertical();
                             // EditorGUILayout.EndHorizontal();
@@ -3586,6 +3940,10 @@ public class VRSL_ManagerWindow : EditorWindow {
                                         GuiLine();
                                         EditorGUILayout.EndFoldoutHeaderGroup();
                                     }
+                                }
+                                if(PrefabUtility.IsPartOfAnyPrefab(fixture.light))
+                                {
+                                    PrefabUtility.RecordPrefabInstancePropertyModifications(fixture.light);
                                 }
                                 
                             }

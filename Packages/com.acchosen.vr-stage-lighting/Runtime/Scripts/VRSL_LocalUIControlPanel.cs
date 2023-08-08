@@ -133,6 +133,10 @@ namespace VRSL
         public bool useLegacyStaticLights = false;
         public bool useExtendedUniverses = false;
 
+
+        [HideInInspector]
+        public bool useDMXGI = false;
+
         [FieldChangeCallback(nameof(VolumetricNoise)), SerializeField]
         private bool _volumetricNoise = true;
         int _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridSpinTimer, _Udon_DMXGridStrobeTimer, _Udon_DMXGridStrobeOutput;
@@ -496,7 +500,8 @@ namespace VRSL
                 mat.SetInt("_PotatoMode", _volumetricNoise ? 0 : 1);
                 mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
                 SetKeyword(mat, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(mat.GetInt("_UseDepthLight"))) == 1 ? true : false);
-                SetKeyword(mat, "_MAGIC_NOISE_ON", (Mathf.FloorToInt(mat.GetInt("_MAGIC_NOISE_ON"))) == 1 ? true : false);
+                SetKeyword(mat, "_MAGIC_NOISE_ON_MED", (Mathf.FloorToInt(mat.GetInt("_MAGIC_NOISE_ON_MED"))) == 1 ? true : false);
+                SetKeyword(mat, "_MAGIC_NOISE_ON_HIGH", (Mathf.FloorToInt(mat.GetInt("_MAGIC_NOISE_ON_HIGH"))) == 1 ? true : false);
                 SetKeyword(mat, "_POTATO_MODE_ON", (Mathf.FloorToInt(mat.GetInt("_PotatoMode"))) == 1 ? true : false);
             }
             foreach(Material mat in projectionMaterials)
@@ -826,7 +831,8 @@ namespace VRSL
                     target.SetInt("_AlphaToCoverage", 0);
                     target.SetInt("_HQMode", 1);
                     target.SetInt("_RenderMode", 0);
-                    SetKeyword(target, "_MAGIC_NOISE_ON", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON"))) == 1 ? true : false);
+                    SetKeyword(target, "_MAGIC_NOISE_ON_MED", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_MED"))) == 1 ? true : false);
+                    SetKeyword(target, "_MAGIC_NOISE_ON_HIGH", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_HIGH"))) == 1 ? true : false);
                     SetKeyword(target, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(target.GetInt("_UseDepthLight"))) == 1 ? true : false);
                     SetKeyword(target, "_POTATO_MODE_ON", (Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 ? true : false);
                     SetKeyword(target, "_HQ_MODE", (Mathf.FloorToInt(target.GetInt("_HQMode"))) == 1 ? true : false);
@@ -843,7 +849,8 @@ namespace VRSL
                     target.SetInt("_AlphaToCoverage", 0);
                     target.SetInt("_HQMode", 0);
                     target.SetInt("_RenderMode", 1);
-                    SetKeyword(target, "_MAGIC_NOISE_ON", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON"))) == 1 ? true : false);
+                    SetKeyword(target, "_MAGIC_NOISE_ON_MED", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_MED"))) == 1 ? true : false);
+                    SetKeyword(target, "_MAGIC_NOISE_ON_HIGH", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_HIGH"))) == 1 ? true : false);
                     SetKeyword(target, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(target.GetInt("_UseDepthLight"))) == 1 ? true : false);
                     SetKeyword(target, "_POTATO_MODE_ON", (Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 ? true : false);
                     SetKeyword(target, "_HQ_MODE", (Mathf.FloorToInt(target.GetInt("_HQMode"))) == 1 ? true : false);
@@ -860,7 +867,8 @@ namespace VRSL
                     target.SetInt("_AlphaToCoverage", 1);
                     target.SetInt("_HQMode", 0);
                     target.SetInt("_RenderMode", 2);
-                    SetKeyword(target, "_MAGIC_NOISE_ON", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON"))) == 1 ? true : false);
+                    SetKeyword(target, "_MAGIC_NOISE_ON_MED", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_MED"))) == 1 ? true : false);
+                    SetKeyword(target, "_MAGIC_NOISE_ON_HIGH", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_HIGH"))) == 1 ? true : false);
                     SetKeyword(target, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(target.GetInt("_UseDepthLight"))) == 1 ? true : false);
                     SetKeyword(target, "_POTATO_MODE_ON", (Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 ? true : false);
                     SetKeyword(target, "_HQ_MODE", (Mathf.FloorToInt(target.GetInt("_HQMode"))) == 1 ? true : false);

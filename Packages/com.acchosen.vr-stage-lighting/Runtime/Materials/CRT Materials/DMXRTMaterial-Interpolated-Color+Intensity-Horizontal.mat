@@ -94,7 +94,7 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Sector: 0
-    - _SmoothValue: 0.6
+    - _SmoothValue: 0.755
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1

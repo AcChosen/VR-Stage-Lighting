@@ -10,8 +10,8 @@ Material:
   m_Name: VRSL-AudioLink-StandardMover-VolumetricMat
   m_Shader: {fileID: 4800000, guid: a9ae9924e60e8b04293b700af7aba257, type: 3}
   m_ShaderKeywords: _2D_NOISE_ON _DNENABLER_NONE _ENABLEOSC_ON _ENABLESPIN_ON _GOBOBEAMSPLITENABLE_ON
-    _MAGIC_NOISE_ON _MAGIC_NOISE_ON_ON _TOGGLEMAGICNOISE_ON _USEDEPTHLIGHT_ON _USERAWGRID_ON
-    _USE_DEPTH_LIGHT
+    _MAGIC_NOISE_ON_HIGH _MAGIC_NOISE_ON_MED _MAGIC_NOISE_ON_ON _TOGGLEMAGICNOISE_ON
+    _USEDEPTHLIGHT_ON _USERAWGRID_ON _USE_DEPTH_LIGHT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -49,6 +49,10 @@ Material:
     - _NoiseTex:
         m_Texture: {fileID: 2800000, guid: 95dae414ef2ffd7438602114879b8b41, type: 3}
         m_Scale: {x: 0.001, y: 5}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTexHigh:
+        m_Texture: {fileID: 2800000, guid: 95dae414ef2ffd7438602114879b8b41, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OSCGridRenderTexture:
         m_Texture: {fileID: 8600000, guid: 85ba02ef33f4e4c4a94d9085f48ec5c1, type: 2}
@@ -159,6 +163,8 @@ Material:
     - _LensMaxBrightness: 3.66
     - _LightProbeMethod: 0
     - _MAGIC_NOISE_ON: 1
+    - _MAGIC_NOISE_ON_HIGH: 1
+    - _MAGIC_NOISE_ON_MED: 1
     - _MagicNoiseScale: 2.5
     - _MaxConeLength: 1
     - _MaxMinPanAngle: 0

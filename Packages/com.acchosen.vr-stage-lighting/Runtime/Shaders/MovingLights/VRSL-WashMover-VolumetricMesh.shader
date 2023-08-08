@@ -59,9 +59,11 @@
 		//[Header(VOLUMETRIC LIGHTING CONTROLS)]
 		_LightMainTex ("Light Texture", 2D) = "white" {}
 		_NoiseTex ("NoiseTex", 2D) = "white" {}
+		_NoiseTexHigh ("NoiseTexHigh", 2D) = "white" {}
 		_NoisePower("Noise Strength", Range(0, 1)) = 1
 		_NoiseSeed ("Noise Seed", float) = 0
-		[ToggleUI]_MAGIC_NOISE_ON ("Toggle Magic Noise", Int) = 1
+		[Toggle]_MAGIC_NOISE_ON_HIGH ("Toggle Magic Noise", Int) = 1
+		[Toggle]_MAGIC_NOISE_ON_MED ("Toggle Magic Noise", Int) = 1
 		[Toggle]_2D_NOISE_ON ("Toggle 2D Noise", Int) = 1
 		_Noise2Stretch ("Outside Magic Noise Scale", Range(-10, 10)) = 1
 		_Noise2StretchInside ("Inside Magic Noise Scale", Range(-10, 10)) = 1
@@ -162,7 +164,8 @@
 			//#pragma multi_compile_fog
 			#pragma multi_compile_instancing
 			#pragma instancing_options assumeuniformscaling
-			#pragma multi_compile_local _ _MAGIC_NOISE_ON
+			#pragma multi_compile_local _ _MAGIC_NOISE_ON_HIGH
+			#pragma multi_compile_local _ _MAGIC_NOISE_ON_MED
 			#pragma multi_compile_local _ _USE_DEPTH_LIGHT
 			#pragma multi_compile_local _ _POTATO_MODE_ON
 			#pragma multi_compile_local _ _HQ_MODE

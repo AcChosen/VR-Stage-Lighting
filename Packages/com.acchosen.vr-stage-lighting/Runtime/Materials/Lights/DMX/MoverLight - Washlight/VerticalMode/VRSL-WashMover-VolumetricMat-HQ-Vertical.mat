@@ -10,7 +10,8 @@ Material:
   m_Name: VRSL-WashMover-VolumetricMat-HQ-Vertical
   m_Shader: {fileID: 4800000, guid: da75de52174b0924f9a93e9a37146aed, type: 3}
   m_ShaderKeywords: _2D_NOISE_ON _DNENABLER_NONE _ENABLEOSC_ON _ENABLESPIN_ON _ENABLEVERTICALMODE_ON
-    _MAGIC_NOISE_ON _TOGGLEMAGICNOISE_ON _USERAWGRID_ON _USE_DEPTH_LIGHT
+    _MAGIC_NOISE_ON_HIGH _MAGIC_NOISE_ON_MED _TOGGLEMAGICNOISE_ON _USERAWGRID_ON
+    _USE_DEPTH_LIGHT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -44,6 +45,10 @@ Material:
     - _NoiseTex:
         m_Texture: {fileID: 2800000, guid: 95dae414ef2ffd7438602114879b8b41, type: 3}
         m_Scale: {x: 0.001, y: 5}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTexHigh:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OSCGridRenderTexture:
         m_Texture: {fileID: 8600000, guid: 3d0e5498d25faf34999f530603c36e4d, type: 2}
@@ -108,7 +113,7 @@ Material:
     - _BlendDst: 1
     - _BlendOp: 0
     - _BlendSrc: 2
-    - _BlindingAngleMod: 1
+    - _BlindingAngleMod: 0.2
     - _BlueMultiplier: 1
     - _BumpScale: 1
     - _ConeLength: 1
@@ -117,7 +122,7 @@ Material:
     - _DMXChannel: 0
     - _DNEnabler: 0
     - _Desaturate: 1
-    - _DistFade: 0.5
+    - _DistFade: 1
     - _Divide: 11.6
     - _DividePower: 0.043
     - _EnableCompatibilityMode: 0
@@ -130,12 +135,12 @@ Material:
     - _EnableVerticalMode: 1
     - _Fade: 1.5
     - _FadeAmt: 95
-    - _FadeStrength: 12
+    - _FadeStrength: 12.77
     - _FeatherOffset: 0.5
     - _FinalIntensity: 1
     - _FinalStrobeFreq: 0
     - _FixtureBaseRotationY: 0
-    - _FixtureMaxIntensity: 0.5
+    - _FixtureMaxIntensity: 0.35
     - _FixtureRotationX: 0
     - _GlobalIntensity: 1
     - _Glossiness: 1
@@ -144,8 +149,8 @@ Material:
     - _GradientModGOBO: 2.25
     - _GreenMultiplier: 1
     - _HQMode: 0
-    - _InnerFadeStrength: 12
-    - _InnerIntensityCurve: 20
+    - _InnerFadeStrength: 10
+    - _InnerIntensityCurve: 10
     - _IntensityCutoff: 0
     - _IsEven: 0
     - _LMStrength: 1
@@ -153,6 +158,8 @@ Material:
     - _LensMaxBrightness: 1
     - _LightProbeMethod: 0
     - _MAGIC_NOISE_ON: 1
+    - _MAGIC_NOISE_ON_HIGH: 1
+    - _MAGIC_NOISE_ON_MED: 1
     - _MaxConeLength: 1
     - _MaxMinPanAngle: 90
     - _MaxMinTiltAngle: -90
@@ -162,19 +169,19 @@ Material:
     - _ModY: 0
     - _NineUniverseMode: 0
     - _Noise2Power: 0.75
-    - _Noise2PowerDefault: 1
+    - _Noise2PowerDefault: 0.887
     - _Noise2PowerPotato: 1
     - _Noise2Stretch: 1
-    - _Noise2StretchDefault: 1
+    - _Noise2StretchDefault: 1.5
     - _Noise2StretchInside: 1
-    - _Noise2StretchInsideDefault: 1
+    - _Noise2StretchInsideDefault: 1.5
     - _Noise2StretchInsidePotato: 1
     - _Noise2StretchPotato: 1
     - _Noise2X: 0
-    - _Noise2XDefault: 1
+    - _Noise2XDefault: 0
     - _Noise2XPotato: 1
     - _Noise2Y: 7.5
-    - _Noise2YDefault: 1
+    - _Noise2YDefault: 7.5
     - _Noise2YPotato: 1
     - _Noise2Z: 1
     - _Noise2ZDefault: 1

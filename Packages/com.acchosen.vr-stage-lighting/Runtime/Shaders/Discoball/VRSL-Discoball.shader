@@ -151,7 +151,7 @@
                         4.0 / 17.0, 12.0 / 17.0,  2.0 / 17.0, 10.0 / 17.0,
                         16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0
                     };
-                    int index = (int(pos.x) % 4) * 4 + int(pos.y) % 4;
+                    int index = (int)((uint(pos.x) % 4) * 4 + uint(pos.y) % 4);
 		        #endif
                 float4 depthdirect = i.worldDirection * (1.0f / i.vertex.w);
                 float sceneZ = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.screenPos.xy / i.screenPos.w);

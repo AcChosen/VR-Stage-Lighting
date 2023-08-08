@@ -195,29 +195,33 @@
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o); //Insert
 
                 uint dmx = getDMXChannel();
-
+                float intensity = 0.0f;
                 #if _1CH_MODE
                     half4 e =IF(isDMX() == 1, getValueAtCoords(dmx+1, _Udon_DMXGridRenderTexture) * getEmissionColor(), getEmissionColor());
+                    intensity = GetDMXChannel(dmx);
                 #elif _4CH_MODE
                     float4 DMXcol = getEmissionColor();
                     DMXcol *= float4(getValueAtCoords(dmx+1, _Udon_DMXGridRenderTexture), getValueAtCoords(dmx+2, _Udon_DMXGridRenderTexture), getValueAtCoords(dmx+3, _Udon_DMXGridRenderTexture), 1);
                     float4 coll = IF(isDMX() == 1, DMXcol, getEmissionColor());
                     half4 e = coll;
+                    intensity = GetDMXChannel(dmx);
                 #elif _5CH_MODE
                     float strobe = IF(isStrobe() == 1, GetStrobeOutputFiveCH(dmx), 1);
                     float4 DMXcol = getEmissionColor();
                     DMXcol *= float4(getValueAtCoords(dmx+1, _Udon_DMXGridRenderTexture), getValueAtCoords(dmx+2, _Udon_DMXGridRenderTexture), getValueAtCoords(dmx+3, _Udon_DMXGridRenderTexture), 1);
                     float4 coll = IF(isDMX() == 1, DMXcol, getEmissionColor());
                     half4 e = coll * strobe;
+                    intensity = GetDMXChannel(dmx);
                 #elif _13CH_MODE
                     float strobe = IF(isStrobe() == 1, GetStrobeOutput(dmx), 1);
                     float4 DMXcol = getEmissionColor();
                     DMXcol *= GetDMXColor(dmx);
                     float4 coll = IF(isDMX() == 1, DMXcol, getEmissionColor());
                     half4 e = coll * strobe;
+                    intensity = GetDMXIntensity(dmx, 1.0);
                 #endif
 
-                e = IF(isDMX() == 1,lerp(half4(-_CurveMod,-_CurveMod,-_CurveMod,1), e, pow(GetDMXIntensity(dmx, 1.0), 1.0)), e);
+                e = IF(isDMX() == 1,lerp(half4(-_CurveMod,-_CurveMod,-_CurveMod,1), e, pow(intensity, 1.0)), e);
                 e = clamp(e, half4(0,0,0,1), half4(_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,1));
                 
                 #ifdef _ALPHATEST_ON
@@ -371,7 +375,7 @@
                         4.0 / 17.0, 12.0 / 17.0,  2.0 / 17.0, 10.0 / 17.0,
                         16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0
                     };
-                    int index = (int(pos.x) % 4) * 4 + int(pos.y) % 4;
+                    int index = (int)((uint(pos.x) % 4) * 4 + uint(pos.y) % 4);
                     float4 col = saturate(tex2D(_MainTex, i.uv ));
                    // col *= i.maskX;
                     //clip((col.a) - DITHER_THRESHOLDS[index]);

@@ -1,18 +1,26 @@
 #define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
 UNITY_INSTANCING_BUFFER_START(Props)
-    UNITY_DEFINE_INSTANCED_PROP(uint, _DMXChannel)
     UNITY_DEFINE_INSTANCED_PROP(uint, _NineUniverseMode)
-    UNITY_DEFINE_INSTANCED_PROP(uint, _EnableDMX)
     UNITY_DEFINE_INSTANCED_PROP(uint, _PanInvert)
+    UNITY_DEFINE_INSTANCED_PROP(uint, _LegacyGoboRange)
     UNITY_DEFINE_INSTANCED_PROP(uint, _TiltInvert)
-    UNITY_DEFINE_INSTANCED_PROP(float4, _Emission)
-    UNITY_DEFINE_INSTANCED_PROP(float4, _EmissionDMX)
-    UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
-    UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
     UNITY_DEFINE_INSTANCED_PROP(uint, _EnableStrobe)
+    UNITY_DEFINE_INSTANCED_PROP(uint, _EnableSpin)
+    UNITY_DEFINE_INSTANCED_PROP(uint, _EnableDMX)
+    UNITY_DEFINE_INSTANCED_PROP(uint, _DMXChannel)
+    UNITY_DEFINE_INSTANCED_PROP(uint, _ProjectionSelection)
     UNITY_DEFINE_INSTANCED_PROP(uint, _FixtureRotationX)
     UNITY_DEFINE_INSTANCED_PROP(uint, _FixtureBaseRotationY)
-    UNITY_DEFINE_INSTANCED_PROP(float, _ConeWidth)
+    UNITY_DEFINE_INSTANCED_PROP(float4, _Emission)
+    UNITY_DEFINE_INSTANCED_PROP(float4, _EmissionDMX)
+    UNITY_DEFINE_INSTANCED_PROP(float, _ConeWidth)  
+    UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
+    UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
+    UNITY_DEFINE_INSTANCED_PROP(float, _ConeLength)
+    UNITY_DEFINE_INSTANCED_PROP(float, _MaxConeLength)
+    UNITY_DEFINE_INSTANCED_PROP(float, _MaxMinPanAngle)
+    UNITY_DEFINE_INSTANCED_PROP(float, _MaxMinTiltAngle)
+    
 UNITY_INSTANCING_BUFFER_END(Props)
 
 #ifdef _VRSL_LEGACY_TEXTURES
@@ -29,7 +37,7 @@ UNITY_INSTANCING_BUFFER_END(Props)
 
 
 uint _EnableCompatibilityMode, _EnableVerticalMode;
-half _MaxMinTiltAngle, _MaxMinPanAngle;
+//half _MaxMinTiltAngle, _MaxMinPanAngle;
 
 float VRSL_invLerp(float from, float to, float value)
 {
@@ -61,6 +69,15 @@ float getFinalIntensity()
     return UNITY_ACCESS_INSTANCED_PROP(Props, _FinalIntensity);
 }
 
+float getMaxMinPanAngle()
+{
+    return UNITY_ACCESS_INSTANCED_PROP(Props, _MaxMinPanAngle);
+}
+float getMaxMinTiltAngle()
+{
+    return UNITY_ACCESS_INSTANCED_PROP(Props, _MaxMinTiltAngle);
+}
+
 uint isStrobe()
 {
     return UNITY_ACCESS_INSTANCED_PROP(Props,_EnableStrobe);
@@ -75,6 +92,7 @@ uint GetDMXChannel()
 {
     return (uint) round(UNITY_ACCESS_INSTANCED_PROP(Props, _DMXChannel));  
 }
+
 
 int ConvertToRawDMXChannel(int chan, int universe)
 {
@@ -401,7 +419,7 @@ float GetPanValue(uint DMXChannel)
     #else
         float inputValue = ReadDMX(DMXChannel, _Udon_DMXGridRenderTextureMovement);
     #endif
-    return ((_MaxMinPanAngle * 2) * (inputValue)) - _MaxMinPanAngle;
+    return ((getMaxMinPanAngle() * 2) * (inputValue)) - getMaxMinPanAngle();
 }
 
 float GetTiltValue(uint DMXChannel)
@@ -411,5 +429,5 @@ float GetTiltValue(uint DMXChannel)
     #else
         float inputValue = ReadDMX(DMXChannel + 2, _Udon_DMXGridRenderTextureMovement);
     #endif
-    return ((_MaxMinTiltAngle * 2) * (inputValue)) - _MaxMinTiltAngle; 
+    return ((getMaxMinTiltAngle() * 2) * (inputValue)) - getMaxMinTiltAngle(); 
 }
