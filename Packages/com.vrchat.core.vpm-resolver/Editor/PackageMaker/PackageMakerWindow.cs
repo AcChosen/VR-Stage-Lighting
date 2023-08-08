@@ -106,8 +106,8 @@ namespace VRC.PackageManagement.PackageMaker
             _actionButton.SetEnabled(
                 StringIsValidAssetFolder(_windowData.targetAssetFolder) &&
                 !string.IsNullOrWhiteSpace(_windowData.packageID) &&
-                !string.IsNullOrWhiteSpace(_windowData.authorName) &&
-                IsValidEmail(_windowData.authorEmail)
+                _authorNameField.value != null &&
+                IsValidEmail(_authorEmailField.value)
             );
         }
 
@@ -224,6 +224,7 @@ namespace VRC.PackageManagement.PackageMaker
             _authorNameField.RegisterValueChangedCallback((evt) =>
             {
                 _windowData.authorName = evt.newValue;
+                Debug.Log($"Window author name is {evt.newValue}");
                 RefreshActionButtonState();
             });
             

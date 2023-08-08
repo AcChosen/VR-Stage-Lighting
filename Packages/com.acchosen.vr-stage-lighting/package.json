@@ -9,7 +9,8 @@
   },
   "gitDependencies":{},
   "vpmDependencies":{
-    "com.llealloo.audiolink":">=0.3.1"
+    "com.llealloo.audiolink":">=0.3.1",
+    "com.vrchat.udonsharp":">=1.1.9"
   },
   "legacyFolders":{
     "Assets\\VR-Stage-Lighting":""
