@@ -145,8 +145,8 @@ public class VRSLInspector : ShaderGUI
     MaterialProperty _GradientMod = null;
     MaterialProperty _GradientModGOBO = null;
     MaterialProperty _RenderMode = null;
-    MaterialProperty _ZWrite = null;
-    MaterialProperty _AlphaToCoverage = null;
+   // MaterialProperty _ZWrite = null;
+   // MaterialProperty _AlphaToCoverage = null;
    // MaterialProperty _InsideConeNormalMap = null;
 
     //Volumetric Control Specific
@@ -185,9 +185,9 @@ public class VRSLInspector : ShaderGUI
     MaterialProperty _ProjectionRangeOrigin = null;
     MaterialProperty _EnableSpin = null;
     MaterialProperty _LegacyGoboRange = null;
-    MaterialProperty _BlendSrc = null;
+    //MaterialProperty _BlendSrc = null;
     MaterialProperty _BlendDst = null;
-    MaterialProperty _BlendOp = null;
+   // MaterialProperty _BlendOp = null;
     MaterialProperty _ProjectionCutoff = null;
     MaterialProperty _ProjectionOriginCutoff = null;
     MaterialProperty _ClippingThreshold = null;
@@ -265,7 +265,7 @@ public class VRSLInspector : ShaderGUI
     MaterialProperty _ColorSat = null;
     MaterialProperty _ScaleFactor = null;
     MaterialProperty _ReferenceDistance = null;
-    MaterialProperty _UVScale = null;
+   // MaterialProperty _UVScale = null;
     MaterialProperty _RemoveTextureArtifact = null;
     MaterialProperty _UsePreMultiplyAlpha = null;
     MaterialProperty _LightSourceViewSpaceRadius = null;
