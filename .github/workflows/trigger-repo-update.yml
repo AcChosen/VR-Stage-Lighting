@@ -14,8 +14,8 @@ jobs:
           github-token: ${{ secrets.VRSL_VPM_TOKEN }}
           script: |
             await github.rest.actions.createWorkflowDispatch({
-              owner: 'rrazgriz',
-              repo: 'raz-vpm',
+              owner: 'AcChosen',
+              repo: 'vrsl-vpm',
               workflow_id: 'build-listing.yml',
               ref: 'main',
             })
