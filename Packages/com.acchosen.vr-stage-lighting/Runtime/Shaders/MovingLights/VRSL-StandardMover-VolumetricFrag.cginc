@@ -33,6 +33,8 @@ float Fresnel(float3 Normal, float3 ViewDir, float Power)
 
 float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 {
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( i );
+
 	#if defined(_POTATO_MODE_ON)
 		float noise2Stretch = _Noise2StretchPotato;
 		float noise2StretchInside = _Noise2StretchInsidePotato;

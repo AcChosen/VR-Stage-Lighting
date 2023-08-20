@@ -135,12 +135,12 @@ Material:
     - _EnableVerticalMode: 0
     - _Fade: 1.5
     - _FadeAmt: 35
-    - _FadeStrength: 10
+    - _FadeStrength: 5
     - _FeatherOffset: 0.5
     - _FinalIntensity: 1
     - _FinalStrobeFreq: 0
     - _FixtureBaseRotationY: 27
-    - _FixtureMaxIntensity: 0.4
+    - _FixtureMaxIntensity: 0.3
     - _FixtureRotationX: 0
     - _GlobalIntensity: 1
     - _Glossiness: 1
