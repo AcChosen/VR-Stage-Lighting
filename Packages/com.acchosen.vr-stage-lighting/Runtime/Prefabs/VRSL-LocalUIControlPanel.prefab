@@ -5034,18 +5034,23 @@ MonoBehaviour:
   isUsingDMX: 1
   isUsingAudioLink: 0
   DMXMode: 0
+  delayStrobeForGI: 1
   DMX_CRTS_Horizontal:
   - {fileID: 8600000, guid: 57481ad1fad57a247b2754e1469292a9, type: 2}
   - {fileID: 8600000, guid: 5225295a38260644c99eb0aebf544ec8, type: 2}
   - {fileID: 8600000, guid: 7d9e75ad34a1ba34db218840cb76100e, type: 2}
   - {fileID: 8600000, guid: fbbd57abbf5ece54c9996e59beb3dac1, type: 2}
   - {fileID: 8600000, guid: 580ab95419bdcc845a4bd0b1a94983c0, type: 2}
+  - {fileID: 8600000, guid: 99d1c91f47ceb344ea8d62554a087e98, type: 2}
+  - {fileID: 8600000, guid: 8c4ff92799dcc5641ac0f7d4ec2f8163, type: 2}
   DMX_CRTS_Vertical:
   - {fileID: 8600000, guid: 2db39b03bdcb2124aaba3db138dd0754, type: 2}
   - {fileID: 8600000, guid: 3d0e5498d25faf34999f530603c36e4d, type: 2}
   - {fileID: 8600000, guid: d8d7d540bd7f30c4b845dcca7a985f31, type: 2}
   - {fileID: 8600000, guid: d4c740f9462f25d4a9d1cc2063318a5f, type: 2}
   - {fileID: 8600000, guid: 42aa50059d38ab44a95ee1cb7a7c5d5b, type: 2}
+  - {fileID: 8600000, guid: cc132e098e98e24448b3171b5f9834d8, type: 2}
+  - {fileID: 8600000, guid: 57baa88f99df79f428add8e6e1c79597, type: 2}
   DMX_CRTS_Legacy:
   - {fileID: 8600000, guid: 3bcce6f0fa9c3d4499ca3015b073785e, type: 2}
   - {fileID: 8600000, guid: 85ba02ef33f4e4c4a94d9085f48ec5c1, type: 2}
@@ -5060,6 +5065,9 @@ MonoBehaviour:
   tiltRangeTarget: -180
   useLegacyStaticLights: 0
   useExtendedUniverses: 0
+  sperateInGameInterpolationSpeed: 1
+  inGameInterpolationModifier: 1.55
+  useDMXGI: 0
   _volumetricNoise: 1
   _requireDepthLight: 1
 --- !u!114 &5530545822544342666

@@ -278,6 +278,8 @@ namespace VRSL
             props.SetFloat("_MaxMinTiltAngle", (maxMinTilt/2.0f));
             switch(objRenderers.Length)
             {
+                case 0:
+                    break;
                 case 1:
                     if(objRenderers[0])
                         objRenderers[0].SetPropertyBlock(props);
@@ -376,6 +378,8 @@ namespace VRSL
             props.SetFloat("_MaxMinTiltAngle", (maxMinTilt/2.0f));
             switch(objRenderers.Length)
             {
+                case 0:
+                    break;
                 case 1:
                     if(objRenderers[0])
                         objRenderers[0].SetPropertyBlock(props);

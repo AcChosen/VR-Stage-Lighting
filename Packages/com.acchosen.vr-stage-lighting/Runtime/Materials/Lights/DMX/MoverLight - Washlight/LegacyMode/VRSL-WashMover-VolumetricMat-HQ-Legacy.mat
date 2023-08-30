@@ -46,6 +46,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 95dae414ef2ffd7438602114879b8b41, type: 3}
         m_Scale: {x: 0.001, y: 5}
         m_Offset: {x: 0, y: 0}
+    - _NoiseTexHigh:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _OSCGridRenderTexture:
         m_Texture: {fileID: 8600000, guid: 85ba02ef33f4e4c4a94d9085f48ec5c1, type: 2}
         m_Scale: {x: 1, y: 1}

@@ -235,6 +235,7 @@ public class VRSLInspector : ShaderGUI
 
     //Interpolation Render Texture
     MaterialProperty _SmoothValue = null;
+    MaterialProperty _UseOldSchoolSmoothing = null;
     MaterialProperty _MinimumSmoothnessDMX = null;
     MaterialProperty _MaximumSmoothnessDMX = null;
 
@@ -1756,6 +1757,7 @@ public class VRSLInspector : ShaderGUI
     {
         GUILayout.Space(5);
         EditorGUI.indentLevel++;
+        matEditor.ShaderProperty(_UseOldSchoolSmoothing, new GUIContent("Use Old School Smoothing Technique", "Uses the old smoothing technique. Recommended for Light+Color Textures."));
         matEditor.ShaderProperty(_EnableLegacyGlobalMovementSpeedChannel, new GUIContent("Enable Legacy Global Movement Speed", "Enables the use of the old Global Movement Speed Channel (DMX Channel 511) instead of having each sector have its own movement speed control. /nThis will always be true when compatibility mode is enabled"));
         matEditor.ShaderProperty(_EnableCompatibilityMode, new GUIContent("Enable Compatibility Mode", "Changes the grid from reading the new 208x1080 grid to the old 200x200 grid. \nThis property is not an instanced property."));
         matEditor.ShaderProperty(_EnableDMX, new GUIContent("Enable DMX", "Enables or Disables reading from the DMX Render Textures"));

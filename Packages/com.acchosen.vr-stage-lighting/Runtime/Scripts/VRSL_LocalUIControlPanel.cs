@@ -116,6 +116,8 @@ namespace VRSL
         const int VERTICAL_MODE = 1;
         const int LEGACY_MODE = 2;
         [Space(20)]
+        public bool delayStrobeForGI = true;
+        [Space(5)]
         public CustomRenderTexture[] DMX_CRTS_Horizontal;
         public CustomRenderTexture[] DMX_CRTS_Vertical;
         public CustomRenderTexture[] DMX_CRTS_Legacy;
@@ -132,6 +134,10 @@ namespace VRSL
         [HideInInspector]
         public bool useLegacyStaticLights = false;
         public bool useExtendedUniverses = false;
+       // public bool adjustInGameInterpolation;
+       public bool sperateInGameInterpolationSpeed = true;
+        public float inGameInterpolationModifier = 1.55f;
+        public bool outputDebugLogs;
 
 
         [HideInInspector]
@@ -174,6 +180,44 @@ namespace VRSL
             _Udon_DMXGridStrobeOutput = PropertyToID("_Udon_DMXGridStrobeOutput");
         }
 
+        void ReduceInGameInterpolation()
+        {
+            if(sperateInGameInterpolationSpeed)
+            {
+                foreach(CustomRenderTexture rend in DMX_CRTS_Horizontal)
+                {
+                    
+                    if(rend.material != null && rend.material.name.Contains("Interpolated"))
+                    {
+                        float max = Mathf.Clamp01(rend.material.GetFloat("_MaximumSmoothnessDMX"));
+                        float min = Mathf.Clamp01(rend.material.GetFloat("_MinimumSmoothnessDMX"));
+                        rend.material.SetFloat("_MaximumSmoothnessDMX", Mathf.Clamp01(max/inGameInterpolationModifier));
+                        rend.material.SetFloat("_MinimumSmoothnessDMX", Mathf.Clamp01(min/inGameInterpolationModifier));
+                    }
+                }
+                foreach(CustomRenderTexture rend in DMX_CRTS_Vertical)
+                {
+                    if(rend.material != null && rend.material.name.Contains("Interpolated"))
+                    {
+                        float max = Mathf.Clamp01(rend.material.GetFloat("_MaximumSmoothnessDMX"));
+                        float min = Mathf.Clamp01(rend.material.GetFloat("_MinimumSmoothnessDMX"));
+                        rend.material.SetFloat("_MaximumSmoothnessDMX", Mathf.Clamp01(max/inGameInterpolationModifier));
+                        rend.material.SetFloat("_MinimumSmoothnessDMX", Mathf.Clamp01(min/inGameInterpolationModifier));
+                    }
+                }
+                foreach(CustomRenderTexture rend in DMX_CRTS_Legacy)
+                {
+                    if(rend.material != null && rend.material.name.Contains("Interpolated"))
+                    {
+                        float max = Mathf.Clamp01(rend.material.GetFloat("_MaximumSmoothnessDMX"));
+                        float min = Mathf.Clamp01(rend.material.GetFloat("_MinimumSmoothnessDMX"));
+                        rend.material.SetFloat("_MaximumSmoothnessDMX", Mathf.Clamp01(max/inGameInterpolationModifier));
+                        rend.material.SetFloat("_MinimumSmoothnessDMX", Mathf.Clamp01(min/inGameInterpolationModifier));
+                    }
+                }
+            }
+        }
+
 
         public void OnEnable() 
         {
@@ -205,6 +249,10 @@ namespace VRSL
             _SetDiscoBallQualityMode();
             _SetLensFlareQualtiyMode();
             _CheckButtonLockStatus();
+
+            #if !UNITY_EDITOR
+                ReduceInGameInterpolation();
+            #endif
         }
 
         void _CheckButtonLockStatus()
@@ -287,7 +335,8 @@ namespace VRSL
 
         public void _Test()
         {
-            Debug.Log("This is a test");
+            if(outputDebugLogs)
+                Debug.Log("This is a test");
         }
 
 
@@ -540,6 +589,8 @@ namespace VRSL
                 rt.updateMode = CustomRenderTextureUpdateMode.Realtime;
                 if(rt.name.Contains("Color"))
                 {
+                    if(outputDebugLogs){
+                        Debug.Log("DMX Color: " + rt.name);}
                     #if UDONSHARP
                     VRCShader.SetGlobalTexture(_Udon_DMXGridRenderTexture, rt);
                     #else
@@ -548,6 +599,8 @@ namespace VRSL
                 }
                 else if(rt.name.Contains("Movement"))
                 {
+                    if(outputDebugLogs){
+                        Debug.Log("DMX Movement: " + rt.name);}
                     #if UDONSHARP
                     VRCShader.SetGlobalTexture(_Udon_DMXGridRenderTextureMovement, rt);
                     #else
@@ -556,6 +609,8 @@ namespace VRSL
                 }
                 else if(rt.name.Contains("Spin"))
                 {
+                    if(outputDebugLogs){
+                        Debug.Log("DMX Spin Timings: " + rt.name);}
                     #if UDONSHARP
                     VRCShader.SetGlobalTexture(_Udon_DMXGridSpinTimer, rt);
                     #else
@@ -566,7 +621,8 @@ namespace VRSL
                 {
                     if(rt.name.Contains("Timings"))
                     {
-                        Debug.Log("Setting Strobe Timer");
+                        if(outputDebugLogs){
+                            Debug.Log("DMX Strobe Timings: " + rt.name);}
                         #if UDONSHARP
                         VRCShader.SetGlobalTexture(_Udon_DMXGridStrobeTimer, rt);
                         #else
@@ -575,12 +631,43 @@ namespace VRSL
                     }
                     else
                     {
-                        Debug.Log("Setting Strobe Output");
-                        #if UDONSHARP
-                        VRCShader.SetGlobalTexture(_Udon_DMXGridStrobeOutput, rt);
-                        #else
-                        Shader.SetGlobalTexture(_Udon_DMXGridStrobeOutput, rt, RenderTextureSubElement.Default);
-                        #endif
+                        //Debug.Log("Setting Strobe Output");
+                        if(delayStrobeForGI)
+                        {
+                            if(rt.name.Contains("Delay-Final") && DMXMode != LEGACY_MODE)
+                            {
+                                #if UDONSHARP
+                                if(outputDebugLogs){
+                                    Debug.Log("DMX Strobe Output: " + rt.name);}
+                                VRCShader.SetGlobalTexture(_Udon_DMXGridStrobeOutput, rt);
+                                #else
+                                Shader.SetGlobalTexture(_Udon_DMXGridStrobeOutput, rt, RenderTextureSubElement.Default);
+                                #endif
+                            }
+                            else if(DMXMode == LEGACY_MODE)
+                            {
+                                #if UDONSHARP
+                                if(outputDebugLogs){
+                                    Debug.Log("DMX Strobe Output: " + rt.name);}
+                                VRCShader.SetGlobalTexture(_Udon_DMXGridStrobeOutput, rt);
+                                #else
+                                Shader.SetGlobalTexture(_Udon_DMXGridStrobeOutput, rt, RenderTextureSubElement.Default);
+                                #endif  
+                            }
+                        }
+                        else
+                        {
+                            if(rt.name.Contains("Delay") == false)
+                            {           
+                                #if UDONSHARP
+                                if(outputDebugLogs){
+                                    Debug.Log("Strobe Output: " + rt.name);}
+                                VRCShader.SetGlobalTexture(_Udon_DMXGridStrobeOutput, rt);
+                                #else
+                                Shader.SetGlobalTexture(_Udon_DMXGridStrobeOutput, rt, RenderTextureSubElement.Default);
+                                #endif
+                            }
+                        }
                     }
                 }
             }

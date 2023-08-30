@@ -85,11 +85,27 @@
                     {
                         #if _VRSL_STATICFREQUENCIES
 
-                            float3 t = float3(currentFrame.r, currentFrame.g, currentFrame.b);
-                            float sinTime = sin(_Time.y);
-                            float speed = (sinTime) * _LowFrequency;
-                            t *= (GetDMXValueRGB(currentFrame) * float3(speed, speed, speed));
-                            return float4(t, currentFrame.a);
+                            float3 dmx = float3(currentFrame.r, currentFrame.g, currentFrame.b);
+                            float sinTime = _Time.y;
+
+
+                            float3 speeds = float3(0,0,0);
+
+                            speeds.x = dmx.x > 0.2 ? _MedFrequency : _LowFrequency;
+                            speeds.x = dmx.x  > 0.5 ? _HighFrequency : speeds.x;
+
+                            speeds.y = dmx.y > 0.2 ? _MedFrequency : _LowFrequency;
+                            speeds.y = dmx.y  > 0.5 ? _HighFrequency : speeds.y;                            
+
+                            speeds.z = dmx.z > 0.2 ? _MedFrequency : _LowFrequency;
+                            speeds.z = dmx.z  > 0.5 ? _HighFrequency : speeds.z;
+
+                           // float speed = dmx > 0.2 ? _MedFrequency : _LowFrequency;
+                            //speed = dmx > 0.5 ? _HighFrequency : speed;
+                            
+                            float3 t = float3(sinTime * speeds.x, sinTime * speeds.y, sinTime * speeds.z);
+                            //t *= (GetDMXValueRGB(currentFrame) * float3(speed, speed, speed));
+                            return float4(t, 1);
                         #else
                             float3 t = float3(previousFrame.r, previousFrame.g, previousFrame.b);
                             //INCREMENT CURRENT PHASE CLOSER TO 2PI
@@ -118,9 +134,9 @@
 
                             float speed = dmx > 0.2 ? _MedFrequency : _LowFrequency;
                             speed = dmx > 0.5 ? _HighFrequency : speed;
-                            float t =((sinTime) * speed);
+                            float t =(sinTime * speed);
                             
-                            return clamp(t, 0.0, 1000000.0);
+                            return t;
                         #else
                             float t = previousFrame.r;
                             //INCREMENT CURRENT PHASE CLOSER TO 2PI

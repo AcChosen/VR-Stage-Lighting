@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DMXRT-StrobeOutput-Legacy
+  m_Name: DMXRTMaterial-StrobeOutput-Horizontal
   m_Shader: {fileID: 4800000, guid: 4fd2aba1f194f2944983084cf77021b3, type: 3}
-  m_ShaderKeywords: _ENABLECOMPATIBILITYMODE_ON
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -64,7 +64,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EnableCompatibilityMode: 1
+    - _EnableCompatibilityMode: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1

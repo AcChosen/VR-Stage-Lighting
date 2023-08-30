@@ -7,6 +7,7 @@ Shader "VRSL/DMX CRTs/Interpolation"
         [Toggle] _EnableDMX ("Enable Stream DMX/DMX Control", Int) = 0
         [Toggle] _NineUniverseMode ("Extended Universe Mode", Int) = 0
         [Toggle] _EnableCompatibilityMode ("Enable Stream DMX/DMX Control", Int) = 0
+        [Toggle(_OLD_SCHOOL_SMOOTHING)] _UseOldSchoolSmoothing ("Use Old School Smoothing", Int) = 0
         [NoScaleOffset]_DMXTexture("DMX Grid Render Texture (To Control Lights)", 2D) = "white" {}
         _SmoothValue ("Smoothness Level (0 to 1, 0 = max)", Range(0,1)) = 0.5
         _MinimumSmoothnessDMX ("Minimum Smoothness Value for DMX", Float) = 0
@@ -38,6 +39,8 @@ Shader "VRSL/DMX CRTs/Interpolation"
             float oscSmoothnessRAW;
             float3 rgbSmoothnessRaw;
             #define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
+
+            #pragma multi_compile_local _ _OLD_SCHOOL_SMOOTHING
 
 
 
@@ -115,40 +118,106 @@ Shader "VRSL/DMX CRTs/Interpolation"
             {
                 return float2(0.911, uv.y);
             }
-            float getSmoothnessValue(float2 uv)
+
+            float getSmoothnessValuePreSet()
+            {
+                return _SmoothValue;
+            }
+
+            float3 getSmoothnessValueRGBPreSet()
+            {
+                return float3(_SmoothValue, _SmoothValue, _SmoothValue);
+            }
+
+            float getSmoothnessValue(float2 uv, out float dmxSmoothness)
             {
                 if(_EnableLegacyGlobalMovementSpeedChannel == 1)
                 {
-                    oscSmoothnessRAW = IF(_EnableCompatibilityMode == 1, getValueAtCoords(0.096151, 0.019231, _DMXChannel), getValueAtCoords(0.189936, 0.00762, _DMXChannel));
+                    dmxSmoothness = IF(_EnableCompatibilityMode == 1, getValueAtCoords(0.096151, 0.019231, _DMXChannel), getValueAtCoords(0.189936, 0.00762, _DMXChannel));
                 }
                 else
                 {
-                    oscSmoothnessRAW = IF(_EnableCompatibilityMode == 1, getValueAtCoords(0.096151, 0.019231, _DMXChannel), getValueAtUV(float2(0.960, uv.y)));
+                    dmxSmoothness = IF(_EnableCompatibilityMode == 1, getValueAtCoords(0.096151, 0.019231, _DMXChannel), getValueAtUV(float2(0.960, uv.y)));
                 }
-                float oscSmoothness = lerp(_MinimumSmoothnessDMX, _MaximumSmoothnessDMX, oscSmoothnessRAW);
-                return IF(_EnableDMX == 1, oscSmoothness, _SmoothValue);  
+                float oscSmoothness = lerp(saturate(_MaximumSmoothnessDMX), saturate(_MinimumSmoothnessDMX), dmxSmoothness);
+                return oscSmoothness;
+               // return IF(_EnableDMX == 1, oscSmoothness, _SmoothValue);  
             }
 
 
-            float3 getSmoothnessValueRGB(float2 uv)
+            float3 getSmoothnessValueRGB(float2 uv, out float3 dmxSmoothness)
             {
 
-                rgbSmoothnessRaw = float3(0,0,0);
+                //rgbSmoothnessRaw = float3(0,0,0);
                 if(_EnableLegacyGlobalMovementSpeedChannel == 1)
                 {
-                    rgbSmoothnessRaw = getValueAtCoordsRGB(0.189936, 0.00762, _DMXChannel);
+                    dmxSmoothness = getValueAtCoordsRGB(0.189936, 0.00762, _DMXChannel);
                 }
                 else
                 {
-                    rgbSmoothnessRaw = getValueAtUVRGB(float2(0.960, uv.y));
+                    dmxSmoothness = getValueAtUVRGB(float2(0.960, uv.y));
                 }
 
-                float3 rgbSmoothness = float3(lerp(_MinimumSmoothnessDMX, _MaximumSmoothnessDMX, rgbSmoothnessRaw.r), 
-                lerp(_MinimumSmoothnessDMX, _MaximumSmoothnessDMX, rgbSmoothnessRaw.g), 
-                lerp(_MinimumSmoothnessDMX, _MaximumSmoothnessDMX, rgbSmoothnessRaw.b));
-
-                return IF(_EnableDMX == 1, rgbSmoothness, float3(_SmoothValue, _SmoothValue, _SmoothValue));  
+                float3 rgbSmoothness = float3(lerp( saturate(_MaximumSmoothnessDMX), saturate(_MinimumSmoothnessDMX), dmxSmoothness.r), 
+                lerp(saturate(_MaximumSmoothnessDMX), saturate(_MinimumSmoothnessDMX), dmxSmoothness.g), 
+                lerp(saturate(_MaximumSmoothnessDMX), saturate(_MinimumSmoothnessDMX), dmxSmoothness.b));
+                return rgbSmoothness;
+               // return IF(_EnableDMX == 1, rgbSmoothness, float3(_SmoothValue, _SmoothValue, _SmoothValue));  
             }
+
+            float SmoothDamp (float current, float target, inout float currentVelocity, float smoothTime, float maxSpeed, float deltaTime)
+            {
+                //smoothTime = 1-pow(smoothTime, deltaTime);
+
+                float multiplier = target < current ? 0.4 : 1.0;
+                smoothTime *= multiplier;
+                smoothTime = max(0.0001, smoothTime);
+                float num = 2.0 / smoothTime;
+                float num2 = num * deltaTime;
+                float num3 = 1.0 / (1.0 + num2 + 0.48 * num2 * num2 + 0.235 * num2 * num2 * num2);
+                float num4 = current - target;
+                float num5 = target;
+                float num6 = maxSpeed * smoothTime;
+                num4 = clamp(num4, -num6, num6);
+                target = current - num4;
+                float num7 = (currentVelocity + num * num4) * deltaTime;
+                currentVelocity = (currentVelocity - num * num7) * num3;
+                float num8 = target + (num4 + num7) * num3;
+                if (num5 - current > 0.0 == num8 > num5)
+                {
+                    num8 = num5;
+                    currentVelocity = (num8 - num5) / deltaTime;
+                }
+                return num8;
+            }
+
+
+            // float invLerp(float from, float to, float value){
+            // return (value - from) / (to - from);
+            // }
+
+            // float remap(float origFrom, float origTo, float targetFrom, float targetTo, float value){
+            // float rel = invLerp(origFrom, origTo, value);
+            // return lerp(targetFrom, targetTo, rel);
+            // }
+
+
+
+            float DampComplex(float source, float target, float smoothing, float dt, float dmxMod)
+            {
+                float multiplier = target < source ? 0.02-(0.01 * dmxMod) : 1.0;
+                smoothing *= multiplier;
+                return lerp(source, target, 1 - pow(saturate(smoothing), dt));
+            }
+
+            float Damp(float source, float target, float smoothing, float dt)
+            {
+                return lerp(source, target, 1 - pow(saturate(smoothing), dt));
+            }
+            // float3 Damp(float3 source, float3 target, float smoothing, float dt)
+            // {
+            //     return lerp(source, target, 1 - pow(smoothing, dt))
+            // }
 
 
             float4 frag(v2f_customrendertexture IN) : COLOR
@@ -164,14 +233,49 @@ Shader "VRSL/DMX CRTs/Interpolation"
                     // }
                     if(_NineUniverseMode && _EnableDMX)
                     {
-                        float3 s = getSmoothnessValueRGB(IN.localTexcoord.xy);
-                        s = lerp(clamp(lerp(previousFrame.rgb, currentFrame.rgb,smoothstep(0.0, 1.0, clamp(unity_DeltaTime.z,0.0,1.0))) , 0.0, 400.0), currentFrame.rgb, s);
+
+                        float3 dmxSmoothness = float3(1.0, 1.0, 1.0);
+                        #if _OLD_SCHOOL_SMOOTHING
+                            float3 s = getSmoothnessValueRGB(IN.localTexcoord.xy, dmxSmoothness);
+                            s = lerp(clamp(lerp(previousFrame.rgb, currentFrame.rgb,smoothstep(0.0, 1.0, clamp(unity_DeltaTime.z,0.0,100.0))) , 0.0, 100.0), currentFrame.rgb, s);
+                        #else
+                            
+                            float3 smoothing = _EnableDMX == 1 ? getSmoothnessValueRGB(IN.localTexcoord.xy, dmxSmoothness) : getSmoothnessValueRGBPreSet() ;
+
+
+
+
+                            float3 s = float3(
+                                lerp(DampComplex(previousFrame.r, currentFrame.r, smoothing.r, unity_DeltaTime.x, dmxSmoothness.r), currentFrame.r, dmxSmoothness.r * 0.1),
+                                                lerp(DampComplex(previousFrame.g, currentFrame.g, smoothing.g, unity_DeltaTime.x, dmxSmoothness.g), currentFrame.g, dmxSmoothness.g * 0.1),
+                                                    (DampComplex(previousFrame.b, currentFrame.b, smoothing.b, unity_DeltaTime.x, dmxSmoothness.b), currentFrame.b, dmxSmoothness.b * 0.1)
+                                                    );
+
+                        #endif
+                        
                         return float4(s, currentFrame.a); 
                     }
                     else
                     {
-                        float smoothness = getSmoothnessValue(IN.localTexcoord.xy);
-                        return lerp(clamp(lerp(previousFrame, currentFrame,smoothstep(0.0, 1.0, clamp(unity_DeltaTime.z,0.0,1.0))) , 0.0, 400.0), currentFrame, smoothness);
+                        float dmxSmoothness = 1.0;
+                        float smoothing = 0.0;
+                        #if _OLD_SCHOOL_SMOOTHING
+                         float smoothness = _EnableDMX == 1 ? getSmoothnessValue(IN.localTexcoord.xy, dmxSmoothness) : getSmoothnessValuePreSet();         
+                            return lerp(clamp(lerp(previousFrame, currentFrame,smoothstep(0.0, 1.0, clamp(unity_DeltaTime.x,0.0,100.0))) , 0.0, 100.0), currentFrame, smoothness);
+                        #else
+                            //float currentVelocity = previousFrame.a;
+                            if(_EnableDMX == 1)
+                            {
+                                smoothing = getSmoothnessValue(IN.localTexcoord.xy, dmxSmoothness);
+                            }
+                            else
+                            {
+                                smoothing = getSmoothnessValuePreSet();
+                            }
+                            return lerp(DampComplex(previousFrame.r, currentFrame.r, smoothing, unity_DeltaTime.x, dmxSmoothness), currentFrame.r , dmxSmoothness * 0.1);
+                            //float output = SmoothDamp(previousFrame.r, currentFrame.r, currentVelocity, smoothing,100000.0,unity_DeltaTime.x);
+                           // return (float4(output, output, output, currentVelocity));
+                        #endif
                     }
                 }
                 else

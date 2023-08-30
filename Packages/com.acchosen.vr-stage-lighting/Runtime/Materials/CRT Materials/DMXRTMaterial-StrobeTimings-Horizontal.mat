@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: DMXRTMaterial-StrobeTimings-Horizontal
   m_Shader: {fileID: 4800000, guid: 70d085252a756e54e96824cb28a38a48, type: 3}
-  m_ShaderKeywords: _NINEUNIVERSEMODE_ON _VRSL_STATICFREQUENCIES
+  m_ShaderKeywords: _VRSL_STATICFREQUENCIES
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -32,10 +32,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _HighFrequency: 75
-    - _LowFrequency: 40
+    - _HighFrequency: 65
+    - _LowFrequency: 25
     - _MaxStrobeFreq: 185
-    - _MedFrequency: 60
+    - _MedFrequency: 45
     - _NineUniverseMode: 0
     - _SmoothValue: 0.5
     - _StrobeType: 1
