@@ -14,6 +14,7 @@ using VRC.Udon.Common;
 using VRC.Udon.Common.Interfaces;
 using System.Collections.Immutable;
 using System;
+using System.IO;
 #endif
 
 
@@ -23,10 +24,22 @@ namespace VRSL.EditorScripts
     public class VRSL_UdonEditor : Editor
     {
         public static Texture logo;
-        public static string ver = "VR Stage Lighting ver:" + " <b><color=#6a15ce> 2.4</color></b>";
+       // public static string ver = "VR Stage Lighting ver:" + " <b><color=#6a15ce> 2.4</color></b>";
         public void OnEnable() 
         {
             logo = Resources.Load("VRStageLighting-Logo") as Texture;
+        }
+        public static string GetVersion()
+        {
+            string path = Application.dataPath;
+            path = path.Replace("Assets","");
+            path += "Packages"  + "\\" + "com.acchosen.vr-stage-lighting" + "\\";
+            path += "Runtime" + "\\"  + "VERSION.txt";
+
+            StreamReader reader = new StreamReader(path); 
+            string versionNum = reader.ReadToEnd();
+            string ver = "VRSL GI ver:" + " <b><color=#b33cff>" + versionNum + "</color></b>";
+            return ver;
         }
         public static void DrawLogo()
         {
@@ -146,7 +159,7 @@ namespace VRSL.EditorScripts
             serializedObject.Update();
             if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
             DrawLogo();
-            ShurikenHeaderCentered(ver);
+            ShurikenHeaderCentered(GetVersion());
             EditorGUILayout.Space();
             EditorGUILayout.Space();
             //EditorGUILayout.Space();
@@ -316,7 +329,7 @@ namespace VRSL.EditorScripts
         {
             if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
             DrawLogo();
-            ShurikenHeaderCentered(ver);
+            ShurikenHeaderCentered(GetVersion());
             EditorGUILayout.Space();
             EditorGUILayout.Space();
             
@@ -394,7 +407,7 @@ namespace VRSL.EditorScripts
         {
             if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
             DrawLogo();
-            ShurikenHeaderCentered(ver);
+            ShurikenHeaderCentered(GetVersion());
             EditorGUILayout.Space();
             EditorGUILayout.Space();
 

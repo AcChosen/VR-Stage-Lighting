@@ -2,6 +2,7 @@
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using System.IO;
 
 // Based on Morioh's toon shader GUI.
 // This code is based off synqark's arktoon-shaders and Xiexe. 
@@ -359,7 +360,7 @@ public class VRSLInspector : ShaderGUI
         EditorGUI.BeginChangeCheck();
         {
             VRSLStyles.DrawLogo();
-            VRSLStyles.ShurikenHeaderCentered(VRSLStyles.ver);
+            VRSLStyles.ShurikenHeaderCentered(VRSLStyles.GetVersion());
             VRSLStyles.ShurikenHeaderCentered(GetShaderType());
             VRSLStyles.PartingLine();
             VRSLStyles.DepthPassWarning();

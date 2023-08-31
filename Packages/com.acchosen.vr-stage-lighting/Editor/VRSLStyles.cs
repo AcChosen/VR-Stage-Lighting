@@ -1,6 +1,7 @@
 ﻿#if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
+using System.IO;
 
 // help link https://docs.unity3d.com/ScriptReference/EditorStyles.html
 // ---DISCLAIMER--- THIS CODE IS BASED OFF OF "SYNQARK"'s ARKTOON-SHADERS AND "XIEXE"'s UNITY-SHADERS. FOR MORE INFORMATION PLEASE REFER TO THE ORIGINAL BASE WRITER "https://github.com/synqark", "https://github.com/synqark/Arktoon-Shaders" or "https://github.com/Xiexe", "https://github.com/Xiexe/Xiexes-Unity-Shaders"
@@ -10,11 +11,23 @@ public class VRSLStyles : MonoBehaviour
 {
     public static Texture logo = Resources.Load("VRStageLighting-Logo") as Texture;
 
-    public static string ver = "VR Stage Lighting ver:" + " <b><color=#6a15ce> 2.4.1</color></b>";
+    //public static string ver = "VR Stage Lighting ver:" + " <b><color=#6a15ce> 2.4.1</color></b>";
 
     public static void DepthPassWarning()
     {
         EditorGUILayout.HelpBox("Shader looking weird? \nPlease ensure that the depth texture is enabled by having the included 'Directional Light' prefab somewhere in your scene, located in \nAssets/VRStageLighting/VR-Stage-Lighting/Other", MessageType.Info);
+    }
+    public static string GetVersion()
+    {
+        string path = Application.dataPath;
+        path = path.Replace("Assets","");
+        path += "Packages"  + "\\" + "com.acchosen.vr-stage-lighting" + "\\";
+        path += "Runtime" + "\\"  + "VERSION.txt";
+
+        StreamReader reader = new StreamReader(path); 
+        string versionNum = reader.ReadToEnd();
+        string ver = "VRSL GI ver:" + " <b><color=#b33cff>" + versionNum + "</color></b>";
+        return ver;
     }
 
     public static void DrawLogo()

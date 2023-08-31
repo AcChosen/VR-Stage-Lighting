@@ -19,6 +19,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using UnityEngine.UIElements;
+using System.IO;
 #endif
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 
@@ -601,7 +602,7 @@ public class VRSL_ManagerWindow : EditorWindow {
     static float tiltRangeOff = -180f;
     public static Texture logo, github, twitter, discord;
     public bool legacyFixtures;
-    public static string ver = "VR Stage Lighting ver:" + " <b><color=#6a15ce> 2.4.1</color></b>";
+    //public static string ver = "VR Stage Lighting ver:" + " <b><color=#6a15ce> 2.4.1</color></b>";
 
     public static bool hasLocalPanel, hasDepthLight;
     private static VRSL_LocalUIControlPanel panel;
@@ -699,6 +700,19 @@ public class VRSL_ManagerWindow : EditorWindow {
         //EditorApplication.playModeStateChanged += LogPlayModeState;
         
 
+    }
+
+    public static string GetVersion()
+    {
+        string path = Application.dataPath;
+        path = path.Replace("Assets","");
+        path += "Packages"  + "\\" + "com.acchosen.vr-stage-lighting" + "\\";
+        path += "Runtime" + "\\"  + "VERSION.txt";
+
+        StreamReader reader = new StreamReader(path); 
+        string versionNum = reader.ReadToEnd();
+        string ver = "VRSL GI ver:" + " <b><color=#b33cff>" + versionNum + "</color></b>";
+        return ver;
     }
 
     static bool CheckIfDMXGIAvailable()
@@ -2385,7 +2399,7 @@ public class VRSL_ManagerWindow : EditorWindow {
 
     void OnGUI() {
         DrawLogo();
-        ShurikenHeaderCentered(ver);
+        ShurikenHeaderCentered(GetVersion());
         GUILayout.Label("Control Panel",Title1());
 
         if(Application.isPlaying)
