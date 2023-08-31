@@ -166,7 +166,7 @@ Material:
     - _MaxMinTiltAngle: -90
     - _MaxMinTiltAngleInstanced: 180
     - _Metallic: 0.501
-    - _MinimumBeamRadius: 1
+    - _MinimumBeamRadius: 0.95
     - _ModX: 0
     - _ModY: 0
     - _NineUniverseMode: 0

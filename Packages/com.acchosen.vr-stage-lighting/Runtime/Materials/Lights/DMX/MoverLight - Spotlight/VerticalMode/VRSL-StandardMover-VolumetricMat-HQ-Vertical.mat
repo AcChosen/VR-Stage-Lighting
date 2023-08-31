@@ -134,23 +134,23 @@ Material:
     - _EnableStrobe: 0
     - _EnableVerticalMode: 1
     - _Fade: 1.5
-    - _FadeAmt: 75
-    - _FadeStrength: 5.5
+    - _FadeAmt: 35
+    - _FadeStrength: 5
     - _FeatherOffset: 0.5
     - _FinalIntensity: 1
     - _FinalStrobeFreq: 0
     - _FixtureBaseRotationY: 0
-    - _FixtureMaxIntensity: 0.65
+    - _FixtureMaxIntensity: 0.3
     - _FixtureRotationX: 0
     - _GlobalIntensity: 1
     - _Glossiness: 1
     - _GoboBeamSplitEnable: 1
-    - _GradientMod: 2
+    - _GradientMod: 2.25
     - _GradientModGOBO: 2.25
     - _GreenMultiplier: 1
     - _HQMode: 0
-    - _InnerFadeStrength: 5
-    - _InnerIntensityCurve: 20
+    - _InnerFadeStrength: 7
+    - _InnerIntensityCurve: 12
     - _IntensityCutoff: 0
     - _IsEven: 0
     - _LMStrength: 1
@@ -169,19 +169,19 @@ Material:
     - _ModY: 0
     - _NineUniverseMode: 0
     - _Noise2Power: 0.85
-    - _Noise2PowerDefault: 1
+    - _Noise2PowerDefault: 0.856
     - _Noise2PowerPotato: 1
     - _Noise2Stretch: 2
-    - _Noise2StretchDefault: 1
+    - _Noise2StretchDefault: 2.5
     - _Noise2StretchInside: 1.75
-    - _Noise2StretchInsideDefault: 1
+    - _Noise2StretchInsideDefault: 2.5
     - _Noise2StretchInsidePotato: 1
     - _Noise2StretchPotato: 1
     - _Noise2X: 0
     - _Noise2XDefault: 1
     - _Noise2XPotato: 1
     - _Noise2Y: 7.5
-    - _Noise2YDefault: 1
+    - _Noise2YDefault: 5
     - _Noise2YPotato: 1
     - _Noise2Z: 1
     - _Noise2ZDefault: 1
