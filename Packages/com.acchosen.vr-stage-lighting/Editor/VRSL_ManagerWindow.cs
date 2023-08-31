@@ -711,7 +711,7 @@ public class VRSL_ManagerWindow : EditorWindow {
 
         StreamReader reader = new StreamReader(path); 
         string versionNum = reader.ReadToEnd();
-        string ver = "VRSL GI ver:" + " <b><color=#b33cff>" + versionNum + "</color></b>";
+        string ver = "VR Stage Lighting ver:" + " <b><color=#b33cff>" + versionNum + "</color></b>";
         return ver;
     }
 
