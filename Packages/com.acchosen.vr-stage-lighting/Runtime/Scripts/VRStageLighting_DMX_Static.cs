@@ -150,7 +150,7 @@ namespace VRSL
             }
             else
             {
-                Debug.Log("Please add atleast one fixture renderer.");
+                //Debug.Log("Please add atleast one fixture renderer.");
                 //enableInstancing = false;
             }
         }

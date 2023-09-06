@@ -7,6 +7,9 @@ using VRC.Udon;
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UnityEditor;
 using UdonSharpEditor;
+using System.Collections.Immutable;
+using System;
+using System.IO;
 #endif
 
 #if UDONSHARP
@@ -1130,8 +1133,21 @@ namespace VRSL
     public class VRSL_LocalUIControlPanel_Editor : Editor
     {
         public static Texture logo;
-        public static string ver = "VR Stage Lighting ver:" + " <b><color=#6a15ce> 2.1</color></b>";
+        //public static string ver = "VR Stage Lighting ver:" + " <b><color=#6a15ce> 2.1</color></b>";
         SerializedProperty audioLinkLasers, audiolinkLights, dmxLights, isUsingDMX,isUsingAudioLink;
+
+        static string GetVersion()
+        {
+            string path = Application.dataPath;
+            path = path.Replace("Assets","");
+            path += "Packages"  + "\\" + "com.acchosen.vr-stage-lighting" + "\\";
+            path += "Runtime" + "\\"  + "VERSION.txt";
+
+            StreamReader reader = new StreamReader(path); 
+            string versionNum = reader.ReadToEnd();
+            string ver = "VR Stage Lighting ver:" + " <b><color=#b33cff>" + versionNum + "</color></b>";
+            return ver;
+        }
 
         public void OnEnable() 
         {
@@ -1216,7 +1232,7 @@ namespace VRSL
             EditorGUI.BeginChangeCheck();
             serializedObject.Update();
             DrawLogo();
-            ShurikenHeaderCentered(ver);
+            ShurikenHeaderCentered(GetVersion());
             EditorGUILayout.Space();
             VRSL_LocalUIControlPanel controlPanel = (VRSL_LocalUIControlPanel)target;
             if (GUILayout.Button(new GUIContent("Force Update Target AudioLink Sample Texture", "Updates all AudioLink VRSL Fixtures to sample from the selected target texture when texture sampling is enabled on the fixture."))) { controlPanel._ForceUpdateVideoSampleTexture(); }
