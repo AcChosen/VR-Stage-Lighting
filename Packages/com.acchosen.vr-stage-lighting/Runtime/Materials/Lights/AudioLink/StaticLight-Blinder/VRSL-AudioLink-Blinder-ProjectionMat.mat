@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-AudioLink-Blinder-ProjectionMat
   m_Shader: {fileID: 4800000, guid: 171b119a9de3c524baa60012ee126713, type: 3}
-  m_ShaderKeywords: _EMISSION _USERAWGRID_ON
+  m_ShaderKeywords: _EMISSION _MULTISAMPLEDEPTH _USERAWGRID_ON
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -132,6 +132,7 @@ Material:
     - _Metallic: 0.498
     - _ModX: -0.12
     - _ModY: -0.37
+    - _MultiSampleDepth: 1
     - _NumBands: 4
     - _ProjectionDistanceFallOff: 0
     - _ProjectionFade: 1.73
@@ -151,6 +152,7 @@ Material:
     - _RTLMStrength: 1
     - _RedMultiplier: 1.5
     - _RenderMode: 1
+    - _RenderTextureMultiplier: 2
     - _Sector: 0
     - _SpecLMOcclusionAdjust: 0.2
     - _SpecularLMOcclusion: 0

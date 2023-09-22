@@ -22,6 +22,7 @@
 
 		//[Header(LIGHTING CONTROLS)]
 		_GlobalIntensity("Global Intensity", Range(0,1)) = 1
+		_GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
 		_FinalIntensity("Final Intensity", Range(0,1)) = 1
 		_UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
 		[HDR]_Emission("Light Color Tint", Color) = (1,1,1,1)
@@ -77,6 +78,7 @@
 		_AlphaProjectionIntensity ("Alpha Projection Intesnity", Range (0,1)) = 0.5
 		[Enum(13CH,0,5CH,1)] _ChannelMode ("Channel Mode", Int) = 0
 
+		[Enum(Off,0,On,1)] _MultiSampleDepth ("Multi Sample Depth", Int) = 1
 
 
 	}
@@ -108,6 +110,7 @@
             #pragma fragment frag
 			#pragma multi_compile_local _ _ALPHATEST_ON
 			#pragma shader_feature_local _CHANNEL_MODE
+			#pragma shader_feature_local _MULTISAMPLEDEPTH
 			//#pragma multi_compile_fog
 			#pragma multi_compile_instancing
 

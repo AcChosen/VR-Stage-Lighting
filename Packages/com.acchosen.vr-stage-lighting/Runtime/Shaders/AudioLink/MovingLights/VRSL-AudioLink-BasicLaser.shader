@@ -12,10 +12,12 @@
          _Band("AudioLink Band", Int) = 0
          _BandMultiplier("AudioLink Multiplier", Float) = 1.0
          _Delay("Audio Link Delay", Int) = 0
+         _RenderTextureMultiplier("Render Texture Multiplier", Range(1,10)) = 1
 
         _UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
         _FinalIntensity("Final Intensity", Range(0,1)) = 1
         _GlobalIntensity ("Global Intensity", Range(0,1)) = 1
+        _GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
         [HideInInspector]_MainTex ("Texture", 2D) = "white" {}
         [HDR]_Emission ("Emission Color" , Color) = (1.0, 1.0, 1.0, 1.0)
         _Multiplier("Emission Multiplier", Range(1,10)) = 1
@@ -128,6 +130,7 @@
                 UNITY_DEFINE_INSTANCED_PROP(float, _VertexConeWidth)
                 UNITY_DEFINE_INSTANCED_PROP(float, _VertexConeLength)
                 UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
+                UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensityBlend)
                 UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
                 UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleX)
                 UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleY)
@@ -217,7 +220,7 @@
             }
             float getGlobalIntensity()
             {
-                return UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensity);
+                return lerp(1.0,UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensity), UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensityBlend));
             }
 
             float getFinalIntensity()

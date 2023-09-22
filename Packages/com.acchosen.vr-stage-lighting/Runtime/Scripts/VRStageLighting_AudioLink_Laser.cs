@@ -35,7 +35,7 @@ namespace VRSL
         [Tooltip("The frequency band of the spectrum to react to.")]
         [FieldChangeCallback(nameof(Band))]
         [SerializeField]
-        private int band;
+        private AudioLinkBandState band;
 
 
         [Range(0, 31)]
@@ -206,7 +206,7 @@ namespace VRSL
             }
         }
 
-        public int Band
+        public AudioLinkBandState Band
         {
             get
             {
@@ -486,7 +486,9 @@ namespace VRSL
             //props.SetFloat("_NumBands", spectrumBands.Length);
             props.SetFloat("_Delay", delay);
             props.SetFloat("_BandMultiplier", bandMultiplier);
-            props.SetFloat("_Band", band);
+            int b = (int) band;
+            float ba = 1.0f * b;
+            props.SetFloat("_Band", ba);
             //Color Texture Sampling
             props.SetFloat("_TextureColorSampleX", textureSamplingCoordinates.x);
             props.SetFloat("_TextureColorSampleY", textureSamplingCoordinates.y);
@@ -573,7 +575,9 @@ namespace VRSL
             //props.SetFloat("_NumBands", spectrumBands.Length);
             props.SetFloat("_Delay", delay);
             props.SetFloat("_BandMultiplier", bandMultiplier);
-            props.SetFloat("_Band", band);
+            int b = (int) band;
+            float ba = 1.0f * b;
+            props.SetFloat("_Band", ba);
             //Color Texture Sampling
             props.SetFloat("_TextureColorSampleX", textureSamplingCoordinates.x);
             props.SetFloat("_TextureColorSampleY", textureSamplingCoordinates.y);

@@ -24,7 +24,7 @@
 		[Header(Audio Section)]
          [Toggle]_EnableAudioLink("Enable Audio Link", Float) = 0
 		 [Toggle] _EnableColorChord ("Enable Color Chord Tinting", Int) = 0
-         _Band("Band", Float) = 0
+         [Enum(Bass,0,Low Mids,1,High Mids,2,Treble,3)]_Band("Band", Float) = 0
          _BandMultiplier("Band Multiplier", Range(1, 15)) = 1
          _Delay("Delay", Float) = 0
          _NumBands("Num Bands", Float) = 4
@@ -33,6 +33,7 @@
 		//[Header (BASIC CONTROLS)]
 		_FinalIntensity("Final Intensity", Range(0,1)) = 1
 		_GlobalIntensity("Global Intensity", Range(0,1)) = 1
+		_GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
 		_UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
 		[HDR]_Emission("Light Color Tint", Color) = (1,1,1,1)
 		_Saturation("Final Saturation", Range(0,1)) = 1
@@ -95,6 +96,7 @@
 		_InnerIntensityCurve("Inner Intensity Curve", Range(0.00001,20)) = 1
 		_DistFade("Distance Fade", Range(0,20)) = 0.1
 		_FadeAmt("Intersection Offset", Range(1, 100)) = 1
+		_BlindingStrength("Blinding Strength", Range(0,1)) = 1
 		_BlindingAngleMod("Blinding Angle Modification", Range(-1, 1)) = 0
 		_IntersectionMod("Intersection Modification", Range(0.00001, 10)) = 1
 		//_IntensityCutoff("Intensity Minimum Cut Off", Range (0, 1)) = 0.2
@@ -130,6 +132,7 @@
 		[Enum(HQTransparent,0,Transparent,1,AlphaToCoverage,2)] _RenderMode ("Render Mode", Int) = 1
 		[Enum(Off,0,On,1)] _ZWrite ("Z Write", Int) = 0
 		[Enum(Off,0,On,1)] _AlphaToCoverage ("Alpha To Coverage", Int) = 0
+		_RenderTextureMultiplier("Render Texture Multiplier", Range(1,10)) = 1
 
 
 		//[Space(16)]
@@ -197,7 +200,7 @@
 
 			struct v2f
 			{
-				float2 uv : TEXCOORD0;
+				centroid float2 uv : TEXCOORD0;
 				float blindingEffect : TEXCOORD1;
 				float4 worldPos : TEXCOORD2;
 				float4 color : TEXCOORD3;

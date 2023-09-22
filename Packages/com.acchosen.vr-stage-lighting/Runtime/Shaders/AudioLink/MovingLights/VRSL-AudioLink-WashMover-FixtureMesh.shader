@@ -6,7 +6,7 @@
 		//[Header (INSTANCED PROPERITES)]
 		 [HideInInspector][Toggle] _PanInvert ("Invert Mover Pan", Int) = 0
 		 [HideInInspector][Toggle] _TiltInvert ("Invert Mover Tilt", Int) = 0
-
+		_RenderTextureMultiplier("Render Texture Multiplier", Range(1,10)) = 1
 
 		 //[HideInInspector]_FinalStrobeFreq ("Final Strobe Frequency", Float) = 0
 		 //[HideInInspector]_NewTimer("New Timer From Udon For Strobe", Float) = 0
@@ -30,6 +30,7 @@
 		//[Header (BASIC CONTROLS)]
 		_FinalIntensity("Final Intensity", Range(0,1)) = 1
 		_GlobalIntensity("Global Intensity", Range(0,1)) = 1
+		_GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
 		_UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
 		[HDR]_Emission("Light Color Tint", Color) = (1,1,1,1)
 		_Saturation("Final Saturation", Range(0,1)) = 1

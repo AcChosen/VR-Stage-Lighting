@@ -13,6 +13,7 @@
         [Toggle] _EnableColorChord ("Enable Color Chord Tinting", Int) = 0
         _FinalIntensity("Final Intensity", Range(0,1)) = 1
         _GlobalIntensity("Global Intensity", Range(0,1)) = 1
+        _GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
         _UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
         [HDR]_Emission("Light Color Tint", Color) = (1,1,1,1)
         _MainTex ("Texture", 2D) = "white" {}
@@ -24,7 +25,7 @@
         _FixtureMaxIntensity ("Maximum Light Intensity",Range (0,15)) = 1
         _CurveMod ("Light Intensity Curve Modifier", Range (-3,8)) = 5.0
         _FixutreIntensityMultiplier ("Intensity Multipler (For Bloom Scaling)", Range(1,5)) = 1
-
+        _RenderTextureMultiplier("Render Texture Multiplier", Range(1,10)) = 1
         _RemoveTextureArtifact("RemoveTextureArtifact", Range(0,0.1)) = 0
 
         [Toggle] _EnableColorTextureSample ("Enable Color Texture Sampling", Int) = 0

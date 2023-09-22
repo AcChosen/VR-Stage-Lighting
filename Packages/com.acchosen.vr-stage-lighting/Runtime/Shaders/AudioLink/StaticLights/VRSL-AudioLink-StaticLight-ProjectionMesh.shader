@@ -22,12 +22,13 @@
 
 		//[Header(LIGHTING CONTROLS)]
 		_GlobalIntensity("Global Intensity", Range(0,1)) = 1
+		_GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
 		_FinalIntensity("Final Intensity", Range(0,1)) = 1
 		_UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
 		[HDR]_Emission("Light Color Tint", Color) = (1,1,1,1)
 		_FixtureMaxIntensity ("Maximum Light Intensity",Range (0,6)) = 1
 		//[NoScaleOffset] _SceneAlbedo ("Scene Albedo Render Texture", 2D) = "white" {}
-
+		_RenderTextureMultiplier("Render Texture Multiplier", Range(1,10)) = 1
 		//Color Texture Sampling Properties
 		 [Toggle] _EnableColorTextureSample ("Enable Color Texture Sampling", Int) = 0
 		 _SamplingTexture ("Texture To Sample From for Color", 2D) = "white" {}
@@ -67,6 +68,8 @@
 		_GreenMultiplier ("Green Channel Multiplier", Range(1, 5)) = 1
 		_BlueMultiplier ("Blue Channel Multiplier", Range(1,5)) = 1
 
+		
+
 
 
 	// 	[Header(MAIN)]
@@ -105,6 +108,8 @@
 		_AlphaProjectionIntensity ("Alpha Projection Intesnity", Range (0,1)) = 0.5
 		[Enum(13CH,0,5CH,1)] _ChannelMode ("Channel Mode", Int) = 0
 
+		[Enum(Off,0,On,1)] _MultiSampleDepth ("Multi Sample Depth", Int) = 1
+
 
 
 
@@ -137,6 +142,7 @@
 			#pragma multi_compile_fog
 			#pragma multi_compile_instancing
 			#pragma multi_compile_local _ _ALPHATEST_ON
+			#pragma shader_feature_local _MULTISAMPLEDEPTH
 			#define PROJECTION_YES
 			#define VRSL_AUDIOLINK
 

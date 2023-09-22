@@ -15,6 +15,15 @@ using System.Collections.Immutable;
 #endif
 namespace VRSL
 {
+
+    public enum AudioLinkBandState
+    {
+        Bass,
+        Low_Mids,
+        High_Mids,
+        Treble
+    }
+
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class VRStageLighting_AudioLink_Static : UdonSharpBehaviour
     {
@@ -30,11 +39,11 @@ namespace VRSL
         //[Tooltip("The Audio Link Script to react to.")]
         //public AudioLink audioLink;
 
-        [Range(0, 3)]
+        //[Range(0, 3)]
         [Tooltip("The frequency band of the spectrum to react to.")]
         [FieldChangeCallback(nameof(Band))]
         [SerializeField]
-        private int band;
+        private AudioLinkBandState band;
 
 
         [Range(0, 31)]
@@ -353,7 +362,7 @@ namespace VRSL
                 _UpdateInstancedProperties();
             }
         }
-        public int Band
+        public AudioLinkBandState Band
         {
             get
             {
@@ -552,7 +561,9 @@ namespace VRSL
             //props.SetFloat("_NumBands", spectrumBands.Length);
             props.SetFloat("_Delay", delay);
             props.SetFloat("_BandMultiplier", bandMultiplier);
-            props.SetFloat("_Band", band);
+            int b = (int) band;
+            float ba = 1.0f * b;
+            props.SetFloat("_Band", ba);
             //Movement Stuff
             // props.SetInt("_PanInvert", invertPan == true ? 1 : 0);
             // props.SetInt("_TiltInvert", invertTilt == true ? 1 : 0);
@@ -646,7 +657,9 @@ namespace VRSL
             //props.SetFloat("_NumBands", spectrumBands.Length);
             props.SetFloat("_Delay", delay);
             props.SetFloat("_BandMultiplier", bandMultiplier);
-            props.SetFloat("_Band", band);
+            int b = (int) band;
+            float ba = 1.0f * b;
+            props.SetFloat("_Band", ba);
             //Movement Stuff
             // props.SetInt("_PanInvert", invertPan == true ? 1 : 0);
             // props.SetInt("_TiltInvert", invertTilt == true ? 1 : 0);

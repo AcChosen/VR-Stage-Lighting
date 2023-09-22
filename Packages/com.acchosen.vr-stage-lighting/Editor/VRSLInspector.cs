@@ -55,6 +55,7 @@ public class VRSLInspector : ShaderGUI
     MaterialProperty _EnableLegacyGlobalMovementSpeedChannel = null;
 
     MaterialProperty _GlobalIntensity = null;
+    MaterialProperty _GlobalIntensityBlend = null;
     MaterialProperty _FinalIntensity = null;
     MaterialProperty _UniversalIntensity = null;
     MaterialProperty _Emission = null;
@@ -152,12 +153,14 @@ public class VRSLInspector : ShaderGUI
 
     //Volumetric Control Specific
     MaterialProperty _FixtureMaxIntensity = null;
+    MaterialProperty _RenderTextureMultiplier = null;
     MaterialProperty _FadeStrength = null;
     MaterialProperty _InnerFadeStrength = null;
     MaterialProperty _InnerIntensityCurve = null;
     MaterialProperty _DistFade = null;
     MaterialProperty _FadeAmt = null;
     MaterialProperty _BlindingAngleMod = null;
+    MaterialProperty _BlindingStrength = null; 
     MaterialProperty _StripeSplit = null;
     MaterialProperty _StripeSplitStrength = null;
     MaterialProperty _StripeSplit2 = null;
@@ -281,6 +284,9 @@ public class VRSLInspector : ShaderGUI
     MaterialProperty _AlphaIntensity = null;
     MaterialProperty _EnableAlphaDMX = null;
     MaterialProperty _Cutoff = null;
+
+
+    MaterialProperty _MultiSampleDepth = null;
 
     
     //END Discoball Exclusives
@@ -539,6 +545,9 @@ public class VRSLInspector : ShaderGUI
                 GUILayout.Space(5);
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_GlobalIntensity, new GUIContent("Global Intensity", "Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity."));
+                EditorGUI.indentLevel++;  
+                matEditor.ShaderProperty(_GlobalIntensityBlend, new GUIContent("Global Intensity Blend", "Sets the overall intensity of the shader. Controls how much the Global Intesnity slider actually affects the output. Good for temporarily disabling animations that use the Global Intesnity property."));
+                EditorGUI.indentLevel--;    
                 matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
                 matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
                 GUILayout.Space(10);
@@ -686,6 +695,9 @@ public class VRSLInspector : ShaderGUI
             GUILayout.Space(5);
             EditorGUI.indentLevel++;
             matEditor.ShaderProperty(_GlobalIntensity, new GUIContent("Global Intensity", "Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity."));
+            EditorGUI.indentLevel++;  
+            matEditor.ShaderProperty(_GlobalIntensityBlend, new GUIContent("Global Intensity Blend", "Sets the overall intensity of the shader. Controls how much the Global Intesnity slider actually affects the output. Good for temporarily disabling animations that use the Global Intesnity property."));
+            EditorGUI.indentLevel--; 
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             GUILayout.Space(10);
@@ -780,6 +792,9 @@ public class VRSLInspector : ShaderGUI
             GUILayout.Space(5);
             EditorGUI.indentLevel++;
             matEditor.ShaderProperty(_GlobalIntensity, new GUIContent("Global Intensity", "Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity."));
+            EditorGUI.indentLevel++;  
+            matEditor.ShaderProperty(_GlobalIntensityBlend, new GUIContent("Global Intensity Blend", "Sets the overall intensity of the shader. Controls how much the Global Intesnity slider actually affects the output. Good for temporarily disabling animations that use the Global Intesnity property."));
+            EditorGUI.indentLevel--; 
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             GUILayout.Space(10);
@@ -801,6 +816,15 @@ public class VRSLInspector : ShaderGUI
         {
             // if(isDMXCompatible)
             // {
+                matEditor.ShaderProperty(_MultiSampleDepth, new GUIContent("Depth Multi-Sampling", "Sample the depth texture multiple times to prevent artifacting on edges of the projection. This does incurr a slight cost."));
+                if(target.GetInt("_MultiSampleDepth") == 1)
+                {
+                    target.EnableKeyword("_MULTISAMPLEDEPTH");
+                }
+                else
+                {
+                    target.DisableKeyword("_MULTISAMPLEDEPTH");
+                }
                 matEditor.ShaderProperty(_RenderMode, new GUIContent("Render Mode", "Choose between a fully transparent shader, or one that is opaque with a dithering technique."));
                 if(target.GetInt("_RenderMode") == 1) 
                 {
@@ -913,6 +937,9 @@ public class VRSLInspector : ShaderGUI
                 GUILayout.Space(5);
                 EditorGUI.indentLevel++;
                 matEditor.ShaderProperty(_GlobalIntensity, new GUIContent("Global Intensity", "Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity."));
+                EditorGUI.indentLevel++;  
+                matEditor.ShaderProperty(_GlobalIntensityBlend, new GUIContent("Global Intensity Blend", "Sets the overall intensity of the shader. Controls how much the Global Intesnity slider actually affects the output. Good for temporarily disabling animations that use the Global Intesnity property."));
+                EditorGUI.indentLevel--; 
                 matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
                 matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
                 matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
@@ -991,6 +1018,9 @@ public class VRSLInspector : ShaderGUI
             GUILayout.Space(5);
             EditorGUI.indentLevel++;
             matEditor.ShaderProperty(_GlobalIntensity, new GUIContent("Global Intensity", "Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity."));
+            EditorGUI.indentLevel++;  
+            matEditor.ShaderProperty(_GlobalIntensityBlend, new GUIContent("Global Intensity Blend", "Sets the overall intensity of the shader. Controls how much the Global Intesnity slider actually affects the output. Good for temporarily disabling animations that use the Global Intesnity property."));
+            EditorGUI.indentLevel--; 
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
@@ -1070,6 +1100,9 @@ public class VRSLInspector : ShaderGUI
             GUILayout.Space(5);
             EditorGUI.indentLevel++;
             matEditor.ShaderProperty(_GlobalIntensity, new GUIContent("Global Intensity", "Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity."));
+            EditorGUI.indentLevel++;  
+            matEditor.ShaderProperty(_GlobalIntensityBlend, new GUIContent("Global Intensity Blend", "Sets the overall intensity of the shader. Controls how much the Global Intesnity slider actually affects the output. Good for temporarily disabling animations that use the Global Intesnity property."));
+            EditorGUI.indentLevel--; 
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             matEditor.ShaderProperty(_FixtureBaseRotationY, new GUIContent("Rotation Y Offset", "Offset the Y Rotation of the fixture."));
@@ -1089,6 +1122,15 @@ public class VRSLInspector : ShaderGUI
         {
             // if(isDMXCompatible)
             // {
+                matEditor.ShaderProperty(_MultiSampleDepth, new GUIContent("Depth Multi-Sampling", "Sample the depth texture multiple times to prevent artifacting on edges of the projection. This does incurr a slight cost."));
+                if(target.GetInt("_MultiSampleDepth") == 1)
+                {
+                    target.EnableKeyword("_MULTISAMPLEDEPTH");
+                }
+                else
+                {
+                    target.DisableKeyword("_MULTISAMPLEDEPTH");
+                }
                 matEditor.ShaderProperty(_RenderMode, new GUIContent("Render Mode", "Choose between a fully transparent shader, or one that is opaque with a dithering technique."));
                 if(target.GetInt("_RenderMode") == 1) 
                 {
@@ -1184,16 +1226,19 @@ public class VRSLInspector : ShaderGUI
         }
 
         //MOVER CONTROLS
-        showMoverControls = VRSLStyles.ShurikenFoldout("Movement Settings", showMoverControls);
-        if(showMoverControls)
+        if(isStaticLight == false && isAudioLink == false)
         {
-            GUILayout.Space(5);
-            EditorGUI.indentLevel++;
-            matEditor.ShaderProperty(_FixtureRotationOrigin, new GUIContent("Fixture Pivot Origin", "Sets the rotation point of the fixture for tilt in object space. Do not change this unless you are trying to make a custom housing."));
-            matEditor.ShaderProperty(_MaxMinPanAngle, new GUIContent("Max/Min Pan Angles (Left/Right)", "Sets the Left/Right rotation range of the fixture by ''-Value to Value''"));
-            matEditor.ShaderProperty(_MaxMinTiltAngle, new GUIContent("Max/Min Tilt Angles (Up/Down)", "Sets the Up/Down rotation range of the fixture by ''-Value to Value''"));
-            EditorGUI.indentLevel--;
-            GUILayout.Space(5);
+            showMoverControls = VRSLStyles.ShurikenFoldout("Movement Settings", showMoverControls);
+            if(showMoverControls)
+            {
+                GUILayout.Space(5);
+                EditorGUI.indentLevel++;
+                matEditor.ShaderProperty(_FixtureRotationOrigin, new GUIContent("Fixture Pivot Origin", "Sets the rotation point of the fixture for tilt in object space. Do not change this unless you are trying to make a custom housing."));
+                matEditor.ShaderProperty(_MaxMinPanAngle, new GUIContent("Max/Min Pan Angles (Left/Right)", "Sets the Left/Right rotation range of the fixture by ''-Value to Value''"));
+                matEditor.ShaderProperty(_MaxMinTiltAngle, new GUIContent("Max/Min Tilt Angles (Up/Down)", "Sets the Up/Down rotation range of the fixture by ''-Value to Value''"));
+                EditorGUI.indentLevel--;
+                GUILayout.Space(5);
+            }
         }
 
         GUILayout.Space(15);
@@ -1240,6 +1285,9 @@ public class VRSLInspector : ShaderGUI
             GUILayout.Space(5);
             EditorGUI.indentLevel++;
             matEditor.ShaderProperty(_GlobalIntensity, new GUIContent("Global Intensity", "Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity."));
+            EditorGUI.indentLevel++;  
+            matEditor.ShaderProperty(_GlobalIntensityBlend, new GUIContent("Global Intensity Blend", "Sets the overall intensity of the shader. Controls how much the Global Intesnity slider actually affects the output. Good for temporarily disabling animations that use the Global Intesnity property."));
+            EditorGUI.indentLevel--; 
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
@@ -1467,6 +1515,7 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_DistFade, new GUIContent("Distance Fade", "How close the camera needs to be before the cone starts fading away."));
             matEditor.ShaderProperty(_FadeAmt, new GUIContent("Blend Amount", "How much does the cone blend with what's behind it."));
             matEditor.ShaderProperty(_BlindingAngleMod, new GUIContent("Blinding Angle Modification", "Changes the angle at which the fixture starts to become blinding when looking direcily into it."));
+            matEditor.ShaderProperty(_BlindingStrength, new GUIContent("Blinding Strength", "Changes how strong the blinding effect is."));
 //            matEditor.ShaderProperty(_IntersectionMod, new GUIContent("Intersection Modification", "The rate at which the volumetric fades away when intersecting with other objects."));
             GUILayout.Space(10);
             matEditor.ShaderProperty(_GoboBeamSplitEnable, new GUIContent("Enable Gobo Beam Split", "Enable beam splitting on gobos 2-6 (Global)"));     
@@ -1504,16 +1553,19 @@ public class VRSLInspector : ShaderGUI
             GUILayout.Space(5);
         }
         //MOVER CONTROLS
-        showMoverControls = VRSLStyles.ShurikenFoldout("Movement Settings", showMoverControls);
-        if(showMoverControls)
+        if(isStaticLight == false && isAudioLink == false)
         {
-            GUILayout.Space(5);
-            EditorGUI.indentLevel++;
-            matEditor.ShaderProperty(_FixtureRotationOrigin, new GUIContent("Fixture Pivot Origin", "Sets the rotation point of the fixture for tilt in object space. Do not change this unless you are trying to make a custom housing."));
-            matEditor.ShaderProperty(_MaxMinPanAngle, new GUIContent("Max/Min Pan Angles (Left/Right)", "Sets the Left/Right rotation range of the fixture by ''-Value to Value''"));
-            matEditor.ShaderProperty(_MaxMinTiltAngle, new GUIContent("Max/Min Tilt Angles (Up/Down)", "Sets the Up/Down rotation range of the fixture by ''-Value to Value''"));
-            EditorGUI.indentLevel--;
-            GUILayout.Space(5);
+            showMoverControls = VRSLStyles.ShurikenFoldout("Movement Settings", showMoverControls);
+            if(showMoverControls)
+            {
+                GUILayout.Space(5);
+                EditorGUI.indentLevel++;
+                matEditor.ShaderProperty(_FixtureRotationOrigin, new GUIContent("Fixture Pivot Origin", "Sets the rotation point of the fixture for tilt in object space. Do not change this unless you are trying to make a custom housing."));
+                matEditor.ShaderProperty(_MaxMinPanAngle, new GUIContent("Max/Min Pan Angles (Left/Right)", "Sets the Left/Right rotation range of the fixture by ''-Value to Value''"));
+                matEditor.ShaderProperty(_MaxMinTiltAngle, new GUIContent("Max/Min Tilt Angles (Up/Down)", "Sets the Up/Down rotation range of the fixture by ''-Value to Value''"));
+                EditorGUI.indentLevel--;
+                GUILayout.Space(5);
+            }
         }
 
         GUILayout.Space(15);
@@ -1559,6 +1611,9 @@ public class VRSLInspector : ShaderGUI
             GUILayout.Space(5);
             EditorGUI.indentLevel++;
             matEditor.ShaderProperty(_GlobalIntensity, new GUIContent("Global Intensity", "Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity."));
+            EditorGUI.indentLevel++;  
+            matEditor.ShaderProperty(_GlobalIntensityBlend, new GUIContent("Global Intensity Blend", "Sets the overall intensity of the shader. Controls how much the Global Intesnity slider actually affects the output. Good for temporarily disabling animations that use the Global Intesnity property."));
+            EditorGUI.indentLevel--; 
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             matEditor.ShaderProperty(_Emission, new GUIContent("Light Emission Color", "The color of the light!. Use this to color the emissive part of the material."));
@@ -1575,16 +1630,19 @@ public class VRSLInspector : ShaderGUI
         }
 
         //MOVER CONTROLS
-        showMoverControls = VRSLStyles.ShurikenFoldout("Movement Settings", showMoverControls);
-        if(showMoverControls)
+        if(isStaticLight == false && isAudioLink == false)
         {
-            GUILayout.Space(5);
-            EditorGUI.indentLevel++;
-            matEditor.ShaderProperty(_FixtureRotationOrigin, new GUIContent("Fixture Pivot Origin", "Sets the rotation point of the fixture for tilt in object space. Do not change this unless you are trying to make a custom housing."));
-            matEditor.ShaderProperty(_MaxMinPanAngle, new GUIContent("Max/Min Pan Angles (Left/Right)", "Sets the Left/Right rotation range of the fixture by ''-Value to Value''"));
-            matEditor.ShaderProperty(_MaxMinTiltAngle, new GUIContent("Max/Min Tilt Angles (Up/Down)", "Sets the Up/Down rotation range of the fixture by ''-Value to Value''"));
-            EditorGUI.indentLevel--;
-            GUILayout.Space(5);
+            showMoverControls = VRSLStyles.ShurikenFoldout("Movement Settings", showMoverControls);
+            if(showMoverControls)
+            {
+                GUILayout.Space(5);
+                EditorGUI.indentLevel++;
+                matEditor.ShaderProperty(_FixtureRotationOrigin, new GUIContent("Fixture Pivot Origin", "Sets the rotation point of the fixture for tilt in object space. Do not change this unless you are trying to make a custom housing."));
+                matEditor.ShaderProperty(_MaxMinPanAngle, new GUIContent("Max/Min Pan Angles (Left/Right)", "Sets the Left/Right rotation range of the fixture by ''-Value to Value''"));
+                matEditor.ShaderProperty(_MaxMinTiltAngle, new GUIContent("Max/Min Tilt Angles (Up/Down)", "Sets the Up/Down rotation range of the fixture by ''-Value to Value''"));
+                EditorGUI.indentLevel--;
+                GUILayout.Space(5);
+            }
         }
 
         //FIXTURE HOUSING SETTINGS
@@ -1664,6 +1722,7 @@ public class VRSLInspector : ShaderGUI
             matEditor.TexturePropertySingleLine(new GUIContent("Color Sampling Texture", "The texture to sample the color from when ''Enable Color Texture Sampling'' is enabled"),_SamplingTexture);
             matEditor.ShaderProperty(_TextureColorSampleX, new GUIContent("X UV Coordinate", "The x uv coordinate for where on the texture to sample from (0 to 1)."));
             matEditor.ShaderProperty(_TextureColorSampleY, new GUIContent("Y UV Coordinate", "The y uv coordinate for where on the texture to sample from (0 to 1)."));
+            matEditor.ShaderProperty(_RenderTextureMultiplier, new GUIContent("Render Texture Multiplier", "Increase the strength of the render texture color"));
             EditorGUI.indentLevel--;
             GUILayout.Space(5);
         
@@ -1731,6 +1790,9 @@ public class VRSLInspector : ShaderGUI
             GUILayout.Space(5);
             EditorGUI.indentLevel++;
             matEditor.ShaderProperty(_GlobalIntensity, new GUIContent("Global Intensity", "Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity."));
+            EditorGUI.indentLevel++;  
+            matEditor.ShaderProperty(_GlobalIntensityBlend, new GUIContent("Global Intensity Blend", "Sets the overall intensity of the shader. Controls how much the Global Intesnity slider actually affects the output. Good for temporarily disabling animations that use the Global Intesnity property."));
+            EditorGUI.indentLevel--; 
             matEditor.ShaderProperty(_FinalIntensity, new GUIContent("Final Intensity", "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."));
             matEditor.ShaderProperty(_UniversalIntensity, new GUIContent("Universal Intensity", "Sets the maximum brightness value of both Final and GLobal Intensity. Good for personalized settings of the max brightness of the shader by other users via UI. Is non-instanced."));
             matEditor.ShaderProperty(_Multiplier, new GUIContent("Intensity Multiplier", "General purpose intensity multiplier."));

@@ -82,7 +82,16 @@
                 float2 altScreenPos = i.screenPos.xy * perspectiveDivide;
 
 
-                float sceneZ = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenposUV);
+                #if _MULTISAMPLEDEPTH
+                    float2 texelSize = _CameraDepthTexture_TexelSize.xy;
+                    float d1 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenposUV + float2(1.0, 0.0) * texelSize);
+                    float d2 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenposUV + float2(-1.0, 0.0) * texelSize);
+                    float d3 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenposUV + float2(0.0, 1.0) * texelSize);
+                    float d4 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenposUV + float2(0.0, -1.0) * texelSize);
+                    float sceneZ = min(d1, min(d2, min(d3, d4)));
+                #else
+                    float sceneZ = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenposUV);
+                #endif
 
                 #if UNITY_REVERSED_Z
                     if (sceneZ == 0)

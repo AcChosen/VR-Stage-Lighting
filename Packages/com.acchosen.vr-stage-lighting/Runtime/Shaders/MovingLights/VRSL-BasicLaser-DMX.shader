@@ -10,6 +10,7 @@
         _UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
         _FinalIntensity("Final Intensity", Range(0,1)) = 1
         _GlobalIntensity ("Global Intensity", Range(0,1)) = 1
+        _GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
         [HideInInspector]_MainTex ("Texture", 2D) = "white" {}
         [HDR] _MainColor ("Main Color" , Color) = (1.0, 1.0, 1.0, 1.0)
         _Emission ("Instanced Emission Color" , Color) = (1.0, 1.0, 1.0, 1.0)
@@ -114,6 +115,7 @@
                 UNITY_DEFINE_INSTANCED_PROP(float, _VertexConeWidth)
                 UNITY_DEFINE_INSTANCED_PROP(float, _VertexConeLength)
                 UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
+                UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensityBlend)
                 UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
                 UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleX)
                 UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleY)

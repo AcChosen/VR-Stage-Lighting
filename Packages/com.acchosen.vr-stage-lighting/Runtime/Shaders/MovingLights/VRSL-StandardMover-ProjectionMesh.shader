@@ -25,6 +25,7 @@
 		//[Header (BASIC CONTROLS)]
 		[HideInInspector]_FinalIntensity("Final Intensity", Range(0,1)) = 1
 		_GlobalIntensity("Global Intensity", Range(0,1)) = 1
+		_GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
 		_UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
 		[HDR]_Emission("Light Color Tint", Color) = (1,1,1,1)
 		//[HDR]_StaticEmission("Static Light Color Tint", Color) = (1,1,1,1)
@@ -140,6 +141,8 @@
 	// 	_LMStrength("Lightmap Strength", Range(0,1)) = 1
 	// 	_RTLMStrength("Realtime Lightmap Strength", Range(0,1)) = 1
 
+	[Enum(Off,0,On,1)] _MultiSampleDepth ("Multi Sample Depth", Int) = 1
+
 
 
 
@@ -172,6 +175,7 @@
             #pragma vertex vert
             #pragma fragment frag
 			#pragma multi_compile_local _ _ALPHATEST_ON
+			#pragma shader_feature_local _MULTISAMPLEDEPTH
 			//#pragma multi_compile_fog
 			#pragma multi_compile_instancing
 			#pragma instancing_options assumeuniformscaling

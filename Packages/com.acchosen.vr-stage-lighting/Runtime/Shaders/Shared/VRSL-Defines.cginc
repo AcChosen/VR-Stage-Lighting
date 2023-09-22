@@ -136,6 +136,7 @@ float _AlphaProjectionIntensity;
 // int _EnableDMX;
 // int _EnableStrobe;
 UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
+uniform float4 _CameraDepthTexture_TexelSize;
 sampler2D _LightMainTex, _ProjectionMainTex;
 float4 _LightMainTex_ST;
 float _ProjectionUVMod, _UseWorldNorm, _ProjectionRotation, _ProjectionUVMod2, _ProjectionUVMod3, _ProjectionUVMod4, _ProjectionUVMod5, _ProjectionUVMod6, _ProjectionUVMod7, _ProjectionUVMod8;
@@ -143,7 +144,7 @@ float _ProjectionUVMod, _UseWorldNorm, _ProjectionRotation, _ProjectionUVMod2, _
 float4 _ProjectionMainTex_ST;
 float _ModX;
 float _ModY;
-half  _ConeSync, _ProjectionShadowHarshness;
+half  _ConeSync, _ProjectionShadowHarshness, _BlindingStrength;
 //float _StrobeFreq;
 
 float _PulseSpeed, _BlendSrc, _BlendDst, _BlendOp;
@@ -154,7 +155,7 @@ half _RedMultiplier, _GreenMultiplier, _BlueMultiplier;
 int _EnableStaticEmissionColor;
 float4 _StaticEmission;
 half _ProjectionCutoff, _ProjectionOriginCutoff, _GradientMod, _GradientModGOBO;
-half _ClippingThreshold;
+half _ClippingThreshold, _RenderTextureMultiplier;
 //Instanced Properties
 
 UNITY_INSTANCING_BUFFER_START(Props)
@@ -190,6 +191,7 @@ UNITY_INSTANCING_BUFFER_START(Props)
     UNITY_DEFINE_INSTANCED_PROP(float, _ConeWidth)
     UNITY_DEFINE_INSTANCED_PROP(float, _ConeLength)
     UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
+    UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensityBlend)
     UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
     UNITY_DEFINE_INSTANCED_PROP(float, _MaxConeLength)
     UNITY_DEFINE_INSTANCED_PROP(float, _MaxMinPanAngle)

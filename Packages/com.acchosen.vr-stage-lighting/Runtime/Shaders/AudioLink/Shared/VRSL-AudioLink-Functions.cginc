@@ -60,7 +60,7 @@ float4 GetTextureSampleColor()
     float4 rawColor = tex2Dlod(_SamplingTexture, float4(UNITY_ACCESS_INSTANCED_PROP(Props,_TextureColorSampleX), UNITY_ACCESS_INSTANCED_PROP(Props,_TextureColorSampleY), 0, 0));
     float4 h = RGBtoHSV(rawColor.rgb);
     h.z = 1.0;
-    return(HSVtoRGB(h));
+    return(HSVtoRGB(h) * _RenderTextureMultiplier);
 }
 
 float4 GetThemeSampleColor()
@@ -138,7 +138,7 @@ float getMaxConeLength()
 
 float getGlobalIntensity()
 {
-    return UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensity);
+    return lerp(1.0,UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensity), UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensityBlend));
 }
 
 float getFinalIntensity()

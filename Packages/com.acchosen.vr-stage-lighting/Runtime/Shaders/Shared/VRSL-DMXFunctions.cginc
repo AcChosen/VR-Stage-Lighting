@@ -215,7 +215,7 @@ float getMaxConeLength(uint DMXChannel)
 #endif
 float getGlobalIntensity()
 {
-    return UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensity);
+    return lerp(1.0,UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensity), UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensityBlend));
 }
 
 float getFinalIntensity()

@@ -77,9 +77,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AlphaProjectionIntensity: 0.5
+    - _AlphaToCoverage: 0
     - _Band: 0
     - _BandMultiplier: 1
+    - _BlendDst: 1
+    - _BlendOp: 0
     - _BumpScale: 1
+    - _ClippingThreshold: 0.5
     - _ColorSat: 0
     - _CurveMod: 5
     - _Cutoff: 0.5
@@ -113,6 +118,8 @@ Material:
     - _Parallax: 0.02
     - _ReferenceDistance: 10
     - _RemoveTextureArtifact: 0.0045
+    - _RenderMode: 1
+    - _RenderTextureMultiplier: 2
     - _ScaleFactor: 0
     - _Sector: 0
     - _ShouldDoFlicker: 0

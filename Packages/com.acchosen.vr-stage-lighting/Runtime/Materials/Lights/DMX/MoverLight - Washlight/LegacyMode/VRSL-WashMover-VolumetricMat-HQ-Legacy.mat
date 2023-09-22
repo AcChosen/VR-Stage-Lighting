@@ -10,7 +10,7 @@ Material:
   m_Name: VRSL-WashMover-VolumetricMat-HQ-Legacy
   m_Shader: {fileID: 4800000, guid: da75de52174b0924f9a93e9a37146aed, type: 3}
   m_ShaderKeywords: _2D_NOISE_ON _DNENABLER_NONE _ENABLECOMPATIBILITYMODE_ON _ENABLEOSC_ON
-    _ENABLESPIN_ON _MAGIC_NOISE_ON_HIGH _MAGIC_NOISE_ON_MED _TOGGLEMAGICNOISE_ON
+    _ENABLESPIN_ON _HQ_MODE _MAGIC_NOISE_ON_HIGH _MAGIC_NOISE_ON_MED _TOGGLEMAGICNOISE_ON
     _USERAWGRID_ON _USE_DEPTH_LIGHT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
@@ -114,6 +114,7 @@ Material:
     - _BlendOp: 0
     - _BlendSrc: 2
     - _BlindingAngleMod: 1
+    - _BlindingStrength: 1
     - _BlueMultiplier: 1
     - _BumpScale: 1
     - _ConeLength: 1
@@ -148,7 +149,7 @@ Material:
     - _GradientMod: 2.25
     - _GradientModGOBO: 2.25
     - _GreenMultiplier: 1
-    - _HQMode: 0
+    - _HQMode: 1
     - _InnerFadeStrength: 12
     - _InnerIntensityCurve: 20
     - _IntensityCutoff: 0
@@ -207,7 +208,7 @@ Material:
     - _PulseSpeed: 0
     - _RTLMStrength: 1
     - _RedMultiplier: 1
-    - _RenderMode: 1
+    - _RenderMode: 0
     - _Saturation: 0
     - _SaturationLength: 14
     - _Sector: 0
@@ -233,7 +234,7 @@ Material:
     - _TiltInvert: 0
     - _ToggleMagicNoise: 1
     - _TriplanarFalloff: 1
-    - _UniversalIntensity: 1
+    - _UniversalIntensity: 0.4
     - _UseDepthLight: 1
     - _UseRawGrid: 1
     - _UseWorldNorm: 0

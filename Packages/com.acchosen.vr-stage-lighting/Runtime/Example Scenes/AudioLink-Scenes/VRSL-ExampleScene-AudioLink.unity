@@ -4156,6 +4156,12 @@ PrefabInstance:
       propertyPath: NetworkIDs.Array.data[57].gameObject
       value: 
       objectReference: {fileID: 82241586}
+    - target: {fileID: 8464459589408506562, guid: 8894fa7e4588a5c4fab98453e558847d,
+        type: 3}
+      propertyPath: serializedProgramAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: d46ac3a4661463a45b9b61a8673d8df3,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8894fa7e4588a5c4fab98453e558847d, type: 3}
 --- !u!1 &798058616 stripped
@@ -6605,7 +6611,7 @@ ReflectionProbe:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IntensityMultiplier: 1
+  m_IntensityMultiplier: 1.25
   m_BlendDistance: 1
   m_HDR: 1
   m_BoxProjection: 1

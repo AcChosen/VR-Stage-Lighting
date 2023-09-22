@@ -15,11 +15,26 @@ UNITY_INSTANCING_BUFFER_START(Props)
     UNITY_DEFINE_INSTANCED_PROP(float4, _EmissionDMX)
     UNITY_DEFINE_INSTANCED_PROP(float, _ConeWidth)  
     UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
+    UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensityBlend)
     UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
     UNITY_DEFINE_INSTANCED_PROP(float, _ConeLength)
     UNITY_DEFINE_INSTANCED_PROP(float, _MaxConeLength)
     UNITY_DEFINE_INSTANCED_PROP(float, _MaxMinPanAngle)
     UNITY_DEFINE_INSTANCED_PROP(float, _MaxMinTiltAngle)
+
+    #ifdef _VRSL_AUDIOLINK_ON
+        UNITY_DEFINE_INSTANCED_PROP(float, _EnableAudioLink)
+        UNITY_DEFINE_INSTANCED_PROP(float, _EnableColorChord)
+        UNITY_DEFINE_INSTANCED_PROP(float, _NumBands)
+        UNITY_DEFINE_INSTANCED_PROP(float, _Band)
+        UNITY_DEFINE_INSTANCED_PROP(float, _BandMultiplier)
+        UNITY_DEFINE_INSTANCED_PROP(float, _Delay)
+        UNITY_DEFINE_INSTANCED_PROP(uint, _EnableColorTextureSample)
+        UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleX)
+        UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleY)
+        UNITY_DEFINE_INSTANCED_PROP(float, _ThemeColorTarget)
+        UNITY_DEFINE_INSTANCED_PROP(uint, _EnableThemeColorSampling)    
+    #endif
     
 UNITY_INSTANCING_BUFFER_END(Props)
 
@@ -61,7 +76,7 @@ float4 getAltBaseEmission()
 
 float getGlobalIntensity()
 {
-    return UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensity);
+    return lerp(1.0,UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensity), UNITY_ACCESS_INSTANCED_PROP(Props, _GlobalIntensityBlend));
 }
 
 float getFinalIntensity()

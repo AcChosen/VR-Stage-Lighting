@@ -119,6 +119,7 @@ Material:
     - _ReferenceDistance: 10
     - _RemoveTextureArtifact: 0.0045
     - _RenderMode: 1
+    - _RenderTextureMultiplier: 2
     - _ScaleFactor: 0
     - _Sector: 0
     - _ShouldDoFlicker: 0

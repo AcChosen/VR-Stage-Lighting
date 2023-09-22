@@ -182,6 +182,7 @@ Material:
     - _ProjectionUVMod6: 0.159
     - _PulseSpeed: 0
     - _RTLMStrength: 1
+    - _RenderTextureMultiplier: 2
     - _Saturation: 0.581
     - _SaturationLength: 0.1
     - _Sector: 0

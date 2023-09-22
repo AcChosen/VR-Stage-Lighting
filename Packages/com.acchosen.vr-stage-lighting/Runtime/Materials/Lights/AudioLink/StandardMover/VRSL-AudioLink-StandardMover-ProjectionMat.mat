@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-AudioLink-StandardMover-ProjectionMat
   m_Shader: {fileID: 4800000, guid: 3f32e1ea57484e441afcd2f990b2f89e, type: 3}
-  m_ShaderKeywords: _DNENABLER_NONE _USERAWGRID_ON
+  m_ShaderKeywords: _DNENABLER_NONE _MULTISAMPLEDEPTH _USERAWGRID_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -157,6 +157,7 @@ Material:
     - _MinimumBeamRadius: 0.94
     - _ModX: 0
     - _ModY: 0
+    - _MultiSampleDepth: 1
     - _NoisePower: 0.333
     - _NoiseSeed: 420
     - _NumBands: 4
@@ -183,6 +184,7 @@ Material:
     - _RTLMStrength: 1
     - _RedMultiplier: 1
     - _RenderMode: 1
+    - _RenderTextureMultiplier: 2
     - _Saturation: 0.5
     - _SaturationLength: 0.1
     - _Sector: 0

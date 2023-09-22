@@ -429,13 +429,17 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 
 		if( i.uv.x < 0.001 == false)
 		{
+			float blinding = i.blindingEffect;
+			//#ifdef VRSL_AUDIOLINK
+				blinding = lerp(1.0, blinding, _BlindingStrength);
+			//#endif
 			#ifdef _ALPHATEST_ON
-				result = lerp(result, result*i.blindingEffect * 20, gradientTexture);
+				result = lerp(result, result*blinding * 20, gradientTexture);
 				#ifdef WASH
 					maxIntensity +=0.25;
 				#endif
 			#else
-				result = lerp(result, result*i.blindingEffect * i.blindingEffect * 10, gradientTexture);
+				result = lerp(result, result*blinding * blinding * 10, gradientTexture);
 			#endif
 			result *= saturate(maxIntensity - (lerp(0.15, maxIntensity * 0.95, pow(widthNormalized,0.4))));
 			

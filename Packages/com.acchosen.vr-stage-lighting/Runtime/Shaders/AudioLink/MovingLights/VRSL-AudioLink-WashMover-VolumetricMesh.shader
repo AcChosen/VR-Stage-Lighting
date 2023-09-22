@@ -29,10 +29,12 @@
          _Delay("Delay", Float) = 0
          _NumBands("Num Bands", Float) = 4
          _AudioSpectrum("AudioSpectrum", 2D) = "black" {}
-
+		_RenderTextureMultiplier("Render Texture Multiplier", Range(1,10)) = 1
 		//[Header (BASIC CONTROLS)]
+		_BlindingStrength("Blinding Strength", Range(0,1)) = 1
 		_FinalIntensity("Final Intensity", Range(0,1)) = 1
 		_GlobalIntensity("Global Intensity", Range(0,1)) = 1
+		_GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
 		_UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
 		[HDR]_Emission("Light Color Tint", Color) = (1,1,1,1)
 		_Saturation("Final Saturation", Range(0,1)) = 1
@@ -198,7 +200,7 @@
 
 			struct v2f
 			{
-				float2 uv : TEXCOORD0;
+				centroid float2 uv : TEXCOORD0;
 				float blindingEffect : TEXCOORD1;
 				float4 worldPos : TEXCOORD2;
 				float4 color : TEXCOORD3;

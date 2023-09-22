@@ -283,7 +283,7 @@ public class AudioLinkListItem
     public VRStageLighting_AudioLink_Laser laser;
     //////////////////////////////////////////////////////////////////////////
     private bool Z_enableAudioLink; public bool P_enableAudioLink;
-    private int Z_band; public int P_band;
+    private AudioLinkBandState Z_band; public AudioLinkBandState P_band;
     private int Z_delay; public int P_delay;
     private float Z_bandMultiplier; public float P_bandMultiplier;
     private bool Z_enableColorChord; public bool P_enableColorChord;
@@ -457,7 +457,7 @@ public class AudioLinkListItem
 
         var so = new SerializedObject(light);
         so.FindProperty("enableAudioLink").boolValue = P_enableAudioLink;
-        so.FindProperty("band").intValue = P_band;
+        so.FindProperty("band").enumValueIndex = (int) P_band;
         so.FindProperty("delay").intValue = P_delay;
         so.FindProperty("bandMultiplier").floatValue = P_bandMultiplier;
         so.FindProperty("enableColorChord").boolValue = P_enableColorChord; 
@@ -520,7 +520,7 @@ public class AudioLinkListItem
 
         var so = new SerializedObject(laser);
         so.FindProperty("enableAudioLink").boolValue = P_enableAudioLink;
-        so.FindProperty("band").intValue = P_band;
+        so.FindProperty("band").enumValueIndex = (int) P_band;
         so.FindProperty("delay").intValue = P_delay;
         so.FindProperty("bandMultiplier").floatValue = P_bandMultiplier;
         so.FindProperty("enableColorChord").boolValue = P_enableColorChord; 
@@ -3697,7 +3697,7 @@ public class VRSL_ManagerWindow : EditorWindow {
                                 
                                 if(fixture.isLaser)
                                 {
-                                    if(fixture.laser.Band == i)
+                                    if((int) fixture.laser.Band == i)
                                     {
                                         EditorGUILayout.BeginHorizontal();
                                         GUILayout.Space(15f);
@@ -3784,7 +3784,9 @@ public class VRSL_ManagerWindow : EditorWindow {
                                             GUILayout.Label("AudioLink Settings", SecLabel());
                                             GUILayout.Space(8.0f);
                                             fixture.P_enableAudioLink = EditorGUILayout.Toggle("Enable AudioLink", fixture.P_enableAudioLink);
-                                            fixture.P_band = EditorGUILayout.IntField("Band", fixture.P_band, GUILayout.MaxWidth(sectionWidth - 10));
+                                            //fixture.P_band = EditorGUILayout.IntField("Band", fixture.P_band, GUILayout.MaxWidth(sectionWidth - 10));
+                                            fixture.P_band = (AudioLinkBandState) EditorGUILayout.EnumPopup("Band", fixture.P_band, GUILayout.MaxWidth(sectionWidth - 10));
+
                                             fixture.P_delay = EditorGUILayout.IntSlider("Delay",fixture.P_delay, 0, 31, GUILayout.MaxWidth(sectionWidth - 10));
                                             fixture.P_bandMultiplier = EditorGUILayout.Slider("Band Multiplier",fixture.P_bandMultiplier, 1f, 15f, GUILayout.MaxWidth(sectionWidth - 10));
                                             fixture.P_enableColorChord = EditorGUILayout.Toggle("Enable Color Chord", fixture.P_enableColorChord);
@@ -3825,7 +3827,7 @@ public class VRSL_ManagerWindow : EditorWindow {
                                 }
                                 else
                                 {
-                                    if(fixture.light.Band == i)
+                                    if((int) fixture.light.Band == i)
                                     {
                                         EditorGUILayout.BeginHorizontal();
                                         GUILayout.Space(15f);
@@ -3913,7 +3915,9 @@ public class VRSL_ManagerWindow : EditorWindow {
                                             GUILayout.Label("AudioLink Settings", SecLabel());
                                             GUILayout.Space(8.0f);
                                             fixture.P_enableAudioLink = EditorGUILayout.Toggle("Enable AudioLink", fixture.P_enableAudioLink);
-                                            fixture.P_band = EditorGUILayout.IntField("Band", fixture.P_band, GUILayout.MaxWidth(sectionWidth - 10));
+                                           // fixture.P_band = EditorGUILayout.IntField("Band", fixture.P_band, GUILayout.MaxWidth(sectionWidth - 10));
+                                            fixture.P_band = (AudioLinkBandState) EditorGUILayout.EnumPopup("Band", fixture.P_band, GUILayout.MaxWidth(sectionWidth - 10));
+
                                             fixture.P_delay = EditorGUILayout.IntSlider("Delay",fixture.P_delay, 0, 31, GUILayout.MaxWidth(sectionWidth - 10));
                                             fixture.P_bandMultiplier = EditorGUILayout.Slider("Band Multiplier",fixture.P_bandMultiplier, 1f, 15f, GUILayout.MaxWidth(sectionWidth - 10));
                                             fixture.P_enableColorChord = EditorGUILayout.Toggle("Enable Color Chord", fixture.P_enableColorChord);

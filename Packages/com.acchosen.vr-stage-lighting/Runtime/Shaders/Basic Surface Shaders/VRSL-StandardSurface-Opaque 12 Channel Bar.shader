@@ -23,6 +23,7 @@
         _FixtureMaxIntensity ("Maximum Light Intensity",Range (0,15)) = 1
         _Saturation ("Color Saturation", Range (0,1)) = 0.95
         _GlobalIntensity("Global Intensity", Range(0,1)) = 1
+        _GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
         _FinalIntensity("Final Intensity", Range(0,1)) = 1
         _UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
         

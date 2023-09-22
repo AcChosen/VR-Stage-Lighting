@@ -18,7 +18,7 @@ Shader "VRSL/AudioLink/Standard Mover/Projection"
 		[Header(Audio Section)]
          [Toggle]_EnableAudioLink("Enable Audio Link", Float) = 0
 		 [Toggle] _EnableColorChord ("Enable Color Chord Tinting", Int) = 0
-         _Band("Band", Float) = 0
+         [Enum(Bass,0,Low Mids,1,High Mids,2,Treble,3)]_Band("Band", Float) = 0
          _BandMultiplier("Band Multiplier", Range(1, 15)) = 1
          _Delay("Delay", Float) = 0
          _NumBands("Num Bands", Float) = 4
@@ -27,6 +27,7 @@ Shader "VRSL/AudioLink/Standard Mover/Projection"
 		//[Header (BASIC CONTROLS)]
 		_FinalIntensity("Final Intensity", Range(0,1)) = 1
 		_GlobalIntensity("Global Intensity", Range(0,1)) = 1
+		_GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
 		_UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
 		[HDR]_Emission("Light Color Tint", Color) = (1,1,1,1)
 		[HDR]_StaticEmission("Static Light Color Tint", Color) = (1,1,1,1)
@@ -43,6 +44,7 @@ Shader "VRSL/AudioLink/Standard Mover/Projection"
 		[Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Source Blend mode", Float) = 2
 		//[Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Destination Blend mode", Float) = 1
 		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
+		_RenderTextureMultiplier("Render Texture Multiplier", Range(1,10)) = 1
 		//[Space(16)]
 
 		//Color Texture Sampling Properties
@@ -114,11 +116,14 @@ Shader "VRSL/AudioLink/Standard Mover/Projection"
 
 		[Enum(Transparent,1,AlphaToCoverage,2)] _RenderMode ("Render Mode", Int) = 1
         [Enum(Off,0,On,1)] _ZWrite ("Z Write", Int) = 0
+		
 		[Enum(Off,0,On,1)] _AlphaToCoverage ("Alpha To Coverage", Int) = 0
         [Enum(Off,0,One,1)] _BlendDst ("Destination Blend mode", Float) = 1
 		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
         _ClippingThreshold ("Clipping Threshold", Range (0,1)) = 0.5
 		_MinimumBeamRadius ("Minimum Beam Radius", Range(0.001,1)) = 1
+
+		[Enum(Off,0,On,1)] _MultiSampleDepth ("Multi Sample Depth", Int) = 1
 
 
 	}
@@ -150,6 +155,7 @@ Shader "VRSL/AudioLink/Standard Mover/Projection"
             #pragma vertex vert
             #pragma fragment frag
 			#pragma multi_compile_local _ _ALPHATEST_ON
+			#pragma shader_feature_local _MULTISAMPLEDEPTH
 			//#pragma multi_compile_fog
 			#pragma multi_compile_instancing
 			#pragma instancing_options assumeuniformscaling

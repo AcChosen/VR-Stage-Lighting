@@ -6,7 +6,7 @@
 		//[Header (INSTANCED PROPERITES)]
 		 [HideInInspector][Toggle] _PanInvert ("Invert Mover Pan", Int) = 0
 		 [HideInInspector][Toggle] _TiltInvert ("Invert Mover Tilt", Int) = 0
-
+		_RenderTextureMultiplier("Render Texture Multiplier", Range(1,10)) = 1
 		 //[HideInInspector]_FinalStrobeFreq ("Final Strobe Frequency", Float) = 0
 		 //[HideInInspector]_NewTimer("New Timer From Udon For Strobe", Float) = 0
 		 [HideInInspector]_FixtureBaseRotationY("Mover Pan Offset (Blue + Green)", Range(-540,540)) = 0
@@ -27,6 +27,7 @@
 		//[Header (BASIC CONTROLS)]
 		_FinalIntensity("Final Intensity", Range(0,1)) = 1
 		_GlobalIntensity("Global Intensity", Range(0,1)) = 1
+		_GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
 		_UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
 		[HDR]_Emission("Light Color Tint", Color) = (1,1,1,1)
 		[HDR]_StaticEmission("Static Light Color Tint", Color) = (1,1,1,1)
@@ -117,6 +118,8 @@
         _ClippingThreshold ("Clipping Threshold", Range (0,1)) = 0.5
 		_MinimumBeamRadius ("Minimum Beam Radius", Range(0.001,1)) = 1
 
+		[Enum(Off,0,On,1)] _MultiSampleDepth ("Multi Sample Depth", Int) = 1
+
 
 	}
 		SubShader
@@ -147,6 +150,7 @@
             #pragma vertex vert
             #pragma fragment frag
 			#pragma multi_compile_local _ _ALPHATEST_ON
+			#pragma shader_feature_local _MULTISAMPLEDEPTH
 			//#pragma multi_compile_fog
 			#pragma multi_compile_instancing
 			#pragma instancing_options assumeuniformscaling

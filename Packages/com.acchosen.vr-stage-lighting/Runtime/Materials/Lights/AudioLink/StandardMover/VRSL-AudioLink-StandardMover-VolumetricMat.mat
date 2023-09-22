@@ -10,7 +10,7 @@ Material:
   m_Name: VRSL-AudioLink-StandardMover-VolumetricMat
   m_Shader: {fileID: 4800000, guid: a9ae9924e60e8b04293b700af7aba257, type: 3}
   m_ShaderKeywords: _2D_NOISE_ON _DNENABLER_NONE _ENABLEOSC_ON _ENABLESPIN_ON _GOBOBEAMSPLITENABLE_ON
-    _MAGIC_NOISE_ON_HIGH _MAGIC_NOISE_ON_MED _MAGIC_NOISE_ON_ON _TOGGLEMAGICNOISE_ON
+    _HQ_MODE _MAGIC_NOISE_ON_HIGH _MAGIC_NOISE_ON_MED _MAGIC_NOISE_ON_ON _TOGGLEMAGICNOISE_ON
     _USEDEPTHLIGHT_ON _USERAWGRID_ON _USE_DEPTH_LIGHT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
@@ -120,6 +120,7 @@ Material:
     - _BlendOp: 0
     - _BlendSrc: 1
     - _BlindingAngleMod: 0.25
+    - _BlindingStrength: 1
     - _BlueMultiplier: 1
     - _BumpScale: 1
     - _ConeLength: 2.13
@@ -140,12 +141,12 @@ Material:
     - _EnableThemeColorSampling: 0
     - _Fade: 1.5
     - _FadeAmt: 35
-    - _FadeStrength: 10
+    - _FadeStrength: 8
     - _FeatherOffset: 0.5
     - _FinalIntensity: 1
     - _FinalStrobeFreq: 0
     - _FixtureBaseRotationY: 0
-    - _FixtureMaxIntensity: 0.4
+    - _FixtureMaxIntensity: 0.6
     - _FixtureRotationX: 0
     - _GlobalIntensity: 1
     - _Glossiness: 1
@@ -153,7 +154,7 @@ Material:
     - _GradientMod: 2.248
     - _GradientModGOBO: 2.25
     - _GreenMultiplier: 1
-    - _HQMode: 0
+    - _HQMode: 1
     - _InnerFadeStrength: 7
     - _InnerIntensityCurve: 12
     - _IntensityCutoff: 0
@@ -213,7 +214,8 @@ Material:
     - _PulseSpeed: 0
     - _RTLMStrength: 1
     - _RedMultiplier: 1
-    - _RenderMode: 1
+    - _RenderMode: 0
+    - _RenderTextureMultiplier: 2
     - _Saturation: 1
     - _SaturationLength: 14.91
     - _Sector: 0
@@ -244,7 +246,7 @@ Material:
     - _TiltInvert: 0
     - _ToggleMagicNoise: 1
     - _TriplanarFalloff: 1
-    - _UniversalIntensity: 1
+    - _UniversalIntensity: 0.4
     - _UseDepthLight: 1
     - _UseRawGrid: 1
     - _UseWorldNorm: 0
@@ -253,7 +255,7 @@ Material:
     - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Emission: {r: 2.354159, g: 2.354159, b: 2.354159, a: 2}
+    - _Emission: {r: 2.6701574, g: 0, b: 2.5293853, a: 1}
     - _EmissionColor: {r: 9.363626, g: 9.363626, b: 9.363626, a: 3}
     - _FixtureRotationOrigin: {r: 0, g: 0, b: 0, a: 0}
     - _LightColor: {r: 23.968628, g: 23.968628, b: 23.968628, a: 1}

@@ -21,10 +21,12 @@
 		 [HideInInspector]_StrobeFreq("Strobe Frequency", Range(0,25)) = 1
 		 [HideInInspector][Toggle] _EnableSpin("Enable Auto Spinning", Float) = 0
 		 [Toggle] _LegacyGoboRange ("Enable Legacy GOBO Range", Int) = 0
+		 _BlindingStrength("Blinding Strength", Range(0,1)) = 1
 
 		//[Header (BASIC CONTROLS)]
 		_FinalIntensity("Final Intensity", Range(0,1)) = 1
 		_GlobalIntensity("Global Intensity", Range(0,1)) = 1
+		_GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
 		_UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
 		[HDR]_Emission("Light Color Tint", Color) = (1,1,1,1)
 		_Saturation("Final Saturation", Range(0,1)) = 1

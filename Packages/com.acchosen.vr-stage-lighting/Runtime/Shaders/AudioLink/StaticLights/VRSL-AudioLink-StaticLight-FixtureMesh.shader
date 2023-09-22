@@ -17,7 +17,7 @@
 		 _SamplingTexture ("Texture To Sample From for Color", 2D) = "white" {}
 		 _TextureColorSampleX ("X coordinate to sample the texture from", Range(0,1)) = 0.5
 		 _TextureColorSampleY ("Y coordinate to sample the texture from", Range(0,1)) = 0.5
-
+        _RenderTextureMultiplier("Render Texture Multiplier", Range(1,10)) = 1
 
         [Toggle] _EnableOSC ("Enable Stream OSC/DMX Control", Int) = 0
         _FixutreIntensityMultiplier ("Intensity Multipler (For Bloom Scaling)", Range(1,15)) = 1
@@ -36,6 +36,7 @@
          _AudioSpectrum("AudioSpectrum", 2D) = "black" {}
         _FinalIntensity("Final Intensity", Range(0,1)) = 1
         _GlobalIntensity("Global Intensity", Range(0,1)) = 1
+        _GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
         _UniversalIntensity ("Universal Intensity", Range (0,1)) = 1
         [HDR]_Emission("Light Color Tint", Color) = (1,1,1,1)
         _CurveMod ("Light Intensity Curve Modifier", Range (-3,8)) = 5.0
