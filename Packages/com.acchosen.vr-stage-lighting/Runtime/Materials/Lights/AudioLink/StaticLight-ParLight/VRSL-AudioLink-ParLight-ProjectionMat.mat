@@ -124,6 +124,7 @@ Material:
     - _FixtureMaxIntensity: 1.97
     - _FixtureRotationX: 0
     - _GlobalIntensity: 1
+    - _GlobalIntensityBlend: 1
     - _Glossiness: 1
     - _GreenMultiplier: 1
     - _LMStrength: 1
@@ -133,6 +134,7 @@ Material:
     - _Metallic: 0.498
     - _ModX: -0.12
     - _ModY: -0.37
+    - _MultiSampleDepth: 1
     - _NumBands: 4
     - _ProjectionDistanceFallOff: 0
     - _ProjectionFade: 1.73
@@ -152,6 +154,7 @@ Material:
     - _RTLMStrength: 1
     - _RedMultiplier: 1
     - _RenderMode: 1
+    - _RenderTextureMultiplier: 1
     - _Sector: 0
     - _SpecLMOcclusionAdjust: 0.2
     - _SpecularLMOcclusion: 0

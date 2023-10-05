@@ -142,6 +142,7 @@ Material:
     - _FixtureMaxIntensity: 0.393
     - _FixtureRotationX: 0
     - _GlobalIntensity: 1
+    - _GlobalIntensityBlend: 1
     - _Glossiness: 1
     - _GreenMultiplier: 1
     - _InnerFadeStrength: 0.58
@@ -163,10 +164,10 @@ Material:
     - _NumBands: 4
     - _PanInvert: 0
     - _ProjectionCutoff: 0.25
-    - _ProjectionDistanceFallOff: 0.006
+    - _ProjectionDistanceFallOff: 0.004
     - _ProjectionFade: 2.35
     - _ProjectionFadeCurve: 1.99
-    - _ProjectionIntensity: 3
+    - _ProjectionIntensity: 2
     - _ProjectionOriginCutoff: 0.25
     - _ProjectionRange: 8
     - _ProjectionRotation: -180

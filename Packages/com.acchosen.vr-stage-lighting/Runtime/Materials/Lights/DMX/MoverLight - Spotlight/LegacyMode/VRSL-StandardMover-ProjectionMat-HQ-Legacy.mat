@@ -139,6 +139,7 @@ Material:
     - _FixtureMaxIntensity: 0.393
     - _FixtureRotationX: 180
     - _GlobalIntensity: 1
+    - _GlobalIntensityBlend: 1
     - _Glossiness: 1
     - _GreenMultiplier: 1
     - _InnerFadeStrength: 0.58
@@ -155,6 +156,7 @@ Material:
     - _MinimumBeamRadius: 1
     - _ModX: 0
     - _ModY: 0
+    - _MultiSampleDepth: 1
     - _NineUniverseMode: 0
     - _NoisePower: 0.333
     - _NoiseSeed: 420

@@ -10,8 +10,8 @@ Material:
   m_Name: VRSL-AudioLink-WashMover-VolumetricMat
   m_Shader: {fileID: 4800000, guid: e94b1a2d8b9ef034da37a82c4fb64b60, type: 3}
   m_ShaderKeywords: _2D_NOISE_ON _DNENABLER_NONE _ENABLECOLORTEXTURESAMPLE_ON _ENABLEOSC_ON
-    _ENABLESPIN_ON _GOBOBEAMSPLITENABLE_ON _HQMODE_ON _HQ_MODE _MAGIC_NOISE_ON_HIGH
-    _MAGIC_NOISE_ON_MED _TOGGLEMAGICNOISE_ON _USEDEPTHLIGHT_ON _USERAWGRID_ON _USE_DEPTH_LIGHT
+    _ENABLESPIN_ON _GOBOBEAMSPLITENABLE_ON _HQMODE_ON _MAGIC_NOISE_ON_HIGH _MAGIC_NOISE_ON_MED
+    _TOGGLEMAGICNOISE_ON _USEDEPTHLIGHT_ON _USERAWGRID_ON _USE_DEPTH_LIGHT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -120,7 +120,7 @@ Material:
     - _BlendOp: 0
     - _BlendSrc: 2
     - _BlindingAngleMod: 0.2
-    - _BlindingStrength: 0.25
+    - _BlindingStrength: 0
     - _BlueMultiplier: 1
     - _BumpScale: 1
     - _ConeLength: 3.45
@@ -141,20 +141,21 @@ Material:
     - _EnableThemeColorSampling: 0
     - _Fade: 1.5
     - _FadeAmt: 95
-    - _FadeStrength: 5.03
+    - _FadeStrength: 3
     - _FeatherOffset: 0.5
     - _FinalIntensity: 1
     - _FinalStrobeFreq: 0
     - _FixtureBaseRotationY: 0
-    - _FixtureMaxIntensity: 0.2
+    - _FixtureMaxIntensity: 0.185
     - _FixtureRotationX: 0
     - _GlobalIntensity: 1
+    - _GlobalIntensityBlend: 1
     - _Glossiness: 1
     - _GoboBeamSplitEnable: 1
     - _GradientMod: 2.25
     - _GradientModGOBO: 2.25
     - _GreenMultiplier: 1
-    - _HQMode: 1
+    - _HQMode: 0
     - _InnerFadeStrength: 13.44
     - _InnerIntensityCurve: 20
     - _IntensityCutoff: 0
@@ -171,7 +172,7 @@ Material:
     - _MaxMinPanAngle: 0
     - _MaxMinTiltAngle: 0
     - _Metallic: 0.501
-    - _MinimumBeamRadius: 0.9
+    - _MinimumBeamRadius: 0.85
     - _ModX: 0
     - _ModY: 0
     - _Noise2Power: 0.6
@@ -214,7 +215,7 @@ Material:
     - _PulseSpeed: 0
     - _RTLMStrength: 1
     - _RedMultiplier: 1
-    - _RenderMode: 0
+    - _RenderMode: 1
     - _RenderTextureMultiplier: 3
     - _Saturation: 0
     - _SaturationLength: 14.1
@@ -246,7 +247,7 @@ Material:
     - _TiltInvert: 0
     - _ToggleMagicNoise: 1
     - _TriplanarFalloff: 1
-    - _UniversalIntensity: 0.4
+    - _UniversalIntensity: 1
     - _UseDepthLight: 1
     - _UseRawGrid: 1
     - _UseWorldNorm: 0

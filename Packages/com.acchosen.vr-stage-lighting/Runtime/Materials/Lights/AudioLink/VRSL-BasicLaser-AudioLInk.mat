@@ -85,6 +85,7 @@ Material:
     - _FinalIntensity: 1
     - _FlatEdgeFadeStrength: 4.82
     - _GlobalIntensity: 1
+    - _GlobalIntensityBlend: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -99,6 +100,7 @@ Material:
     - _Multiplier: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _RenderTextureMultiplier: 1
     - _Scroll: 0.022
     - _SmoothnessTextureChannel: 0
     - _SourceIntensity: 5

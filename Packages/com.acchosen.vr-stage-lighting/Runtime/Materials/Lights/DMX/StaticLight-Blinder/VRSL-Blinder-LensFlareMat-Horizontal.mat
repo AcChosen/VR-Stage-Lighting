@@ -96,6 +96,7 @@ Material:
     - _FlickResultIntensityLowestPoint: 0.5
     - _FlickerAnimSpeed: 5
     - _GlobalIntensity: 0.538
+    - _GlobalIntensityBlend: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1

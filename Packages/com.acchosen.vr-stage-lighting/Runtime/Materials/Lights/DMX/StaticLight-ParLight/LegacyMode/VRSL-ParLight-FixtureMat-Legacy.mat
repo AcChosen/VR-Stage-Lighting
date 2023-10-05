@@ -150,6 +150,7 @@ Material:
     - _FixtureRotationX: 0
     - _FixutreIntensityMultiplier: 15
     - _GlobalIntensity: 1
+    - _GlobalIntensityBlend: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.609
     - _GlossyReflections: 1

@@ -136,6 +136,7 @@ Material:
     - _FixtureRotationX: 180
     - _FixutreIntensityMultiplier: 3
     - _GlobalIntensity: 1
+    - _GlobalIntensityBlend: 1
     - _Glossiness: 0.877
     - _InnerFadeStrength: 0.58
     - _InnerIntensityCurve: -1.3

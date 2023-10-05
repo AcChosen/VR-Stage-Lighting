@@ -156,6 +156,7 @@ Material:
     - _FixtureRotationX: 0
     - _FixutreIntensityMultiplier: 4
     - _GlobalIntensity: 1
+    - _GlobalIntensityBlend: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.563
     - _GlossyReflections: 1
@@ -187,6 +188,7 @@ Material:
     - _ProjectionUVMod6: 0
     - _PulseSpeed: 0
     - _RTLMStrength: 1
+    - _RenderTextureMultiplier: 1
     - _Sector: 0
     - _SmoothnessTextureChannel: 0
     - _SpecLMOcclusionAdjust: 0.359

@@ -23,6 +23,7 @@
         [Enum(Off,0,One,1)] _BlendDst ("Destination Blend mode", Float) = 1
 		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
         _ClippingThreshold ("Clipping Threshold", Range (0,1)) = 0.5
+        _GlobalIntensityBlend("Global Intensity Blend", Range(0,1)) = 1
 
      }
      SubShader

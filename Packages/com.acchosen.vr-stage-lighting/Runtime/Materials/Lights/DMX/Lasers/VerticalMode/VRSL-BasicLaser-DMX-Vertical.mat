@@ -74,6 +74,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EnableCompatibilityMode: 0
+    - _EnableDMX: 0
     - _EnableOSC: 0
     - _EnableVerticalMode: 1
     - _EndFade: 3
@@ -82,6 +83,7 @@ Material:
     - _FinalIntensity: 1
     - _FlatEdgeFadeStrength: 2.55
     - _GlobalIntensity: 1
+    - _GlobalIntensityBlend: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -99,6 +101,7 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Scroll: 0.092
+    - _ScrollOffset: 0.00001
     - _Sector: 0
     - _SmoothnessTextureChannel: 0
     - _SourceIntensity: 0.041

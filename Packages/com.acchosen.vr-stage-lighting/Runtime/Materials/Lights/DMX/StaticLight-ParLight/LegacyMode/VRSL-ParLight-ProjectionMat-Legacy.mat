@@ -113,6 +113,7 @@ Material:
     - _FixtureMaxIntensity: 1.97
     - _FixtureRotationX: 0
     - _GlobalIntensity: 1
+    - _GlobalIntensityBlend: 1
     - _Glossiness: 1
     - _GreenMultiplier: 1
     - _LMStrength: 1
@@ -122,6 +123,7 @@ Material:
     - _Metallic: 0.498
     - _ModX: -0.12
     - _ModY: -0.37
+    - _MultiSampleDepth: 1
     - _NineUniverseMode: 0
     - _ProjectionDistanceFallOff: 0
     - _ProjectionFade: 1.73

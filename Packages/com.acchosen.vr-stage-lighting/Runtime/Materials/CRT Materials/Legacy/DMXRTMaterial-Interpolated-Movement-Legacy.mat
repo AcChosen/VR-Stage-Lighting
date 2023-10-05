@@ -85,10 +85,10 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _MaximumSmoothnessDMX: 0.5
+    - _MaximumSmoothnessDMX: 0.32258067
     - _MaximumSmoothnessOSC: 0.15
     - _Metallic: 0
-    - _MinimumSmoothnessDMX: 0.25
+    - _MinimumSmoothnessDMX: 0.16129033
     - _MinimumSmoothnessOSC: 0.0025
     - _Mode: 0
     - _NineUniverseMode: 0
