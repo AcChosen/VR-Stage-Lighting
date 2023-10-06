@@ -141,7 +141,7 @@ Material:
     - _FinalIntensity: 1
     - _FinalStrobeFreq: 0
     - _FixtureBaseRotationY: 0
-    - _FixtureMaxIntensity: 0.35
+    - _FixtureMaxIntensity: 0.3
     - _FixtureRotationX: 0
     - _GlobalIntensity: 1
     - _GlobalIntensityBlend: 1
@@ -235,7 +235,7 @@ Material:
     - _TiltInvert: 0
     - _ToggleMagicNoise: 1
     - _TriplanarFalloff: 1
-    - _UniversalIntensity: 1
+    - _UniversalIntensity: 0.9
     - _UseDepthLight: 1
     - _UseRawGrid: 1
     - _UseWorldNorm: 0

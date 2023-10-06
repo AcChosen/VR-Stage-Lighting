@@ -102,7 +102,7 @@
 			Stencil
 			{
 				Ref 142
-				Comp Greater
+				Comp NotEqual
 			}
             CGPROGRAM
 			

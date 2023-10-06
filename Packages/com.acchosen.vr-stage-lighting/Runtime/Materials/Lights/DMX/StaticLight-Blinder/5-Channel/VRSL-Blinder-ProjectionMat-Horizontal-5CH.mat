@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-Blinder-ProjectionMat-Horizontal-5CH
   m_Shader: {fileID: 4800000, guid: 3112589b70301d047baf8f5211152b0e, type: 3}
-  m_ShaderKeywords: _CHANNEL_MODE _EMISSION _USERAWGRID_ON
+  m_ShaderKeywords: _CHANNEL_MODE _EMISSION _MULTISAMPLEDEPTH _USERAWGRID_ON
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -153,7 +153,7 @@ Material:
     - _StrobeFreq: 12.76
     - _TextureSampleMode: 0
     - _TriplanarFalloff: 1
-    - _UniversalIntensity: 1
+    - _UniversalIntensity: 0.5
     - _UseRawGrid: 1
     - _UseWorldNorm: 0
     - _XOffset: -4.21

@@ -150,7 +150,7 @@ Material:
     - _StrobeFreq: 12.76
     - _TextureSampleMode: 0
     - _TriplanarFalloff: 1
-    - _UniversalIntensity: 1
+    - _UniversalIntensity: 0.5
     - _UseRawGrid: 1
     - _UseWorldNorm: 0
     - _XOffset: -4.21

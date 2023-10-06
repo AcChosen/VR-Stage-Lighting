@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-WashMover-ProjectionMat-HQ-Horizontal
   m_Shader: {fileID: 4800000, guid: ce3c400a1c758ae48b94d80f26617ca3, type: 3}
-  m_ShaderKeywords: _DNENABLER_NONE _ENABLESPIN_ON _USERAWGRID_ON
+  m_ShaderKeywords: _DNENABLER_NONE _ENABLESPIN_ON _MULTISAMPLEDEPTH _USERAWGRID_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -193,7 +193,7 @@ Material:
     - _TextureSampleMode: 0
     - _TiltInvert: 0
     - _TriplanarFalloff: 1
-    - _UniversalIntensity: 1
+    - _UniversalIntensity: 0.5
     - _UseRawGrid: 1
     - _UseWorldNorm: 0
     - _XOffset: 0

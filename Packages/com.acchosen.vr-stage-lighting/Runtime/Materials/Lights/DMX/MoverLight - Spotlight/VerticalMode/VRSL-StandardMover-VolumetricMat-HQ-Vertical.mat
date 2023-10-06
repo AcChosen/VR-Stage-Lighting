@@ -235,7 +235,7 @@ Material:
     - _TiltInvert: 0
     - _ToggleMagicNoise: 1
     - _TriplanarFalloff: 1
-    - _UniversalIntensity: 1
+    - _UniversalIntensity: 0.9
     - _UseDepthLight: 1
     - _UseRawGrid: 1
     - _UseWorldNorm: 0
