@@ -9,7 +9,7 @@
   },
   "gitDependencies": {},
   "vpmDependencies": {
-    "com.llealloo.audiolink": ">=0.3.1 <1.0.0 || =1.2.0"
+    "com.llealloo.audiolink": "~0.3.1 || ~1.2.0"
   },
   "legacyFolders": {
     "Assets\\VR-Stage-Lighting": ""
