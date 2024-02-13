@@ -6,6 +6,7 @@ VR Stage Lighting is a year-long project that started out as a means to research
 
 This performance is provided through a standardized set of custom shaders that aim to avoid things such as real-time unity lights and using cost saving measures such as GPU-instancing and batching.
 
+# GET THE VPM PACKAGE [@ VPM.VRSL.DEV](https://vpm.vrsl.dev)
 
 ### SEE ALL THESE SYSTEMS LIVE IN VRCHAT [@ CLUB ORION](https://vrchat.com/home/launch?worldId=wrld_b2d9f284-3a77-4a8a-a58e-f8427f87ba79)
 
