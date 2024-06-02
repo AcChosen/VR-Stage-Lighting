@@ -2,16 +2,34 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-AudioLink-StandardMover-VolumetricMat
   m_Shader: {fileID: 4800000, guid: a9ae9924e60e8b04293b700af7aba257, type: 3}
-  m_ShaderKeywords: _2D_NOISE_ON _DNENABLER_NONE _ENABLEOSC_ON _ENABLESPIN_ON _GOBOBEAMSPLITENABLE_ON
-    _MAGIC_NOISE_ON_HIGH _MAGIC_NOISE_ON_MED _MAGIC_NOISE_ON_ON _TOGGLEMAGICNOISE_ON
-    _USEDEPTHLIGHT_ON _USERAWGRID_ON _USE_DEPTH_LIGHT
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _2D_NOISE_ON
+  - _MAGIC_NOISE_ON_HIGH
+  - _MAGIC_NOISE_ON_MED
+  - _USE_DEPTH_LIGHT
+  m_InvalidKeywords:
+  - _2D_NOISE_ON_ON
+  - _DNENABLER_NONE
+  - _ENABLECOLORTEXTURESAMPLE_ON
+  - _ENABLEOSC_ON
+  - _ENABLESPIN_ON
+  - _GOBOBEAMSPLITENABLE_ON
+  - _MAGIC_NOISE_ON_HIGH_ON
+  - _MAGIC_NOISE_ON_MED_ON
+  - _MAGIC_NOISE_ON_ON
+  - _TOGGLEMAGICNOISE_ON
+  - _USEDEPTHLIGHT_ON
+  - _USERAWGRID_ON
+  - _USETRADITIONALSAMPLING_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -19,6 +37,7 @@ Material:
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -110,6 +129,7 @@ Material:
         m_Texture: {fileID: 8400000, guid: 97a6cc22a32ae15489c972f5447a21c0, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - FinalStrobeFreq: 0
     - _2D_NOISE_ON: 1
@@ -120,7 +140,7 @@ Material:
     - _BlendOp: 0
     - _BlendSrc: 1
     - _BlindingAngleMod: 0.25
-    - _BlindingStrength: 1
+    - _BlindingStrength: 0.1
     - _BlueMultiplier: 1
     - _BumpScale: 1
     - _ConeLength: 2.13
@@ -133,7 +153,7 @@ Material:
     - _DividePower: 0.043
     - _EnableAudioLink: 0
     - _EnableColorChord: 0
-    - _EnableColorTextureSample: 0
+    - _EnableColorTextureSample: 1
     - _EnableOSC: 1
     - _EnableSpin: 1
     - _EnableStaticEmissionColor: 0
@@ -146,7 +166,7 @@ Material:
     - _FinalIntensity: 1
     - _FinalStrobeFreq: 0
     - _FixtureBaseRotationY: 0
-    - _FixtureMaxIntensity: 0.6
+    - _FixtureMaxIntensity: 0.375
     - _FixtureRotationX: 0
     - _GlobalIntensity: 1
     - _GlobalIntensityBlend: 1
@@ -247,9 +267,10 @@ Material:
     - _TiltInvert: 0
     - _ToggleMagicNoise: 1
     - _TriplanarFalloff: 1
-    - _UniversalIntensity: 0.9
+    - _UniversalIntensity: 0.8
     - _UseDepthLight: 1
     - _UseRawGrid: 1
+    - _UseTraditionalSampling: 1
     - _UseWorldNorm: 0
     - _XOffset: 0
     - _YOffset: 0
@@ -262,3 +283,4 @@ Material:
     - _LightColor: {r: 23.968628, g: 23.968628, b: 23.968628, a: 1}
     - _ProjectionRangeOrigin: {r: 0, g: -0.075354, b: 0.123875, a: 0}
     - _StaticEmission: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []

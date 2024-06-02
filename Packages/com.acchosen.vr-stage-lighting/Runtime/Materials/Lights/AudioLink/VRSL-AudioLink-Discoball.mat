@@ -2,14 +2,18 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-AudioLink-Discoball
   m_Shader: {fileID: 4800000, guid: 29ef7182cec5f7740971f3c2e3e326c0, type: 3}
-  m_ShaderKeywords: _ALPHATEST_ON
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _ALPHATEST_ON
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -17,6 +21,7 @@ Material:
   stringTagMap:
     RenderType: Opaque
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -76,6 +81,7 @@ Material:
         m_Texture: {fileID: 2800000, guid: f310c3dbad3125d4e8fc2e00bdc2acb4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _Alpha: 0.66
     - _AlphaToCoverage: 1
@@ -116,14 +122,18 @@ Material:
     - _OuterRadius: 0.495
     - _Parallax: 0.02
     - _RenderMode: 2
+    - _RenderTextureMultiplier: 1
     - _RotationSpeed: 8.2
     - _Sector: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _TextureColorSampleX: 0.5
+    - _TextureColorSampleY: 0.5
     - _ThemeColorTarget: 0
     - _UVSec: 0
-    - _UniversalIntensity: 1
+    - _UniversalIntensity: 0.8
+    - _UseTraditionalSampling: 0
     - _UseWorldNorm: 0
     - _ZWrite: 1
     m_Colors:
@@ -135,3 +145,4 @@ Material:
     - _Mod: {r: 1, g: 1, b: 1, a: 1}
     - _PositionOffset: {r: 0, g: 0, b: 0, a: 1}
     - _RegularColor: {r: 1, g: 1, b: 1, a: 0}
+  m_BuildTextureStacks: []

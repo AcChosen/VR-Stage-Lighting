@@ -20,6 +20,7 @@
 		 [HideInInspector]_FixtureRotationX("Mover Tilt Offset (Blue)", Range(-180,180)) = 0
 		 [HideInInspector]_ProjectionSelection ("GOBO Selection", Range(1,6)) = 1
 		 [HideInInspector][Toggle] _EnableSpin("Enable Auto Spinning", Float) = 0
+		 [Toggle]_UseTraditionalSampling("Use Traditional Texture Sampling", Int) = 0
 
 		[Header(Audio Section)]
          [Toggle]_EnableAudioLink("Enable Audio Link", Float) = 0

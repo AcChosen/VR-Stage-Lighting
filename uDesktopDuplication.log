@@ -1,36 +1,36 @@
-[uDD::Log][2023-05-05 17:10:38] Start
-[uDD::Log][2023-05-05 17:10:38] OS Version    : 10.0
-[uDD::Log][2023-05-05 17:10:38] Build Number  : 19045
-[uDD::Log][2023-05-05 17:10:38] Service Pack  : 
-[uDD::Log][2023-05-05 17:10:38] Graphics Card [0] : NVIDIA GeForce RTX 3090
-[uDD::Log][2023-05-05 17:10:38]   > Monitor[0] : \\.\DISPLAY2
-[uDD::Log][2023-05-05 17:10:38]   > Monitor[1] : \\.\DISPLAY1
-[uDD::Log][2023-05-05 17:10:38]   > Monitor[2] : \\.\DISPLAY3
-[uDD::Log][2023-05-05 17:10:38]   > Monitor[3] : \\.\DISPLAY4
-[uDD::Log][2023-05-05 17:10:38] Graphics Card [1] : Microsoft Basic Render Driver
-[uDD::Log][2023-05-05 17:10:38] Monitor::Initialized() =>
-[uDD::Log][2023-05-05 17:10:38]     ID    : 0
-[uDD::Log][2023-05-05 17:10:38]     Size  : (3840, 2160)
-[uDD::Log][2023-05-05 17:10:38]     DPI   : (157, 160)
-[uDD::Log][2023-05-05 17:10:38]     Rot   : Landscape
-[uDD::Log][2023-05-05 17:10:38] Duplicator::Initialize() => OK.
-[uDD::Log][2023-05-05 17:10:38] Monitor::Initialized() =>
-[uDD::Log][2023-05-05 17:10:38]     ID    : 1
-[uDD::Log][2023-05-05 17:10:38]     Size  : (1920, 1080)
-[uDD::Log][2023-05-05 17:10:38]     DPI   : (81, 81)
-[uDD::Log][2023-05-05 17:10:38]     Rot   : Landscape
-[uDD::Log][2023-05-05 17:10:39] Duplicator::Initialize() => OK.
-[uDD::Log][2023-05-05 17:10:39] Monitor::Initialized() =>
-[uDD::Log][2023-05-05 17:10:39]     ID    : 2
-[uDD::Log][2023-05-05 17:10:39]     Size  : (1920, 1080)
-[uDD::Log][2023-05-05 17:10:39]     DPI   : (88, 88)
-[uDD::Log][2023-05-05 17:10:39]     Rot   : Landscape
-[uDD::Log][2023-05-05 17:10:39] Duplicator::Initialize() => OK.
-[uDD::Err][2023-05-05 17:10:39] Monitor::Initialize() => GetDpiForMonitor() failed.
-[uDD::Log][2023-05-05 17:10:39] Monitor::Initialized() =>
-[uDD::Log][2023-05-05 17:10:39]     ID    : 3
-[uDD::Log][2023-05-05 17:10:39]     Size  : (1920, 1080)
-[uDD::Log][2023-05-05 17:10:39]     DPI   : (0, 0)
-[uDD::Log][2023-05-05 17:10:39]     Rot   : Landscape
-[uDD::Log][2023-05-05 17:10:39] Duplicator::Initialize() => OK.
-[uDD::Log][2023-05-05 17:11:11] Stop
+[uDD::Log][2024-05-31 11:51:02] Start
+[uDD::Log][2024-05-31 11:51:02] OS Version    : 10.0
+[uDD::Log][2024-05-31 11:51:02] Build Number  : 19045
+[uDD::Log][2024-05-31 11:51:02] Service Pack  : 
+[uDD::Log][2024-05-31 11:51:02] Graphics Card [0] : NVIDIA GeForce RTX 3090
+[uDD::Log][2024-05-31 11:51:02]   > Monitor[0] : \\.\DISPLAY2
+[uDD::Log][2024-05-31 11:51:02]   > Monitor[1] : \\.\DISPLAY1
+[uDD::Log][2024-05-31 11:51:02]   > Monitor[2] : \\.\DISPLAY3
+[uDD::Log][2024-05-31 11:51:02]   > Monitor[3] : \\.\DISPLAY4
+[uDD::Log][2024-05-31 11:51:02] Graphics Card [1] : Microsoft Basic Render Driver
+[uDD::Log][2024-05-31 11:51:02] Monitor::Initialized() =>
+[uDD::Log][2024-05-31 11:51:02]     ID    : 0
+[uDD::Log][2024-05-31 11:51:02]     Size  : (3840, 2160)
+[uDD::Log][2024-05-31 11:51:02]     DPI   : (157, 160)
+[uDD::Log][2024-05-31 11:51:02]     Rot   : Landscape
+[uDD::Log][2024-05-31 11:51:02] Duplicator::Initialize() => OK.
+[uDD::Log][2024-05-31 11:51:02] Monitor::Initialized() =>
+[uDD::Log][2024-05-31 11:51:02]     ID    : 1
+[uDD::Log][2024-05-31 11:51:02]     Size  : (1920, 1080)
+[uDD::Log][2024-05-31 11:51:02]     DPI   : (81, 81)
+[uDD::Log][2024-05-31 11:51:02]     Rot   : Landscape
+[uDD::Log][2024-05-31 11:51:02] Duplicator::Initialize() => OK.
+[uDD::Log][2024-05-31 11:51:02] Monitor::Initialized() =>
+[uDD::Log][2024-05-31 11:51:02]     ID    : 2
+[uDD::Log][2024-05-31 11:51:02]     Size  : (1920, 1080)
+[uDD::Log][2024-05-31 11:51:02]     DPI   : (88, 88)
+[uDD::Log][2024-05-31 11:51:02]     Rot   : Landscape
+[uDD::Log][2024-05-31 11:51:02] Duplicator::Initialize() => OK.
+[uDD::Err][2024-05-31 11:51:02] Monitor::Initialize() => GetDpiForMonitor() failed.
+[uDD::Log][2024-05-31 11:51:02] Monitor::Initialized() =>
+[uDD::Log][2024-05-31 11:51:02]     ID    : 3
+[uDD::Log][2024-05-31 11:51:02]     Size  : (1920, 1080)
+[uDD::Log][2024-05-31 11:51:02]     DPI   : (0, 0)
+[uDD::Log][2024-05-31 11:51:02]     Rot   : Landscape
+[uDD::Log][2024-05-31 11:51:02] Duplicator::Initialize() => OK.
+[uDD::Log][2024-05-31 11:52:02] Stop

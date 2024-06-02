@@ -8,6 +8,7 @@ using VRC.Udon;
 using UnityEditor;
 using UdonSharpEditor;
 using System.Collections.Immutable;
+using System.Collections.Generic;
 using System;
 using System.IO;
 #endif
@@ -105,6 +106,9 @@ namespace VRSL
         public UnityEngine.UI.Text  discoballHighText,  discoballLowText;
         public UnityEngine.UI.Button lensFlareHighButton,  lensFlareLowButton;
         public UnityEngine.UI.Text lensFlareHighText, lensFlareLowText;
+
+        public UnityEngine.UI.Button globalStrobeToggleButton;
+        public UnityEngine.UI.Text globalStrobeLabel;
         UnityEngine.UI.ColorBlock defaultColorBlock;
         UnityEngine.UI.ColorBlock cbOn;
         public bool isUsingDMX = true;
@@ -142,6 +146,15 @@ namespace VRSL
         public float inGameInterpolationModifier = 1.55f;
         public bool outputDebugLogs;
 
+        [HideInInspector]
+        public int volumetricMeshQuality;
+
+        [HideInInspector]
+        public string fixtureDefGUID = "4d88361aa1276d64d8a60009bfb590ed";
+
+        [HideInInspector]
+        public string fixtureSaveFile = "NONE";
+
 
         [HideInInspector]
         public bool useDMXGI = false;
@@ -173,6 +186,63 @@ namespace VRSL
             }
             get => _requireDepthLight;
         }
+
+        [FieldChangeCallback(nameof(GlobalDisableStrobe)), SerializeField]
+        private bool _globalDisableStrobe = false;
+
+        public bool GlobalDisableStrobe
+        {
+            set
+            {
+                _globalDisableStrobe = value;
+                SetStrobeTextureStatus();
+            }
+            get => _globalDisableStrobe;
+        }
+
+        public float _targetCRTUpdateRate = 0.0f;
+
+        public void _ToggleGlobalStrobe()
+        {
+            GlobalDisableStrobe = !GlobalDisableStrobe;
+        }
+
+        void SetGlobalStrobeUI()
+        {
+            
+            if(globalStrobeToggleButton){globalStrobeToggleButton.colors = GlobalDisableStrobe ? cbOn : defaultColorBlock;}
+            globalStrobeToggleButton.gameObject.SetActive(isUsingDMX);
+        }
+
+        void SetStrobeTextureStatus()
+        {
+            foreach(CustomRenderTexture rt in DMX_CRTS_Legacy)
+            {
+                if(rt == null){continue;}
+                if(rt.name.Contains("Strobe") && rt.material.HasProperty("_DisableStrobe"))
+                {
+                    rt.material.SetFloat("_DisableStrobe",GlobalDisableStrobe ? 1f : 0f);
+                }
+            }       
+            foreach(CustomRenderTexture rt in DMX_CRTS_Horizontal)
+            {
+                if(rt == null){continue;}
+                if(rt.name.Contains("Strobe") && rt.material.HasProperty("_DisableStrobe"))
+                {
+                    rt.material.SetFloat("_DisableStrobe",GlobalDisableStrobe ? 1f : 0f);
+                }
+            }        
+            foreach(CustomRenderTexture rt in DMX_CRTS_Vertical)
+            {
+                if(rt == null){continue;}
+                if(rt.name.Contains("Strobe") && rt.material.HasProperty("_DisableStrobe"))
+                {
+                    rt.material.SetFloat("_DisableStrobe",GlobalDisableStrobe ? 1f : 0f);
+                }
+            }
+            SetGlobalStrobeUI();     
+        }
+
         
         void _SetTextureIDS()
         {
@@ -233,6 +303,14 @@ namespace VRSL
                 cbOn = defaultColorBlock;
                 cbOn.normalColor = new Color(cbOn.normalColor.r + 0.35f, cbOn.normalColor.r + 0.35f, cbOn.normalColor.g + 0.35f, 1.0f);
                 }
+            if(bloomAnimator == null)
+            {
+                GameObject anim = GameObject.Find("PostProcessingExample-Bloom");
+                if(anim != null)
+                {
+                    bloomAnimator = anim.GetComponent<Animator>();
+                }
+            }
             _SetTextureIDS();
             _CheckDepthLightStatus();
             _SetFinalIntensity();
@@ -256,6 +334,7 @@ namespace VRSL
             #if !UNITY_EDITOR
                 ReduceInGameInterpolation();
             #endif
+            SetStrobeTextureStatus();
         }
 
         void _CheckButtonLockStatus()
@@ -551,10 +630,14 @@ namespace VRSL
             {
                 mat.SetInt("_PotatoMode", _volumetricNoise ? 0 : 1);
                 mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
-                SetKeyword(mat, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(mat.GetInt("_UseDepthLight"))) == 1 ? true : false);
-                SetKeyword(mat, "_MAGIC_NOISE_ON_MED", (Mathf.FloorToInt(mat.GetInt("_MAGIC_NOISE_ON_MED"))) == 1 ? true : false);
-                SetKeyword(mat, "_MAGIC_NOISE_ON_HIGH", (Mathf.FloorToInt(mat.GetInt("_MAGIC_NOISE_ON_HIGH"))) == 1 ? true : false);
-                SetKeyword(mat, "_POTATO_MODE_ON", (Mathf.FloorToInt(mat.GetInt("_PotatoMode"))) == 1 ? true : false);
+                if(mat.HasProperty("_UseDepthLight")){
+                SetKeyword(mat, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(mat.GetInt("_UseDepthLight"))) == 1 ? true : false);}
+                if(mat.HasProperty("_MAGIC_NOISE_ON_MED")){
+                SetKeyword(mat, "_MAGIC_NOISE_ON_MED", (Mathf.FloorToInt(mat.GetInt("_MAGIC_NOISE_ON_MED"))) == 1 ? true : false);}
+                if(mat.HasProperty("_MAGIC_NOISE_ON_HIGH")){
+                SetKeyword(mat, "_MAGIC_NOISE_ON_HIGH", (Mathf.FloorToInt(mat.GetInt("_MAGIC_NOISE_ON_HIGH"))) == 1 ? true : false);}
+                if(mat.HasProperty("_PotatoMode")){
+                SetKeyword(mat, "_POTATO_MODE_ON", (Mathf.FloorToInt(mat.GetInt("_PotatoMode"))) == 1 ? true : false);}
             }
             foreach(Material mat in projectionMaterials)
             {
@@ -567,7 +650,8 @@ namespace VRSL
                     if(mat != null)
                     {
                         mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
-                        SetKeyword(mat, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(mat.GetInt("_UseDepthLight"))) == 1 ? true : false);
+                        if(mat.HasProperty("_UseDepthLight")){
+                        SetKeyword(mat, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(mat.GetInt("_UseDepthLight"))) == 1 ? true : false);}
                     }
                 }
             }
@@ -590,6 +674,9 @@ namespace VRSL
             foreach(CustomRenderTexture rt in rtArray)
             {
                 rt.updateMode = CustomRenderTextureUpdateMode.Realtime;
+                #if UNITY_2022
+                    rt.updatePeriod = _targetCRTUpdateRate;
+                #endif
                 if(rt.name.Contains("Color"))
                 {
                     if(outputDebugLogs){
@@ -892,6 +979,10 @@ namespace VRSL
                 bloomAnimator.SetFloat("BloomIntensity", bloomSlider.value);
                 bloomSliderText.text = Mathf.Round(bloomSlider.value * 100.0f).ToString();
             }
+            else
+            {
+                bloomSlider.gameObject.SetActive(false);
+            }
         }
 
         void SetKeyword(Material mat, string keyword, bool status)
@@ -921,11 +1012,16 @@ namespace VRSL
                     target.SetInt("_AlphaToCoverage", 0);
                     target.SetInt("_HQMode", 1);
                     target.SetInt("_RenderMode", 0);
-                    SetKeyword(target, "_MAGIC_NOISE_ON_MED", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_MED"))) == 1 ? true : false);
-                    SetKeyword(target, "_MAGIC_NOISE_ON_HIGH", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_HIGH"))) == 1 ? true : false);
-                    SetKeyword(target, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(target.GetInt("_UseDepthLight"))) == 1 ? true : false);
-                    SetKeyword(target, "_POTATO_MODE_ON", (Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 ? true : false);
-                    SetKeyword(target, "_HQ_MODE", (Mathf.FloorToInt(target.GetInt("_HQMode"))) == 1 ? true : false);
+                    if(target.HasProperty("_MAGIC_NOISE_ON_MED")){
+                    SetKeyword(target, "_MAGIC_NOISE_ON_MED", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_MED"))) == 1 ? true : false);}
+                    if(target.HasProperty("_MAGIC_NOISE_ON_HIGH")){
+                    SetKeyword(target, "_MAGIC_NOISE_ON_HIGH", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_HIGH"))) == 1 ? true : false);}
+                    if(target.HasProperty("_UseDepthLight")){
+                    SetKeyword(target, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(target.GetInt("_UseDepthLight"))) == 1 ? true : false);}
+                    if(target.HasProperty("_PotatoMode")){
+                    SetKeyword(target, "_POTATO_MODE_ON", (Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 ? true : false);}
+                    if(target.HasProperty("_HQMode")){
+                    SetKeyword(target, "_HQ_MODE", (Mathf.FloorToInt(target.GetInt("_HQMode"))) == 1 ? true : false);}
                     //SetKeyword(target, "_2D_NOISE_ON", (Mathf.FloorToInt(target.GetInt("_2D_NOISE_ON"))) == 1 ? true : false);
                     target.renderQueue = 3002;
                 }
@@ -939,11 +1035,16 @@ namespace VRSL
                     target.SetInt("_AlphaToCoverage", 0);
                     target.SetInt("_HQMode", 0);
                     target.SetInt("_RenderMode", 1);
-                    SetKeyword(target, "_MAGIC_NOISE_ON_MED", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_MED"))) == 1 ? true : false);
-                    SetKeyword(target, "_MAGIC_NOISE_ON_HIGH", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_HIGH"))) == 1 ? true : false);
-                    SetKeyword(target, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(target.GetInt("_UseDepthLight"))) == 1 ? true : false);
-                    SetKeyword(target, "_POTATO_MODE_ON", (Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 ? true : false);
-                    SetKeyword(target, "_HQ_MODE", (Mathf.FloorToInt(target.GetInt("_HQMode"))) == 1 ? true : false);
+                    if(target.HasProperty("_MAGIC_NOISE_ON_MED")){
+                    SetKeyword(target, "_MAGIC_NOISE_ON_MED", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_MED"))) == 1 ? true : false);}
+                    if(target.HasProperty("_MAGIC_NOISE_ON_HIGH")){
+                    SetKeyword(target, "_MAGIC_NOISE_ON_HIGH", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_HIGH"))) == 1 ? true : false);}
+                    if(target.HasProperty("_UseDepthLight")){
+                    SetKeyword(target, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(target.GetInt("_UseDepthLight"))) == 1 ? true : false);}
+                    if(target.HasProperty("_PotatoMode")){
+                    SetKeyword(target, "_POTATO_MODE_ON", (Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 ? true : false);}
+                    if(target.HasProperty("_HQMode")){
+                    SetKeyword(target, "_HQ_MODE", (Mathf.FloorToInt(target.GetInt("_HQMode"))) == 1 ? true : false);}
                     //SetKeyword(target, "_2D_NOISE_ON", (Mathf.FloorToInt(target.GetInt("_2D_NOISE_ON"))) == 1 ? true : false);
                     target.renderQueue = 3002;
                 }
@@ -957,11 +1058,16 @@ namespace VRSL
                     target.SetInt("_AlphaToCoverage", 1);
                     target.SetInt("_HQMode", 0);
                     target.SetInt("_RenderMode", 2);
-                    SetKeyword(target, "_MAGIC_NOISE_ON_MED", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_MED"))) == 1 ? true : false);
-                    SetKeyword(target, "_MAGIC_NOISE_ON_HIGH", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_HIGH"))) == 1 ? true : false);
-                    SetKeyword(target, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(target.GetInt("_UseDepthLight"))) == 1 ? true : false);
-                    SetKeyword(target, "_POTATO_MODE_ON", (Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 ? true : false);
-                    SetKeyword(target, "_HQ_MODE", (Mathf.FloorToInt(target.GetInt("_HQMode"))) == 1 ? true : false);
+                    if(target.HasProperty("_MAGIC_NOISE_ON_MED")){
+                    SetKeyword(target, "_MAGIC_NOISE_ON_MED", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_MED"))) == 1 ? true : false);}
+                    if(target.HasProperty("_MAGIC_NOISE_ON_HIGH")){
+                    SetKeyword(target, "_MAGIC_NOISE_ON_HIGH", (Mathf.FloorToInt(target.GetInt("_MAGIC_NOISE_ON_HIGH"))) == 1 ? true : false);}
+                    if(target.HasProperty("_UseDepthLight")){
+                    SetKeyword(target, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(target.GetInt("_UseDepthLight"))) == 1 ? true : false);}
+                    if(target.HasProperty("_PotatoMode")){
+                    SetKeyword(target, "_POTATO_MODE_ON", (Mathf.FloorToInt(target.GetInt("_PotatoMode"))) == 1 ? true : false);}
+                    if(target.HasProperty("_HQMode")){
+                    SetKeyword(target, "_HQ_MODE", (Mathf.FloorToInt(target.GetInt("_HQMode"))) == 1 ? true : false);}
                     //SetKeyword(target, "_2D_NOISE_ON", (Mathf.FloorToInt(target.GetInt("_2D_NOISE_ON"))) == 1 ? true : false);
                     target.renderQueue = 2452;
                 }
@@ -1126,6 +1232,70 @@ namespace VRSL
             }
         }
 
+
+        #if !COMPILER_UDONSHARP && UNITY_EDITOR
+
+        static List<GameObject> GetAllObjectsOnlyInScene()
+        {
+            List<GameObject> objectsInScene = new List<GameObject>();
+
+            foreach (GameObject go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[])
+            {
+                if (!EditorUtility.IsPersistent(go.transform.root.gameObject) && !(go.hideFlags == HideFlags.NotEditable || go.hideFlags == HideFlags.HideAndDontSave))
+                    objectsInScene.Add(go);
+            }
+
+            return objectsInScene;
+        }
+
+        public void _GetNewMaterials()
+        {
+            List<GameObject> sceneObjects = GetAllObjectsOnlyInScene();
+            List<Material> freshFixtureMats = new List<Material>();
+            freshFixtureMats.AddRange(fixtureMaterials);
+            List<Material> freshVolumetricMats = new List<Material>();
+            freshVolumetricMats.AddRange(volumetricMaterials);
+            List<Material> freshProjectionMats = new List<Material>();
+            freshProjectionMats.AddRange(projectionMaterials);
+            foreach(GameObject go in sceneObjects)
+            {
+                MeshRenderer rend = go.GetComponent<MeshRenderer>();
+                if(rend != null)
+                {
+                    if(go.name.Contains("Fixture") && (go.name.Contains("Lamp") || go.name.Contains("Mesh")))
+                    {
+                        if(!freshFixtureMats.Contains(rend.sharedMaterial) && ((rend.sharedMaterial.shader.FindPropertyIndex("_Band") != -1) || rend.sharedMaterial.shader.FindPropertyIndex("_DMXChannel") != -1))
+                        {
+                            freshFixtureMats.Add(rend.sharedMaterial);
+                        }
+                    }
+                    else if(go.name.Contains("Volumetric") && ((rend.sharedMaterial.shader.FindPropertyIndex("_Band") != -1) || rend.sharedMaterial.shader.FindPropertyIndex("_DMXChannel") != -1))
+                    {
+                        if(!freshVolumetricMats.Contains(rend.sharedMaterial))
+                        {
+                            freshVolumetricMats.Add(rend.sharedMaterial);
+                        }
+                    }
+                    else if (go.name.Contains("Projection") && ((rend.sharedMaterial.shader.FindPropertyIndex("_Band") != -1) || rend.sharedMaterial.shader.FindPropertyIndex("_DMXChannel") != -1))
+                    {
+                        if(!freshProjectionMats.Contains(rend.sharedMaterial))
+                        {
+                            freshProjectionMats.Add(rend.sharedMaterial);
+                        }
+                    }
+                    else{continue;}
+                }
+            }
+
+            fixtureMaterials = freshFixtureMats.ToArray();
+            volumetricMaterials = freshVolumetricMats.ToArray();
+            projectionMaterials = freshProjectionMats.ToArray();
+            if(PrefabUtility.IsPartOfAnyPrefab(this))
+            {
+                PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+            }
+        }
+        #endif
     }
 
         #if !COMPILER_UDONSHARP && UNITY_EDITOR
@@ -1134,7 +1304,7 @@ namespace VRSL
     {
         public static Texture logo;
         //public static string ver = "VR Stage Lighting ver:" + " <b><color=#6a15ce> 2.1</color></b>";
-        SerializedProperty audioLinkLasers, audiolinkLights, dmxLights, isUsingDMX,isUsingAudioLink;
+        SerializedProperty audioLinkLasers, audiolinkLights, dmxLights, isUsingDMX,isUsingAudioLink, fixtureDefGUID, volumetricMeshQuality;
 
         static string GetVersion()
         {
@@ -1157,6 +1327,8 @@ namespace VRSL
             dmxLights = serializedObject.FindProperty("dmxLights");
             isUsingDMX = serializedObject.FindProperty("isUsingDMX");
             isUsingAudioLink = serializedObject.FindProperty("isUsingAudioLink");
+            fixtureDefGUID = serializedObject.FindProperty("fixtureDefGUID");
+            volumetricMeshQuality = serializedObject.FindProperty("volumetricMeshQuality");
         }
         public void _RemoveEmptyMaterials()
         {
@@ -1239,8 +1411,9 @@ namespace VRSL
             EditorGUILayout.Space();
             if (GUILayout.Button(new GUIContent("Apply Quality Modes to All Materials", "Applies currently set quality modes to all materials."))) { controlPanel._UpdateAllQualityModes(); }
             EditorGUILayout.Space();
-
-            if (GUILayout.Button(new GUIContent("Remove Empty Materials", "Applies currently set quality modes to all materials."))) {_RemoveEmptyMaterials(); }
+                if (GUILayout.Button(new GUIContent("Search For VRSL Materials", "Adds VRSL Compatible Materials in scene to materials lists"))) {controlPanel._GetNewMaterials(); }
+            EditorGUILayout.Space();
+            if (GUILayout.Button(new GUIContent("Remove Empty Materials", "Removes all Empty Material slots from material lists."))) {_RemoveEmptyMaterials(); }
             EditorGUILayout.Space();
             if(isUsingDMX.boolValue)
             {
@@ -1260,7 +1433,8 @@ namespace VRSL
                 // EditorGUILayout.PropertyField(audioLinkLasers,true);
                 }
             }
-
+            EditorGUILayout.LabelField("Fixture Definition GUID: " + fixtureDefGUID.stringValue);
+            EditorGUILayout.LabelField("Volumetric Mesh Quality State: " + volumetricMeshQuality.intValue);
             base.OnInspectorGUI();
 
             if (EditorGUI.EndChangeCheck())

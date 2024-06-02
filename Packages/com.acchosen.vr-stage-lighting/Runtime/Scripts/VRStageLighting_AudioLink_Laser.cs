@@ -84,6 +84,11 @@ namespace VRSL
         [SerializeField]
         private bool enableColorTextureSampling;
 
+        [Tooltip ("Check this box if you wish to use traditional color sampling instead of white to black conversion")]
+        [FieldChangeCallback(nameof(TraditionalColorTextureSampling))]
+        [SerializeField]
+        private bool traditionalColorTextureSampling;
+
         [Tooltip ("The UV coordinates to sample the color from on the texture.")]
         [FieldChangeCallback(nameof(TextureSamplingCoordinates))]
         [SerializeField]
@@ -411,6 +416,18 @@ namespace VRSL
                 _UpdateInstancedProperties();
             }
         }
+        public bool TraditionalColorTextureSampling
+        {
+            get
+            {
+                return traditionalColorTextureSampling;
+            }
+            set
+            {
+                traditionalColorTextureSampling = value;
+                _UpdateInstancedProperties();
+            }
+        }
         public Vector2 TextureSamplingCoordinates
         {
             get
@@ -493,6 +510,7 @@ namespace VRSL
             props.SetFloat("_TextureColorSampleX", textureSamplingCoordinates.x);
             props.SetFloat("_TextureColorSampleY", textureSamplingCoordinates.y);
             props.SetInt("_EnableColorTextureSample", enableColorTextureSampling == true ? 1 : 0);
+            props.SetInt("_UseTraditionalSampling", traditionalColorTextureSampling == true ? 1 : 0);
             props.SetInt("_EnableThemeColorSampling", enableThemeColorSampling == true ? 1 : 0);
             props.SetInt("_ThemeColorTarget", themeColorTarget);
             //General Light Stuff
@@ -582,6 +600,7 @@ namespace VRSL
             props.SetFloat("_TextureColorSampleX", textureSamplingCoordinates.x);
             props.SetFloat("_TextureColorSampleY", textureSamplingCoordinates.y);
             props.SetInt("_EnableColorTextureSample", enableColorTextureSampling == true ? 1 : 0);
+            props.SetInt("_UseTraditionalSampling", traditionalColorTextureSampling == true ? 1 : 0);
             props.SetInt("_EnableThemeColorSampling", enableThemeColorSampling == true ? 1 : 0);
             props.SetInt("_ThemeColorTarget", themeColorTarget);
             //General Light Stuff

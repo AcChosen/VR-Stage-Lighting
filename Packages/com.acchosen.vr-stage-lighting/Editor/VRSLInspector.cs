@@ -42,6 +42,8 @@ public class VRSLInspector : ShaderGUI
 
     MaterialProperty _DMXChannel = null;
     MaterialProperty _NineUniverseMode = null;
+    MaterialProperty _SignalDetectionSystem = null;
+    MaterialProperty _SignalDetectionSensativity = null;
     MaterialProperty _EnableDMX = null;
     MaterialProperty _EnableExtraChannels = null;
     // MaterialProperty _Udon_DMXGridRenderTextureMovement = null;
@@ -114,7 +116,7 @@ public class VRSLInspector : ShaderGUI
     MaterialProperty _Noise2Stretch = null;
     MaterialProperty _Noise2StretchInside = null;
     MaterialProperty _Noise2Power = null;
-
+    MaterialProperty _UseTraditionalSampling = null;
     
 
     MaterialProperty _Noise2XDefault = null;
@@ -1723,6 +1725,10 @@ public class VRSLInspector : ShaderGUI
             matEditor.ShaderProperty(_TextureColorSampleX, new GUIContent("X UV Coordinate", "The x uv coordinate for where on the texture to sample from (0 to 1)."));
             matEditor.ShaderProperty(_TextureColorSampleY, new GUIContent("Y UV Coordinate", "The y uv coordinate for where on the texture to sample from (0 to 1)."));
             matEditor.ShaderProperty(_RenderTextureMultiplier, new GUIContent("Render Texture Multiplier", "Increase the strength of the render texture color"));
+            if(_RenderTextureMultiplier.floatValue > 0f)
+            {
+                matEditor.ShaderProperty(_UseTraditionalSampling, new GUIContent("Use Traditional Texture Sampling", "Disable Black to white conversion in texture sampling"));
+            }
             EditorGUI.indentLevel--;
             GUILayout.Space(5);
         
@@ -1801,6 +1807,7 @@ public class VRSLInspector : ShaderGUI
             VRSLStyles.PartingLine();
             EditorGUI.indentLevel++;
             matEditor.ShaderProperty(_Emission, new GUIContent("Emission Color", "The overall emissive color of the shader. Use this to tint the shader."));
+            ColorTextureSamplingGUI(matEditor, props, target);
             matEditor.TexturePropertySingleLine(new GUIContent("Discoball Projection Cube Map", "The cube map used to project a 360 degree image from the center of the object onto other objects."), _Cube);
             matEditor.TextureScaleOffsetProperty(_Cube);
             matEditor.ShaderProperty(_RotationSpeed, new GUIContent("Discoball Rotation Speed", "The speed at which the discoball spins."));
@@ -1830,6 +1837,9 @@ public class VRSLInspector : ShaderGUI
         matEditor.ShaderProperty(_SmoothValue, new GUIContent("Smoothness Level", "Changes how much interpolated smoothing is applied to the texture. The closer to 0, the more smoothing applied, the closer to 1, the less smoothing applied. \nThis value is usually controlled by a seperate DMX signal to control the movement speed of the movers. "));
         matEditor.ShaderProperty(_MinimumSmoothnessDMX, new GUIContent("Minimum Smoothness Value", "Sets the minimum amount of smoothing applied to the texture by default."));
         matEditor.ShaderProperty(_MaximumSmoothnessDMX, new GUIContent("Maximum Smoothness Value", "Sets the maximum amount of smoothing applied to the texture by default."));
+        GUILayout.Space(5);
+        matEditor.ShaderProperty(_SignalDetectionSystem, new GUIContent("Enable Signal Detection System", "Enables the auto signal detection system. If certain pixels in the grid node (that aren't DMX Channels) aren't black, this texture will output black. This prevents unwanted pixel data coming in and disrupting a show."));
+        matEditor.ShaderProperty(_SignalDetectionSensativity, new GUIContent("Signal Detection System Sensativity", "How close to black does the signal need to be before it activates."));
         matEditor.RenderQueueField();
         EditorGUI.indentLevel--;
         GUILayout.Space(5);

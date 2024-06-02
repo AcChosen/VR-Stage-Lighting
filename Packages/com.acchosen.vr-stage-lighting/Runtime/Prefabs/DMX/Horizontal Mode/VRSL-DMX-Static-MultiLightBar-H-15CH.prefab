@@ -27,12 +27,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7283209747670126661}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.00000005760116, y: -0.7071069, z: -0.00000005760117, w: 0.7071067}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.04873553, y: 0.04873553, z: 0.04873553}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -90.00001, z: 0}
 --- !u!33 &6482689310242178394
 MeshFilter:
@@ -53,10 +54,12 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -81,6 +84,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &6764573573970080944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,6 +135,7 @@ MonoBehaviour:
   maxConeLength: 1
   maxMinPan: 180
   maxMinTilt: -180
+  fixtureDefintion: 12
   foldout: 0
 --- !u!114 &7625229122314661137
 MonoBehaviour:

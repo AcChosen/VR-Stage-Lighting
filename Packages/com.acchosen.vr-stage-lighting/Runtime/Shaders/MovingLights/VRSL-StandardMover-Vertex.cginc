@@ -3,30 +3,30 @@
 #define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
 
 #ifdef VRSL_DMX
-	float4 calculateRotations(appdata v, float4 input, int normalsCheck, float pan, float tilt)
+	half4 calculateRotations(appdata v, half4 input, int normalsCheck, half pan, half tilt)
 	{
-	//	input = IF(worldspacecheck == 1, float4(UnityObjectToWorldNormal(v.normal).x * -1.0, UnityObjectToWorldNormal(v.normal).y * -1.0, UnityObjectToWorldNormal(v.normal).z * -1.0, 1), input)
+	//	input = IF(worldspacecheck == 1, half4(UnityObjectToWorldNormal(v.normal).x * -1.0, UnityObjectToWorldNormal(v.normal).y * -1.0, UnityObjectToWorldNormal(v.normal).z * -1.0, 1), input)
 		//CALCULATE BASE ROTATION. MORE FUN MATH. THIS IS FOR PAN.
-		float angleY = radians(getOffsetY() + pan);
-		float c, s;
+		half angleY = radians(getOffsetY() + pan);
+		half c, s;
 		sincos(angleY, s, c);
 
-		float3x3 rotateYMatrix = float3x3(c, -s, 0,
+		half3x3 rotateYMatrix = half3x3(c, -s, 0,
 										s, c, 0,
 										0, 0, 1);
-		float3 BaseAndFixturePos = input.xyz;
+		half3 BaseAndFixturePos = input.xyz;
 
 		//INVERSION CHECK
 		rotateYMatrix = checkPanInvertY() == 1 ? transpose(rotateYMatrix) : rotateYMatrix;
 
-		float3 localRotY = mul(rotateYMatrix, BaseAndFixturePos);
+		half3 localRotY = mul(rotateYMatrix, BaseAndFixturePos);
 		//LOCALROTY IS NEW ROTATION
 
 
 		//CALCULATE FIXTURE ROTATION. WOO FUN MATH. THIS IS FOR TILT.
 
 		//set new origin to do transform
-		float3 newOrigin = input.w * _FixtureRotationOrigin.xyz;
+		half3 newOrigin = input.w * _FixtureRotationOrigin.xyz;
 		//if input.w is 1 (vertex), origin changes
 		//if input.w is 0 (normal/tangent), origin doesn't change
 
@@ -40,26 +40,26 @@
 		//#if defined(PROJECTION_YES)
 		//buffer[3] = GetTiltValue(sector);
 		//#endif
-		float angleX = radians(getOffsetX() + tilt);
+		half angleX = radians(getOffsetX() + tilt);
 		sincos(angleX, s, c);
-		float3x3 rotateXMatrix = float3x3(1, 0, 0,
+		half3x3 rotateXMatrix = half3x3(1, 0, 0,
 										0, c, -s,
 										0, s, c);
 			
-		//float4 fixtureVertexPos = input;
+		//half4 fixtureVertexPos = input;
 			
 		//INVERSION CHECK
 		rotateXMatrix = checkTiltInvertZ() == 1 ? transpose(rotateXMatrix) : rotateXMatrix;
 
-		//float4 localRotX = mul(rotateXMatrix, fixtureVertexPos);
+		//half4 localRotX = mul(rotateXMatrix, fixtureVertexPos);
 		//LOCALROTX IS NEW ROTATION
 
 
 
 		//COMBINED ROTATION FOR FIXTURE
 
-		float3x3 rotateXYMatrix = mul(rotateYMatrix, rotateXMatrix);
-		float3 localRotXY = mul(rotateXYMatrix, input.xyz);
+		half3x3 rotateXYMatrix = mul(rotateYMatrix, rotateXMatrix);
+		half3 localRotXY = mul(rotateXYMatrix, input.xyz);
 		//LOCALROTXY IS COMBINED ROTATION
 
 		//Apply fixture rotation ONLY to those with blue vertex colors
@@ -73,44 +73,44 @@
 
 		return input;
 	}
-	float4 InvertVolumetricRotations (float4 input, float pan, float tilt)
+	half4 InvertVolumetricRotations (half4 input, half pan, half tilt)
 	{
-		float sX, cX, sY, cY;
-		float angleY = radians(getOffsetY() + pan);
+		half sX, cX, sY, cY;
+		half angleY = radians(getOffsetY() + pan);
 		sincos(angleY, sY, cY);
-		float3x3 rotateYMatrix = float3x3(cY, sY, 0,
+		half3x3 rotateYMatrix = half3x3(cY, sY, 0,
 										-sY, cY, 0,
 										0, 0, 1);
-		float3 BaseAndFixturePos = input.xyz;
+		half3 BaseAndFixturePos = input.xyz;
 
 			//INVERSION CHECK
 		rotateYMatrix = checkPanInvertY() == 1 ? transpose(rotateYMatrix) : rotateYMatrix;
 
-		//float4 localRotY = mul(rotateYMatrix, BaseAndFixturePos);
+		//half4 localRotY = mul(rotateYMatrix, BaseAndFixturePos);
 		//LOCALROTY IS NEW ROTATION
 
 
-		float tiltOffset = 90.0;
+		half tiltOffset = 90.0;
 		tiltOffset = checkTiltInvertZ() == 1 ? -tiltOffset : tiltOffset;
 		//set new origin to do transform
-		float4 newOrigin = input.w * _FixtureRotationOrigin;
+		half4 newOrigin = input.w * _FixtureRotationOrigin;
 		input.xyz -= newOrigin;
 
 
-		float angleX = radians(getOffsetX() + (tiltOffset) + tilt);
+		half angleX = radians(getOffsetX() + (tiltOffset) + tilt);
 		sincos(angleX, sX, cX);
-		float3x3 rotateXMatrix = float3x3(1, 0, 0,
+		half3x3 rotateXMatrix = half3x3(1, 0, 0,
 										0, cX, sX,
 										0, -sX, cX);
 
-		//float4 fixtureVertexPos = input;
+		//half4 fixtureVertexPos = input;
 
 			//INVERSION CHECK
 		rotateXMatrix = checkTiltInvertZ() == 1 ? transpose(rotateXMatrix) : rotateXMatrix;
-		//float4 localRotX = mul(rotateXMatrix, fixtureVertexPos);
+		//half4 localRotX = mul(rotateXMatrix, fixtureVertexPos);
 
-		float3x3 rotateXYMatrix = mul(rotateXMatrix, rotateYMatrix);
-		float3 localRotXY = mul(rotateXYMatrix, input);
+		half3x3 rotateXYMatrix = mul(rotateXMatrix, rotateYMatrix);
+		half3 localRotXY = mul(rotateXYMatrix, input);
 
 		input.xyz = localRotXY;
 		input.xyz += newOrigin;
@@ -119,10 +119,10 @@
 #endif
 
 
-float4 CalculateProjectionScaleRange(appdata v, float4 input, float scalar)
+half4 CalculateProjectionScaleRange(appdata v, half4 input, half scalar)
 {
-	float4 oldinput = input;
-	float4 newOrigin = input.w * _ProjectionRangeOrigin;
+	half4 oldinput = input;
+	half4 newOrigin = input.w * _ProjectionRangeOrigin;
 	input.xyz = input.xyz - newOrigin;
 	//Do stretch
 	input.xyz = input.xyz * scalar;
@@ -133,15 +133,15 @@ float4 CalculateProjectionScaleRange(appdata v, float4 input, float scalar)
 
 }
 
-float4 ConeScale(appdata v, float4 input, float scalar)
+half4 ConeScale(appdata v, half4 input, half scalar)
 {	
 	//Set New Origin
 	#ifdef VRSL_DMX
-		float4 newOrigin = input.w * _FixtureRotationOrigin; 
+		half4 newOrigin = input.w * _FixtureRotationOrigin; 
 		input.xyz = input.xyz - newOrigin;
 		//scalar = -scalar;
 
-		float4x4 scaleMatrix 	= float4x4(scalar,	0,	0,	0,
+		half4x4 scaleMatrix 	= half4x4(scalar,	0,	0,	0,
 												0,	1,  0,	0,
 												0,	0,	scalar,0,
 												0,	0,	0,	1);
@@ -151,11 +151,11 @@ float4 ConeScale(appdata v, float4 input, float scalar)
 		return input;
 	#endif
 	#ifdef VRSL_AUDIOLINK
-		float4 newOrigin = input.w * _FixtureRotationOrigin; 
+		half4 newOrigin = input.w * _FixtureRotationOrigin; 
 		input.xyz = input.xyz - newOrigin;
 		//scalar = -scalar;
 
-		float4x4 scaleMatrix 	= float4x4(scalar,	0,	0,	0,
+		half4x4 scaleMatrix 	= half4x4(scalar,	0,	0,	0,
 												0,	scalar,  0,	0,
 												0,	0,	1,0,
 												0,	0,	0,	1);
@@ -166,7 +166,7 @@ float4 ConeScale(appdata v, float4 input, float scalar)
 	#endif
 }
 #ifdef VRSL_DMX
-	float4 CalculateConeWidth(appdata v, float4 input, float scalar, uint dmx)
+	half4 CalculateConeWidth(appdata v, half4 input, half scalar, uint dmx)
 	{
 		#if defined(VOLUMETRIC_YES)
 
@@ -174,7 +174,7 @@ float4 ConeScale(appdata v, float4 input, float scalar)
 			// {
 
 				//Set New Origin
-				float4 newOrigin = input.w * _FixtureRotationOrigin; 
+				half4 newOrigin = input.w * _FixtureRotationOrigin; 
 				input.xyz = input.xyz - newOrigin;
 				scalar = -scalar;
 
@@ -189,13 +189,13 @@ float4 ConeScale(appdata v, float4 input, float scalar)
 				#endif
 				// if(v.color.r < 0.9)
 				// {
-					float distanceFromFixture = (v.uv.x) * (scalar);
+					half distanceFromFixture = (v.uv.x) * (scalar);
 					distanceFromFixture = lerp(0, distanceFromFixture, pow(v.uv.x, _ConeSync));
 
 					input.z = (input.z) + (-v.normal.z) * (distanceFromFixture);
 					input.x = (input.x) + (-v.normal.x) * (distanceFromFixture);
-					float3 originStretch = input.xyz;
-					float3 stretchedcoords = ((-v.tangent.y)*getMaxConeLength(dmx));
+					half3 originStretch = input.xyz;
+					half3 stretchedcoords = ((-v.tangent.y)*getMaxConeLength(dmx));
 					input.xyz = lerp(originStretch, (originStretch * stretchedcoords), pow(v.uv.x,lerp(1, 0.1, v.uv.x)-0.5));
 					input.xyz = IF(v.uv.x < 0.001, originStretch, input.xyz);
 
@@ -212,11 +212,11 @@ float4 ConeScale(appdata v, float4 input, float scalar)
 		#if defined(PROJECTION_YES)
 			if(ceil(v.color.g) >= 0.9 && ceil(v.color.r) >= 0.5)
 			{
-				float4 newOrigin = input.w * _ProjectionRangeOrigin; 
+				half4 newOrigin = input.w * _ProjectionRangeOrigin; 
 				input.xyz = input.xyz - newOrigin;
 
 				// Do Transformation
-				float distanceFromFixture = (v.texcoord.x) * scalar;
+				half distanceFromFixture = (v.texcoord.x) * scalar;
 				//input.xy = input.xy + v.normal.xy * distanceFromFixture;
 				input.x = (input.x) + (v.normal.x) * distanceFromFixture;
 				input.z = (input.z) + (v.normal.z) * distanceFromFixture;
@@ -237,7 +237,7 @@ float4 ConeScale(appdata v, float4 input, float scalar)
 	}
 #endif
 #ifdef VRSL_AUDIOLINK
-	float4 CalculateConeWidth(appdata v, float4 input, float scalar)
+	half4 CalculateConeWidth(appdata v, half4 input, half scalar)
 	{
 		#if defined(VOLUMETRIC_YES)
 				#ifdef WASH
@@ -247,16 +247,16 @@ float4 ConeScale(appdata v, float4 input, float scalar)
 				#endif
 
 				//Set New Origin
-				float4 newOrigin = input.w * _FixtureRotationOrigin; 
+				half4 newOrigin = input.w * _FixtureRotationOrigin; 
 				input.xyz = input.xyz - newOrigin;
 				scalar = -scalar;
 				// Do Transformation
-				float distanceFromFixture = (v.uv.x) * (scalar);
+				half distanceFromFixture = (v.uv.x) * (scalar);
 				distanceFromFixture = lerp(0, distanceFromFixture, pow(v.uv.x, 0.05));
 				input.y = (input.y) + (-v.normal.y) * (distanceFromFixture);
 				input.x = (input.x) + (-v.normal.x) * (distanceFromFixture);
-				float3 originStretch = input.xyz;
-				float3 stretchedcoords = (v.tangent.z*getMaxConeLength());
+				half3 originStretch = input.xyz;
+				half3 stretchedcoords = (v.tangent.z*getMaxConeLength());
 				input.xyz = lerp(originStretch, (input.xyz * stretchedcoords), pow(v.uv.x,lerp(1, 0.1, v.uv.x)-0.5));
 				input.xyz = IF(v.uv.x < 0.001, originStretch, input.xyz);
 				
@@ -268,11 +268,11 @@ float4 ConeScale(appdata v, float4 input, float scalar)
 		#if defined(PROJECTION_YES)
 			if(ceil(v.color.g) >= 0.9 && ceil(v.color.r) >= 0.5)
 			{
-				float4 newOrigin = input.w * _ProjectionRangeOrigin; 
+				half4 newOrigin = input.w * _ProjectionRangeOrigin; 
 				input.xyz = input.xyz - newOrigin;
 
 				// Do Transformation
-				float distanceFromFixture = (v.texcoord.x) * scalar;
+				half distanceFromFixture = (v.texcoord.x) * scalar;
 				//input.xy = input.xy + v.normal.xy * distanceFromFixture;
 				input.x = (input.x) + (v.normal.x) * distanceFromFixture;
 				input.z = (input.z) + (v.normal.z) * distanceFromFixture;
@@ -301,26 +301,26 @@ inline float4 CalculateFrustumCorrection()
 	return float4(x1, x2, 0, UNITY_MATRIX_P._33/UNITY_MATRIX_P._34 + x1*UNITY_MATRIX_P._13 + x2*UNITY_MATRIX_P._23);
 }
 
-float2 GetStripeInfo(uint goboSelection)
+half2 GetStripeInfo(uint goboSelection)
 {
 	switch(goboSelection)
 	{
 		case 2:
-			return float2(_StripeSplit, _StripeSplitStrength);
+			return half2(_StripeSplit, _StripeSplitStrength);
 		case 3:
-			return float2(_StripeSplit2, _StripeSplitStrength2);
+			return half2(_StripeSplit2, _StripeSplitStrength2);
 		case 4:
-			return float2(_StripeSplit3, _StripeSplitStrength3);
+			return half2(_StripeSplit3, _StripeSplitStrength3);
 		case 5:
-			return float2(_StripeSplit4, _StripeSplitStrength4);
+			return half2(_StripeSplit4, _StripeSplitStrength4);
 		case 6:
-			return float2(_StripeSplit5, _StripeSplitStrength5);
+			return half2(_StripeSplit5, _StripeSplitStrength5);
 		case 7:
-			return float2(_StripeSplit6, _StripeSplitStrength6);
+			return half2(_StripeSplit6, _StripeSplitStrength6);
 		case 8:
-			return float2(_StripeSplit7, _StripeSplitStrength7);
+			return half2(_StripeSplit7, _StripeSplitStrength7);
 		default:
-			return float2(0.0f,0.0f);
+			return half2(0.0f,0.0f);
 	}
 }
 
@@ -345,9 +345,9 @@ v2f vert (appdata v)
 	////////////////////////////////////////START DMX VERTEX//////////////////////////////////////////////////////////////////////
 	#ifdef VRSL_DMX
 		uint dmx = getDMXChannel();
-		float oscConeWidth = getDMXConeWidth(dmx);
-		float oscPanValue = GetPanValue(dmx);
-		float oscTiltValue = GetTiltValue(dmx);
+		half oscConeWidth = getDMXConeWidth(dmx);
+		half oscPanValue = GetPanValue(dmx);
+		half oscTiltValue = GetTiltValue(dmx);
 
 
 		v.vertex = CalculateConeWidth(v, v.vertex, oscConeWidth, dmx);
@@ -375,15 +375,15 @@ v2f vert (appdata v)
 			objCamPos = InvertVolumetricRotations(float4(objCamPos,1), oscPanValue, oscTiltValue).xyz;
 			
 			#ifdef _ALPHATEST_ON
-				float len = length(objCamPos.xy);
+				half len = length(objCamPos.xy);
 				len *= (_BlindingAngleMod);
 			#else
-				float len = length(objCamPos.xy);
+				half len = length(objCamPos.xy);
 				len *= (len * _BlindingAngleMod);
 			#endif
 			float4 originScreenPos = ComputeScreenPos(UnityObjectToClipPos(_FixtureRotationOrigin));
 			float2 originScreenUV = originScreenPos.xy / originScreenPos.w;
-			o.camAngleCamfade.x = saturate((1-distance(float2(0.5, 0.5), originScreenUV))-0.5);
+			o.camAngleCamfade.x = saturate((1-distance(half2(0.5, 0.5), originScreenUV))-0.5);
 			
 			//camAngle = lerp(1, camAngle, len);
 			//o.blindingEffect = lerp(1, o.blindingEffect * 2.5, o.camAngleCamfade.x);
@@ -391,11 +391,11 @@ v2f vert (appdata v)
 				
 				#ifdef _ALPHATEST_ON
 					o.blindingEffect = clamp(0.6/len,1.0,20.0);
-					float endBlind = 1.0;
+					half endBlind = 1.0;
 					o.blindingEffect = lerp(endBlind, o.blindingEffect, o.camAngleCamfade.x);
 				#else
 					o.blindingEffect = clamp(0.6/len,1.0,20.0);
-					float endBlind = lerp(1.0, o.blindingEffect, 0.15);
+					half endBlind = lerp(1.0, o.blindingEffect, 0.15);
 					o.blindingEffect = lerp(endBlind, o.blindingEffect * 2.2, o.camAngleCamfade.x);	
 				#endif
 			// #else
@@ -405,15 +405,15 @@ v2f vert (appdata v)
 			//o.viewDir.yzw = objCamPos.xyz;
 		#endif
 
-		//calculate rotations for normals, cast to float4 first with 0 as w
-		float4 newNormals = float4(v.normal.x, v.normal.y, v.normal.z, 0);
+		//calculate rotations for normals, cast to half4 first with 0 as w
+		half4 newNormals = half4(v.normal.x, v.normal.y, v.normal.z, 0);
 		newNormals = calculateRotations(v, newNormals, 1, oscPanValue, oscTiltValue);
 		v.normal = newNormals.xyz;
 
-		//calculate rotations for tangents, cast to float4 first with 0 as w
-		float4 newTangent = float4(v.tangent.x, v.tangent.y, v.tangent.z, 0);
-		newTangent = calculateRotations(v, newTangent, 1, oscPanValue, oscTiltValue);
-		v.tangent = newTangent.xyz;
+		//calculate rotations for tangents, cast to half4 first with 0 as w
+		// half4 newTangent = half4(v.tangent.x, v.tangent.y, v.tangent.z, 0);
+		// newTangent = calculateRotations(v, newTangent, 1, oscPanValue, oscTiltValue);
+		// v.tangent = newTangent.xyz;
 
 		#if defined(FIXTURE_SHADOWCAST)
 			//o.pos = UnityObjectToClipPos(v.vertex);
@@ -426,9 +426,9 @@ v2f vert (appdata v)
 
 		//original surface shader related code
 		#if !defined(VOLUMETRIC_YES) && !defined(FIXTURE_SHADOWCAST)
-			float3 worldNormal = UnityObjectToWorldNormal(v.normal);
-			float3 tangent = UnityObjectToWorldDir(v.tangent);
-			float3 bitangent = cross(tangent, worldNormal);
+			half3 worldNormal = UnityObjectToWorldNormal(v.normal);
+			half3 tangent = UnityObjectToWorldDir(v.tangent);
+			half3 bitangent = cross(tangent, worldNormal);
 		#endif
 
 
@@ -450,10 +450,10 @@ v2f vert (appdata v)
 			//Putting in the vertex position before the transformation seems to somewhat move the projection correctly, but is still incorrect...?
 			o.ray = UnityObjectToViewPos(v.vertex).xyz;
 			//invert z axis so that it projects from camera properly
-			o.ray *= float3(1,1,-1);
+			o.ray *= half3(1,1,-1);
 			//saving vertex color incase needing to perform rotation calculation in fragment shader
 			o.color = v.color;
-			o.dmx.x = (float)dmx;
+			o.dmx.x = (half)dmx;
 
 			o.worldPos = mul(unity_ObjectToWorld, v.vertex);
 
@@ -465,17 +465,17 @@ v2f vert (appdata v)
 			o.viewDir = normalize(UnityObjectToViewPos(v.vertex.xyz));
 			o.viewDir /= o.viewDir.z; // rescale vector so z is 1.0
 			//GET DMX/DMX VALUES
-			o.intensityStrobeWidth = float3(GetDMXIntensity(dmx, 1.0), GetStrobeOutput(dmx), oscConeWidth);
+			o.intensityStrobeWidth = half3(GetDMXIntensity(dmx, 1.0), GetStrobeOutput(dmx), oscConeWidth);
 			#ifdef WASH
-				float spinSpeed = 0.0;
+				half spinSpeed = 0.0;
 			#else
-				float spinSpeed = getGoboSpinSpeed(dmx);
+				half spinSpeed = getGoboSpinSpeed(dmx);
 			#endif
-			o.goboPlusSpinPanTilt = float4(getDMXGoboSelection(dmx), spinSpeed, oscPanValue, oscTiltValue);
+			o.goboPlusSpinPanTilt = half4(getDMXGoboSelection(dmx), spinSpeed, oscPanValue, oscTiltValue);
 			o.rgbColor = GetDMXColor(dmx);
-			if(((all(o.rgbColor <= float4(0.01,0.01,0.01,1)) || o.intensityStrobeWidth.x <= 0.01) && isDMX() == 1) || getGlobalIntensity() <= 0.005 || getFinalIntensity() <= 0.005 || all(o.emissionColor <= float4(0.005, 0.005, 0.005, 1.0)))
+			if(((all(o.rgbColor <= half4(0.01,0.01,0.01,1)) || o.intensityStrobeWidth.x <= 0.01) && isDMX() == 1) || getGlobalIntensity() <= 0.005 || getFinalIntensity() <= 0.005 || all(o.emissionColor <= half4(0.005, 0.005, 0.005, 1.0)))
 			{
-				v.vertex = float4(0,0,0,0);
+				v.vertex = half4(0,0,0,0);
 				o.pos = UnityObjectToClipPos(v.vertex);
 			} 
 
@@ -521,16 +521,16 @@ v2f vert (appdata v)
 			//o.tan = tangent;
 			//o.norm = worldNormal;
 			//GETTING DATA FROM DMX TEXTURE
-			o.intensityStrobeGOBOSpinSpeed = float4(GetDMXIntensity(dmx, 1.0),GetStrobeOutput(dmx), getGoboSpinSpeed(dmx), getDMXGoboSelection(dmx));
+			o.intensityStrobeGOBOSpinSpeed = half4(GetDMXIntensity(dmx, 1.0),GetStrobeOutput(dmx), getGoboSpinSpeed(dmx), getDMXGoboSelection(dmx));
 			o.intensityStrobeGOBOSpinSpeed.x = isDMX() == 1 ? o.intensityStrobeGOBOSpinSpeed.x : 1.0;
 			#if !defined(WASH)
 			uint gobo = isDMX() > 0 ? ceil(o.intensityStrobeGOBOSpinSpeed.w) : instancedGOBOSelection();
 			o.stripeInfo = GetStripeInfo(gobo);
 			#endif
 			o.rgbColor = GetDMXColor(dmx);
-			if(((all(o.rgbColor <= float4(0.005,0.005,0.005,1)) || o.intensityStrobeGOBOSpinSpeed.x <= 0.01) && isDMX() == 1) || getGlobalIntensity() <= 0.005 || getFinalIntensity() <= 0.005)
+			if(((all(o.rgbColor <= half4(0.005,0.005,0.005,1)) || o.intensityStrobeGOBOSpinSpeed.x <= 0.01) && isDMX() == 1) || getGlobalIntensity() <= 0.005 || getFinalIntensity() <= 0.005)
 			{
-				v.vertex = float4(0,0,0,0);
+				v.vertex = half4(0,0,0,0);
 				o.pos = UnityObjectToClipPos(v.vertex);
 			} 
 		#endif
@@ -547,7 +547,7 @@ v2f vert (appdata v)
 		o.worldPos = mul(unity_ObjectToWorld, v.vertex);
 
 
-		o.intensityStrobe = float2(GetDMXIntensity(dmx, 1.0),GetStrobeOutput(dmx));
+		o.intensityStrobe = half2(GetDMXIntensity(dmx, 1.0),GetStrobeOutput(dmx));
 		o.rgbColor = GetDMXColor(dmx);
 		o.btn[0] = bitangent;
 		o.btn[1] = tangent;
@@ -620,21 +620,21 @@ v2f vert (appdata v)
 			worldCam.x = unity_CameraToWorld[0][3];
 			worldCam.y = unity_CameraToWorld[1][3];
 			worldCam.z = unity_CameraToWorld[2][3];
-			float3 objCamPos = mul(unity_WorldToObject, float4(worldCam, 1)).xyz;
+			half3 objCamPos = mul(unity_WorldToObject, float4(worldCam, 1)).xyz;
 			//objCamPos = InvertVolumetricRotations(float4(objCamPos,1)).xyz;
-			float len = length(objCamPos.xy);
+			half len = length(objCamPos.xy);
 			len *= len;
 			o.camAngleLen.y = len;
-			float4 originScreenPos = ComputeScreenPos(UnityObjectToClipPos(float4(0,0,0,0)));
+			float4 originScreenPos = ComputeScreenPos(UnityObjectToClipPos(half4(0,0,0,0)));
 			float2 originScreenUV = originScreenPos.xy / originScreenPos.w;
-			o.camAngleLen.x = saturate((1-distance(float2(0.5, 0.5), originScreenUV))-0.5);
+			o.camAngleLen.x = saturate((1-distance(half2(0.5, 0.5), originScreenUV))-0.5);
 			o.camAngleLen.x = pow(o.camAngleLen.x, 0.5);
 			o.blindingEffect = clamp(0.6/len,1.0,8.0);
 			//camAngle = lerp(1, camAngle, len);
 
 			
 			#ifndef WASH
-				float endBlind = lerp(1.0, o.blindingEffect, 0.35);
+				half endBlind = lerp(1.0, o.blindingEffect, 0.35);
 				o.blindingEffect = lerp(endBlind, o.blindingEffect * 2.2, o.camAngleLen.x);
 			#else
 				o.blindingEffect = lerp(1, o.blindingEffect * 2.0, o.camAngleLen.x);
@@ -643,20 +643,20 @@ v2f vert (appdata v)
 			//o.viewDir.yzw = objCamPos.xyz;
 		#endif
 
-		//calculate rotations for normals, cast to float4 first with 0 as w
-		float4 newNormals = float4(v.normal.x, v.normal.y, v.normal.z, 0);
+		//calculate rotations for normals, cast to half4 first with 0 as w
+		half4 newNormals = half4(v.normal.x, v.normal.y, v.normal.z, 0);
 		//newNormals = calculateRotations(v, newNormals, 1);
 		v.normal = newNormals.xyz;
 
-		//calculate rotations for tangents, cast to float4 first with 0 as w
-		float4 newTangent = float4(v.tangent.x, v.tangent.y, v.tangent.z, 0);
+		//calculate rotations for tangents, cast to half4 first with 0 as w
+		half4 newTangent = half4(v.tangent.x, v.tangent.y, v.tangent.z, 0);
 		//newTangent = calculateRotations(v, newTangent, 1);
 		v.tangent = newTangent.xyz;
 
 		//original surface shader related code
-		float3 worldNormal = UnityObjectToWorldNormal(v.normal);
-		float3 tangent = UnityObjectToWorldDir(v.tangent);
-		float3 bitangent = cross(tangent, worldNormal);
+		half3 worldNormal = UnityObjectToWorldNormal(v.normal);
+		half3 tangent = UnityObjectToWorldDir(v.tangent);
+		half3 bitangent = cross(tangent, worldNormal);
 
 
 		#if !defined(PROJECTION_YES) && !defined(VOLUMETRIC_YES)
@@ -675,10 +675,10 @@ v2f vert (appdata v)
 			//Putting in the vertex position before the transformation seems to somewhat move the projection correctly, but is still incorrect...?
 			o.ray = UnityObjectToViewPos(v.vertex).xyz;
 			//invert z axis so that it projects from camera properly
-			o.ray *= float3(1,1,-1);
+			o.ray *= half3(1,1,-1);
 			//saving vertex color incase needing to perform rotation calculation in fragment shader
 			o.color = v.color;
-			//o.sector.x = (float)sector;
+			//o.sector.x = (half)sector;
 
 			o.worldPos = mul(unity_ObjectToWorld, v.vertex);
 
@@ -690,15 +690,15 @@ v2f vert (appdata v)
 			o.viewDir = normalize(UnityObjectToViewPos(v.vertex.xyz)); // get normalized view dir
 			o.viewDir /= o.viewDir.z; // rescale vector so z is 1.0
 			#ifdef RAW
-				if(o.globalFinalIntensity.x <= 0.005 || o.globalFinalIntensity.y <= 0.005 || all(o.emissionColor.xyz <= float4(0.005, 0.005, 0.005, 1.0)))
+				if(o.globalFinalIntensity.x <= 0.005 || o.globalFinalIntensity.y <= 0.005 || all(o.emissionColor.xyz <= half4(0.005, 0.005, 0.005, 1.0)))
 				{
-					v.vertex = float4(0,0,0,0);
+					v.vertex = half4(0,0,0,0);
 					o.pos = UnityObjectToClipPos(v.vertex);
 				}
 			#else
-				if(o.audioGlobalFinalConeIntensity.x <= 0.005 || o.audioGlobalFinalConeIntensity.y <= 0.005 || o.audioGlobalFinalConeIntensity.z <= 0.005 || all(o.emissionColor.xyz <= float4(0.005, 0.005, 0.005, 1.0)))
+				if(o.audioGlobalFinalConeIntensity.x <= 0.005 || o.audioGlobalFinalConeIntensity.y <= 0.005 || o.audioGlobalFinalConeIntensity.z <= 0.005 || all(o.emissionColor.xyz <= half4(0.005, 0.005, 0.005, 1.0)))
 				{
-					v.vertex = float4(0,0,0,0);
+					v.vertex = half4(0,0,0,0);
 					o.pos = UnityObjectToClipPos(v.vertex);
 				}
 			#endif		
@@ -719,7 +719,7 @@ v2f vert (appdata v)
 			#if _USE_DEPTH_LIGHT
 				o.screenPos = ComputeScreenPos (o.pos);
 			#else
-				o.screenPos = float4(0,0,0,0);
+				o.screenPos = half4(0,0,0,0);
 			#endif
 			o.uvClone = v.uv2;
 			#ifdef _HQ_MODE
@@ -741,7 +741,7 @@ v2f vert (appdata v)
 				// pack correction factor into direction w component to save space
 				o.worldDirection.w = dot(o.pos, CalculateFrustumCorrection());
 			#else
-				o.worldDirection = float4(0,0,0,0);
+				o.worldDirection = half4(0,0,0,0);
 			#endif
 			o.color = v.color;
 			//o.worldPos = mul(unity_ObjectToWorld, v.vertex);
@@ -750,15 +750,15 @@ v2f vert (appdata v)
 			o.stripeInfo = GetStripeInfo(instancedGOBOSelection());
 			o.norm = worldNormal;
 			#ifdef RAW
-				if(o.globalFinalIntensity.x <= 0.005 || o.globalFinalIntensity.y <= 0.005 || all(o.emissionColor.xyz <= float4(0.005, 0.005, 0.005, 1.0)))
+				if(o.globalFinalIntensity.x <= 0.005 || o.globalFinalIntensity.y <= 0.005 || all(o.emissionColor.xyz <= half4(0.005, 0.005, 0.005, 1.0)))
 				{
-					v.vertex = float4(0,0,0,0);
+					v.vertex = half4(0,0,0,0);
 					o.pos = UnityObjectToClipPos(v.vertex);
 				}
 			#else
-				if(o.audioGlobalFinalIntensity.x <= 0.005 || o.audioGlobalFinalIntensity.y <= 0.005 || o.audioGlobalFinalIntensity.z <= 0.005 || all(o.emissionColor.xyz <= float4(0.005, 0.005, 0.005, 1.0)))
+				if(o.audioGlobalFinalIntensity.x <= 0.005 || o.audioGlobalFinalIntensity.y <= 0.005 || o.audioGlobalFinalIntensity.z <= 0.005 || all(o.emissionColor.xyz <= half4(0.005, 0.005, 0.005, 1.0)))
 				{
-					v.vertex = float4(0,0,0,0);
+					v.vertex = half4(0,0,0,0);
 					o.pos = UnityObjectToClipPos(v.vertex);
 				}
 			#endif

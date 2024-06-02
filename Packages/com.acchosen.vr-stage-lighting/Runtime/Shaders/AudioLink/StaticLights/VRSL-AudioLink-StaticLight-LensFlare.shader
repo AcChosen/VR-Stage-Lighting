@@ -27,6 +27,7 @@
         _FixutreIntensityMultiplier ("Intensity Multipler (For Bloom Scaling)", Range(1,5)) = 1
         _RenderTextureMultiplier("Render Texture Multiplier", Range(1,10)) = 1
         _RemoveTextureArtifact("RemoveTextureArtifact", Range(0,0.1)) = 0
+        [Toggle]_UseTraditionalSampling("Use Traditional Texture Sampling", Int) = 0
 
         [Toggle] _EnableColorTextureSample ("Enable Color Texture Sampling", Int) = 0
 		 _SamplingTexture ("Texture To Sample From for Color", 2D) = "white" {}
@@ -359,7 +360,7 @@
                         4.0 / 17.0, 12.0 / 17.0,  2.0 / 17.0, 10.0 / 17.0,
                         16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0
                     };
-                    int index = (int(pos.x) % 4) * 4 + int(pos.y) % 4;
+                    int index = (uint(pos.x) % 4) * 4 + uint(pos.y) % 4;
                     float4 col = saturate(tex2D(_MainTex, i.uv ));
                    // col *= i.maskX;
                     //clip((col.a) - DITHER_THRESHOLDS[index]);

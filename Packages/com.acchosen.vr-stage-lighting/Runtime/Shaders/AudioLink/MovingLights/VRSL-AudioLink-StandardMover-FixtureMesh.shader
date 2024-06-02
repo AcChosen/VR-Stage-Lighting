@@ -26,6 +26,7 @@
          _Delay("Delay", Float) = 0
          _NumBands("Num Bands", Float) = 4
          _AudioSpectrum("AudioSpectrum", 2D) = "black" {}
+		 [Toggle]_UseTraditionalSampling("Use Traditional Texture Sampling", Int) = 0
 
 		//[Header (BASIC CONTROLS)]
 		_RenderTextureMultiplier("Render Texture Multiplier", Range(1,10)) = 1

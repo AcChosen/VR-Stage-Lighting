@@ -29,6 +29,7 @@
 		_FixtureMaxIntensity ("Maximum Light Intensity",Range (0,6)) = 1
 		//[NoScaleOffset] _SceneAlbedo ("Scene Albedo Render Texture", 2D) = "white" {}
 		_RenderTextureMultiplier("Render Texture Multiplier", Range(1,10)) = 1
+		[Toggle]_UseTraditionalSampling("Use Traditional Texture Sampling", Int) = 0
 		//Color Texture Sampling Properties
 		 [Toggle] _EnableColorTextureSample ("Enable Color Texture Sampling", Int) = 0
 		 _SamplingTexture ("Texture To Sample From for Color", 2D) = "white" {}

@@ -598,11 +598,13 @@ public class AudioLinkListItem
 // }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 public class VRSL_ManagerWindow : EditorWindow {
+    private static VRSL_ManagerWindowSettings settings;
     static float panRangeOff = 180f;
     static float tiltRangeOff = -180f;
     public static Texture logo, github, twitter, discord;
     public bool legacyFixtures;
     //public static string ver = "VR Stage Lighting ver:" + " <b><color=#6a15ce> 2.4.1</color></b>";
+    public static bool useGIPrefabs;
 
     public static bool hasLocalPanel, hasDepthLight;
     private static VRSL_LocalUIControlPanel panel;
@@ -625,7 +627,8 @@ public class VRSL_ManagerWindow : EditorWindow {
     private string[] materialChooserList = new string[]{"Off","Intensity+Color", "Movement", "Spin", "Strobe Timing", "Strobe Output", "AudioLink Interpolation"};
     private string [] dmxGizmoInfo = new string[]{"None", "Channel Only", "Universe + Channel"};
     private static UnityEngine.Object controlPanelUiPrefab, directionalLightPrefab, uDesktopHorizontalPrefab, uDesktopVerticalPrefab, uDesktopLegacyPrefab, uVidHorizontalPrefab, uVidVerticalPrefab, uVidLegacyPrefab,
-    audioLinkPrefab, audioLinkControllerPrefab, standardAudioLinkControllerPrefab, oscGridReaderHorizontalPrefab, oscGridReaderVerticalPrefab, audioLinkVRSLPrefab, cubeMask, cylinderMask, capsuleMask, sphereMask;
+    audioLinkPrefab, audioLinkControllerPrefab, standardAudioLinkControllerPrefab, oscGridReaderHorizontalPrefab, oscGridReaderVerticalPrefab, audioLinkVRSLPrefab, cubeMask, cylinderMask, capsuleMask, sphereMask,
+    proTVVertical, proTVHorizontal, videoTXLVertical, videoTXLHorizontal;
     private static bool dmxSpawnsFoldout, audioLinkSpawnsFoldout, mainOptionsFoldout, stencilFoldout;
     Vector2 dmxScrollPos, audioLinkScrollPos, mainScrollPos;
     private static bool dmxHover, audioLinkHover;
@@ -633,12 +636,18 @@ public class VRSL_ManagerWindow : EditorWindow {
     private static bool lastDepthLightRequirement, lastVolumetricNoiseToggle;
 
     private static UnityEngine.Object spotlight_h, spotlight_v, spotlight_l, spotlight_a;
+    private static UnityEngine.Object gi_spotlight_h, gi_spotlight_v, gi_spotlight_a;
     private static UnityEngine.Object washlight_h, washlight_v, washlight_l, washlight_a;
+    private static UnityEngine.Object gi_washlight_h, gi_washlight_v, gi_washlight_a;
     private static UnityEngine.Object blinder_h, blinder_v, blinder_l, blinder_a;
+    private static UnityEngine.Object gi_blinder_h, gi_blinder_v, gi_blinder_a;
     private static UnityEngine.Object flasher_h, flasher_v, flasher_l, flasher_a;
+    private static UnityEngine.Object gi_flasher_h, gi_flasher_v, gi_flasher_a;   
     private static UnityEngine.Object parlight_h, parlight_v, parlight_l, parlight_a;
+    private static UnityEngine.Object gi_parlight_h, gi_parlight_v, gi_parlight_a;
     private static UnityEngine.Object lightbar_h, lightbar_v, lightbar_l, lightbar_a;
-    private static UnityEngine.Object discoball_h, discoball_v, discoball_l, discoball_a;
+    private static UnityEngine.Object gi_lightbar_h, gi_lightbar_v, gi_lightbar_a;    
+    private static UnityEngine.Object discoball_h, discoball_v, discoball_l, discoball_a; 
     private static UnityEngine.Object laser_h, laser_v, laser_l, laser_a;
     private static UnityEngine.Object sixFour_h, sixFour_v, sixFour_l;
     private static UnityEngine.Object multiLightbar_h, multiLightbar_v, multiLightbar_l;
@@ -648,6 +657,8 @@ public class VRSL_ManagerWindow : EditorWindow {
     dmx_H_CRT_StrobeTime_Mat, dmx_V_CRT_StrobeTime_Mat, dmx_L_CRT_StrobeTime_Mat,
     dmx_H_CRT_StrobeOut_Mat, dmx_V_CRT_StrobeOut_Mat, dmx_L_CRT_StrobeOut_Mat,
     audiolink_CRT_InterpolationMat;
+    string[] volumetricMeshQualityNames = new string[] {"High", "Medium", "Low"};
+    int[] volumetricMeshQualityValues = {0, 1, 2};
 
     private MaterialEditor _materialEditor; 
     private bool showMaterialEditor;
@@ -658,12 +669,14 @@ public class VRSL_ManagerWindow : EditorWindow {
     private static Shader GIDMXLightTextureShader;
     private static bool hasDMXGI;
 
+    private static bool hasUsharpVideo, hasDesktop, hasProTV, hasVideoTXL;
+
     private int materialChooser;
     // private float panRangeTarget = 90f; 
     // private float tiltRangeTarget = -90f;
 
 
-    [MenuItem("VRSL/Control Panel")]
+    [MenuItem("VRSL/Control Panel", priority = 250)]
     static void ShowWindow() {
         EditorWindow window = GetWindow<VRSL_ManagerWindow>();
         window.titleContent = new GUIContent("VRSL Control Panel");
@@ -684,8 +697,14 @@ public class VRSL_ManagerWindow : EditorWindow {
                 lastVolumetricNoiseToggle = panel.VolumetricNoise;
                 MassHideShowProjections();
                 panel._CheckDepthLightStatus();   
-            }    
+            }   
+            CheckDesktopDuplication();
+            CheckUSharpVideo();
+            CheckVideoTXL(); 
+            CheckProTV();
+
             LoadPrefabs();
+            GetManagerSettings();
             //Debug.Log("VRSL Control Panel: Initializing!");
             ApplyChangesToFixtures(true, true, false);
         }
@@ -700,6 +719,15 @@ public class VRSL_ManagerWindow : EditorWindow {
         //EditorApplication.playModeStateChanged += LogPlayModeState;
         
 
+    }
+
+
+    static void GetManagerSettings()
+    {
+        if(settings == null)
+        {
+            settings = (VRSL_ManagerWindowSettings) AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath("9d76acca48d75144d934f63fba1b5adf"), typeof(VRSL_ManagerWindowSettings));
+        }
     }
 
     public static string GetVersion()
@@ -718,6 +746,7 @@ public class VRSL_ManagerWindow : EditorWindow {
     static bool CheckIfDMXGIAvailable()
     {
         string path = "Packages/com.acchosen.vrsl-dmx-gi/Runtime/Shaders/VRSL_GI_LightTexture.shader";
+        
         bool wasSuccessful = false;
         try{
             GIDMXLightTextureShader = (Shader)AssetDatabase.LoadAssetAtPath(path, typeof(Shader));
@@ -727,7 +756,15 @@ public class VRSL_ManagerWindow : EditorWindow {
         {
             e.GetType();
             wasSuccessful = false;
+            return wasSuccessful;
         }
+
+        string path2 = Application.dataPath;
+        path2 = path2.Replace("Assets","");
+        path2 += "Packages"  + "\\" + "com.acchosen.vrsl-dmx-gi" + "\\";
+        path2 += "Runtime" + "\\"  + "Scripts" + "\\" + "VRSL_GI_VenueStateController.cs";
+
+        wasSuccessful = File.Exists(path2);
         return wasSuccessful;
     }
 
@@ -738,37 +775,36 @@ public class VRSL_ManagerWindow : EditorWindow {
        
     // }
 
+    static void CheckUSharpVideo()
+    {
+        string path = Application.dataPath;
+        path += "/VRSL Addons/VRSL-USharpVideo Package/VERSION.txt";
+        hasUsharpVideo = File.Exists(path);
+    }
+    static void CheckDesktopDuplication()
+    {
+        string path = Application.dataPath;
+        path += "/VRSL Addons/VRSL-DesktopDuplication Package/VERSION.txt";
+        hasDesktop = File.Exists(path);
+    }
+
+    static void CheckProTV()
+    {
+        string path = Application.dataPath;
+        path += "/VRSL Addons/VRSL-ProTV Package/VERSION.txt";
+        hasProTV = File.Exists(path);
+    }
+
+    static void CheckVideoTXL()
+    {
+        string path = Application.dataPath;
+        path += "/VRSL Addons/VRSL-VideoTXL Package/VERSION.txt";
+        hasVideoTXL = File.Exists(path);
+    }
     static bool LoadPrefabs()
     {
         bool result = true;
-        // string controlPanelPath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/VRSL-LocalUIControlPanel.prefab";
-        // string directionalLightPath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/Directional Light (For Depth).prefab";
-        // string udeskHorizontalPath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/DMX/Horizontal Mode/DMX Reader Screens/VRSL-DMX-uDesktopDuplicationReaderScreen-Horizontal.prefab";
-        // string udeskVerticalPath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/DMX/Vertical Mode/DMX Reader Screens/VRSL-DMX-uDesktopDuplicationReaderScreen-Vertical.prefab";
-        // string udeskLegacyPath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/DMX/Legacy Mode/DMX Reader Screens/VRSL-DMX-uDesktopDuplicationReader-Legacy.prefab";
-        // string vidHorizontalPath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/DMX/Horizontal Mode/DMX Reader Screens/VRSL-DMX-USharpVideoReaderScreen-Horizontal.prefab";
-        // string vidVerticalPath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/DMX/Vertical Mode/DMX Reader Screens/VRSL-DMX-USharpVideoReaderScreen-Vertical.prefab";
-        // string vidLegacyPath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/DMX/Legacy Mode/DMX Reader Screens/VRSL-DMX-USharpVideoReaderScreen-Legacy.prefab";
-        // string audioLinkPath = "Assets/AudioLink/Audiolink.prefab";
-        // string audioLinkPathAlt = "Packages/com.llealloo.audiolink/Runtime/Audiolink.prefab";
-        // string audioLinkControllerPath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/AudioLink/VRSL-AudioLinkControllerWithSmoothing/AudioLinkController-WithVRSLSmoothing.prefab";
-        // string standardAudioLinkControllerPath = "Assets/AudioLink/AudioLinkController.prefab";
-        // string standardAudioLinkControllerPathAlt = "Packages/com.llealloo.audiolink/Runtime/AudioLinkController.prefab";
-        // string oscGridReadHPath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/DMX/GridReader/VRSL-DMX-TekOSCGridReader-H.prefab";
-        // string oscGridReadVPath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/DMX/GridReader/VRSL-DMX-TekOSCGridReader-V.prefab";
-        // controlPanelUiPrefab = AssetDatabase.LoadAssetAtPath(controlPanelPath, typeof(GameObject));
-        // directionalLightPrefab = AssetDatabase.LoadAssetAtPath(directionalLightPath, typeof(GameObject));
-        // oscGridReaderHorizontalPrefab = AssetDatabase.LoadAssetAtPath(oscGridReadHPath, typeof(GameObject));
-        // oscGridReaderVerticalPrefab = AssetDatabase.LoadAssetAtPath(oscGridReadVPath, typeof(GameObject));
-        // uDesktopHorizontalPrefab = AssetDatabase.LoadAssetAtPath(udeskHorizontalPath, typeof(GameObject));
-        // uDesktopVerticalPrefab = AssetDatabase.LoadAssetAtPath(udeskVerticalPath, typeof(GameObject));
-        // uDesktopLegacyPrefab = AssetDatabase.LoadAssetAtPath(udeskLegacyPath, typeof(GameObject));
-        // uVidHorizontalPrefab = AssetDatabase.LoadAssetAtPath(vidHorizontalPath, typeof(GameObject));
-        // uVidVerticalPrefab = AssetDatabase.LoadAssetAtPath(vidVerticalPath, typeof(GameObject));
-        // uVidLegacyPrefab = AssetDatabase.LoadAssetAtPath(vidLegacyPath, typeof(GameObject));
-        // audioLinkPrefab = AssetDatabase.LoadAssetAtPath(audioLinkPath, typeof(GameObject));
-        // audioLinkControllerPrefab = AssetDatabase.LoadAssetAtPath(audioLinkControllerPath, typeof(GameObject));
-        // standardAudioLinkControllerPrefab = AssetDatabase.LoadAssetAtPath(standardAudioLinkControllerPath, typeof(GameObject));
+
         controlPanelUiPrefab = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath("dedfba01424b93148b3d9a42e95ed2f7"), typeof(GameObject));
         directionalLightPrefab = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath("dc2b8d13712a0f3488413e49afae73ef"), typeof(GameObject));
         oscGridReaderHorizontalPrefab = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath("f37d8aba2d9398d4aa2fc86f7d8c0cd4"), typeof(GameObject));
@@ -787,6 +823,10 @@ public class VRSL_ManagerWindow : EditorWindow {
         cylinderMask = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath("de5b252ed1e43b14a9f655ac98144fff"), typeof(GameObject));
         capsuleMask = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath("29158ac9808b32541ba787435bdfa109"), typeof(GameObject));
         sphereMask = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath("fa0972d9c823bcf4293febe61ff79da6"), typeof(GameObject));
+        proTVVertical = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath("e4fe596a841f2d449aab8a480115a03d"), typeof(GameObject));
+        proTVHorizontal = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath("d58eb5975ef68b8448ae81cd41c1b615"), typeof(GameObject));
+        videoTXLVertical = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath("30c965f2294a39b4c83772e8aa63f69d"), typeof(GameObject));
+        videoTXLHorizontal = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath("b815c24c9fa26f04e9d441922ce84968"), typeof(GameObject));
 
         if(controlPanelUiPrefab == null)
         {
@@ -808,36 +848,36 @@ public class VRSL_ManagerWindow : EditorWindow {
             Debug.LogError("VRSL Control Panel: Failed to load  " + AssetDatabase.GUIDToAssetPath("2ed7323806c632f4294ff51d8af9a2b2"));
             result = false;
         }
-        if(uDesktopHorizontalPrefab == null)
-        {
-            Debug.LogError("VRSL Control Panel: Failed to load  " + AssetDatabase.GUIDToAssetPath("d8bedad6090068740a8d3d9de3c84ea4"));
-            result = false;
-        }
-        if(uDesktopVerticalPrefab == null)
-        {
-            Debug.LogError("VRSL Control Panel: Failed to load " + AssetDatabase.GUIDToAssetPath("b55309c416955b044a48bbced977331d"));
-            result = false;
-        }
-        if(uDesktopLegacyPrefab == null)
-        {
-            Debug.LogError("VRSL Control Panel: Failed to load " + AssetDatabase.GUIDToAssetPath("a6013d8268c98274386159517c50aa09"));
-            result = false;
-        }
-        if(uVidHorizontalPrefab == null)
-        {
-            Debug.LogError("VRSL Control Panel: Failed to load " + AssetDatabase.GUIDToAssetPath("e62fe963d8da32147bbd2f1caa73a0de"));
-            result = false;
-        }
-        if(uVidVerticalPrefab == null)
-        {
-            Debug.LogError("VRSL Control Panel: Failed to load " + AssetDatabase.GUIDToAssetPath("91a099dcf3cff864a9bc08584904554a"));
-            result = false;
-        }
-        if(uVidLegacyPrefab == null)
-        {
-            Debug.LogError("VRSL Control Panel: Failed to load " + AssetDatabase.GUIDToAssetPath("dd476adc52e8f374da7dd7e4e9274f71"));
-            result = false;
-        }
+        // if(uDesktopHorizontalPrefab == null)
+        // {
+        //     Debug.LogError("VRSL Control Panel: Failed to load  " + AssetDatabase.GUIDToAssetPath("d8bedad6090068740a8d3d9de3c84ea4"));
+        //     result = false;
+        // }
+        // if(uDesktopVerticalPrefab == null)
+        // {
+        //     Debug.LogError("VRSL Control Panel: Failed to load " + AssetDatabase.GUIDToAssetPath("b55309c416955b044a48bbced977331d"));
+        //     result = false;
+        // }
+        // if(uDesktopLegacyPrefab == null)
+        // {
+        //     Debug.LogError("VRSL Control Panel: Failed to load " + AssetDatabase.GUIDToAssetPath("a6013d8268c98274386159517c50aa09"));
+        //     result = false;
+        // }
+        // if(uVidHorizontalPrefab == null)
+        // {
+        //     Debug.LogError("VRSL Control Panel: Failed to load " + AssetDatabase.GUIDToAssetPath("e62fe963d8da32147bbd2f1caa73a0de"));
+        //     result = false;
+        // }
+        // if(uVidVerticalPrefab == null)
+        // {
+        //     Debug.LogError("VRSL Control Panel: Failed to load " + AssetDatabase.GUIDToAssetPath("91a099dcf3cff864a9bc08584904554a"));
+        //     result = false;
+        // }
+        // if(uVidLegacyPrefab == null)
+        // {
+        //     Debug.LogError("VRSL Control Panel: Failed to load " + AssetDatabase.GUIDToAssetPath("dd476adc52e8f374da7dd7e4e9274f71"));
+        //     result = false;
+        // }
         if(audioLinkPrefab == null)
         {
             // audioLinkPrefab = AssetDatabase.LoadAssetAtPath(audioLinkPathAlt, typeof(GameObject));
@@ -1216,6 +1256,7 @@ public class VRSL_ManagerWindow : EditorWindow {
         g.fixedHeight = 45;
         //g.fontStyle = FontStyle.Bold;
         g.normal.textColor = Color.white;
+        g.hover.textColor = Color.white;
         g.alignment = TextAnchor.MiddleCenter;
         return g;
     }
@@ -1226,6 +1267,7 @@ public class VRSL_ManagerWindow : EditorWindow {
         g.fixedHeight = 35;
         //g.fontStyle = FontStyle.Bold;
         g.normal.textColor = Color.white;
+        g.hover.textColor = Color.white;
         g.alignment = TextAnchor.MiddleCenter;
         return g;
     }
@@ -1236,6 +1278,7 @@ public class VRSL_ManagerWindow : EditorWindow {
        // g.fixedHeight = 35;
       //  g.fontStyle = FontStyle.Italic;
         g.normal.textColor = Color.white;
+        g.hover.textColor = Color.white;
         g.alignment = TextAnchor.MiddleCenter;
         return g;
     }
@@ -1246,7 +1289,8 @@ public class VRSL_ManagerWindow : EditorWindow {
        // g.fixedHeight = 35;
       //  g.fontStyle = FontStyle.Italic;
         g.normal.textColor = Color.white;
-        g.alignment = TextAnchor.MiddleLeft;
+        g.hover.textColor = Color.white;
+        g.alignment = TextAnchor.MiddleCenter;
         return g;
     }
     public static GUIStyle Title1Foldout()
@@ -1334,6 +1378,7 @@ public class VRSL_ManagerWindow : EditorWindow {
    //  EditorApplication.playModeStateChanged += LogPlayModeState;
      SceneView.duringSceneGui += this.OnSceneGUI;
      LoadMaterials();
+     GetManagerSettings();
      hasDMXGI = CheckIfDMXGIAvailable();
     }
     void OnDisable( )
@@ -1538,6 +1583,76 @@ public class VRSL_ManagerWindow : EditorWindow {
             }
         }
     }
+
+    static void SetVolumetricMeshes(Mesh spotMesh, Mesh washMesh, Mesh audioSpotMesh, Mesh audioWashMesh)
+    {
+        if(settings != null)
+        {
+            for(int i = 0; i < universes.Length; i++)
+            {
+                if(universes[i] == null)
+                {
+                    continue;
+                }
+                foreach(DMXListItem fixture in universes[i])
+                {
+                    if(fixture == null)
+                    {
+                        continue;
+                    }
+                    if(fixture.light == null)
+                    {
+                        continue;
+                    }
+                    foreach(MeshRenderer rend in fixture.light.objRenderers)
+                    {
+                        int type = fixture.light.gameObject.name.Contains("Spot") ? 1 : 0;
+                        type = fixture.light.gameObject.name.Contains("Wash") ? 2 : type;
+                        if(type > 0)
+                        {
+                            if(rend.gameObject.name.Contains("Volumetric"))
+                            {
+                                MeshFilter mf = rend.gameObject.GetComponent<MeshFilter>();
+                                if(mf)
+                                {
+                                    mf.mesh = type == 1 ? spotMesh : washMesh;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach(AudioLinkListItem fixture in audioLinkLights)
+            {
+                if(fixture == null)
+                {
+                    continue;
+                }
+                if(fixture.light == null)
+                {
+                    continue;
+                }
+                foreach(MeshRenderer rend in fixture.light.objRenderers)
+                {
+                    int type = fixture.light.gameObject.name.Contains("Spot") ? 1 : 0;
+                    type = fixture.light.gameObject.name.Contains("Wash") ? 2 : type;
+                    if(type > 0)
+                    {
+                        if(rend.gameObject.name.Contains("Volumetric"))
+                        {
+                            MeshFilter mf = rend.gameObject.GetComponent<MeshFilter>();
+                            if(mf)
+                            {
+                                mf.mesh = type == 1 ? audioSpotMesh : audioWashMesh;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
     static void MassApplyIDs()
     {
         int prefabID = 100;
@@ -1588,10 +1703,13 @@ public class VRSL_ManagerWindow : EditorWindow {
 
     private static void SpawnPrefabWithUndo(UnityEngine.Object obj, string undoMessage, bool isFixture, bool isAudioLinkFixture)
     {
-        GameObject instance = (GameObject) PrefabUtility.InstantiatePrefab(obj as GameObject);
-        Undo.RegisterCreatedObjectUndo (instance, undoMessage);
-        Selection.SetActiveObjectWithContext(instance, null);
-        //MassHideShowProjections();
+        if(obj != null)
+        {
+            GameObject instance = (GameObject) PrefabUtility.InstantiatePrefab(obj as GameObject);
+            Undo.RegisterCreatedObjectUndo (instance, undoMessage);
+            Selection.SetActiveObjectWithContext(instance, null);
+            //MassHideShowProjections();
+        }
     }
 
      private static void ApplyChangesToFixtures(bool acceptChanges, bool initialize, bool closeMenus)
@@ -2055,108 +2173,6 @@ public class VRSL_ManagerWindow : EditorWindow {
     {
         bool loadSuccessful = true;
 
-        // string horizontalpath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/DMX/Horizontal Mode/";
-        // string verticalpath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/DMX/Vertical Mode/";
-        // string legacypath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/DMX/Legacy Mode/";
-        // string audiopath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/AudioLink/";
-
-        // string spot_h_path = horizontalpath + "VRSL-DMX-Mover-Spotlight-H-13CH.prefab";
-        // string spot_v_path = verticalpath + "VRSL-DMX-Mover-Spotlight-V-13CH.prefab";
-        // string spot_l_path = legacypath + "VRSL-DMX-Mover-Spotlight-L-13CH.prefab";
-        // string spot_a_path = audiopath + "VRSL-AudioLink-Mover-Spotlight.prefab";
-
-        // string wash_h_path = horizontalpath + "VRSL-DMX-Mover-WashLight-H-13CH.prefab";
-        // string wash_v_path = verticalpath + "VRSL-DMX-Mover-WashLight-V-13CH.prefab";
-        // string wash_l_path = legacypath + "VRSL-DMX-Mover-WashLight-L-13CH.prefab";
-        // string wash_a_path = audiopath + "VRSL-AudioLink-Mover-Washlight.prefab";
-        // string blind_h_path, blind_v_path, blind_l_path, blind_a_path;
-        // string par_h_path, par_v_path, par_l_path, par_a_path;
-        // string bar_h_path, bar_v_path, bar_l_path, bar_a_path;
-        // string six_h_path, six_v_path, six_l_path;
-        // string multibar_h_path, multibar_v_path, multibar_l_path;
-        // if(legacyFixtures)
-        // {
-        //     blind_h_path = horizontalpath + "VRSL-DMX-Static-Blinder-H-13CH.prefab";
-        //     blind_v_path = verticalpath + "VRSL-DMX-Static-Blinder-V-13CH.prefab";
-        //     blind_l_path = legacypath + "VRSL-DMX-Static-Blinder-L-13CH.prefab";
-        //     blind_a_path = audiopath + "VRSL-AudioLink-Static-Blinder.prefab";
-
-        //     par_h_path = horizontalpath + "VRSL-DMX-Static-ParLight-H-13CH.prefab";
-        //     par_v_path = verticalpath + "VRSL-DMX-Static-ParLight-V-13CH.prefab";
-        //     par_l_path = legacypath + "VRSL-DMX-Static-ParLight-L-13CH.prefab";
-        //     par_a_path = audiopath + "VRSL-AudioLink-Static-ParLight.prefab";
-
-        //     bar_h_path = horizontalpath + "VRSL-DMX-Static-LightBar-H-13CH.prefab";
-        //     bar_v_path = verticalpath + "VRSL-DMX-Static-LightBar-V-13CH.prefab";
-        //     bar_l_path = legacypath + "VRSL-DMX-Static-LightBar-L-13CH.prefab";
-        //     bar_a_path = audiopath + "VRSL-AudioLink-Static-Lightbar.prefab";
-            
-        //     six_h_path = horizontalpath + "5-Channel Statics/" + "VRSL-DMX-Static-6x4StrobeLight-H-5CH.prefab";
-        //     six_v_path = verticalpath + "5-Channel Statics/" + "VRSL-DMX-Static-6x4StrobeLight-V-5CH.prefab";
-        //     six_l_path = legacypath + "5-Channel Statics/" + "VRSL-DMX-Static-6x4StrobeLight-L-5CH.prefab";
-
-        //     multibar_h_path = horizontalpath + "VRSL-DMX-Static-MultiLightBar-H-15CH.prefab";
-        //     multibar_v_path = verticalpath + "VRSL-DMX-Static-MultiLightBar-V-15CH.prefab";
-        //     multibar_l_path = legacypath + "VRSL-DMX-Static-MultiLightBar-L-15CH.prefab";
-        // }
-        // else
-        // {
-        //     blind_h_path = horizontalpath + "5-Channel Statics/" + "VRSL-DMX-Static-Blinder-H-5CH.prefab";
-        //     blind_v_path = verticalpath + "5-Channel Statics/" +  "VRSL-DMX-Static-Blinder-V-5CH.prefab";
-        //     blind_l_path = legacypath + "VRSL-DMX-Static-Blinder-L-13CH.prefab";
-        //     blind_a_path = audiopath + "VRSL-AudioLink-Static-Blinder.prefab";
-
-        //     par_h_path = horizontalpath + "5-Channel Statics/" +  "VRSL-DMX-Static-ParLight-H-5CH.prefab";
-        //     par_v_path = verticalpath + "5-Channel Statics/" +  "VRSL-DMX-Static-ParLight-V-5CH.prefab";
-        //     par_l_path = legacypath + "VRSL-DMX-Static-ParLight-L-13CH.prefab";
-        //     par_a_path = audiopath + "VRSL-AudioLink-Static-ParLight.prefab";
-
-        //     bar_h_path = horizontalpath + "5-Channel Statics/" +  "VRSL-DMX-Static-LightBar-H-5CH.prefab";
-        //     bar_v_path = verticalpath + "5-Channel Statics/" +  "VRSL-DMX-Static-LightBar-V-5CH.prefab";
-        //     bar_l_path = legacypath + "VRSL-DMX-Static-LightBar-L-13CH.prefab";
-        //     bar_a_path = audiopath + "VRSL-AudioLink-Static-Lightbar.prefab";
-
-        //     six_h_path = horizontalpath + "5-Channel Statics/" + "VRSL-DMX-Static-6x4StrobeLight-H-5CH.prefab";
-        //     six_v_path = verticalpath + "5-Channel Statics/" + "VRSL-DMX-Static-6x4StrobeLight-V-5CH.prefab";
-        //     six_l_path = legacypath + "5-Channel Statics/" + "VRSL-DMX-Static-6x4StrobeLight-L-5CH.prefab";
-
-        //     multibar_h_path = horizontalpath + "VRSL-DMX-Static-MultiLightBar-H-15CH.prefab";
-        //     multibar_v_path = verticalpath + "VRSL-DMX-Static-MultiLightBar-V-15CH.prefab";
-        //     multibar_l_path = legacypath + "VRSL-DMX-Static-MultiLightBar-L-15CH.prefab";
-
-        // }
-
-        // string flash_h_path = horizontalpath + "VRSL-DMX-Static-Flasher-H-1CH.prefab";
-        // string flash_v_path = verticalpath + "VRSL-DMX-Static-Flasher-V-1CH.prefab";
-        // string flash_l_path = legacypath + "VRSL-DMX-Static-Flasher-L-1CH.prefab";
-        // string flash_a_path = audiopath + "VRSL-AudioLink-Static-Flasher.prefab";
-
-        // string disco_h_path = horizontalpath + "VRSL-DMX-Static-DiscoBall-H-1CH.prefab";
-        // string disco_v_path = verticalpath + "VRSL-DMX-Static-DiscoBall-V-1CH.prefab";
-        // string disco_l_path = legacypath + "VRSL-DMX-Static-DiscoBall-L-1CH.prefab";
-        // string disco_a_path = audiopath + "VRSL-AudioLink-DiscoBall.prefab";
-
-        // string laser_h_path = horizontalpath + "VRSL-DMX-Static-Laser-H-13CH.prefab";
-        // string laser_v_path = verticalpath + "VRSL-DMX-Static-Laser-V-13CH.prefab";
-        // string laser_l_path = legacypath + "VRSL-DMX-Static-Laser-L-13CH.prefab";
-        // string laser_a_path = audiopath + "VRSL-AudioLink-BasicLaser.prefab";
-
-
-        
-
-
-
-
-
-
-
-
-
-        // string horizontalpath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/DMX/Horizontal Mode/";
-        // string verticalpath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/DMX/Vertical Mode/";
-        // string legacypath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/DMX/Legacy Mode/";
-        // string audiopath = "Assets/VR-Stage-Lighting/Runtime/Prefabs/AudioLink/";
-
         string spot_h_path = AssetDatabase.GUIDToAssetPath("f5be3cfe3f15bfb4e9477904c5af9daf");
         string spot_v_path = AssetDatabase.GUIDToAssetPath("9a6d4144bda0d3c4ba95593af446b653");
         string spot_l_path = AssetDatabase.GUIDToAssetPath("d9cab657bd2dff14ea5425c2c4c4679e");
@@ -2242,6 +2258,8 @@ public class VRSL_ManagerWindow : EditorWindow {
         string laser_a_path = AssetDatabase.GUIDToAssetPath("75c269de381facb4cae616c67f83f519");
 
 
+        
+
 
 
 
@@ -2260,6 +2278,8 @@ public class VRSL_ManagerWindow : EditorWindow {
                     multiLightbar_h = AssetDatabase.LoadAssetAtPath(multibar_h_path, typeof(GameObject));
                     discoball_h = AssetDatabase.LoadAssetAtPath(disco_h_path, typeof(GameObject));
                     laser_h = AssetDatabase.LoadAssetAtPath(laser_h_path, typeof(GameObject));
+
+                 
                 }
                 catch(Exception e)      
                 {
@@ -2332,6 +2352,102 @@ public class VRSL_ManagerWindow : EditorWindow {
             default:
                 break;
         }
+
+        if(hasDMXGI)
+        {
+            bool dmxGIloadSuccessful = true;
+            string gi_spot_h_path = AssetDatabase.GUIDToAssetPath("c20cd40cd85b4b747a3998287dd4315c");
+            string gi_spot_v_path = AssetDatabase.GUIDToAssetPath("7398a8df967e86343a17f8f8c9d029fd");
+            string gi_spot_a_path = AssetDatabase.GUIDToAssetPath("47d88ad3422bdd348914b248f8f31f8c");
+
+            string gi_wash_h_path = AssetDatabase.GUIDToAssetPath("8fc2a753a63d13b45a00dfe19eba9a57");
+            string gi_wash_v_path = AssetDatabase.GUIDToAssetPath("57c3c125669558749824834e79a988f9");
+            string gi_wash_a_path = AssetDatabase.GUIDToAssetPath("f6d1cef32f9700d428a781ad0dd85f58");
+
+            string gi_blind_h_path = AssetDatabase.GUIDToAssetPath("339dc1942b2c0a748a00fc7aa50fca41");
+            string gi_blind_v_path = AssetDatabase.GUIDToAssetPath("8a0855893cfd2fd40ab7eeabdc41677e");
+            string gi_blind_a_path = AssetDatabase.GUIDToAssetPath("a616cb360164b324494bbebdc3aa2940");
+
+            string gi_par_h_path = AssetDatabase.GUIDToAssetPath("8aea333a2600a55409ee9a1b6cba5edd");
+            string gi_par_v_path = AssetDatabase.GUIDToAssetPath("30de11795f206c24c91d74a52e7c373b");
+            string gi_par_a_path = AssetDatabase.GUIDToAssetPath("087a8c4137e1b214197a4c087d5a31fc");
+
+            string gi_bar_h_path = AssetDatabase.GUIDToAssetPath("3da5fec912938ed45a84e7abd88efd3f");
+            string gi_bar_v_path = AssetDatabase.GUIDToAssetPath("867d86b7458bfce478b2a589e88b0dac");
+            string gi_bar_a_path = AssetDatabase.GUIDToAssetPath("2ba9a269d4a89d04aba7cbc83bb860f0");
+
+            string gi_flash_h_path = AssetDatabase.GUIDToAssetPath("3bec86cdf8a5ea1459db2779371eeb4c");
+            string gi_flash_v_path = AssetDatabase.GUIDToAssetPath("2d68c4597200c67409c35edc5499aff1");
+            string gi_flash_a_path = AssetDatabase.GUIDToAssetPath("5a8fad0952385634d822ef1085856919");
+
+                try{
+                switch(a)
+                {
+                    case 0:
+                        gi_spotlight_h = AssetDatabase.LoadAssetAtPath(gi_spot_h_path, typeof(GameObject));
+                        gi_washlight_h = AssetDatabase.LoadAssetAtPath(gi_wash_h_path, typeof(GameObject));
+                        gi_blinder_h = AssetDatabase.LoadAssetAtPath(gi_blind_h_path, typeof(GameObject));
+                        gi_flasher_h = AssetDatabase.LoadAssetAtPath(gi_flash_h_path, typeof(GameObject));
+                        gi_parlight_h = AssetDatabase.LoadAssetAtPath(gi_par_h_path, typeof(GameObject));
+                        gi_lightbar_h = AssetDatabase.LoadAssetAtPath(gi_bar_h_path, typeof(GameObject));    
+                        break;
+                    case 1:
+                        gi_spotlight_v = AssetDatabase.LoadAssetAtPath(gi_spot_v_path, typeof(GameObject));
+                        gi_washlight_v = AssetDatabase.LoadAssetAtPath(gi_wash_v_path, typeof(GameObject));
+                        gi_blinder_v = AssetDatabase.LoadAssetAtPath(gi_blind_v_path, typeof(GameObject));
+                        gi_flasher_v = AssetDatabase.LoadAssetAtPath(gi_flash_v_path, typeof(GameObject));
+                        gi_parlight_v = AssetDatabase.LoadAssetAtPath(gi_par_v_path, typeof(GameObject));
+                        gi_lightbar_v = AssetDatabase.LoadAssetAtPath(gi_bar_v_path, typeof(GameObject));
+                        break;
+                    case 3:
+                        gi_spotlight_a = AssetDatabase.LoadAssetAtPath(gi_spot_a_path, typeof(GameObject));
+                        gi_washlight_a = AssetDatabase.LoadAssetAtPath(gi_wash_a_path, typeof(GameObject));
+                        gi_blinder_a = AssetDatabase.LoadAssetAtPath(gi_blind_a_path, typeof(GameObject));
+                        gi_flasher_a = AssetDatabase.LoadAssetAtPath(gi_flash_a_path, typeof(GameObject));
+                        gi_parlight_a = AssetDatabase.LoadAssetAtPath(gi_par_a_path, typeof(GameObject));
+                        gi_lightbar_a = AssetDatabase.LoadAssetAtPath(gi_bar_a_path, typeof(GameObject));
+                        break;
+                    default:
+                        break;
+                }   
+                }
+                catch(Exception e)
+                {
+                    dmxGIloadSuccessful = false;
+                    Debug.Log("Could not load fixture prefab!");
+                    e.ToString();                    
+                }
+            if(useGIPrefabs && dmxGIloadSuccessful)
+            {
+                spotlight_h = gi_spotlight_h;
+                spotlight_v = gi_spotlight_v;
+                spotlight_a = gi_spotlight_a;
+
+                washlight_h = gi_washlight_h;
+                washlight_v = gi_washlight_v;
+                washlight_a = gi_washlight_a;
+
+                blinder_h = gi_blinder_h;
+                blinder_v = gi_blinder_v;
+                blinder_a = gi_blinder_a;
+
+                flasher_h = gi_flasher_h;
+                flasher_v = gi_flasher_v;
+                flasher_a = gi_flasher_a;       
+
+                lightbar_h = gi_lightbar_h;
+                lightbar_v = gi_lightbar_v;
+                lightbar_a = gi_lightbar_v;
+
+                parlight_h = gi_parlight_h;
+                parlight_v = gi_parlight_v;
+                parlight_a = gi_parlight_a;
+            }
+
+        }
+
+
+
         return loadSuccessful;
     }
 
@@ -2427,7 +2543,7 @@ public class VRSL_ManagerWindow : EditorWindow {
             var so = new SerializedObject(panel);
             EditorGUI.indentLevel++;
             so.FindProperty("_requireDepthLight").boolValue = EditorGUILayout.ToggleLeft(Label("Require Depth Light (Recommended: Enable on PC. Required: Disable on Quest)", "Require The Depth Texture to be used in this scene. This will remove the requirement for a directional light in the scene to generate a depth texture for the shaders. WARNING: This will remove the ability to use projections and make volumetrics clip through objects more aggressively. Disabling this is required for VRSL to work on Quest."),panel.RequireDepthLight);
-            so.FindProperty("_volumetricNoise").boolValue = EditorGUILayout.ToggleLeft(Label("Use Volumetric Noise (Recomended: Enable on PC and Disable on Quest)", "Disables both 3D and 2D noise effects on all volumetric VRSL shaders in this scene at the shader level. Disable this for more performance if you do not care for the noise effect. Disabling this is highly recommend for quest."),panel.VolumetricNoise);
+            so.FindProperty("_volumetricNoise").boolValue = EditorGUILayout.ToggleLeft(Label("Use Volumetric Noise (Recommended: Enable on PC and Disable on Quest)", "Disables both 3D and 2D noise effects on all volumetric VRSL shaders in this scene at the shader level. Disable this for more performance if you do not care for the noise effect. Disabling this is highly recommend for quest."),panel.VolumetricNoise);
             EditorGUI.indentLevel--;
             so.ApplyModifiedProperties();
             if((so.FindProperty("_requireDepthLight").boolValue != lastDepthLightRequirement) || (so.FindProperty("_volumetricNoise").boolValue != lastVolumetricNoiseToggle))
@@ -2570,7 +2686,7 @@ public class VRSL_ManagerWindow : EditorWindow {
                     ResetItems(false);
                     Repaint();   
                 }
-
+                
                 EditorGUILayout.EndHorizontal();
 
 
@@ -2585,10 +2701,52 @@ public class VRSL_ManagerWindow : EditorWindow {
                     ResetItems(false);
                     Repaint();   
                 }
-
+                
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.LabelField("", GUILayout.Width(50f));
+                soptr.FindProperty("volumetricMeshQuality").intValue = EditorGUILayout.IntPopup(panel.volumetricMeshQuality, volumetricMeshQualityNames, volumetricMeshQualityValues, GUILayout.MaxWidth(100f));
+                if(GUILayout.Button(Label("Set Volumetric Mesh Quality", "Changes out the volumetric mesh for each fixture in the scene to a either a high, medium, or low poly mesh."), GUILayout.MaxWidth(170f)))
+                {
+                    if(settings)
+                    {
+                        Debug.Log("Setting all volumetric meshes to: " + volumetricMeshQualityNames[panel.volumetricMeshQuality]);
+                        SetVolumetricMeshes(settings.GetSpotLightMesh(panel.volumetricMeshQuality), settings.GetWashLightMesh(panel.volumetricMeshQuality), settings.GetAudioLinkSpotLightMesh(panel.volumetricMeshQuality), settings.GetAudioLinkWashLightMesh(panel.volumetricMeshQuality));
+                    }
+                    else
+                    {
+                        GetManagerSettings();
+                    }
+                }
 
                 EditorGUILayout.EndHorizontal();
+                EditorGUI.BeginDisabledGroup(!panel.isUsingDMX); 
+                EditorGUILayout.BeginVertical("box"); 
+                string fixtureDefGUID = so.FindProperty("fixtureDefGUID").stringValue;
+                VRSL_FixtureDefinitions fixDefAsset = (VRSL_FixtureDefinitions) EditorGUILayout.ObjectField("DMX Fixture Definitions", AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(fixtureDefGUID), typeof(VRSL_FixtureDefinitions)), typeof(VRSL_FixtureDefinitions), false, GUILayout.Width(400f));
+                so.FindProperty("fixtureDefGUID").stringValue = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(fixDefAsset));
+
+                so.ApplyModifiedProperties();
+                #pragma warning disable 0618 //suppressing obsoletion warnings
+                panel.UpdateProxy();
+                #pragma warning restore 0618 //suppressing obsoletion warnings
+                panel.fixtureDefGUID = so.FindProperty("fixtureDefGUID").stringValue;
+                #pragma warning disable 0618 //suppressing obsoletion warnings
+                panel.ApplyProxyModifications();
+                #pragma warning restore 0618 //suppressing obsoletion warnings
                 EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndVertical();
+
+                if(fixtureDefGUID != so.FindProperty("fixtureDefGUID").stringValue)
+                {
+                    
+                    VRStageLighting_DMX_Static_Editor[] editors = (VRStageLighting_DMX_Static_Editor[])Resources.FindObjectsOfTypeAll(typeof(VRStageLighting_DMX_Static_Editor));
+                    if (editors.Length > 0)
+                    {
+                       // Debug.Log("Changed Fixture Definitions!");
+                        editors[0].GetPanel();
+                        editors[0].Repaint();
+                    }
+                }
 
 
 
@@ -2796,85 +2954,147 @@ public class VRSL_ManagerWindow : EditorWindow {
                     t = "Hide DMX Prefab Spawn Buttons";
                 EditorGUILayout.BeginVertical("box", GUILayout.MaxWidth(((position.width/2f)-30f)));
                 dmxSpawnsFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(dmxSpawnsFoldout,Label(t, "Show/Hide DMX Prefab Spawn Buttons!"), Title2Foldout());
-                
+                //EditorGUILayout.BeginVertical("box");
                 if(dmxSpawnsFoldout)
                 {
-                    GUILayout.Label("DMX Direct Readers (TekOSC To Editor)", Title3());
-                    EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((position.width/2f)));
-                    if(GUILayout.Button(Label("Horizontal", "Spawn the horizontal version of the TekOSC DMX Reader! Use this to send DMX to the Unity Editor through OSC without OBS!"), HalfButton()))
-                    {
-                        Debug.Log("VRSL Control Panel: Spawning Horizontal OSC Grid Reader...");
-                        if(LoadPrefabs())
-                            SpawnPrefabWithUndo(oscGridReaderHorizontalPrefab, "Spawn OSC Grid Reader", false, false);
-                        Repaint();
-                    }
-                    if(GUILayout.Button(Label("Vertical", "Spawn the vertical version of the TekOSC DMX Reader! Use this to send DMX to the Unity Editor through OSC without OBS!"), HalfButton()))
-                    {
-                        Debug.Log("VRSL Control Panel: Spawning Vertical OSC Grid Reader...");
-                        if(LoadPrefabs())
-                            SpawnPrefabWithUndo(oscGridReaderVerticalPrefab, "Spawn OSC Grid Reader", false, false);
-                        Repaint();
-                    }
-                    EditorGUILayout.EndHorizontal();
-                    
-                    GUILayout.Label("DMX Reader Screens (Desktop To Editor)", Title3());
-                    
-                    EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((position.width/2f)));
-                    if(GUILayout.Button(Label("Horizontal", "Spawn the horizontal version of the uDesktop DMX Reader screen! Use this send your DMX stream directly to the Unity Editor by copying your screen!"), HalfButton()))
-                    {
-                        Debug.Log("VRSL Control Panel: Spawning Horizontal Desktop to Editor DMX Screen...");
-                        if(LoadPrefabs())
-                            SpawnPrefabWithUndo(uDesktopHorizontalPrefab, "Spawn Desktop To Editor Screen", false, false);
-                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uDesktopHorizontalPrefab as GameObject), null);
-                        Repaint();
-                    }
-                    if(GUILayout.Button(Label("Vertical", "Spawn the vertical version of the uDesktop DMX Reader screen! Use send your DMX stream directly to the Unity Editor by copying your screen!"), HalfButton()))
-                    {
-                        Debug.Log("VRSL Control Panel: Spawning Vertical Desktop to Editor DMX Screen...");
-                        if(LoadPrefabs())
-                            SpawnPrefabWithUndo(uDesktopVerticalPrefab, "Spawn Desktop To Editor Screen", false, false);
-                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uDesktopVerticalPrefab as GameObject), null);
-                        Repaint();
-                    }
-                    if(GUILayout.Button(Label("Legacy", "Spawn the legacy version of the uDesktop DMX Reader screen! Use send your DMX stream directly to the Unity Editor by copying your screen!"), HalfButton()))
-                    {
-                        Debug.Log("VRSL Control Panel: Spawning Legacy Desktop to Editor DMX Screen...");
-                        if(LoadPrefabs())
-                            SpawnPrefabWithUndo(uDesktopLegacyPrefab, "Spawn Desktop To Editor Screen", false, false);
-                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uDesktopLegacyPrefab as GameObject), null);
-                        Repaint();
-                    }
-                    EditorGUILayout.EndHorizontal();
+                        {
+                            EditorGUILayout.BeginVertical("box", GUILayout.MaxWidth(((position.width/2f)-32f)));
+                            GUILayout.Label("DMX Screens & Readers", Title4());
+
+                            GUILayout.Label("TekOSC To Editor", Title3());
+                            EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((position.width/2f)));
+                            if(GUILayout.Button(Label("Horizontal", "Spawn the horizontal version of the TekOSC DMX Reader! Use this to send DMX to the Unity Editor through OSC without OBS!"), HalfButton()))
+                            {
+                                Debug.Log("VRSL Control Panel: Spawning Horizontal OSC Grid Reader...");
+                                if(LoadPrefabs())
+                                    SpawnPrefabWithUndo(oscGridReaderHorizontalPrefab, "Spawn OSC Grid Reader", false, false);
+                                Repaint();
+                            }
+                            if(GUILayout.Button(Label("Vertical", "Spawn the vertical version of the TekOSC DMX Reader! Use this to send DMX to the Unity Editor through OSC without OBS!"), HalfButton()))
+                            {
+                                Debug.Log("VRSL Control Panel: Spawning Vertical OSC Grid Reader...");
+                                if(LoadPrefabs())
+                                    SpawnPrefabWithUndo(oscGridReaderVerticalPrefab, "Spawn OSC Grid Reader", false, false);
+                                Repaint();
+                            }
+                            EditorGUILayout.EndHorizontal();
+                            
+                            // GUILayout.Label("DMX Reader Screens", Title2());
+                            if(hasDesktop)
+                            {
+                                GUILayout.Label("uDesktopDuplication (Desktop To Editor)", Title3());
+                                
+                                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((position.width/2f)));
+                                    if(GUILayout.Button(Label("Horizontal", "Spawn the horizontal version of the uDesktop DMX Reader screen! Use this send your DMX stream directly to the Unity Editor by copying your screen!"), HalfButton()))
+                                    {
+                                        Debug.Log("VRSL Control Panel: Spawning Horizontal Desktop to Editor DMX Screen...");
+                                        if(LoadPrefabs())
+                                            SpawnPrefabWithUndo(uDesktopHorizontalPrefab, "Spawn Desktop To Editor Screen", false, false);
+                                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uDesktopHorizontalPrefab as GameObject), null);
+                                        Repaint();
+                                    }
+                                    if(GUILayout.Button(Label("Vertical", "Spawn the vertical version of the uDesktop DMX Reader screen! Use send your DMX stream directly to the Unity Editor by copying your screen!"), HalfButton()))
+                                    {
+                                        Debug.Log("VRSL Control Panel: Spawning Vertical Desktop to Editor DMX Screen...");
+                                        if(LoadPrefabs())
+                                            SpawnPrefabWithUndo(uDesktopVerticalPrefab, "Spawn Desktop To Editor Screen", false, false);
+                                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uDesktopVerticalPrefab as GameObject), null);
+                                        Repaint();
+                                    }
+                                    if(GUILayout.Button(Label("Legacy", "Spawn the legacy version of the uDesktop DMX Reader screen! Use send your DMX stream directly to the Unity Editor by copying your screen!"), HalfButton()))
+                                    {
+                                        Debug.Log("VRSL Control Panel: Spawning Legacy Desktop to Editor DMX Screen...");
+                                        if(LoadPrefabs())
+                                            SpawnPrefabWithUndo(uDesktopLegacyPrefab, "Spawn Desktop To Editor Screen", false, false);
+                                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uDesktopLegacyPrefab as GameObject), null);
+                                        Repaint();
+                                    }
+                                EditorGUILayout.EndHorizontal();
+                            }
+                            // EditorGUILayout.EndVertical();
+                            if(hasUsharpVideo)
+                            {
+                                GUILayout.Label("USharpVideo Player", Title3());
+                                //EditorGUILayout.BeginVertical("box");
+                                
+                                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((position.width/2f)));
+                                    if(GUILayout.Button(Label("Horizontal", "Spawn the horizontal version of the USharpVideo Player DMX Reader Screen. Use this video player prefab to stream DMX data to VRChat via Twitch/VRCDN! You can replace the video player in this prefab with any other video player you want as long as the screen gets duplicated to the larger plane!"), HalfButton()))
+                                    {
+                                        Debug.Log("VRSL Control Panel: Spawning Horizontal USharpVideo DMX Screen...");
+                                        if(LoadPrefabs())
+                                            SpawnPrefabWithUndo(uVidHorizontalPrefab, "Spawn USharpVideo DMX Screen", false, false);
+                                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uVidHorizontalPrefab as GameObject), null);
+                                        Repaint();
+                                    }
+                                    if(GUILayout.Button(Label("Vertical", "Spawn the vertical version of the USharpVideo Player DMX Reader Screen. Use this video player prefab to stream DMX data to VRChat via Twitch/VRCDN! You can replace the video player in this prefab with any other video player you want as long as the screen gets duplicated to the larger plane!"), HalfButton()))
+                                    {
+                                        Debug.Log("VRSL Control Panel: Spawning Vertical USharp Video DMX Screen...");
+                                        if(LoadPrefabs())
+                                            SpawnPrefabWithUndo(uVidVerticalPrefab, "Spawn USharp Video DMX Screen", false, false);
+                                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uVidVerticalPrefab as GameObject), null);
+                                        Repaint();
+                                    }
+                                    if(GUILayout.Button(Label("Legacy", "Spawn the legacy version of the USharpVideo Player DMX Reader Screen. Use this video player prefab to stream DMX data to VRChat via Twitch/VRCDN! You can replace the video player in this prefab with any other video player you want as long as the screen gets duplicated to the larger plane!"), HalfButton()))
+                                    {
+                                        Debug.Log("VRSL Control Panel: Spawning Legacy USharpVideo DMX Screen...");
+                                        if(LoadPrefabs())
+                                            SpawnPrefabWithUndo(uVidLegacyPrefab, "Spawn USharpVideo DMX Screen", false, false);
+                                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uVidLegacyPrefab as GameObject), null);
+                                        Repaint();
+                                    }
+                                EditorGUILayout.EndHorizontal();
+                            }
+                            if(hasVideoTXL)
+                            {
+                                GUILayout.Label("VideoTXL Player", Title3());
+                                //EditorGUILayout.BeginVertical("box");
+                                
+                                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((position.width/2f)));
+                                    if(GUILayout.Button(Label("Horizontal", "Spawn the horizontal version of the VideoTXL Video Player DMX Reader Screen. Use this video player prefab to stream DMX data to VRChat via Twitch/VRCDN! You can replace the video player in this prefab with any other video player you want as long as the screen gets duplicated to the larger plane!"), HalfButton()))
+                                    {
+                                        Debug.Log("VRSL Control Panel: Spawning Horizontal VideoTXL Video DMX Screen...");
+                                        if(LoadPrefabs())
+                                            SpawnPrefabWithUndo(videoTXLHorizontal, "Spawn VideoTXL Video DMX Screen", false, false);
+                                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uVidHorizontalPrefab as GameObject), null);
+                                        Repaint();
+                                    }
+                                    if(GUILayout.Button(Label("Vertical", "Spawn the vertical version of the VideoTXL Video Player DMX Reader Screen. Use this video player prefab to stream DMX data to VRChat via Twitch/VRCDN! You can replace the video player in this prefab with any other video player you want as long as the screen gets duplicated to the larger plane!"), HalfButton()))
+                                    {
+                                        Debug.Log("VRSL Control Panel: Spawning Vertical VideoTXL Video DMX Screen...");
+                                        if(LoadPrefabs())
+                                            SpawnPrefabWithUndo(videoTXLVertical, "Spawn VideoTXL Video DMX Screen", false, false);
+                                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uVidVerticalPrefab as GameObject), null);
+                                        Repaint();
+                                    }
+                                EditorGUILayout.EndHorizontal();
+                            }
+                            if(hasVideoTXL)
+                            {
+                                GUILayout.Label("ProTV Player", Title3());
+                                //EditorGUILayout.BeginVertical("box");
+                                
+                                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((position.width/2f)));
+                                    if(GUILayout.Button(Label("Horizontal", "Spawn the horizontal version of the ProTV Player DMX Reader Screen. Use this video player prefab to stream DMX data to VRChat via Twitch/VRCDN! You can replace the video player in this prefab with any other video player you want as long as the screen gets duplicated to the larger plane!"), HalfButton()))
+                                    {
+                                        Debug.Log("VRSL Control Panel: Spawning Horizontal ProTV DMX Screen...");
+                                        if(LoadPrefabs())
+                                            SpawnPrefabWithUndo(proTVHorizontal, "Spawn ProTV DMX Screen", false, false);
+                                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uVidHorizontalPrefab as GameObject), null);
+                                        Repaint();
+                                    }
+                                    if(GUILayout.Button(Label("Vertical", "Spawn the vertical version of the ProTV Player DMX Reader Screen. Use this video player prefab to stream DMX data to VRChat via Twitch/VRCDN! You can replace the video player in this prefab with any other video player you want as long as the screen gets duplicated to the larger plane!"), HalfButton()))
+                                    {
+                                        Debug.Log("VRSL Control Panel: Spawning Vertical ProTV DMX Screen...");
+                                        if(LoadPrefabs())
+                                            SpawnPrefabWithUndo(proTVVertical, "Spawn ProTV DMX Screen", false, false);
+                                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uVidVerticalPrefab as GameObject), null);
+                                        Repaint();
+                                    }
+                                EditorGUILayout.EndHorizontal();
+                            }
+                            EditorGUILayout.EndVertical();
+                        }
                    // EditorGUILayout.EndVertical();
-                    GUILayout.Label("DMX Reader Screens (USharp Video Player)", Title3());
-                    //EditorGUILayout.BeginVertical("box");
-                    
-                    EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((position.width/2f)));
-                    if(GUILayout.Button(Label("Horizontal", "Spawn the horizontal version of the USharp Video Player DMX Reader Screen. Use this video player prefab to stream DMX data to VRChat via Twitch/VRCDN! You can replace the video player in this prefab with any other video player you want as long as the screen gets duplicated to the larger plane!"), HalfButton()))
-                    {
-                        Debug.Log("VRSL Control Panel: Spawning Horizontal Usharp Video DMX Screen...");
-                        if(LoadPrefabs())
-                            SpawnPrefabWithUndo(uVidHorizontalPrefab, "Spawn Usharp Video DMX Screen", false, false);
-                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uVidHorizontalPrefab as GameObject), null);
-                        Repaint();
-                    }
-                    if(GUILayout.Button(Label("Vertical", "Spawn the vertical version of the USharp Video Player DMX Reader Screen. Use this video player prefab to stream DMX data to VRChat via Twitch/VRCDN! You can replace the video player in this prefab with any other video player you want as long as the screen gets duplicated to the larger plane!"), HalfButton()))
-                    {
-                        Debug.Log("VRSL Control Panel: Spawning Vertical Usharp Video DMX Screen...");
-                        if(LoadPrefabs())
-                            SpawnPrefabWithUndo(uVidVerticalPrefab, "Spawn Usharp Video DMX Screen", false, false);
-                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uVidVerticalPrefab as GameObject), null);
-                        Repaint();
-                    }
-                    if(GUILayout.Button(Label("Legacy", "Spawn the legacy version of the USharp Video Player DMX Reader Screen. Use this video player prefab to stream DMX data to VRChat via Twitch/VRCDN! You can replace the video player in this prefab with any other video player you want as long as the screen gets duplicated to the larger plane!"), HalfButton()))
-                    {
-                        Debug.Log("VRSL Control Panel: Spawning Legacy Usharp Video DMX Screen...");
-                        if(LoadPrefabs())
-                            SpawnPrefabWithUndo(uVidLegacyPrefab, "Spawn Usharp Video DMX Screen", false, false);
-                            //Selection.SetActiveObjectWithContext(PrefabUtility.InstantiatePrefab(uVidLegacyPrefab as GameObject), null);
-                        Repaint();
-                    }
-                    EditorGUILayout.EndHorizontal();
                     string fp = "";
                     switch(panel.DMXMode)
                     {
@@ -2891,12 +3111,15 @@ public class VRSL_ManagerWindow : EditorWindow {
                             break;
                     }  
                     //EditorGUILayout.BeginHorizontal(); 
-                    GUILayout.Label("Fixture Prefabs: " + fp, Title3());
+                    GuiLine();
+                    GUILayout.Label("Fixture Prefabs: " + fp, Title4());
                     //EditorGUILayout.EndHorizontal();
                     EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((position.width/2f)));
                     int mode = panel.DMXMode;
 
                     string legacyfixString = legacyFixtures || mode == 2 ? "(13CH)" : "(5CH)";
+                    string giSuffix = (hasDMXGI && useGIPrefabs) ? "+GI" : ""; 
+                    //legacyfixString = legacyfixString + giSuffix;
 
 
                     if(GUILayout.Button(Label("SpotLight (13CH)", "Spawn the " + fp + " version of the DMX Spotlight prefab!"), HalfButton()))
@@ -3200,6 +3423,10 @@ public class VRSL_ManagerWindow : EditorWindow {
                     EditorGUILayout.BeginHorizontal();
                     soptr.FindProperty("useLegacyStaticLights").boolValue = EditorGUILayout.ToggleLeft("Use Old 13 Channel Static Lights (Not Recommended)", panel.useLegacyStaticLights);
 
+                    if(hasDMXGI)
+                    {
+                        useGIPrefabs = EditorGUILayout.ToggleLeft("Use VRSL GI Prefabs", useGIPrefabs);
+                    }
                     // if(hasDMXGI)
                     // {
                     //     soptr.FindProperty("useDMXGI").boolValue = EditorGUILayout.ToggleLeft("Enable DMX GI Prefabs", panel.useDMXGI);
@@ -3402,8 +3629,14 @@ public class VRSL_ManagerWindow : EditorWindow {
                         }
                     }
                     EditorGUILayout.EndHorizontal();
-                    
+
+                    if(hasDMXGI)
+                    {
+                        useGIPrefabs = EditorGUILayout.ToggleLeft("Use VRSL GI Prefabs", useGIPrefabs);
+                    }                   
                 }
+
+
                 EditorGUILayout.EndFoldoutHeaderGroup();
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndHorizontal();
@@ -3479,7 +3712,7 @@ public class VRSL_ManagerWindow : EditorWindow {
             so.FindProperty("isUsingDMX").boolValue = GUI.Toggle(dmxRect, panel.isUsingDMX, dmxRectText, NormalButtonToggle(panel.isUsingDMX, dmxHover));
             //so.FindProperty("isUsingDMX").boolValue = GUILayout.Toggle(panel.isUsingDMX, ToggleText(panel.isUsingDMX,"DMX"), NormalButtonToggle(panel.isUsingDMX, dmxHover));
             
-            GUIContent audioRectText = new GUIContent(ToggleText(panel.isUsingAudioLink,"AUDIOLINK (" + audioLinkCount + ")"), "Enable/Disable AudioLink MOde from this scene. This will diable all corresponding AudioLink render textures and prevent them from updating at runtime.");
+            GUIContent audioRectText = new GUIContent(ToggleText(panel.isUsingAudioLink,"AUDIOLINK (" + audioLinkCount + ")"), "Enable/Disable AudioLink mode from this scene. This will diable all corresponding AudioLink render textures and prevent them from updating at runtime.");
             Rect audioRect = GUILayoutUtility.GetRect(audioRectText, NormalButtonToggle(panel.isUsingAudioLink, audioLinkHover));
             if (Event.current.type == EventType.Repaint && audioRect.Contains(Event.current.mousePosition))
             {
@@ -3659,9 +3892,9 @@ public class VRSL_ManagerWindow : EditorWindow {
                    // EditorGUILayout.EndVertical();
                    // EditorGUILayout.EndHorizontal();
                 }
-                universeFourFold = EditorGUILayout.BeginFoldoutHeaderGroup(universeFourFold, Label("Universe 10 (Experimental)", "DMX Universe 10 is an experimental universe used for testing out the new DMX via Audio Amplitude feature. Any Audio Amplitude based scripts will appear here."), Title1Foldout());
-                GuiLine();
-                EditorGUILayout.EndFoldoutHeaderGroup();
+                //universeFourFold = EditorGUILayout.BeginFoldoutHeaderGroup(universeFourFold, Label("Universe 10 (Experimental)", "DMX Universe 10 is an experimental universe used for testing out the new DMX via Audio Amplitude feature. Any Audio Amplitude based scripts will appear here."), Title1Foldout());
+               // GuiLine();
+                //EditorGUILayout.EndFoldoutHeaderGroup();
             }
             EditorGUILayout.EndScrollView();
             audioLinkScrollPos = EditorGUILayout.BeginScrollView(audioLinkScrollPos, true, true,GUILayout.MaxWidth((position.width / 2)));

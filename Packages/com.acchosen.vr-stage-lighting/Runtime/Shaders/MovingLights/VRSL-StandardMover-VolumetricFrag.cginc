@@ -11,51 +11,51 @@ inline float CorrectedLinearEyeDepth(float z, float B)
 	#endif
 	return 1.0 / (z/UNITY_MATRIX_P._34 + B);
 }
-float Fresnel(float3 Normal, float3 ViewDir, float Power)
+half Fresnel(half3 Normal, half3 ViewDir, half Power)
 {
     return pow(max(0, dot(Normal, -ViewDir)), Power);
 }
 #ifndef _POTATO_MODE_ON
 	//3D noise based on iq's https://www.shadertoy.com/view/4sfGzS
 	//HLSL conversion by Orels1~
-	half Noise(float3 p)
+	half Noise(half3 p)
 	{
-	float3 i = floor(p); p -= i; 
+	half3 i = floor(p); p -= i; 
 	p *= p * (3. - 2. * p);
-	float2 uv = (p.xy + i.xy + float2(37, 17) * i.z + .5)*0.00390625;
+	half2 uv = (p.xy + i.xy + half2(37, 17) * i.z + .5)*0.00390625;
 	//uv.y *= -1;
-	float4 uv4 = float4(uv.x, uv.y * -1, 0.0, 0.0);
+	half4 uv4 = half4(uv.x, uv.y * -1, 0.0, 0.0);
 	p.xy = tex2Dlod(_LightMainTex, uv4).yx;
 	return lerp(p.x, p.y, p.z);
 	}
 #endif
 
 
-float4 VolumetricLightingBRDF(v2f i, fixed facePos)
+half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 {
 	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( i );
 
 	#if defined(_POTATO_MODE_ON)
-		float noise2Stretch = _Noise2StretchPotato;
-		float noise2StretchInside = _Noise2StretchInsidePotato;
-		float noise2X = _Noise2XPotato;
-		float noise2Y = _Noise2YPotato;
-		float noise2Z = _Noise2ZPotato;
-		float noise2Power = _Noise2PowerPotato;
+		half noise2Stretch = _Noise2StretchPotato;
+		half noise2StretchInside = _Noise2StretchInsidePotato;
+		half noise2X = _Noise2XPotato;
+		half noise2Y = _Noise2YPotato;
+		half noise2Z = _Noise2ZPotato;
+		half noise2Power = _Noise2PowerPotato;
 	#elif defined(_HQ_MODE)
-		float noise2Stretch = _Noise2Stretch;
-		float noise2StretchInside = _Noise2StretchInside;
-		float noise2X = _Noise2X;
-		float noise2Y = _Noise2Y;
-		float noise2Z = _Noise2Z;
-		float noise2Power = _Noise2Power;
+		half noise2Stretch = _Noise2Stretch;
+		half noise2StretchInside = _Noise2StretchInside;
+		half noise2X = _Noise2X;
+		half noise2Y = _Noise2Y;
+		half noise2Z = _Noise2Z;
+		half noise2Power = _Noise2Power;
 	#else
-		float noise2Stretch = _Noise2StretchDefault;
-		float noise2StretchInside = _Noise2StretchInsideDefault;
-		float noise2X = _Noise2XDefault;
-		float noise2Y = _Noise2YDefault;
-		float noise2Z = _Noise2ZDefault;
-		float noise2Power = _Noise2PowerDefault;
+		half noise2Stretch = _Noise2StretchDefault;
+		half noise2StretchInside = _Noise2StretchInsideDefault;
+		half noise2X = _Noise2XDefault;
+		half noise2Y = _Noise2YDefault;
+		half noise2Z = _Noise2ZDefault;
+		half noise2Power = _Noise2PowerDefault;
 	#endif
 
 
@@ -64,15 +64,15 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 
 
 		#ifdef VRSL_DMX
-			float gi = getGlobalIntensity();
-			float fi = getFinalIntensity();
+			half gi = getGlobalIntensity();
+			half fi = getFinalIntensity();
 		#endif
 		#ifdef VRSL_AUDIOLINK
-			float audioReact = i.audioGlobalFinalIntensity.x;
-			float gi = i.audioGlobalFinalIntensity.y;
-			float fi = i.audioGlobalFinalIntensity.z;
+			half audioReact = i.audioGlobalFinalIntensity.x;
+			half gi = i.audioGlobalFinalIntensity.y;
+			half fi = i.audioGlobalFinalIntensity.z;
 			//Get Emission Color
-			float4 emissionTint = i.emissionColor;
+			half4 emissionTint = i.emissionColor;
 		#endif
 
 
@@ -80,7 +80,7 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		#if _ALPHATEST_ON
 		    float2 pos = i.screenPos.xy / i.screenPos.w;
             pos *= _ScreenParams.xy;
-			float DITHER_THRESHOLDS[16] =
+			half DITHER_THRESHOLDS[16] =
 			{
 				1.0 / 17.0,  9.0 / 17.0,  3.0 / 17.0, 11.0 / 17.0,
 				13.0 / 17.0,  5.0 / 17.0, 15.0 / 17.0,  7.0 / 17.0,
@@ -93,14 +93,14 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 
 
 		#ifdef VRSL_DMX
-			if(((all(i.rgbColor <= float4(0.005,0.005,0.005,1)) || i.intensityStrobeGOBOSpinSpeed.x <= 0.005) && isDMX() == 1) || gi <= 0.005 || fi <= 0.005)
+			if(((all(i.rgbColor <= half4(0.005,0.005,0.005,1)) || i.intensityStrobeGOBOSpinSpeed.x <= 0.005) && isDMX() == 1) || gi <= 0.005 || fi <= 0.005)
 			{
 				//If the light is basically off, don't render anything.
 				return half4(0,0,0,0);
 			}
 		#endif 
 		#ifdef VRSL_AUDIOLINK
-			if(gi <= 0.005 || fi <= 0.005 || audioReact <= 0.005 || all(emissionTint<= float4(0.005, 0.005, 0.005, 1.0)))
+			if(gi <= 0.005 || fi <= 0.005 || audioReact <= 0.005 || all(emissionTint<= half4(0.005, 0.005, 0.005, 1.0)))
 			{
 				//If the light is basically off, don't render anything.
 				return half4(0,0,0,0);
@@ -115,12 +115,12 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		//Select Gobo!
 		//uint gobo = i.intensityStrobeGOBOSpinSpeed.w;
 		#ifdef VRSL_DMX
-			float spinSpeed = i.intensityStrobeGOBOSpinSpeed.z;
+			half spinSpeed = i.intensityStrobeGOBOSpinSpeed.z;
 			spinSpeed = (-spinSpeed) * UNITY_ACCESS_INSTANCED_PROP(Props,_EnableSpin);
 		#endif
 		#ifdef VRSL_AUDIOLINK
-			float goboSpinSpeed = checkPanInvertY() == 1 ? -getGoboSpinSpeed() : getGoboSpinSpeed();
-			float spinSpeed = UNITY_ACCESS_INSTANCED_PROP(Props,_EnableSpin);
+			half goboSpinSpeed = checkPanInvertY() == 1 ? -getGoboSpinSpeed() : getGoboSpinSpeed();
+			half spinSpeed = UNITY_ACCESS_INSTANCED_PROP(Props,_EnableSpin);
 			spinSpeed *= -goboSpinSpeed;
 		#endif
 
@@ -155,17 +155,17 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 			float intersectionFade = saturate(((depth * _ProjectionParams.z) - i.screenPos.w));
 			intersectionFade = lerp(1, intersectionFade, saturate(i.uv.x * _FadeAmt));
 		#else
-			float intersectionFade = 1.0;
+			half intersectionFade = 1.0;
 		#endif
 		//Attempt to fade cone away when intersecting with the camera.
 		//float cameraFade = i.camAngleCamfade.y;
 
 		//Fade the camera less when you are closer to the source of the light.
 		#ifdef VRSL_DMX
-			float cameraFade = i.camAngleCamfade.y;
+			half cameraFade = i.camAngleCamfade.y;
 		#endif
 		#ifdef VRSL_AUDIOLINK
-			float cameraFade = saturate(((distance(wpos, i.worldPos) - 0.5)));
+			half cameraFade = saturate(((distance(wpos, i.worldPos) - 0.5)));
 		#endif
 
 		cameraFade = lerp(1.0, cameraFade, saturate(pow(i.uv.x, 0.1)));
@@ -184,7 +184,7 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		i.uv.x = saturate(i.uv.x * 1.5);
 
 		#ifdef VRSL_DMX
-			float gobo = i.intensityStrobeGOBOSpinSpeed.w;
+			half gobo = i.intensityStrobeGOBOSpinSpeed.w;
 		#endif
 		#ifdef VRSL_AUDIOLINK
 			uint gobo = instancedGOBOSelection();
@@ -206,25 +206,25 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		fixed4 col = gradientTexture.r;
 
 		//Calculate View Direction for fading edges.
-		//float3 viewDir = normalize(wpos - i.worldPos.xyz);
+		//half3 viewDir = normalize(wpos - i.worldPos.xyz);
 		float3 viewDir = (wpos - i.worldPos.xyz);
 		viewDir = normalize(mul(unity_WorldToObject,float4(viewDir,0.0)));
 		//Initialize Edge Fade
-		float edgeFade = 0.0;
+		half edgeFade = 0.0;
 		//Fade away edges of cone using a Fresnel calculation.
 		//Set the strength of the fade based on which side of t he polygon.
-		float threeDNoiseScale = 1.0;
+		half threeDNoiseScale = 1.0;
 		if(facePos > 0)
 		{
 			
 			#if _ALPHATEST_ON
 				#ifdef WASH
-					float fadeSTR = 0.1 * (_InnerFadeStrength+2);
+					half fadeSTR = 0.1 * (_InnerFadeStrength+2);
 				#else
-					float fadeSTR = 0.1 * (_InnerFadeStrength);
+					half fadeSTR = 0.1 * (_InnerFadeStrength);
 				#endif
 			#else
-				float fadeSTR = _InnerFadeStrength;
+				half fadeSTR = _InnerFadeStrength;
 			#endif
 			edgeFade = Fresnel(-i.objNormal, viewDir, fadeSTR);
 			threeDNoiseScale = noise2Stretch;
@@ -235,46 +235,56 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 			//Reduce fade strength if closer to source of light
 			
 			#if _ALPHATEST_ON
-				float fadeSTR = (lerp(1.0, _FadeStrength + (lerp(5.0, 1.0, widthNormalized)), saturate(pow(i.uv.x, 0.1) + 0.05))) * 0.5;
+				half fadeSTR = (lerp(1.0, _FadeStrength + (lerp(5.0, 1.0, widthNormalized)), saturate(pow(i.uv.x, 0.1) + 0.05))) * 0.5;
 			#else
-				float fadeSTR = lerp(1.0, _FadeStrength + (lerp(5.0, 1.0, widthNormalized)), saturate(pow(i.uv.x, 0.1) + 0.05));
+				half fadeSTR = lerp(1.0, _FadeStrength + (lerp(5.0, 1.0, widthNormalized)), saturate(pow(i.uv.x, 0.1) + 0.05));
 			#endif
 			edgeFade = Fresnel(i.objNormal, viewDir, fadeSTR);
 			threeDNoiseScale = noise2StretchInside;
 		}
+		// threeDNoiseScale *= 1.5;
+
+		float3 inverseTransformScale = 1/float3(
+			length(unity_ObjectToWorld._m00_m10_m20),
+			length(unity_ObjectToWorld._m01_m11_m21),
+			length(unity_ObjectToWorld._m02_m12_m22)
+		);
+		threeDNoiseScale *= inverseTransformScale;
+		threeDNoiseScale *= 1.25;
+	
 
 		//Combine Gradient with emission color, intersection fade and camera fade.
 		col = col * getEmissionColor() * intersectionFade * cameraFade;
 
 		//Get Strobe information
 		#ifdef VRSL_DMX
-			float strobe = isStrobe() == 1 ? i.intensityStrobeGOBOSpinSpeed.y : 1;
+			half strobe = isStrobe() == 1 ? i.intensityStrobeGOBOSpinSpeed.y : 1;
 		#endif
 		#ifdef VRSL_AUDIOLINK
-			float strobe = 1.0;
+			half strobe = 1.0;
 		#endif
 		#ifndef _ALPHATEST_ON
 			#ifndef _POTATO_MODE_ON
 				//Generate 2D noise texture, add scroll effect, and map to cone.
 				#ifdef _2D_NOISE_ON
-					float2 texUV = i.uv2;
-					float3 baseWorldPos = unity_ObjectToWorld._m03_m13_m23;
+					half2 texUV = i.uv2;
+					half3 baseWorldPos = unity_ObjectToWorld._m03_m13_m23;
 					texUV.x += baseWorldPos.z;
 					texUV.y += baseWorldPos.x;
 					texUV.x = (_Time.y*0.1) * 0.75f + texUV.x;
 					texUV.y = (_Time.y*0.1) * 0.10f + texUV.y;
 					
 					#ifdef _HQ_MODE
-						float4 tex = tex2D(_NoiseTexHigh, texUV);
+						half4 tex = tex2D(_NoiseTexHigh, texUV);
 					#else
-						float4 tex = tex2D(_NoiseTex, texUV);
+						half4 tex = tex2D(_NoiseTex, texUV);
 					#endif
 				#else
-					float4 tex = float4(1,1,1,1);
+					half4 tex = half4(1,1,1,1);
 				#endif
 
 				//initialize 3D noise value and 2D noise strength value
-				float threeDNoise = 1.0f;
+				half threeDNoise = 1.0f;
 				half np = 0.0f;
 
 				//If we are using 3D noise...
@@ -289,7 +299,7 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 					worldposNoise.z += ((_Time.y*0.1) * noise2Z);
 					//Add Tiling effect
 					//float3 q = threeDNoiseScale * worldposNoise.xyz;
-					float3 q = float3(0,0,0);
+					half3 q = half3(0,0,0);
 					q.x = threeDNoiseScale * worldposNoise.x;
 					q.y = threeDNoiseScale * worldposNoise.y;
 					q.z = threeDNoiseScale * worldposNoise.z;
@@ -314,10 +324,10 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 					np = gobo > 1 ? _NoisePower : 0.0;
 					//Set 3D Noise Power
 					#ifndef WASH
-						float newNP = lerp(noise2Power - 0.2, noise2Power, gradientTexture.r);
+						half newNP = lerp(noise2Power - 0.2, noise2Power, gradientTexture.r);
 						threeDNoise = lerp(1, threeDNoise, newNP);
 					#else
-						// float nnp = lerp(noise2Power * 5, noise2Power, saturate(-uvMap.x));
+						// half nnp = lerp(noise2Power * 5, noise2Power, saturate(-uvMap.x));
 						threeDNoise = lerp(1, threeDNoise, noise2Power);
 					#endif
 				//}
@@ -338,7 +348,7 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 				tex = lerp(fixed4(1, 1, 1, 1), tex, np);
 			#endif
 		#else
-			float4 tex = float4(1,1,1,1);
+			half4 tex = half4(1,1,1,1);
 		#endif
 
 
@@ -354,13 +364,13 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		//Choose split strength and pattern based on information in i.stripeinfo.
 		#ifdef VRSL_DMX
 			#if !defined(WASH)
-			float splitter = (sin(i.uv.y * 3.14159265 * floor(i.stripeInfo.x) * 2.0f + ( spinSpeed * 5.0)) + 1.0);
+			half splitter = (sin(i.uv.y * 3.14159265 * floor(i.stripeInfo.x) * 2.0f + ( spinSpeed * 5.0)) + 1.0);
 
 			//Do not use beam splitting if we aren't using gobos.
-			float splitstr = IF(_GoboBeamSplitEnable == 1 && gobo > 1, i.stripeInfo.y, 0);
+			half splitstr = IF(_GoboBeamSplitEnable == 1 && gobo > 1, i.stripeInfo.y, 0);
 			splitter = lerp(1.0, splitter, splitstr);
 			#else
-			float splitter = 1.0;
+			half splitter = 1.0;
 			#endif
 		#endif
 		#ifdef VRSL_AUDIOLINK
@@ -368,13 +378,13 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 			//Beam Splitter and gobo spin
 				const float pi = 3.14159265;
 				//Choose split strength and pattern based on information in i.stripeinfo.
-				float splitter = (sin(i.uv.y * pi * floor(i.stripeInfo.x) * 2 + (_Time.w * spinSpeed)) + 1.0);
+				half splitter = (sin(i.uv.y * pi * floor(i.stripeInfo.x) * 2 + (_Time.w * spinSpeed)) + 1.0);
 				//Do not use beam splitting if we aren't using gobos.
-				//float splitstr = IF(_GoboBeamSplitEnable == 1 && gobo > 1, i.stripeInfo.y, 0);
-				float splitstr = _GoboBeamSplitEnable == 1 && gobo > 1 ? i.stripeInfo.y : 0;
+				//half splitstr = IF(_GoboBeamSplitEnable == 1 && gobo > 1, i.stripeInfo.y, 0);
+				half splitstr = _GoboBeamSplitEnable == 1 && gobo > 1 ? i.stripeInfo.y : 0;
 				splitter = lerp(1.0, splitter, splitstr);
 			#else
-				float splitter = 1.0;
+				half splitter = 1.0;
 			#endif
 		#endif
 
@@ -393,7 +403,7 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		#endif
 
 		//Add more power to Inner side of cone
-		float4 result = col;
+		half4 result = col;
 		#if !defined(WASH)
 		#if _ALPHATEST_ON
 			result = lerp(col,col * 25, saturate(pow(gradientTexture, (_InnerIntensityCurve+20))));
@@ -411,7 +421,7 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 				result *= edgeFade;
 			#endif
 		//#endif
-		float maxIntensity = _FixtureMaxIntensity;
+		half maxIntensity = _FixtureMaxIntensity;
 		#ifdef _HQ_MODE
 		maxIntensity *= 0.75;
 		#endif
@@ -429,7 +439,7 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 
 		if( i.uv.x < 0.001 == false)
 		{
-			float blinding = i.blindingEffect;
+			half blinding = i.blindingEffect;
 			//#ifdef VRSL_AUDIOLINK
 				blinding = lerp(1.0, blinding, _BlindingStrength);
 			//#endif
@@ -453,29 +463,29 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		#ifdef VRSL_DMX
 			result = (i.intensityStrobeGOBOSpinSpeed.x <= _IntensityCutoff && isDMX() == 1) ? half4(0,0,0,result.w) : result;
 			//Fixture lens is now apart of Volumetrics, calculation for lens strenght is here
-			//float maxBrightness = lerp(1.0, _LensMaxBrightness)
+			//half maxBrightness = lerp(1.0, _LensMaxBrightness)
 			#if !defined(WASH)
-			float4 r2 = i.uv.x < 0.001 ? 10 * result * (_LensMaxBrightness * i.intensityStrobeGOBOSpinSpeed.x): result;
+			half4 r2 = i.uv.x < 0.001 ? 10 * result * (_LensMaxBrightness * i.intensityStrobeGOBOSpinSpeed.x): result;
 			#else
-			float4 r2 = i.uv.x < 0.001 ? result * (_LensMaxBrightness * i.intensityStrobeGOBOSpinSpeed.x): result;
+			half4 r2 = i.uv.x < 0.001 ? result * (_LensMaxBrightness * i.intensityStrobeGOBOSpinSpeed.x): result;
 			#endif
-			float camAngle = i.camAngleCamfade.x;
+			half camAngle = i.camAngleCamfade.x;
 		#endif
 		#ifdef VRSL_AUDIOLINK
 			#if !defined(WASH)
-			float4 r2 = i.uv.x < 0.001 ? 60 * result * _LensMaxBrightness : result;
+			half4 r2 = i.uv.x < 0.001 ? 60 * result * _LensMaxBrightness : result;
 			#else
-			float4 r2 = i.uv.x < 0.001 ? result * _LensMaxBrightness : result;
+			half4 r2 = i.uv.x < 0.001 ? result * _LensMaxBrightness : result;
 			#endif
-			float camAngle = i.camAngleLen.x;
+			half camAngle = i.camAngleLen.x;
 		#endif
 
-		float gifi = (gi * gi) * (fi * fi) * _UniversalIntensity;
+		half gifi = (gi * gi) * (fi * fi) * _UniversalIntensity;
 		result = lerp(result, r2, gifi);
 
 		//Find Greyscale value of cone.
-		float3 newCol = (result.r + result.g + result.b)/3;
-		float satMod = 5.0;
+		half3 newCol = (result.r + result.g + result.b)/3;
+		half satMod = 5.0;
 
 		//Create fake white power effect at source of cone and use Saturation and Saturation Length to blend that effect
 		#ifndef _ALPHATEST_ON
@@ -490,8 +500,8 @@ float4 VolumetricLightingBRDF(v2f i, fixed facePos)
 
 		//Mix in Camera angle into strength for outside faces, increase strength for inside faces.
 		result = facePos > 0 ? lerp(result * camAngle, result, cameraFade) : result * 3;
-		float lastGrad = saturate((1-i.uv.x)*+1);
-		float distfade = _DistFade;
+		half lastGrad = saturate((1-i.uv.x)*+1);
+		half distfade = _DistFade;
 		#ifdef _ALPHATEST_ON
 		distfade -= 0.4;
 		#endif

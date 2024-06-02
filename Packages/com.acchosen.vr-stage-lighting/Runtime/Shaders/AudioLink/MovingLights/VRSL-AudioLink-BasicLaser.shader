@@ -44,6 +44,7 @@
         _Scroll ("Scroll", Range(-1, 1)) = 1
 
         [Toggle] _EnableThemeColorSampling ("Enable Theme Color Sampling", Int) = 0
+        [Toggle]_UseTraditionalSampling("Use Traditional Texture Sampling", Int) = 0
 		 _ThemeColorTarget ("Choose Theme Color", Int) = 0
 
     }
@@ -137,6 +138,7 @@
                 UNITY_DEFINE_INSTANCED_PROP(float, _BlackOut)
                 UNITY_DEFINE_INSTANCED_PROP(float, _ThemeColorTarget)
                 UNITY_DEFINE_INSTANCED_PROP(uint, _EnableThemeColorSampling)
+                UNITY_DEFINE_INSTANCED_PROP(uint, _UseTraditionalSampling)
             UNITY_INSTANCING_BUFFER_END(Props)
 
              inline float AudioLinkLerp3_g5( int Band, float Delay )
@@ -244,18 +246,22 @@
                 return float3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
             }
 
-            float3 hsb2rgb( float3 c ){
+            float3 hsb2rgb( float3 c )
+            {
                 float3 rgb = clamp( abs(fmod(c.x*6.0+float3(0.0,4.0,2.0),6)-3.0)-1.0, 0, 1);
                 rgb = rgb*rgb*(3.0-2.0*rgb);
                 return c.z * lerp( float3(1,1,1), rgb, c.y);
             }
+
             float4 GetTextureSampleColor()
             {
                 float4 rawColor = tex2Dlod(_SamplingTexture, float4(UNITY_ACCESS_INSTANCED_PROP(Props,_TextureColorSampleX), UNITY_ACCESS_INSTANCED_PROP(Props,_TextureColorSampleY), 0, 0));
                 float3 h = (RGB2HSV(rawColor.rgb));
                 h.z = 1.0;
-                return float4(hsb2rgb(h),1);
+                //return float4(hsb2rgb(h),1);
+                return UNITY_ACCESS_INSTANCED_PROP(Props, _UseTraditionalSampling) > 0 ? rawColor : float4(hsb2rgb(h),1);
             }
+
             float GetAudioReactAmplitude()
             {
                 if(checkIfAudioLink() > 0)

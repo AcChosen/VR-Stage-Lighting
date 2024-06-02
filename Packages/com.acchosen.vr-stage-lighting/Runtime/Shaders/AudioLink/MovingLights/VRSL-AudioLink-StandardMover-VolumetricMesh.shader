@@ -126,6 +126,7 @@
 		[Toggle]_UseDepthLight("Toggle The Requirement of the depth light to function.", Int) = 1
 		[Toggle]_PotatoMode("Reduces the overhead on the fragment shader by removing both noise components to extra texture sampling", Int) = 0
 		[Toggle]_HQMode("A higher quality volumetric mode (Experimental)", Int) = 0
+		[Toggle]_UseTraditionalSampling("Use Traditional Texture Sampling", Int) = 0
 
 		[Enum(Off,0,One,1)] _BlendDst ("Destination Blend mode", Float) = 1
 		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0

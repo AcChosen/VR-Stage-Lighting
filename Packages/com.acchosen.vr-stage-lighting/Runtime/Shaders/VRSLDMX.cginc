@@ -236,7 +236,6 @@ float ReadDMX(uint DMXChannel, Texture2D _Tex)
         float3 cRGB = float3(c.r, c.g, c.b);
         value = LinearRgbToLuminance(cRGB);
     }
-    value = LinearToGammaSpaceExact(value);
     return value;
 }
 

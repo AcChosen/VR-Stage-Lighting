@@ -2,20 +2,27 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-BasicLaser-DMX-Horizontal
   m_Shader: {fileID: 4800000, guid: 95349cd3a2b52c5428761b3034abda38, type: 3}
-  m_ShaderKeywords: _BEAMSTRENGTH_ON _USEDEPTHLIGHT_ON _USE_DEPTH_LIGHT
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - _BEAMSTRENGTH_ON
+  - _USEDEPTHLIGHT_ON
+  - _USE_DEPTH_LIGHT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -79,6 +86,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _BeamStrength: 1
     - _BumpScale: 1
@@ -136,7 +144,7 @@ Material:
     - _UVSec: 0
     - _UVx: 0
     - _UVy: 0
-    - _UniversalIntensity: 1
+    - _UniversalIntensity: 0.8
     - _UseDepthLight: 1
     - _VertexConeFlatness: 1
     - _VertexConeLength: 1
@@ -153,3 +161,4 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 10.432951, g: 10.432951, b: 10.432951, a: 1}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []

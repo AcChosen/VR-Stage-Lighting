@@ -4,6 +4,8 @@ using VRC.SDKBase;
 using VRC.Udon;
 using UnityEngine.UI;
 using System.Threading;
+using VRC.SDKBase.Midi;
+
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UnityEditor;
@@ -15,12 +17,14 @@ using VRC.Udon.Common.Interfaces;
 using System.Collections.Immutable;
 using System;
 using System.IO;
+using System.Collections.Generic;
 #endif
 
 
 namespace VRSL.EditorScripts
 {
     #if !COMPILER_UDONSHARP && UNITY_EDITOR
+    [CanEditMultipleObjects]
     public class VRSL_UdonEditor : Editor
     {
         public static Texture logo;
@@ -76,19 +80,14 @@ namespace VRSL.EditorScripts
 
     #if !COMPILER_UDONSHARP && UNITY_EDITOR
     [CustomEditor(typeof(VRStageLighting_DMX_Static))]
+    [CanEditMultipleObjects]
     public class VRStageLighting_DMX_Static_Editor : VRSL_UdonEditor
     {
         GUIStyle l, I;
         GUIContent colorLabel;
+        VRSL_LocalUIControlPanel panel;
+        string[] fixDefinitionNames = new string[1];
     //  SerializedProperty _globalIntensity;
-        public static GUIStyle SectionLabel()
-        {
-            GUIStyle g = new GUIStyle();
-            g.fontSize = 15;
-            g.fontStyle = FontStyle.Bold;
-            g.normal.textColor = Color.white;
-            return g;
-        }
         public static GUIStyle InfoLabel()
         {
             GUIStyle g = new GUIStyle();
@@ -98,6 +97,14 @@ namespace VRSL.EditorScripts
             return g;
         }
 
+        public static GUIStyle SectionLabel()
+        {
+            GUIStyle g = new GUIStyle();
+            g.fontSize = 15;
+            g.fontStyle = FontStyle.Bold;
+            g.normal.textColor = Color.white;
+            return g;
+        }
         public new void OnEnable() 
         {
             base.OnEnable();
@@ -107,13 +114,48 @@ namespace VRSL.EditorScripts
             colorLabel.text = "Emission Color";
         //  _globalIntensity = serializedObject.FindProperty("globalIntensity");
         EditorApplication.hierarchyChanged += HierarchyChanged;
+        SceneView.duringSceneGui += this.OnSceneGUI;
+        GetPanel();
+        }
+        void OnSceneGUI(SceneView sceneView)
+        {
 
         }
-                
+        string[] GetFixtureOptions(string fixtureDefGUID)
+        {
+          VRSL_FixtureDefinitions fixDefAsset = (VRSL_FixtureDefinitions) AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(fixtureDefGUID), typeof(VRSL_FixtureDefinitions));
+          return fixDefAsset.GetNames();
+        }
+        public void GetPanel()
+        {
+            List<GameObject> sceneObjects = GetAllObjectsOnlyInScene();
+            foreach(GameObject go in sceneObjects)
+            {
+                panel = go.GetComponent<VRSL_LocalUIControlPanel>();
+                if(panel != null)
+                {
+                    fixDefinitionNames = GetFixtureOptions(panel.fixtureDefGUID);
+                    break;
+                }
+            }
+        }
+
+        static List<GameObject> GetAllObjectsOnlyInScene()
+        {
+            List<GameObject> objectsInScene = new List<GameObject>();
+
+            foreach (GameObject go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[])
+            {
+                if (!EditorUtility.IsPersistent(go.transform.root.gameObject) && !(go.hideFlags == HideFlags.NotEditable || go.hideFlags == HideFlags.HideAndDontSave))
+                    objectsInScene.Add(go);
+            }
+            return objectsInScene;
+        }            
     
         void OnDisable( )
         {
             EditorApplication.hierarchyChanged -= HierarchyChanged;
+            SceneView.duringSceneGui -= this.OnSceneGUI;
         }
         private void HierarchyChanged()
         {
@@ -154,6 +196,8 @@ namespace VRSL.EditorScripts
             }
         }
 
+
+
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -174,6 +218,12 @@ namespace VRSL.EditorScripts
             GUILayout.Label("DMX Settings", l);
             serializedObject.FindProperty("enableDMXChannels").boolValue = EditorGUILayout.Toggle(new GUIContent("Enable DMX", 
             "The industry standard DMX Channel this fixture begins on. Most standard VRSL fixtures are 13 channels"), fixture.enableDMXChannels);
+            if(serializedObject.FindProperty("enableDMXChannels").boolValue && panel != null)
+            {
+                EditorGUI.indentLevel++;
+                serializedObject.FindProperty("fixtureDefintion").intValue = EditorGUILayout.Popup("Fixture Type",serializedObject.FindProperty("fixtureDefintion").intValue, fixDefinitionNames);
+                EditorGUI.indentLevel--;
+            }
 
             serializedObject.FindProperty("nineUniverseMode").boolValue = EditorGUILayout.Toggle(new GUIContent("Extended Universe Mode", 
             "Enables 9-Universe mode for this fixture. The grid will be split up by RGB channels with each section and color representing a universe." + 
@@ -217,8 +267,24 @@ namespace VRSL.EditorScripts
             GUILayout.Label("General Settings", l);
             serializedObject.FindProperty("globalIntensity").floatValue = EditorGUILayout.Slider(new GUIContent("Global Intensity",
             "Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity."), fixture.globalIntensity, 0.0f, 1.0f);
-            serializedObject.FindProperty("finalIntensity").floatValue  = EditorGUILayout.Slider(new GUIContent("Final Intensity",
-            "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."), fixture.finalIntensity, 0.0f, 1.0f);
+            EditorGUILayout.PropertyField( serializedObject.FindProperty("finalIntensityComponentMode"), new GUIContent("Control Component Intensities"));
+            EditorGUI.indentLevel++;
+            if(serializedObject.FindProperty("finalIntensityComponentMode").boolValue){
+
+                serializedObject.FindProperty("finalIntensityVolumetric").floatValue  = EditorGUILayout.Slider(new GUIContent("Volumetric Intensity",
+                "Sets the maximum brightness value of Global Intensity for volumetric meshes only. Good for personalized settings of the max brightness of the shader by other users via UI."), fixture.finalIntensityVolumetric, 0.0f, 1.0f);
+                
+                serializedObject.FindProperty("finalIntensityProjection").floatValue  = EditorGUILayout.Slider(new GUIContent("Projection Intensity",
+                "Sets the maximum brightness value of Global Intensity for projection meshes only. Good for personalized settings of the max brightness of the shader by other users via UI."), fixture.finalIntensityProjection, 0.0f, 1.0f);
+
+                serializedObject.FindProperty("finalIntensityFixture").floatValue  = EditorGUILayout.Slider(new GUIContent("Fixture/Other Intensity",
+                "Sets the maximum brightness value of Global Intensity for everything else. Good for personalized settings of the max brightness of the shader by other users via UI."), fixture.finalIntensityFixture, 0.0f, 1.0f);
+            }
+            else{
+                serializedObject.FindProperty("finalIntensity").floatValue  = EditorGUILayout.Slider(new GUIContent("Final Intensity",
+                "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."), fixture.finalIntensity, 0.0f, 1.0f);
+            }
+            EditorGUI.indentLevel--;
             serializedObject.FindProperty("lightColorTint").colorValue = EditorGUILayout.ColorField(colorLabel, fixture.lightColorTint, true, true, true);
             EditorGUILayout.Space();
             EditorGUILayout.Space();
@@ -272,19 +338,26 @@ namespace VRSL.EditorScripts
 
     #if !COMPILER_UDONSHARP && UNITY_EDITOR
     [CustomEditor(typeof(VRStageLighting_AudioLink_Laser))]
+    [CanEditMultipleObjects]
     public class VRStageLighting_AudioLink_Laser_Editor : VRSL_UdonEditor
     {
 
+        void OnSceneGUI(SceneView sceneView)
+        {
+
+        }
 
         new void OnEnable( )
         {
             base.OnEnable();
             EditorApplication.hierarchyChanged += HierarchyChanged;
+            SceneView.duringSceneGui += this.OnSceneGUI;
         }
     
         void OnDisable( )
         {
             EditorApplication.hierarchyChanged -= HierarchyChanged;
+            SceneView.duringSceneGui -= this.OnSceneGUI;
         }
 
         private void HierarchyChanged( )
@@ -323,7 +396,14 @@ namespace VRSL.EditorScripts
                 }
             }
         }
-
+        public static GUIStyle SectionLabel()
+        {
+            GUIStyle g = new GUIStyle();
+            g.fontSize = 15;
+            g.fontStyle = FontStyle.Bold;
+            g.normal.textColor = Color.white;
+            return g;
+        }
 
         public override void OnInspectorGUI()
         {
@@ -348,19 +428,27 @@ namespace VRSL.EditorScripts
     #if !COMPILER_UDONSHARP && UNITY_EDITOR
     [InitializeOnLoad]
     [CustomEditor(typeof(VRStageLighting_AudioLink_Static))]
-
+    [CanEditMultipleObjects]
     public class VRStageLighting_AudioLink_Static_Editor : VRSL_UdonEditor
     {
+
+
+        void OnSceneGUI(SceneView sceneView)
+        {
+
+        }
 
         new void OnEnable( )
         {
             base.OnEnable();
             EditorApplication.hierarchyChanged += HierarchyChanged;
+            SceneView.duringSceneGui += this.OnSceneGUI;
         }
     
         void OnDisable( )
         {
             EditorApplication.hierarchyChanged -= HierarchyChanged;
+            SceneView.duringSceneGui -= this.OnSceneGUI;
         }
 
         void UpdateSettings(VRStageLighting_AudioLink_Static fixture)
@@ -403,8 +491,36 @@ namespace VRSL.EditorScripts
             VRStageLighting_AudioLink_Static fixture = (VRStageLighting_AudioLink_Static)target;
             UpdateSettings(fixture);
         }
+        public static GUIStyle SectionLabel()
+        {
+            GUIStyle g = new GUIStyle();
+            g.fontSize = 14;
+            g.fontStyle = FontStyle.Bold;
+            g.normal.textColor = new Color(0.8f, 0.8f, 0.8f);
+            return g;
+        }
+            void GuiLine( int i_height = 1 )
+
+   {
+        try{
+       //GUIStyle g = GUIStyle.none;
+       //g.fixedHeight = 6;
+       Rect rect = EditorGUILayout.GetControlRect(false, i_height);
+
+       rect.height = i_height;
+
+       EditorGUI.DrawRect(rect, new Color ( 0.5f,0.5f,0.5f, 1 ) );
+        }
+        catch(Exception e)
+        {
+            e.GetType();
+        }
+
+   }
+
         public override void OnInspectorGUI()
         {
+            
             if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
             DrawLogo();
             ShurikenHeaderCentered(GetVersion());
@@ -414,10 +530,40 @@ namespace VRSL.EditorScripts
             VRStageLighting_AudioLink_Static fixture = (VRStageLighting_AudioLink_Static)target;
             EditorGUI.BeginChangeCheck();
             base.OnInspectorGUI();
+
+
+
+
+            EditorGUILayout.Space();
+            GuiLine();
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Fine Intensity Controls", SectionLabel());
+            serializedObject.Update();
+            EditorGUILayout.PropertyField( serializedObject.FindProperty("finalIntensityComponentMode"), new GUIContent("Control Component Intensities"));
+            EditorGUI.indentLevel++;
+            if(serializedObject.FindProperty("finalIntensityComponentMode").boolValue){
+
+                serializedObject.FindProperty("finalIntensityVolumetric").floatValue  = EditorGUILayout.Slider(new GUIContent("Volumetric Intensity",
+                "Sets the maximum brightness value of Global Intensity for volumetric meshes only. Good for personalized settings of the max brightness of the shader by other users via UI."), fixture.finalIntensityVolumetric, 0.0f, 1.0f);
+                
+                serializedObject.FindProperty("finalIntensityProjection").floatValue  = EditorGUILayout.Slider(new GUIContent("Projection Intensity",
+                "Sets the maximum brightness value of Global Intensity for projection meshes only. Good for personalized settings of the max brightness of the shader by other users via UI."), fixture.finalIntensityProjection, 0.0f, 1.0f);
+
+                serializedObject.FindProperty("finalIntensityFixture").floatValue  = EditorGUILayout.Slider(new GUIContent("Fixture/Other Intensity",
+                "Sets the maximum brightness value of Global Intensity for everything else. Good for personalized settings of the max brightness of the shader by other users via UI."), fixture.finalIntensityFixture, 0.0f, 1.0f);
+            }
+            else{
+                serializedObject.FindProperty("finalIntensity").floatValue  = EditorGUILayout.Slider(new GUIContent("Final Intensity",
+                "Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI."), fixture.finalIntensity, 0.0f, 1.0f);
+            }
+
             if(EditorGUI.EndChangeCheck())
             {
+                serializedObject.ApplyModifiedProperties();
                 UpdateSettings(fixture);
+            //EditorGUIUtility.LookLikeControls();
             }
+
         }
     }
     #endif

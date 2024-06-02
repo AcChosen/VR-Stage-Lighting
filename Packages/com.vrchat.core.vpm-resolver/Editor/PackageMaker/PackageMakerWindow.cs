@@ -106,8 +106,8 @@ namespace VRC.PackageManagement.PackageMaker
             _actionButton.SetEnabled(
                 StringIsValidAssetFolder(_windowData.targetAssetFolder) &&
                 !string.IsNullOrWhiteSpace(_windowData.packageID) &&
-                !string.IsNullOrWhiteSpace(_windowData.authorName) &&
-                IsValidEmail(_windowData.authorEmail)
+                _authorNameField.value != null &&
+                IsValidEmail(_authorEmailField.value)
             );
         }
 
@@ -120,8 +120,11 @@ namespace VRC.PackageManagement.PackageMaker
             {
                 _windowData = PackageMakerWindowData.GetOrCreate();
             }
+
+            ScrollView scrollView = new();
+            rootVisualElement.Add(scrollView);
             
-            _rootView = rootVisualElement;
+            _rootView = scrollView;
             _rootView.name = "root-view";
             _rootView.styleSheets.Add((StyleSheet) Resources.Load("PackageMakerWindowStyle"));
 
@@ -140,8 +143,7 @@ namespace VRC.PackageManagement.PackageMaker
             None = 0,
             Worlds = 1,
             Avatars = 2,
-            Base = 3,
-            UdonSharp = 4,
+            Base = 3
         }
         
         private VisualElement CreateTargetVRCPackageElement()
@@ -224,6 +226,7 @@ namespace VRC.PackageManagement.PackageMaker
             _authorNameField.RegisterValueChangedCallback((evt) =>
             {
                 _windowData.authorName = evt.newValue;
+                Debug.Log($"Window author name is {evt.newValue}");
                 RefreshActionButtonState();
             });
             
@@ -386,10 +389,7 @@ namespace VRC.PackageManagement.PackageMaker
                     packageType = "com.vrchat.base";
                     break;
                 case VRCPackageEnum.Worlds:
-                    packageType = "com.vrchat.clientsim"; // we want ClientSim too, need to specify that for now
-                    break;
-                case VRCPackageEnum.UdonSharp:
-                    packageType = "com.vrchat.udonsharp";
+                    packageType = "com.vrchat.worlds";
                     break;
             }
 

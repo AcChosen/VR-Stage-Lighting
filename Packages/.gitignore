@@ -1,11 +1,2 @@
 /*/
-!com.vrchat.core.*
-
-com.vrchat.core.vpm-resolver
-manifest.json
-packages-lock.json
-vpm-manifest.json
-
-# Change this to match your new package name
-!com.acchosen.vr-stage-lighting
 !com.vrchat.core.*/

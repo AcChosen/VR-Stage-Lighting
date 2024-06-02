@@ -7,6 +7,7 @@
         _MaxStrobeFreq("Maximum Strobe Frequency", Range(1,100)) = 25
         [Toggle]_EnableCompatibilityMode("Compatibility Mode", Float) = 0
         [Toggle]_NineUniverseMode("Nine Universe Mode", Float) = 0
+        [Toggle]_DisableStrobe("Disable All Strobe", Float) = 0
      }
 
      SubShader
@@ -30,6 +31,7 @@
             Texture2D _Udon_DMXGridStrobeTimer;
             SamplerState VRSL_PointClampSampler;
             float _NineUniverseMode, _EnableCompatibilityMode;
+            uint _DisableStrobe;
 
             #define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
 
@@ -49,7 +51,6 @@
                         float v = LinearRgbToLuminance(cRGB);
                         value = float3(v,v,v);
                     }
-                        value = float3(LinearToGammaSpaceExact(value.r),LinearToGammaSpaceExact(value.g),LinearToGammaSpaceExact(value.b));
                         return value;
             }
 
@@ -57,6 +58,7 @@
 
 
             {
+                    if(_DisableStrobe > 0){return float4(1,1,1,1);}
                 //CHILL FOR 1 SECOND TO ALLOW DATA TO COME IN
                 // if (_Time.y > 1.0)
                 // {

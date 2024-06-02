@@ -106,30 +106,30 @@
                 UNITY_DEFINE_INSTANCED_PROP(uint, _EnableColorTextureSample)
                 UNITY_DEFINE_INSTANCED_PROP(uint, _LaserCount)
                 UNITY_DEFINE_INSTANCED_PROP(uint, _EnableDMX)
-                UNITY_DEFINE_INSTANCED_PROP(float, _Scroll)
-                UNITY_DEFINE_INSTANCED_PROP(float, _XRotation)
-                UNITY_DEFINE_INSTANCED_PROP(float, _YRotation)
-                UNITY_DEFINE_INSTANCED_PROP(float, _LaserThickness)
-                UNITY_DEFINE_INSTANCED_PROP(float4, _Emission)
-                UNITY_DEFINE_INSTANCED_PROP(float, _ZConeFlatness)
-                UNITY_DEFINE_INSTANCED_PROP(float, _VertexConeWidth)
-                UNITY_DEFINE_INSTANCED_PROP(float, _VertexConeLength)
-                UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensity)
-                UNITY_DEFINE_INSTANCED_PROP(float, _GlobalIntensityBlend)
-                UNITY_DEFINE_INSTANCED_PROP(float, _FinalIntensity)
-                UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleX)
-                UNITY_DEFINE_INSTANCED_PROP(float, _TextureColorSampleY)
+                UNITY_DEFINE_INSTANCED_PROP(half, _Scroll)
+                UNITY_DEFINE_INSTANCED_PROP(half, _XRotation)
+                UNITY_DEFINE_INSTANCED_PROP(half, _YRotation)
+                UNITY_DEFINE_INSTANCED_PROP(half, _LaserThickness)
+                UNITY_DEFINE_INSTANCED_PROP(half4, _Emission)
+                UNITY_DEFINE_INSTANCED_PROP(half, _ZConeFlatness)
+                UNITY_DEFINE_INSTANCED_PROP(half, _VertexConeWidth)
+                UNITY_DEFINE_INSTANCED_PROP(half, _VertexConeLength)
+                UNITY_DEFINE_INSTANCED_PROP(half, _GlobalIntensity)
+                UNITY_DEFINE_INSTANCED_PROP(half, _GlobalIntensityBlend)
+                UNITY_DEFINE_INSTANCED_PROP(half, _FinalIntensity)
+                UNITY_DEFINE_INSTANCED_PROP(half, _TextureColorSampleX)
+                UNITY_DEFINE_INSTANCED_PROP(half, _TextureColorSampleY)
             UNITY_INSTANCING_BUFFER_END(Props)
 
             #include "../Shared/VRSL-DMXFunctions.cginc"
 
             //#define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
 
-            float getPan()
+            half getPan()
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props,_XRotation);
             }
-            float getTilt()
+            half getTilt()
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props,_YRotation);
             }
@@ -137,87 +137,87 @@
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props,_LaserCount);
             }
-            float getConeWidth()
+            half getConeWidth()
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props,_VertexConeWidth);
             }
-            float getConeLength()
+            half getConeLength()
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props,_VertexConeLength);
             }
-            float getLaserThickness()
+            half getLaserThickness()
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props,_LaserThickness);
             }
-            float getScrollSpeed()
+            half getScrollSpeed()
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props,_Scroll);
             }
-            float getConeFlatness()
+            half getConeFlatness()
             {
                 return UNITY_ACCESS_INSTANCED_PROP(Props, _ZConeFlatness);
             }
 
-            float3 RGB2HSV(float3 c)
+            half3 RGB2HSV(half3 c)
             {
-                float4 K = float4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
-                float4 p = lerp(float4(c.bg, K.wz), float4(c.gb, K.xy), step(c.b, c.g));
-                float4 q = lerp(float4(p.xyw, c.r), float4(c.r, p.yzx), step(p.x, c.r));
+                half4 K = half4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+                half4 p = lerp(half4(c.bg, K.wz), half4(c.gb, K.xy), step(c.b, c.g));
+                half4 q = lerp(half4(p.xyw, c.r), half4(c.r, p.yzx), step(p.x, c.r));
 
-                float d = q.x - min(q.w, q.y);
-                float e = 1.0e-10;
-                return float3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+                half d = q.x - min(q.w, q.y);
+                half e = 1.0e-10;
+                return half3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
             }
 
-            float3 hsb2rgb( float3 c ){
-                float3 rgb = clamp( abs(fmod(c.x*6.0+float3(0.0,4.0,2.0),6)-3.0)-1.0, 0, 1);
+            half3 hsb2rgb( half3 c ){
+                half3 rgb = clamp( abs(fmod(c.x*6.0+half3(0.0,4.0,2.0),6)-3.0)-1.0, 0, 1);
                 rgb = rgb*rgb*(3.0-2.0*rgb);
-                return c.z * lerp( float3(1,1,1), rgb, c.y);
+                return c.z * lerp( half3(1,1,1), rgb, c.y);
             }
 
-            float4 CalculateRotations(appdata v, float4 input, float pan, float tilt, float roll)
+            half4 CalculateRotations(appdata v, half4 input, half pan, half tilt, half roll)
             {
-                float angleY = radians(pan);
-                float c = cos(angleY);
-                float s = sin(angleY);
-                float4x4 rotateYMatrix = float4x4(c, -s, 0, 0,
+                half angleY = radians(pan);
+                half c = cos(angleY);
+                half s = sin(angleY);
+                half4x4 rotateYMatrix = half4x4(c, -s, 0, 0,
                     s, c, 0, 0,
                     0, 0, 1, 0,
                     0, 0, 0, 1);
-                float4 BaseAndFixturePos = input;
-                float4 localRotY = mul(rotateYMatrix, BaseAndFixturePos);
+                half4 BaseAndFixturePos = input;
+                half4 localRotY = mul(rotateYMatrix, BaseAndFixturePos);
 
 
-                float angleX = radians(tilt);
+                half angleX = radians(tilt);
                 c = cos(angleX);
                 s = sin(angleX);
-                float4x4 rotateXMatrix = float4x4(1, 0, 0, 0,
+                half4x4 rotateXMatrix = half4x4(1, 0, 0, 0,
                     0, c, -s, 0,
                     0, s, c, 0,
                     0, 0, 0, 1);
 
-                float4x4 rotateXYMatrix = mul(rotateYMatrix, rotateXMatrix);
-                //float4 localRotXY = mul(rotateXYMatrix, input);
+                half4x4 rotateXYMatrix = mul(rotateYMatrix, rotateXMatrix);
+                //half4 localRotXY = mul(rotateXYMatrix, input);
                 
                 
-                float angleZ = radians(roll);
+                half angleZ = radians(roll);
                 c = cos(angleZ);
                 s = sin(angleZ);
-                float4x4 rotateZMatrix = float4x4(c, 0, s, 0,
+                half4x4 rotateZMatrix = half4x4(c, 0, s, 0,
                     0, 1, 0, 0,
                     -s, 0, c, 0,
                     0, 0, 0, 1);
-                float4x4 rotateXYZMatrix = mul(rotateZMatrix, rotateXYMatrix);
-                float4 localRotXYZ = mul(rotateXYZMatrix, input);
+                half4x4 rotateXYZMatrix = mul(rotateZMatrix, rotateXYMatrix);
+                half4 localRotXYZ = mul(rotateXYZMatrix, input);
                 input.xyz = localRotXYZ.xyz;
                 return input;
                 //LOCALROTXY IS COMBINED ROTATION
             }
 
-            float GetSpin(uint DMXChannel)
+            half GetSpin(uint DMXChannel)
             {
-                float status = getValueAtCoords(DMXChannel, _Udon_DMXGridRenderTexture);
-                float phase = getValueAtCoordsRaw(DMXChannel, _Udon_DMXGridSpinTimer);
+                half status = getValueAtCoords(DMXChannel, _Udon_DMXGridRenderTexture);
+                half phase = getValueAtCoordsRaw(DMXChannel, _Udon_DMXGridSpinTimer);
                 //phase = checkPanInvertY() == 1 ? -phase : phase;
                 return status > 0.5 ? -phase : phase;
             }
@@ -235,7 +235,7 @@
                 o.rgbIntensity.w = IF(isDMX() > 0, o.rgbIntensity.w, 1);
                 if(getGlobalIntensity() <= 0.01 || getFinalIntensity() <= 0.05 || _UniversalIntensity <= 0.05 || o.rgbIntensity.w <= 0.05)
                 {
-                    o.vertex = UnityObjectToClipPos(float4(0,0,0,0));
+                    o.vertex = UnityObjectToClipPos(half4(0,0,0,0));
                     return o;
                 }
                 o.panTiltLengthWidth.x = lerp(-90,90,clamp(getValueAtCoords(dmx, _Udon_DMXGridRenderTextureMovement), 0.0,0.9999)); // ch 1
@@ -256,27 +256,27 @@
                  
                 
                 //Cone Length
-                float length = IF(isDMX() > 0, o.panTiltLengthWidth.z, getConeLength());
+                half length = IF(isDMX() > 0, o.panTiltLengthWidth.z, getConeLength());
                 v.vertex.y = lerp(v.vertex.y, v.vertex.y *2, length);
                 
 
                 //Cone Width
-                float width = IF(isDMX() > 0, o.panTiltLengthWidth.w, getConeWidth());
-                float4 vert = lerp(v.vertex ,float4(v.vertex.xyz + v.normal * width, 1), v.uv2.y);
+                half width = IF(isDMX() > 0, o.panTiltLengthWidth.w, getConeWidth());
+                half4 vert = lerp(v.vertex ,half4(v.vertex.xyz + v.normal * width, 1), v.uv2.y);
                 vert.y = v.vertex.y; //Prevent the cone from elongating when changing width.
 
                 // Cone Flatness for X and Z
-                float flatness = lerp(0,1.999,getValueAtCoords(dmx+ (uint) 4, _Udon_DMXGridRenderTexture));
+                half flatness = lerp(0,1.999,getValueAtCoords(dmx+ (uint) 4, _Udon_DMXGridRenderTexture));
                 flatness = IF(isDMX() > 0, flatness, getConeFlatness());
                 vert.z = lerp(vert.z, vert.z/2, flatness);
               //  vert.x = lerp(vert.x, vert.x/2, _XConeFlatness);
-                float xRot = IF(isDMX() > 0, o.panTiltLengthWidth.x, getPan());
-                float yRot = IF(isDMX() > 0, o.panTiltLengthWidth.y, getTilt());
+                half xRot = IF(isDMX() > 0, o.panTiltLengthWidth.x, getPan());
+                half yRot = IF(isDMX() > 0, o.panTiltLengthWidth.y, getTilt());
                 vert = CalculateRotations(v, vert, _ZRotation, xRot, yRot);
 
                 o.viewDir = normalize(wpos - mul(unity_ObjectToWorld, vert).xyz);
-                v.normal = CalculateRotations(v, float4(v.normal, 1), _ZRotation, xRot, yRot).xyz;
-                o.normal = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
+                v.normal = CalculateRotations(v, half4(v.normal, 1), _ZRotation, xRot, yRot).xyz;
+                o.normal = normalize(mul(half4(v.normal, 0.0), unity_WorldToObject).xyz);
                 o.worldPos = mul(unity_ObjectToWorld, vert);
                 o.vertex = UnityObjectToClipPos(vert);
 
@@ -304,74 +304,74 @@
                 {
                     return half4(0,0,0,0);
                 }
-                float fade = pow(saturate(dot(normalize(i.normal), i.viewDir)), _FadeStrength);
+                half fade = pow(saturate(dot(normalize(i.normal), i.viewDir)), _FadeStrength);
                 
                 
                // fade = pow(fade, pow(_FadeStrength, _FadeAmt)) * fade;
                 // sample the texture
-                float4 dmxcol = float4(i.rgbIntensity.x,i.rgbIntensity.y, i.rgbIntensity.z, _MainColor.a);
-                float4 actualcolor = IF(isDMX() > 0, dmxcol *_MainColor * getEmissionColor(), _MainColor * getEmissionColor());
-                float4 color = lerp(float4(0,0,0,_MainColor.a), actualcolor, getGlobalIntensity());
-                // float3 newColor = RGB2HSV(color.rgb);
+                half4 dmxcol = half4(i.rgbIntensity.x,i.rgbIntensity.y, i.rgbIntensity.z, _MainColor.a);
+                half4 actualcolor = IF(isDMX() > 0, dmxcol *_MainColor * getEmissionColor(), _MainColor * getEmissionColor());
+                half4 color = lerp(half4(0,0,0,_MainColor.a), actualcolor, getGlobalIntensity());
+                // half3 newColor = RGB2HSV(color.rgb);
                 // newColor.y -= 0.1;
                 // color.rgb = hsb2rgb(newColor);
                 
                 color = color * getFinalIntensity();
                 color = color * _UniversalIntensity;
                 color = color * i.rgbIntensity.w;
-                fixed4 col = float4(1,1,1,1);
+                fixed4 col = half4(1,1,1,1);
                 fixed4 alphaMask = tex2D(_MainTex, i.uv2);
-                float2 laserUV = i.uv2;
+                half2 laserUV = i.uv2;
                 col *= color;
 
                 //Draw Beams
-                float scroll = IF(isDMX() > 0, i.flatnessBeamCountSpinThickness.z, getScrollSpeed());
+                half scroll = IF(isDMX() > 0, i.flatnessBeamCountSpinThickness.z, getScrollSpeed());
                 laserUV.x += _Time.y * scroll;  
-                float beamcount = IF(isDMX() > 0, round(i.flatnessBeamCountSpinThickness.y), getLaserCount());
+                half beamcount = IF(isDMX() > 0, round(i.flatnessBeamCountSpinThickness.y), getLaserCount());
                 laserUV.x = frac(laserUV.x * beamcount);
                 laserUV.x = laserUV.x - 0.5;
-                float thiknes = IF(isDMX() > 0, i.flatnessBeamCountSpinThickness.w, getLaserThickness());
+                half thiknes = IF(isDMX() > 0, i.flatnessBeamCountSpinThickness.w, getLaserThickness());
                 
                 
                 // Transparency (with gradation)
-                //float dist = normalize(distance(i.worldPos, float4(0,0,0,0))); 
+                //half dist = normalize(distance(i.worldPos, half4(0,0,0,0))); 
                // fade = lerp(1,fade, pow(dist, _FadeAmt));
 
                 
-                float beams = (beamcount * thiknes * 0.1) / abs(laserUV.x);
-                float transv = pow((-i.uv2.y + 1), _EndFade) ;
+                half beams = (beamcount * thiknes * 0.1) / abs(laserUV.x);
+                half transv = pow((-i.uv2.y + 1), _EndFade) ;
                 col = col * beams;
 
                 col += pow(-laserUV.y+1,_InternalShineLength*1.5) * _InternalShine * color;
 
-                // float beamGradCorrect = .2 / (1.-laserUV.y);
+                // half beamGradCorrect = .2 / (1.-laserUV.y);
                 // col *= beamGradCorrect;
                 // Clamping here softens the depiction
                 col = clamp(0, _LaserSoftening, col);
 
                 // col = lerp(col, col*10, _ZConeFlatness/1.999);
-                // float edgeFadeL = distance(i.uv2.x, 0.75);
-                // float edgeFadeR = distance(i.uv2.x, 0.25);
-                // float4 edgee = lerp(float4(0,0,0,0), col, pow(edgeFadeR * edgeFadeL, _FadeStrength));
+                // half edgeFadeL = distance(i.uv2.x, 0.75);
+                // half edgeFadeR = distance(i.uv2.x, 0.25);
+                // half4 edgee = lerp(half4(0,0,0,0), col, pow(edgeFadeR * edgeFadeL, _FadeStrength));
                 // col = lerp(col, edgee, _ZConeFlatness/1.999);
 
 //                col.xyz += rimlight.xyz;
                 //col *= fade;
-                col = lerp(float4(0,0,0,0), col, transv);
-                float pi = 3.14159;
-                float edgeMask = clamp((((sin((12.5 * i.uv2.x) + 4.75)) ))/pi * 6, 0,1);
+                col = lerp(half4(0,0,0,0), col, transv);
+                half pi = 3.14159;
+                half edgeMask = clamp((((sin((12.5 * i.uv2.x) + 4.75)) ))/pi * 6, 0,1);
                 edgeMask = 1 - edgeMask;
                 if(i.uv2.y > 0.99)
                 {
                     discard;
-                    return float4(0,0,0,0);
+                    return half4(0,0,0,0);
                 }
                 
                 // col = col * col *;
-               // float4 flatCol = col * flatEdgeMask.r;
-               float flatness = IF(isDMX() > 0, i.flatnessBeamCountSpinThickness.x, getConeFlatness());
+               // half4 flatCol = col * flatEdgeMask.r;
+               half flatness = IF(isDMX() > 0, i.flatnessBeamCountSpinThickness.x, getConeFlatness());
               
-               float4 flatCol = col * edgeMask;
+               half4 flatCol = col * edgeMask;
                 col = lerp(flatCol, col, pow(((flatness/2.0) - 1.0)*-1, 0.95));
                 col *= getFinalIntensity() * _UniversalIntensity * i.rgbIntensity.w;
                 return col;

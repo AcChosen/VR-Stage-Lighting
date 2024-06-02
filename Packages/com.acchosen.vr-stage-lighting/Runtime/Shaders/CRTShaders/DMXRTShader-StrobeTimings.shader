@@ -54,13 +54,8 @@
             {
                 float3 cRGB = float3(c.r, c.g, c.b);
                 float value = LinearRgbToLuminance(cRGB);
-                value = LinearToGammaSpaceExact(value);
                 
                 return value;
-            }
-            float3 GetDMXValueRGB(float4 c)
-            {     
-                return float3(LinearToGammaSpaceExact(c.r), LinearToGammaSpaceExact(c.g), LinearToGammaSpaceExact(c.b));
             }
 
             float4 frag(v2f_customrendertexture IN) : COLOR
@@ -109,7 +104,7 @@
                         #else
                             float3 t = float3(previousFrame.r, previousFrame.g, previousFrame.b);
                             //INCREMENT CURRENT PHASE CLOSER TO 2PI
-                            t = t + (float3(dt, dt, dt) * (GetDMXValueRGB(currentFrame) * float3(_MaxStrobeFreq, _MaxStrobeFreq, _MaxStrobeFreq)));
+                            t = t + (float3(dt, dt, dt) * (currentFrame.rgb * float3(_MaxStrobeFreq, _MaxStrobeFreq, _MaxStrobeFreq)));
 
                             //IF PHASE IS GREATER THAN OR EQUAL TO 2PI, RETURN TO 0, CAUSE SIN(2PI) == SIN(0)
                             // if (t >= 2*3.14159265) 

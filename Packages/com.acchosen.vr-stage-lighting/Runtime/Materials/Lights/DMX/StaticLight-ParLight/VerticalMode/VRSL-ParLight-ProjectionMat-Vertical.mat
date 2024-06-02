@@ -2,14 +2,20 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: VRSL-ParLight-ProjectionMat-Vertical
   m_Shader: {fileID: 4800000, guid: 3112589b70301d047baf8f5211152b0e, type: 3}
-  m_ShaderKeywords: _EMISSION _ENABLEVERTICALMODE_ON _USERAWGRID_ON
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - _EMISSION
+  - _ENABLEVERTICALMODE_ON
+  - _USERAWGRID_ON
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -17,6 +23,7 @@ Material:
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -80,6 +87,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - FinalStrobeFreq: 0
     - _AlphaProjectionIntensity: 0.5
@@ -150,7 +158,7 @@ Material:
     - _StrobeFreq: 12.76
     - _TextureSampleMode: 0
     - _TriplanarFalloff: 1
-    - _UniversalIntensity: 0.5
+    - _UniversalIntensity: 0.8
     - _UseRawGrid: 1
     - _UseWorldNorm: 0
     - _XOffset: -4.21
@@ -162,3 +170,4 @@ Material:
     - _EmissionColor: {r: 4.005236, g: 4.005236, b: 4.005236, a: 3}
     - _FixtureRotationOrigin: {r: 0, g: 0.014709, b: -1.02868, a: 0}
     - _ProjectionRangeOrigin: {r: 0, g: -0.23, b: 0, a: 0}
+  m_BuildTextureStacks: []

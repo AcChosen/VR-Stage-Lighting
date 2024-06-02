@@ -78,8 +78,6 @@
 #define FIXTURE_EMIT
 #define VRSL_DMX
 //DEBUGGING BUFFER
-RWStructuredBuffer<float> buffer : register(u1);
-RWStructuredBuffer<float4> buffer4 : register(u2);
 
 #include "UnityCG.cginc"
 #include "Lighting.cginc"

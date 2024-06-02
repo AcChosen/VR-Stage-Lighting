@@ -28,24 +28,19 @@
             sampler2D   _Tex;
             Texture2D _DMXTexture;
          //   half _MaxSpinSpeed;
-            uniform float4 _DMXTexture_TexelSize;
+            uniform half4 _DMXTexture_TexelSize;
             SamplerState sampler_point_repeat;
             uint _NineUniverseMode;
            // half _MaxStrobeFreq;
             #define PI 3.14159265
             #define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
 
-            float GetDMXValue(float4 c)
+            half GetDMXValue(half4 c)
             {
-                float3 cRGB = float3(c.r, c.g, c.b);
-                float value = LinearRgbToLuminance(cRGB);
-                value = LinearToGammaSpaceExact(value);
+                half3 cRGB = half3(c.r, c.g, c.b);
+                half value = LinearRgbToLuminance(cRGB);
                 
                 return value;
-            }
-            float3 GetDMXValueRGB(float4 c)
-            {     
-                return float3(LinearToGammaSpaceExact(c.r), LinearToGammaSpaceExact(c.g), LinearToGammaSpaceExact(c.b));
             }
 
             float4 frag(v2f_customrendertexture IN) : COLOR
@@ -60,70 +55,32 @@
                     float dt = unity_DeltaTime.x;
                     if(_NineUniverseMode)
                     {
-                        float3 dmx = GetDMXValueRGB(currentFrame);
+                        float3 dmx = currentFrame.rgb;
                         float3 t = previousFrame.rgb;
-                        float3 spin;
-                        spin *= 2.0;
-                        spin.rgb = dmx.rgb > float3(0.5, 0.5, 0.5) ? -(dmx.rgb - float3(0.5, 0.5, 0.5)) : dmx.rgb;
-                        t.rgb = dmx.rgb > float3(0.5, 0.5, 0.5) ? t.rgb + (dt * spin * 10.0) : t.rgb - (dt * spin * 10.0);
+                        float3 spin = float3(dmx.r > 0.5 ? (dmx.r - 0.5) : dmx.r, dmx.g > 0.5 ? (dmx.g - 0.5) : dmx.g, dmx.b > 0.5 ? (dmx.b - 0.5) : dmx.b);
 
-                        t.rgb-= t.rgb >= float3(2*PI,2*PI,2*PI) && dmx.rgb > float3(0.5, 0.5, 0.5) ? float3(2*PI,2*PI,2*PI) : float3(0.0, 0.0, 0.0);
-                        t.rgb+= t.rgb <= float3(0.0, 0.0, 0.0) ? float3(2*PI,2*PI,2*PI) : float3(0.0, 0.0, 0.0);
-
-
-                        // dmx.r = dmx.r < 0.015 ? 0.0 : dmx.r;
-                        // dmx.g = dmx.g < 0.015 ? 0.0 : dmx.g;
-                        // dmx.b = dmx.b < 0.015 ? 0.0 : dmx.b;
-                        dmx.rgb = dmx.rgb < float3(0.015, 0.015, 0.015) ? float3(0,0,0) : dmx.rgb;
-                        return float4(clamp(t.rgb, float3(0.0, 0.0, 0.0), float3(1000000.0,1000000.0,1000000.0)), currentFrame.a);
-
+                        t+= dt * spin;
+                        return float4(t, 1);
+                        // return half4(clamp(t.rgb, half3(0.0, 0.0, 0.0), half3(1000000.0,1000000.0,1000000.0)), currentFrame.a);
+                            
                     }
                     else
                     {
                         float dmx = GetDMXValue(currentFrame);
-                        if(dmx < 0.015)
+                        if(dmx < 0.01)
                         {
                             return 0;
                         }
                         //T = CURRENT PHASE
                         float t = previousFrame.r;
                         //INCREMENT CURRENT PHASE CLOSER TO 2PI
-                        float spin;
+                        // float spin;
 
-                        spin = dmx > 0.5 ? -(dmx - 0.5) : dmx;
-                        spin *= 2.0;
-                        t = dmx > 0.5 ? t + (dt * spin * 10.0) : t - (dt * spin * 10.0);
-
-                        t-= t >= 2*PI && dmx > 0.5 ? 2*PI : 0.0;
-                        t+= t <= 0.0 ? 2*PI : 0.0;
-                        return clamp(t, 0.0, 1000000.0);
+                        float spin = dmx > 0.5 ? (dmx - 0.5) : dmx;
+                        t+= dt * spin;
+                        return t;
+                        //return clamp(t, 0.0, 1000000.0);
                     }
-
-
-                    // if(dmx > 0.5)
-                    // {
-                    //   spin = -(dmx - 0.5);
-                    //   t = t + (dt * spin * 10.0);
-                    // }
-                    // else
-                    // {
-                    //     spin = dmx;
-                    //     t = t - (dt * spin * 10.0);
-                    // }
-
-                    //IF PHASE IS GREATER THAN OR EQUAL TO 2PI, RETURN TO 0, CAUSE SIN(2PI) == SIN(0)
-
-                    // if (t >= 2*PI && dmx > 0.5) 
-                    // {
-                    //     t -= 2*PI; 
-                    // }
-
-                    // else if(t <= 0.0)
-                    // {
-                    //     t += 2*PI; 
-                    // }
-                    //EZ CLAP
-                   // return clamp(t, 0.0, 1000000.0);
                 }
 
                 else

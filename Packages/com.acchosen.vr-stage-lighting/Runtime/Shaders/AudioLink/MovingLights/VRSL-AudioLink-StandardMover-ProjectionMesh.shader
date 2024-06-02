@@ -66,6 +66,7 @@ Shader "VRSL/AudioLink/Standard Mover/Projection"
 		_MaxMinTiltAngle("Max/Min Tilt Angle (-y, y)", Float) = 180
 
 		_FixtureMaxIntensity ("Maximum Cone Intensity",Range (0,0.5)) = 0.5
+		[Toggle]_UseTraditionalSampling("Use Traditional Texture Sampling", Int) = 0
 
 		// [Header(Divide)]
 		// _Divide ("Divide", Range(0, 30)) = 0

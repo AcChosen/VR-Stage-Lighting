@@ -46,7 +46,7 @@ namespace VRSL
         private AudioLinkBandState band;
 
 
-        [Range(0, 31)]
+        [Range(0, 127)]
         [Tooltip("The level of delay to add to the reaction.")]
         [FieldChangeCallback(nameof(Delay))]
         [SerializeField]
@@ -80,9 +80,28 @@ namespace VRSL
         [Range(0,1)]
         [FieldChangeCallback(nameof(FinalIntensity))]
         [SerializeField]
+        [HideInInspector]
         [Tooltip ("Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI.")]
-        private float finalIntensity = 1;
-
+        public float finalIntensity = 1;
+        [Tooltip ("Choose between setting the Final Intensity for all meshes, or individual meshes")]
+        [FieldChangeCallback(nameof(FinalIntensityComponentMode))]
+        [HideInInspector]
+        public bool finalIntensityComponentMode = false;
+        [Range(0,1)]
+        [Tooltip ("Sets the maximum brightness value of Global Intensity For Volumetric Meshes Only. Good for personalized settings of the max brightness of the shader by other users via UI.")]
+        [FieldChangeCallback(nameof(FinalIntensityVolumetric))]
+        [HideInInspector]
+        public float finalIntensityVolumetric = 1;
+        [Range(0,1)]
+        [Tooltip ("Sets the maximum brightness value of Global Intensity For Projection Meshes Only. Good for personalized settings of the max brightness of the shader by other users via UI.")]
+        [FieldChangeCallback(nameof(FinalIntensityProjection))]
+        [HideInInspector]
+        public float finalIntensityProjection = 1;
+        [Range(0,1)]
+        [Tooltip ("Sets the maximum brightness value of Global Intensity For Fixture Meshes Only. Good for personalized settings of the max brightness of the shader by other users via UI.")]
+        [FieldChangeCallback(nameof(FinalIntensityFixture))]
+        [HideInInspector]
+        public float finalIntensityFixture = 1;
 
         [Tooltip ("The main color of the light.")]
         [ColorUsage(false,true)]
@@ -95,6 +114,11 @@ namespace VRSL
         [FieldChangeCallback(nameof(ColorTextureSampling))]
         [SerializeField]
         private bool enableColorTextureSampling;
+
+        [Tooltip ("Check this box if you wish to use traditional color sampling instead of white to black conversion")]
+        [FieldChangeCallback(nameof(TraditionalColorTextureSampling))]
+        [SerializeField]
+        private bool traditionalColorTextureSampling;
 
 
         [Tooltip ("The UV coordinates to sample the color from on the texture.")]
@@ -237,6 +261,7 @@ namespace VRSL
         private Transform previousTargetToFollowTransform;
         
         private float previousConeWidth, previousConeLength, previousGlobalIntensity, previousFinalIntensity, previousMaxConeLength;
+        private float previousFinalIntensityVolumetric, previousFinalIntensityProjection, previousFinalIntensityFixture;
         private int previousGOBOSelection;
         [HideInInspector]
         public UnityEngine.Animations.AimConstraint targetConstraint;
@@ -334,6 +359,59 @@ namespace VRSL
             {
                 previousFinalIntensity = finalIntensity;
                 finalIntensity = value;
+                _UpdateInstancedProperties();
+            }
+        }
+
+        public bool FinalIntensityComponentMode
+        {
+            get
+            {
+                return finalIntensityComponentMode;
+            }
+            set
+            {
+                finalIntensityComponentMode = value;
+                _UpdateInstancedProperties();
+            }            
+        }
+        public float FinalIntensityVolumetric
+        {
+            get
+            {
+                return finalIntensityVolumetric;
+            }
+            set
+            {
+                previousFinalIntensityVolumetric = finalIntensityVolumetric;
+                finalIntensityVolumetric  = value;
+                _UpdateInstancedProperties();
+            }
+        }
+
+        public float FinalIntensityProjection
+        {
+            get
+            {
+                return finalIntensityProjection;
+            }
+            set
+            {
+                previousFinalIntensityProjection = finalIntensityProjection;
+                finalIntensityProjection  = value;
+                _UpdateInstancedProperties();
+            }
+        }
+        public float FinalIntensityFixture
+        {
+            get
+            {
+                return finalIntensityFixture;
+            }
+            set
+            {
+                previousFinalIntensityFixture = finalIntensityFixture;
+                finalIntensityFixture  = value;
                 _UpdateInstancedProperties();
             }
         }
@@ -482,6 +560,19 @@ namespace VRSL
                     _UpdateInstancedProperties();
                 }
             }
+
+            public bool TraditionalColorTextureSampling
+            {
+                get
+                {
+                    return traditionalColorTextureSampling;
+                }
+                set
+                {
+                    traditionalColorTextureSampling = value;
+                    _UpdateInstancedProperties();
+                }
+            }
             public bool ThemeColorSampling
             {
                 get
@@ -533,7 +624,19 @@ namespace VRSL
             // }
 
     /////////////////////////////////////////////////////////////////////////END PROPERTIES///////////////////////////////////////////////////////////////////////////////////////////////
-
+        MaterialPropertyBlock _SetFinalIntensityComponents(MaterialPropertyBlock props, MeshRenderer renderer){
+            if(!finalIntensityComponentMode){return props;}
+                if(renderer.gameObject.name.Contains("Volume") || renderer.gameObject.name.Contains("volume") || renderer.gameObject.name.Contains("Flare") || renderer.gameObject.name.Contains("flare")){
+                    props.SetFloat("_FinalIntensity", finalIntensityVolumetric);
+                }
+                else if(renderer.gameObject.name.Contains("Project") || renderer.gameObject.name.Contains("project")){
+                    props.SetFloat("_FinalIntensity", finalIntensityProjection);
+                }
+                else{
+                    props.SetFloat("_FinalIntensity", finalIntensityFixture);
+                }
+            return props;
+        }
         public void _UpdateInstancedProperties()
         {   
             if(props == null)
@@ -552,6 +655,7 @@ namespace VRSL
             props.SetFloat("_TextureColorSampleX", textureSamplingCoordinates.x);
             props.SetFloat("_TextureColorSampleY", textureSamplingCoordinates.y);
             props.SetInt("_EnableColorTextureSample", enableColorTextureSampling == true ? 1 : 0);
+            props.SetInt("_UseTraditionalSampling", traditionalColorTextureSampling == true ? 1 : 0);
             props.SetInt("_EnableThemeColorSampling", enableThemeColorSampling == true ? 1 : 0);
             props.SetInt("_ThemeColorTarget", themeColorTarget);
 
@@ -587,43 +691,43 @@ namespace VRSL
             {
                 case 1:
                     if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(props);
+                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
                     break;
                 case 2:
                     if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(props);
+                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
                     if(objRenderers[0])
-                        objRenderers[1].SetPropertyBlock(props);
+                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
                     break;
                 case 3:
                     if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(props);
+                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
                     if(objRenderers[1])
-                        objRenderers[1].SetPropertyBlock(props);
+                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
                     if(objRenderers[2])
-                        objRenderers[2].SetPropertyBlock(props);
+                        objRenderers[2].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[2]));
                     break;
                 case 4:
                     if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(props);
+                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
                     if(objRenderers[1])
-                        objRenderers[1].SetPropertyBlock(props);
+                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
                     if(objRenderers[2])
-                        objRenderers[2].SetPropertyBlock(props);
+                        objRenderers[2].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[2]));
                     if(objRenderers[3])
-                        objRenderers[3].SetPropertyBlock(props);
+                        objRenderers[3].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[3]));
                     break;
                 case 5:
                     if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(props);
+                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
                     if(objRenderers[1])
-                        objRenderers[1].SetPropertyBlock(props);
+                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
                     if(objRenderers[2])
-                        objRenderers[2].SetPropertyBlock(props);
+                        objRenderers[2].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[2]));
                     if(objRenderers[3])
-                        objRenderers[3].SetPropertyBlock(props);
+                        objRenderers[3].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[3]));
                     if(objRenderers[4])
-                        objRenderers[4].SetPropertyBlock(props);
+                        objRenderers[4].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[4]));
                     break;
                 default:
                     Debug.Log("Too many mesh renderers for this fixture!");
@@ -648,6 +752,7 @@ namespace VRSL
             props.SetFloat("_TextureColorSampleX", textureSamplingCoordinates.x);
             props.SetFloat("_TextureColorSampleY", textureSamplingCoordinates.y);
             props.SetInt("_EnableColorTextureSample", enableColorTextureSampling == true ? 1 : 0);
+            props.SetInt("_UseTraditionalSampling", traditionalColorTextureSampling == true ? 1 : 0);
             props.SetInt("_EnableThemeColorSampling", enableThemeColorSampling == true ? 1 : 0);
             props.SetInt("_ThemeColorTarget", themeColorTarget);
 
@@ -683,43 +788,43 @@ namespace VRSL
             {
                 case 1:
                     if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(props);
+                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
                     break;
                 case 2:
                     if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(props);
+                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
                     if(objRenderers[0])
-                        objRenderers[1].SetPropertyBlock(props);
+                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
                     break;
                 case 3:
                     if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(props);
+                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
                     if(objRenderers[1])
-                        objRenderers[1].SetPropertyBlock(props);
+                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
                     if(objRenderers[2])
-                        objRenderers[2].SetPropertyBlock(props);
+                        objRenderers[2].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[2]));
                     break;
                 case 4:
                     if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(props);
+                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
                     if(objRenderers[1])
-                        objRenderers[1].SetPropertyBlock(props);
+                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
                     if(objRenderers[2])
-                        objRenderers[2].SetPropertyBlock(props);
+                        objRenderers[2].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[2]));
                     if(objRenderers[3])
-                        objRenderers[3].SetPropertyBlock(props);
+                        objRenderers[3].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[3]));
                     break;
                 case 5:
                     if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(props);
+                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
                     if(objRenderers[1])
-                        objRenderers[1].SetPropertyBlock(props);
+                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
                     if(objRenderers[2])
-                        objRenderers[2].SetPropertyBlock(props);
+                        objRenderers[2].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[2]));
                     if(objRenderers[3])
-                        objRenderers[3].SetPropertyBlock(props);
+                        objRenderers[3].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[3]));
                     if(objRenderers[4])
-                        objRenderers[4].SetPropertyBlock(props);
+                        objRenderers[4].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[4]));
                     break;
                 default:
                     Debug.Log("Too many mesh renderers for this fixture!");
@@ -742,6 +847,9 @@ namespace VRSL
                 previousGOBOSelection = selectGOBO;
                 previousGlobalIntensity = globalIntensity;
                 previousFinalIntensity = finalIntensity;
+                previousFinalIntensityFixture = finalIntensityFixture;
+                previousFinalIntensityProjection = finalIntensityProjection;
+                previousFinalIntensityVolumetric = finalIntensityVolumetric;
                 if(withAL)
                 {
                     _UpdateInstancedProperties();

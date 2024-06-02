@@ -22,7 +22,11 @@
 		 _ThemeColorTarget ("Choose Theme Color", Int) = 0
          [Toggle] _EnableColorTextureSample ("Enable Color Texture Sampling", Int) = 0
 		 _SamplingTexture ("Texture To Sample From for Color", 2D) = "white" {}
+         _TextureColorSampleX ("X coordinate to sample the texture from", Range(0,1)) = 0.5
+		 _TextureColorSampleY ("Y coordinate to sample the texture from", Range(0,1)) = 0.5
+         _RenderTextureMultiplier("Render Texture Multiplier", Range(1,10)) = 1
          [Toggle] _EnableColorChord ("Enable Color Chord Tinting", Int) = 0
+         [Toggle]_UseTraditionalSampling("Use Traditional Texture Sampling", Int) = 0
 
                   [Enum(Transparent,1,AlphaToCoverage,2)] _RenderMode ("Render Mode", Int) = 1
         [Enum(Off,0,On,1)] _ZWrite ("Z Write", Int) = 0

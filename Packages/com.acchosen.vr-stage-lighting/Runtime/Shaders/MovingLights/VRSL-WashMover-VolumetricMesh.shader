@@ -198,6 +198,7 @@
 				float blindingEffect : TEXCOORD1;
 				float4 worldPos : TEXCOORD2;
 				//float4 color : TEXCOORD3;
+				float3 currentForward : TEXCOORD3;
 				float2 camAngleCamfade : TEXCOORD5;
 				float4 screenPos : TEXCOORD6;
 				float4 pos : SV_POSITION;
