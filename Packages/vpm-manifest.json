@@ -1,0 +1,80 @@
+{
+  "dependencies": {
+    "com.vrchat.base": {
+      "version": "3.5.2"
+    },
+    "com.vrchat.worlds": {
+      "version": "3.5.2"
+    },
+    "com.vrchat.core.vpm-resolver": {
+      "version": "0.1.29"
+    },
+    "dev.architech.videoplayershim": {
+      "version": "1.3.5"
+    },
+    "com.texelsaur.video": {
+      "version": "2.4.7"
+    },
+    "dev.architech.protv": {
+      "version": "3.0.0-beta.16"
+    },
+    "com.acchosen.vr-stage-lighting": {
+      "version": "2.7.0"
+    }
+  },
+  "locked": {
+    "com.vrchat.base": {
+      "version": "3.5.2",
+      "dependencies": {}
+    },
+    "com.vrchat.worlds": {
+      "version": "3.5.2",
+      "dependencies": {
+        "com.vrchat.base": "3.5.2"
+      }
+    },
+    "com.vrchat.core.vpm-resolver": {
+      "version": "0.1.29",
+      "dependencies": {}
+    },
+    "com.llealloo.audiolink": {
+      "version": "1.4.0",
+      "dependencies": {}
+    },
+    "dev.architech.videoplayershim": {
+      "version": "1.3.5",
+      "dependencies": {
+        "com.vrchat.worlds": "^3.3"
+      }
+    },
+    "com.texelsaur.video": {
+      "version": "2.4.7",
+      "dependencies": {
+        "com.texelsaur.common": "^1.5.0"
+      }
+    },
+    "com.texelsaur.common": {
+      "version": "1.5.2",
+      "dependencies": {}
+    },
+    "dev.architech.protv": {
+      "version": "3.0.0-beta.16",
+      "dependencies": {
+        "com.vrchat.worlds": "^3.3",
+        "dev.architech.sdk": ">=0.14 <1"
+      }
+    },
+    "dev.architech.sdk": {
+      "version": "0.15.6",
+      "dependencies": {
+        "com.vrchat.worlds": "^3.4"
+      }
+    },
+    "com.acchosen.vr-stage-lighting": {
+      "version": "2.7.0",
+      "dependencies": {
+        "com.llealloo.audiolink": ">=0.3.1"
+      }
+    }
+  }
+}

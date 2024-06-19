@@ -102,7 +102,7 @@ Material:
     - _Sector: 0
     - _SignalDetectionSensativity: 0.025
     - _SignalDetectionSystem: 0
-    - _SmoothValue: 0.7
+    - _SmoothValue: 0.9206
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
