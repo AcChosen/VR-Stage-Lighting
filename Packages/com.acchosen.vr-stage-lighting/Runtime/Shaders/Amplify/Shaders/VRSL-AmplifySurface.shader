@@ -103,10 +103,12 @@ Shader "VRSL/Amplify/VRSL-AmplifySurface"
 			y = frac(y)== 0.00000 ? y - 1 : y;
 			if(x == 13.0)
 			{
-			    y = DMXChannel >= 90 && DMXChannel <= 404 ? y - 1 : y;
-			    y = DMXChannel >= 676 && DMXChannel <= 819 ? y - 1 : y;
-			    y = DMXChannel >= 1339 ? y - 1 : y;
-			}
+			y = DMXChannel >= 90 && DMXChannel <= 101 ? y - 1 : y;
+			        y = DMXChannel >= 160 && DMXChannel <= 205 ? y - 1 : y;
+			        y = DMXChannel >= 326 && DMXChannel <= 404 ? y - 1 : y;
+			        y = DMXChannel >= 676 && DMXChannel <= 819 ? y - 1 : y;
+			        y = DMXChannel >= 1339 ? y - 1 : y;
+			    }
 			float2 xAndy = float2(x,y);
 			return xAndy;
 		}
@@ -133,8 +135,8 @@ Shader "VRSL/Amplify/VRSL-AmplifySurface"
 			float2 xyUV = float2(0.0,0.0);
 			xyUV.x = ((x * resMultiplierX) * _OSCGridRenderTextureRAW_TexelSize.x);
 			xyUV.y = (y * resMultiplierX) * _OSCGridRenderTextureRAW_TexelSize.y;
-			xyUV.y -= 0.001;
-			xyUV.x -= 0.015;
+			xyUV.y -= 0.001915;
+			 xyUV.x -= 0.015;
 			return xyUV;
 		}
 
@@ -143,7 +145,6 @@ Shader "VRSL/Amplify/VRSL-AmplifySurface"
 		{
 			    float3 cRGB = float3(c.r, c.g, c.b);
 			    float value = LinearRgbToLuminance(cRGB);
-			    value = LinearToGammaSpaceExact(value);
 			    return value;
 		}
 
@@ -162,7 +163,6 @@ Shader "VRSL/Amplify/VRSL-AmplifySurface"
 		{
 			    float3 cRGB = float3(c.r, c.g, c.b);
 			    float value = LinearRgbToLuminance(cRGB);
-			    value = LinearToGammaSpaceExact(value);
 			    return value;
 		}
 
@@ -171,16 +171,6 @@ Shader "VRSL/Amplify/VRSL-AmplifySurface"
 		{
 			    float3 cRGB = float3(c.r, c.g, c.b);
 			    float value = LinearRgbToLuminance(cRGB);
-			    value = LinearToGammaSpaceExact(value);
-			    return value;
-		}
-
-
-		float SampleDMX88_g353( float4 c )
-		{
-			    float3 cRGB = float3(c.r, c.g, c.b);
-			    float value = LinearRgbToLuminance(cRGB);
-			    value = LinearToGammaSpaceExact(value);
 			    return value;
 		}
 
@@ -189,7 +179,14 @@ Shader "VRSL/Amplify/VRSL-AmplifySurface"
 		{
 			    float3 cRGB = float3(c.r, c.g, c.b);
 			    float value = LinearRgbToLuminance(cRGB);
-			    value = LinearToGammaSpaceExact(value);
+			    return value;
+		}
+
+
+		float SampleDMX88_g353( float4 c )
+		{
+			    float3 cRGB = float3(c.r, c.g, c.b);
+			    float value = LinearRgbToLuminance(cRGB);
 			    return value;
 		}
 
@@ -262,19 +259,7 @@ Shader "VRSL/Amplify/VRSL-AmplifySurface"
 			float4 c88_g355 = SAMPLE_TEXTURE2D( _DMXGrid, sampler_DMXGrid, ( temp_output_6_0_g352 == 1 ? localLegacyRead79_g355 : localIndustryRead84_g355 ) );
 			float localSampleDMX88_g355 = SampleDMX88_g355( c88_g355 );
 			int temp_output_37_0_g352 = ( temp_output_8_0_g352 + 1 );
-			int DMXChannel78_g353 = abs( temp_output_37_0_g352 );
-			float2 localBaseRead78_g353 = BaseRead( DMXChannel78_g353 );
-			float2 break95_g353 = localBaseRead78_g353;
-			int channel79_g353 = (int)break95_g353.x;
-			int sector79_g353 = (int)break95_g353.y;
-			float2 localLegacyRead79_g353 = LegacyRead( channel79_g353 , sector79_g353 );
-			float4 _OSCGridRenderTextureRAW_TexelSize84_g353 = _DMXGrid_TexelSize;
-			int x84_g353 = (int)break95_g353.x;
-			int y84_g353 = (int)break95_g353.y;
-			float2 localIndustryRead84_g353 = IndustryRead( _OSCGridRenderTextureRAW_TexelSize84_g353 , x84_g353 , y84_g353 );
-			float4 c88_g353 = SAMPLE_TEXTURE2D( _DMXGrid, sampler_DMXGrid, ( temp_output_6_0_g352 == 1 ? localLegacyRead79_g353 : localIndustryRead84_g353 ) );
-			float localSampleDMX88_g353 = SampleDMX88_g353( c88_g353 );
-			int DMXChannel78_g354 = abs( ( temp_output_37_0_g352 + 1 ) );
+			int DMXChannel78_g354 = abs( temp_output_37_0_g352 );
 			float2 localBaseRead78_g354 = BaseRead( DMXChannel78_g354 );
 			float2 break95_g354 = localBaseRead78_g354;
 			int channel79_g354 = (int)break95_g354.x;
@@ -286,7 +271,19 @@ Shader "VRSL/Amplify/VRSL-AmplifySurface"
 			float2 localIndustryRead84_g354 = IndustryRead( _OSCGridRenderTextureRAW_TexelSize84_g354 , x84_g354 , y84_g354 );
 			float4 c88_g354 = SAMPLE_TEXTURE2D( _DMXGrid, sampler_DMXGrid, ( temp_output_6_0_g352 == 1 ? localLegacyRead79_g354 : localIndustryRead84_g354 ) );
 			float localSampleDMX88_g354 = SampleDMX88_g354( c88_g354 );
-			float4 appendResult9_g352 = (float4(localSampleDMX88_g355 , localSampleDMX88_g353 , localSampleDMX88_g354 , 1.0));
+			int DMXChannel78_g353 = abs( ( temp_output_37_0_g352 + 1 ) );
+			float2 localBaseRead78_g353 = BaseRead( DMXChannel78_g353 );
+			float2 break95_g353 = localBaseRead78_g353;
+			int channel79_g353 = (int)break95_g353.x;
+			int sector79_g353 = (int)break95_g353.y;
+			float2 localLegacyRead79_g353 = LegacyRead( channel79_g353 , sector79_g353 );
+			float4 _OSCGridRenderTextureRAW_TexelSize84_g353 = _DMXGrid_TexelSize;
+			int x84_g353 = (int)break95_g353.x;
+			int y84_g353 = (int)break95_g353.y;
+			float2 localIndustryRead84_g353 = IndustryRead( _OSCGridRenderTextureRAW_TexelSize84_g353 , x84_g353 , y84_g353 );
+			float4 c88_g353 = SAMPLE_TEXTURE2D( _DMXGrid, sampler_DMXGrid, ( temp_output_6_0_g352 == 1 ? localLegacyRead79_g353 : localIndustryRead84_g353 ) );
+			float localSampleDMX88_g353 = SampleDMX88_g353( c88_g353 );
+			float4 appendResult9_g352 = (float4(localSampleDMX88_g355 , localSampleDMX88_g354 , localSampleDMX88_g353 , 1.0));
 			float _FinalIntensity_Instance = UNITY_ACCESS_INSTANCED_PROP(_FinalIntensity_arr, _FinalIntensity);
 			float _GlobalIntensity_Instance = UNITY_ACCESS_INSTANCED_PROP(_GlobalIntensity_arr, _GlobalIntensity);
 			float lerpResult190 = lerp( 0.0 , _EmissionStrengthMultiplier , temp_output_173_0);
@@ -310,40 +307,40 @@ Shader "VRSL/Amplify/VRSL-AmplifySurface"
 }
 /*ASEBEGIN
 Version=18935
-245;301;1658;983;2012.546;326.2515;1.787992;True;False
+573.1429;350.8571;1206.286;666.4286;1608.715;38.12936;1.787992;True;False
 Node;AmplifyShaderEditor.CommentaryNode;81;-964.9736,83.32082;Inherit;False;1223.884;667.8798;5 Channel Fixture Setup. Intensity, RGB, and Strobe. ;12;80;79;43;21;16;173;175;177;176;163;39;181;5 Channel Fixture DMX Reading;1,1,1,1;0;0
 Node;AmplifyShaderEditor.IntNode;16;-870.2498,453.5368;Inherit;False;InstancedProperty;_DMXChannel;DMX Channel;7;0;Create;True;0;0;0;False;0;False;0;0;False;0;1;INT;0
 Node;AmplifyShaderEditor.IntNode;21;-874.9551,384.8933;Inherit;False;Property;_LegacyMode;Legacy Mode?;8;0;Create;True;0;0;0;False;1;Toggle;False;0;0;False;0;1;INT;0
 Node;AmplifyShaderEditor.TexturePropertyNode;176;-946.5815,549.8076;Inherit;True;Property;_DMXGrid;DMX Grid;2;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
-Node;AmplifyShaderEditor.IntNode;175;-870.8794,313.3403;Inherit;False;InstancedProperty;_EnableStrobe;Can Strobe?;9;0;Create;False;0;0;0;False;1;Toggle;False;1;0;False;0;1;INT;0
-Node;AmplifyShaderEditor.IntNode;163;-691.8258,683.2285;Inherit;False;Constant;_Int0;Int 0;19;0;Create;True;0;0;0;False;0;False;1;0;False;0;1;INT;0
-Node;AmplifyShaderEditor.TexturePropertyNode;177;-912.5815,121.8076;Inherit;True;Property;_DMXStrobeTimer;DMX Strobe Timer;4;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
+Node;AmplifyShaderEditor.RangedFloatNode;83;-161.8089,-82.04681;Inherit;False;Property;_EmissionStrengthMultiplier;Emission Strength Multiplier;13;0;Create;True;0;0;0;False;0;False;1;0;1;200;0;1;FLOAT;0
 Node;AmplifyShaderEditor.CommentaryNode;82;-578.9083,-1176.978;Inherit;False;1188.889;1049.79;Standard Surface Shader Items;17;7;12;49;10;11;9;6;64;63;65;66;67;61;70;84;183;182;Standard Surface Shader;1,1,1,1;0;0
 Node;AmplifyShaderEditor.FunctionNode;173;-565.9862,338.5289;Inherit;False;VRSL-ReadDMX;-1;;351;daf3802ef6ad79c4f8b45fd9600401f1;0;3;96;SAMPLER2D;0;False;80;INT;0;False;77;INT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;83;-161.8089,-82.04681;Inherit;False;Property;_EmissionStrengthMultiplier;Emission Strength Multiplier;13;0;Create;True;0;0;0;False;0;False;1;0;1;200;0;1;FLOAT;0
+Node;AmplifyShaderEditor.IntNode;163;-691.8258,683.2285;Inherit;False;Constant;_Int0;Int 0;19;0;Create;True;0;0;0;False;0;False;1;0;False;0;1;INT;0
+Node;AmplifyShaderEditor.IntNode;175;-870.8794,313.3403;Inherit;False;InstancedProperty;_EnableStrobe;Can Strobe?;9;0;Create;False;0;0;0;False;1;Toggle;False;1;0;False;0;1;INT;0
+Node;AmplifyShaderEditor.TexturePropertyNode;177;-912.5815,121.8076;Inherit;True;Property;_DMXStrobeTimer;DMX Strobe Timer;4;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
 Node;AmplifyShaderEditor.FunctionNode;172;-529.5178,545.8111;Inherit;False;VRSL-GetRGBValues;-1;;352;6ff3fb2f25dfde442a3d454ce5bfa464;0;4;53;SAMPLER2D;0;False;4;INT;0;False;6;INT;0;False;7;INT;0;False;1;COLOR;0
 Node;AmplifyShaderEditor.LerpOp;190;204.0121,-175.8546;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.FunctionNode;181;-604.018,136.0169;Inherit;True;VRSL-GetStrobeValue;-1;;356;67bfbade731e9bf479d532da3afed0e6;0;6;43;SAMPLER2D;0;False;31;INT;4;False;39;INT;0;False;17;INT;0;False;1;INT;0;False;4;SAMPLER2D;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SamplerStateNode;7;-528.9083,-482.0835;Inherit;False;0;0;0;1;-1;None;1;0;SAMPLER2D;;False;1;SAMPLERSTATE;0
 Node;AmplifyShaderEditor.CommentaryNode;80;-210.2069,120.7118;Inherit;False;132;132;CH 5;1;45;Strobe value;1,1,1,1;0;0
 Node;AmplifyShaderEditor.RangedFloatNode;61;37.43338,-391.7389;Inherit;False;InstancedProperty;_GlobalIntensity;Global Intensity;11;0;Create;False;0;0;0;False;0;False;1;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;39;34.03101,433.2328;Inherit;True;2;2;0;FLOAT;0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
-Node;AmplifyShaderEditor.CommentaryNode;49;30.46555,-259.1884;Inherit;False;132;132;Emission Mask;1;48;;1,1,1,1;0;0
-Node;AmplifyShaderEditor.WireNode;45;-160.2069,170.7118;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;183;250.6088,-543.0911;Inherit;False;InstancedProperty;_FinalIntensity;Final Intensity;12;0;Create;False;0;0;0;False;0;False;1;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SamplerNode;12;-267.2777,-377.7147;Inherit;True;Property;_EmissionMask;Emission Mask;6;1;[SingleLineTexture];Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;84;299.1382,-356.8202;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;183;250.6088,-543.0911;Inherit;False;InstancedProperty;_FinalIntensity;Final Intensity;12;0;Create;False;0;0;0;False;0;False;1;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.CommentaryNode;49;30.46555,-259.1884;Inherit;False;132;132;Emission Mask;1;48;;1,1,1,1;0;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;39;34.03101,433.2328;Inherit;True;2;2;0;FLOAT;0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
+Node;AmplifyShaderEditor.WireNode;45;-160.2069,170.7118;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.WireNode;48;80.46545,-209.1885;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;44;293.0238,125.7325;Inherit;True;2;2;0;FLOAT;0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.RangedFloatNode;184;456.4612,-613.6317;Inherit;False;Property;_UniversalIntensity;Universal Intensity;10;0;Create;False;0;0;0;False;0;False;1;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;182;393.3136,-467.1724;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SamplerNode;10;-263.1878,-752.1567;Inherit;True;Property;_MetallicSmoothnessMap;Metallic Smoothness Map;3;1;[SingleLineTexture];Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.RangedFloatNode;63;68.82088,-772.7103;Inherit;False;Property;_MetallicStrength;Metallic Strength;14;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;67;32.24033,-467.6367;Inherit;False;Property;_AmbientOcclusionStrength;Ambient Occlusion Strength;16;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SamplerNode;11;-266.9187,-564.269;Inherit;True;Property;_AmbientOcclusionMap;Ambient Occlusion Map;5;1;[SingleLineTexture];Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.RangedFloatNode;65;55.59845,-663.7995;Inherit;False;Property;_SmoothnessStrength;Smoothness Strength;15;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;185;550.4612,-492.6317;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;47;397.5565,-38.39049;Inherit;False;2;2;0;FLOAT;0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
-Node;AmplifyShaderEditor.RangedFloatNode;65;55.59845,-663.7995;Inherit;False;Property;_SmoothnessStrength;Smoothness Strength;15;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.SamplerNode;11;-266.9187,-564.269;Inherit;True;Property;_AmbientOcclusionMap;Ambient Occlusion Map;5;1;[SingleLineTexture];Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.RangedFloatNode;63;68.82088,-772.7103;Inherit;False;Property;_MetallicStrength;Metallic Strength;14;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SamplerNode;10;-263.1878,-752.1567;Inherit;True;Property;_MetallicSmoothnessMap;Metallic Smoothness Map;3;1;[SingleLineTexture];Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.RangedFloatNode;67;32.24033,-467.6367;Inherit;False;Property;_AmbientOcclusionStrength;Ambient Occlusion Strength;16;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;66;333.8387,-688.778;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;64;331.0926,-827.6705;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SamplerNode;9;-265.6089,-937.0826;Inherit;True;Property;_NormalMap;Normal Map;0;2;[Normal];[SingleLineTexture];Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;bump;Auto;True;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
@@ -367,23 +364,23 @@ WireConnection;181;39;175;0
 WireConnection;181;17;21;0
 WireConnection;181;1;16;0
 WireConnection;181;4;177;0
-WireConnection;39;0;173;0
-WireConnection;39;1;172;0
-WireConnection;45;0;181;0
 WireConnection;12;7;7;0
 WireConnection;84;0;61;0
 WireConnection;84;1;190;0
+WireConnection;39;0;173;0
+WireConnection;39;1;172;0
+WireConnection;45;0;181;0
 WireConnection;48;0;12;1
 WireConnection;44;0;45;0
 WireConnection;44;1;39;0
 WireConnection;182;0;183;0
 WireConnection;182;1;84;0
-WireConnection;10;7;7;0
+WireConnection;11;7;7;0
 WireConnection;185;0;184;0
 WireConnection;185;1;182;0
 WireConnection;47;0;48;0
 WireConnection;47;1;44;0
-WireConnection;11;7;7;0
+WireConnection;10;7;7;0
 WireConnection;66;0;10;4
 WireConnection;66;1;65;0
 WireConnection;64;0;10;1
@@ -401,4 +398,4 @@ WireConnection;0;3;64;0
 WireConnection;0;4;66;0
 WireConnection;0;5;70;0
 ASEEND*/
-//CHKSM=71E9F27070FDDF8DD27236D124D7D95BA55D58C0
+//CHKSM=A7832EA48DB9E0F0FCC537E8FC32A9E25F591CE2
