@@ -1,0 +1,13 @@
+1:Pan
+2:Tilt
+3:Length
+4:Width
+5:Flatness
+6:Beam Count
+7:Spin Speed
+8:Red
+9:Green
+10:Blue
+11:Intensity
+12:Beam Thickness
+13:Movement Speed

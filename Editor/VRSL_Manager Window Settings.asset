@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c995926c90549704bb9e0c3f100b0866, type: 3}
+  m_Name: VRSL_Manager Window Settings
+  m_EditorClassIdentifier: 
+  highPolySpotlightVolumetric: {fileID: 3095268764473335706, guid: cc98423c9d250574a97ff77da8b48ae0,
+    type: 3}
+  mediumPolySpotlightVolumetric: {fileID: -4914940944117782908, guid: 1c6727fdb4d67144997ca7f1d773425d,
+    type: 3}
+  lowPolySpotlightVolumetric: {fileID: 2092003020933698497, guid: 176a7b05c669a304cbfc7f8d85df1f15,
+    type: 3}
+  highPolyWashlightVolumetric: {fileID: 4044263387530785113, guid: 1361fb5cca0845e418adc5d07965dc4d,
+    type: 3}
+  mediumPolyWashlightVolumetric: {fileID: 8407130331639395620, guid: 76f8b7aadc98ef64799418ba4b393086,
+    type: 3}
+  lowPolyWashlightVolumetric: {fileID: -917289432552507181, guid: 7b9bf5375ef4f5f409f6f26650981e8b,
+    type: 3}
+  highPolySpotlightVolumetricAudioLink: {fileID: 4348356663761886654, guid: 75fedb72c375d3742a6b8ea2ee9deab5,
+    type: 3}
+  mediumPolySpotlightVolumetricAudioLink: {fileID: 193328329398799331, guid: 4cb903544eccc4440a13d6d9472186e5,
+    type: 3}
+  lowPolySpotlightVolumetricAudioLink: {fileID: 901887270275031821, guid: 80323f7df22152d47ad79c4ee15fe1ed,
+    type: 3}
+  highPolyWashlightVolumetricAudioLink: {fileID: -7448728899984790229, guid: 217a2239725e7da41b06787fd790b7db,
+    type: 3}
+  mediumPolyWashlightVolumetricAudioLink: {fileID: 6994501472999443680, guid: 58c8b73bcdd7d04489661dc3feb058c1,
+    type: 3}
+  lowPolyWashlightVolumetricAudioLink: {fileID: 3013821634381010568, guid: 860053a68d88c0e46bde9443f5ae76a4,
+    type: 3}

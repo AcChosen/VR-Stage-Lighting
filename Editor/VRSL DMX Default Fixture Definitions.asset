@@ -1,0 +1,155 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5234e5a618f589b49aa604ad3e28f500, type: 3}
+  m_Name: VRSL DMX Default Fixture Definitions
+  m_EditorClassIdentifier: 
+  definitions:
+  - name: SpotLight 13CH
+    channelNames:
+    - Pan
+    - Fine Pan
+    - Tilt
+    - Fine Tilt
+    - Zoom
+    - Dimmer
+    - Strobe
+    - Red
+    - Green
+    - Blue
+    - GOBO Spin
+    - GOBO Select
+    - Movement Speed
+    foldOut: 0
+  - name: WashLight 13CH
+    channelNames:
+    - Pan
+    - Fine Pan
+    - Tilt
+    - Fine Tilt
+    - Zoom
+    - Dimmer
+    - Red
+    - Green
+    - Blue
+    - None
+    - None
+    - None
+    - Movement Speed
+    foldOut: 0
+  - name: ParLight 13CH
+    channelNames:
+    - None
+    - None
+    - None
+    - None
+    - None
+    - Dimmer
+    - Strobe
+    - Red
+    - Green
+    - Blue
+    - None
+    - None
+    - None
+    foldOut: 0
+  - name: Blinder 13CH
+    channelNames:
+    - None
+    - None
+    - None
+    - None
+    - None
+    - Dimmer
+    - Strobe
+    - Red
+    - Green
+    - Blue
+    - None
+    - None
+    - None
+    foldOut: 0
+  - name: LightBar 13CH
+    channelNames:
+    - None
+    - None
+    - None
+    - None
+    - None
+    - Dimmer
+    - Strobe
+    - Red
+    - Green
+    - Blue
+    - None
+    - None
+    - None
+    foldOut: 0
+  - name: ParLight 5CH
+    channelNames:
+    - Dimmer
+    - Red
+    - Green
+    - Blue
+    - Strobe
+    foldOut: 0
+  - name: Blinder 5CH
+    channelNames:
+    - Dimmer
+    - Red
+    - Green
+    - Blue
+    - Strobe
+    foldOut: 0
+  - name: LightBar 5CH
+    channelNames:
+    - Dimmer
+    - Red
+    - Green
+    - Blue
+    - Strobe
+    foldOut: 0
+  - name: Flasher 1CH
+    channelNames:
+    - Dimmer
+    foldOut: 0
+  - name: DiscoBall 1CH
+    channelNames:
+    - Dimmer
+    foldOut: 0
+  - name: Laser 13CH
+    channelNames:
+    - Pan
+    - Tilt
+    - Length
+    - Width
+    - Flatness
+    - Beam Count
+    - Spin Speed
+    - Red
+    - Green
+    - Blue
+    - Dimmer
+    - Beam Thickness
+    - Movement Speed
+    foldOut: 0
+  - name: Generic 5CH
+    channelNames:
+    - Dimmer
+    - Red
+    - Green
+    - Blue
+    - Strobe
+    foldOut: 0
+  - name: Other
+    channelNames:
+    - Unknown
+    foldOut: 1

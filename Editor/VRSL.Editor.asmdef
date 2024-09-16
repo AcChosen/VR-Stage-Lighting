@@ -1,0 +1,21 @@
+{
+    "name": "VRSL.Editor",
+    "references": [
+        "GUID:99835874ee819da44948776e0df4ff1d",
+        "GUID:e1a67d4778ffb214390ddafa61c1a557",
+        "GUID:3c1bc1267eab5884ebe7f232c09ee0d9",
+        "GUID:58281da7f948e9644aceb5d0178bf06b",
+        "GUID:d1e8c2ba944807d4a9213e2de6930a0b",
+        "GUID:c78fbc11badb87949afced0f13251750",
+        "GUID:84265b35cca3905448e623ef3903f0ff"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
