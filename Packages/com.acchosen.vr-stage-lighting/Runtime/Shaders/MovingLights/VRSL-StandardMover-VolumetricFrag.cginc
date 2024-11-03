@@ -143,6 +143,9 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 			float2 screenUV = i.screenPos.xy / i.screenPos.w;
 			//Sampling Depth
 			float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenUV);
+			#if !UNITY_REVERSED_Z
+			depth = lerp(UNITY_NEAR_CLIP_VALUE, 1, depth);
+			#endif
 			//Correct for mirrors as Eye Depth
 			depth = CorrectedLinearEyeDepth(depth, direction.w);
 			//Convert to Raw Depth
