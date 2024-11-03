@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+#if UDONSHARP
 using UdonSharpEditor;
+#endif
 using UnityEngine.SceneManagement;
 using System.IO;
 using System;
@@ -36,9 +38,13 @@ namespace VRSL.EditorScripts
          //  colorLabel.text = "Emission Color";
             foreach (GameObject go in sceneObjects)
             {
+                #if UDONSHARP
                 #pragma warning disable 0618 //suppressing obsoletion warnings
                 panel =  go.GetUdonSharpComponent<VRSL_LocalUIControlPanel>();
                 #pragma warning restore 0618
+                #else
+                panel =  go.GetComponent<VRSL_LocalUIControlPanel>();
+                #endif
                 if(panel != null)
                 {
                     hasLocalPanel = true;
@@ -78,6 +84,7 @@ namespace VRSL.EditorScripts
                     SerializedObject so = new SerializedObject(panel);
                     so.FindProperty("fixtureSaveFile").stringValue = AssetDatabase.GUIDFromAssetPath(path).ToString();
                     so.ApplyModifiedProperties();
+#if UDONSHARP
                     #pragma warning disable 0618 //suppressing obsoletion warnings
                     panel.UpdateProxy();
                     #pragma warning restore 0618 //suppressing obsoletion warnings
@@ -85,6 +92,9 @@ namespace VRSL.EditorScripts
                     #pragma warning disable 0618 //suppressing obsoletion warnings
                     panel.ApplyProxyModifications();
                     #pragma warning restore 0618 //suppressing obsoletion warnings
+#else
+                    panel.fixtureSaveFile = so.FindProperty("fixtureSaveFile").stringValue;
+#endif
 
                    /// asset = (VRSL_DMXPatchSettings) AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(panel.fixtureSaveFile), typeof(VRSL_DMXPatchSettings));
                    // asset.SetScene();
@@ -112,6 +122,7 @@ namespace VRSL.EditorScripts
                     SerializedObject so = new SerializedObject(panel);
                     so.FindProperty("fixtureSaveFile").stringValue = "NONE";
                     so.ApplyModifiedProperties();
+#if UDONSHARP
                     #pragma warning disable 0618 //suppressing obsoletion warnings
                     panel.UpdateProxy();
                     #pragma warning restore 0618 //suppressing obsoletion warnings
@@ -119,6 +130,9 @@ namespace VRSL.EditorScripts
                     #pragma warning disable 0618 //suppressing obsoletion warnings
                     panel.ApplyProxyModifications();
                     #pragma warning restore 0618 //suppressing obsoletion warnings
+#else
+                    panel.fixtureSaveFile = so.FindProperty("fixtureSaveFile").stringValue;
+#endif
                     SavePatchData();
                 }
                 catch(Exception e)
@@ -199,7 +213,7 @@ namespace VRSL.EditorScripts
             }
         }
 
-        [MenuItem("VRSL/Export/To PDF", priority = 504)]
+        [MenuItem("VRSL/Export/To PDF (Windows)", priority = 504)]
         public static void ExportToPDF()
         {
             CheckForLocalPanel();
@@ -208,8 +222,12 @@ namespace VRSL.EditorScripts
             {
                 try
                 {
+#if !UNITY_EDITOR_LINUX
                     VRSL_DMXPatchSettings asset = (VRSL_DMXPatchSettings) AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(panel.fixtureSaveFile), typeof(VRSL_DMXPatchSettings));
                     asset.ToPDF();
+#else
+                    EditorUtility.DisplayDialog("PDF export error", "PDF export is currently a Windows only feature", "OK", "Cancel");
+#endif
                 }
                 catch
                 {
