@@ -1,25 +1,34 @@
 ﻿
-using UdonSharp;
 using UnityEngine;
+using System.Numerics;
+//using UnityEngine.UI;
+#if UDONSHARP
+using UdonSharp;
 using VRC.SDKBase;
 using VRC.Udon;
-using System.Numerics;
-
-//using UnityEngine.UI;
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-using UnityEditor;
 using UdonSharpEditor;
 //using VRC.Udon;
 using VRC.Udon.Common;
 using VRC.Udon.Common.Interfaces;
+#endif
+
+#endif
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+using UnityEditor;
 using System.Collections.Immutable;
 #endif
 
 namespace VRSL
 {
+#if UDONSHARP
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class VRStageLighting_DMX_Static : UdonSharpBehaviour
+#else
+    public class VRStageLighting_DMX_Static : MonoBehaviour
+#endif
     {
         //////////////////Public Variables////////////////////
         [Header("DMX Settings")]

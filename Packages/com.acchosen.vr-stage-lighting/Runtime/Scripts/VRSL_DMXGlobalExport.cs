@@ -1,12 +1,15 @@
-﻿
+﻿using UnityEngine;
+#if UDONSHARP
 using UdonSharp;
-using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 
 public class VRSL_DMXGlobalExport : UdonSharpBehaviour
+#else
+public class VRSL_DMXGlobalExport : MonoBehaviour
+#endif
 {
     public CustomRenderTexture dmxExportTexture;
     void Start()

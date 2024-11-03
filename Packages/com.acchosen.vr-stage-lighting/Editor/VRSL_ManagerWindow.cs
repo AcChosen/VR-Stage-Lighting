@@ -1,10 +1,12 @@
-using UdonSharp;
 using UnityEngine;
-using VRC.SDKBase;
-using VRC.Udon;
 using UnityEngine.UI;
 using System.Threading;
 using VRSL;
+
+#if UDONSHARP
+using UdonSharp;
+using VRC.SDKBase;
+using VRC.Udon;
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UnityEditor;
@@ -20,9 +22,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using UnityEngine.UIElements;
 using System.IO;
-#endif
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
-
 
 namespace VRSL.EditorScripts
 {
@@ -4312,4 +4311,6 @@ public class VRSL_ManagerWindow : EditorWindow {
     }
 }
 }
+#endif
+
 #endif

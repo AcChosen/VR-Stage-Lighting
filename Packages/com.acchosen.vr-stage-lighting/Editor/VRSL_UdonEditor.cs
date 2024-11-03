@@ -1,25 +1,30 @@
-﻿using UdonSharp;
-using UnityEngine;
-using VRC.SDKBase;
-using VRC.Udon;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Threading;
+
+#if UDONSHARP
+using UdonSharp;
+using VRC.SDKBase;
+using VRC.Udon;
 using VRC.SDKBase.Midi;
 
-
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-using UnityEditor;
 using UdonSharpEditor;
-using UnityEngine.SceneManagement;
 //using VRC.Udon;
 using VRC.Udon.Common;
 using VRC.Udon.Common.Interfaces;
+#endif
+
+#endif
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+using UnityEditor;
+using UnityEngine.SceneManagement;
 using System.Collections.Immutable;
 using System;
 using System.IO;
 using System.Collections.Generic;
 #endif
-
 
 namespace VRSL.EditorScripts
 {
@@ -201,7 +206,9 @@ namespace VRSL.EditorScripts
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+#if UDONSHARP
             if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
+#endif
             DrawLogo();
             ShurikenHeaderCentered(GetVersion());
             EditorGUILayout.Space();
@@ -407,7 +414,9 @@ namespace VRSL.EditorScripts
 
         public override void OnInspectorGUI()
         {
+#if UDONSHARP
             if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
+#endif
             DrawLogo();
             ShurikenHeaderCentered(GetVersion());
             EditorGUILayout.Space();
@@ -520,8 +529,9 @@ namespace VRSL.EditorScripts
 
         public override void OnInspectorGUI()
         {
-            
+#if UDONSHARP
             if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
+#endif
             DrawLogo();
             ShurikenHeaderCentered(GetVersion());
             EditorGUILayout.Space();
@@ -622,6 +632,7 @@ namespace VRSL.EditorScripts
             {  
                 foreach(GameObject obj in objs)
                 {
+#if UDONSHARP
                     #pragma warning disable 0618 //suppressing obsoletion warnings
                     //VRStageLighting_RAW_Static[] staticLights = obj.GetUdonSharpComponentsInChildren<VRStageLighting_RAW_Static>();
                     VRStageLighting_AudioLink_Static[] audioLinkLights = obj.GetUdonSharpComponentsInChildren<VRStageLighting_AudioLink_Static>();
@@ -632,6 +643,12 @@ namespace VRSL.EditorScripts
                 // VRStageLighting_DMX_Static[] dmxLights = obj.GetUdonSharpComponentsInChildren<VRStageLighting_DMX_Static>();
                     VRSL_LocalUIControlPanel[] controlPanels = obj.GetUdonSharpComponentsInChildren<VRSL_LocalUIControlPanel>();
                     #pragma warning restore 0618 //suppressing obsoletion warnings
+#else
+                    VRStageLighting_AudioLink_Static[] audioLinkLights = obj.GetComponentsInChildren<VRStageLighting_AudioLink_Static>();
+                    VRStageLighting_DMX_Static[] dmxLights = obj.GetComponentsInChildren<VRStageLighting_DMX_Static>();
+                    VRStageLighting_AudioLink_Laser[] audioLinkLasers = obj.GetComponentsInChildren<VRStageLighting_AudioLink_Laser>();
+                    VRSL_LocalUIControlPanel[] controlPanels = obj.GetComponentsInChildren<VRSL_LocalUIControlPanel>();
+#endif
                     if(dmxLights != null)
                     {
                         foreach(VRStageLighting_DMX_Static fixture in dmxLights)
