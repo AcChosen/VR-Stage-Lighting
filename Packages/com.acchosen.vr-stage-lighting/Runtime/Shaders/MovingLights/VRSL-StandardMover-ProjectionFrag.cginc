@@ -160,7 +160,7 @@ inline float CorrectedLinearEyeDepth(float z, float B)
 
         fixed4 ProjectionFrag(v2f i) : SV_Target
         {
-            //UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
+            UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
             UNITY_SETUP_INSTANCE_ID(i);
             if(i.color.g > 0.5)
             {
@@ -238,6 +238,7 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 #if UNITY_REVERSED_Z
                     if (sceneZ == 0)
                 #else
+                    sceneZ = lerp(UNITY_NEAR_CLIP_VALUE, 1, sceneZ);
                     if (sceneZ == 1)
                 #endif
                         return float4(0,0,0,1);

@@ -286,6 +286,9 @@
                                 //we don't have tex2D() in vertex shader, because rasterization is not done by GPU, so we use tex2Dlod() with mip0 instead
                                 float4 ssd = SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(screenUV, 0.0, 0.0));//(uv.x,uv.y,0,mipLevel)
                                 float sampledSceneDepth = ssd.x;
+                                #if !UNITY_REVERSED_Z
+                                sampledSceneDepth = lerp(UNITY_NEAR_CLIP_VALUE, 1, sampledSceneDepth);
+                                #endif
                                 float linearEyeDepthFromSceneDepthTexture = LinearEyeDepth(sampledSceneDepth);
                                 float linearEyeDepthFromSelfALU = PivotPosCS.w; //clip space .w is view space z, = linear eye depth
 

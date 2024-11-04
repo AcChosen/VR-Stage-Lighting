@@ -176,6 +176,7 @@
 				 float4 emissionColor : TEXCOORD8;
 				 float3 audioGlobalFinalIntensity: TEXCOORD1;
 				 UNITY_VERTEX_INPUT_INSTANCE_ID
+				 UNITY_VERTEX_OUTPUT_STEREO
              };
 			#include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-Defines.cginc"
 			#include "../Shared/VRSL-AudioLink-Functions.cginc"
@@ -216,6 +217,7 @@
 		v2f o;
 		UNITY_INITIALIZE_OUTPUT(v2f, o);
 		UNITY_SETUP_INSTANCE_ID(v);
+		UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 		//
 		UNITY_TRANSFER_INSTANCE_ID(v, o);
 		o.audioGlobalFinalIntensity.x = GetAudioReactAmplitude();
