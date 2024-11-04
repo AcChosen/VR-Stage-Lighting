@@ -3,20 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Diagnostics;
-using VRC.Udon;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
-using UdonSharpEditor;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Xml;
-using System.Drawing.Printing;
 using System.Drawing;
 using System.Data;
 using UnityEngine.UIElements;
 using System.Linq;
+
+#if UDONSHARP
+using VRC.Udon;
+using UdonSharpEditor;
+#endif
+
+#if !UNITY_EDITOR_LINUX
+using System.Drawing.Printing;
+#endif
+
 namespace VRSL.EditorScripts
 {
     public class StringWriterUtf8 : StringWriter
@@ -256,9 +263,13 @@ namespace VRSL.EditorScripts
             List<VRStageLighting_DMX_Static> sceneFixtures = new List<VRStageLighting_DMX_Static>();
             foreach(GameObject go in sceneObjects)
             {
+#if UDONSHARP
                 #pragma warning disable 0618 //suppressing obsoletion warnings
                 VRStageLighting_DMX_Static lightScript = go.GetUdonSharpComponent<VRStageLighting_DMX_Static>();
                 #pragma warning restore 0618 //suppressing obsoletion warnings
+#else
+                VRStageLighting_DMX_Static lightScript = go.GetComponent<VRStageLighting_DMX_Static>();
+#endif
                 if(lightScript != null)
                 {
                     sceneFixtures.Add(lightScript);
@@ -313,9 +324,13 @@ namespace VRSL.EditorScripts
                 List<VRStageLighting_DMX_Static> sceneFixtures = new List<VRStageLighting_DMX_Static>();
                 foreach(GameObject go in sceneObjects)
                 {
+#if UDONSHARP
                     #pragma warning disable 0618 //suppressing obsoletion warnings
                     VRStageLighting_DMX_Static lightScript = go.GetUdonSharpComponent<VRStageLighting_DMX_Static>();
                     #pragma warning restore 0618 //suppressing obsoletion warnings
+#else
+                    VRStageLighting_DMX_Static lightScript = go.GetComponent<VRStageLighting_DMX_Static>();
+#endif
                     if(lightScript != null)
                     {
                         sceneFixtures.Add(lightScript);
@@ -412,9 +427,11 @@ namespace VRSL.EditorScripts
                             }
                             sof.ApplyModifiedProperties();
 
+#if UDONSHARP
                             #pragma warning disable 0618 //suppressing obsoletion warnings
                             fixture.UpdateProxy();
                             #pragma warning restore 0618 //suppressing obsoletion warnings.
+#endif
 
                             fixture.enableDMXChannels = data[dmxID].enableDMXChannels;
                             fixture.fixtureID = data[dmxID].fixtureID;
@@ -445,9 +462,11 @@ namespace VRSL.EditorScripts
                             fixture.fixtureDefintion = data[dmxID].fixtureDefintion;
                             fixture.objRenderers = rends;
 
+#if UDONSHARP
                             #pragma warning disable 0618 //suppressing obsoletion warnings
                             fixture.ApplyProxyModifications();
                             #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
                             if(PrefabUtility.IsPartOfAnyPrefab(fixture))
                             {
                                 PrefabUtility.RecordPrefabInstancePropertyModifications(fixture);
@@ -485,9 +504,13 @@ namespace VRSL.EditorScripts
          //  colorLabel.text = "Emission Color";
             foreach (GameObject go in sceneObjects)
             {
+#if UDONSHARP
                 #pragma warning disable 0618 //suppressing obsoletion warnings
                 panel =  go.GetUdonSharpComponent<VRSL_LocalUIControlPanel>();
                 #pragma warning restore 0618
+#else
+                panel =  go.GetComponent<VRSL_LocalUIControlPanel>();
+#endif
                 if(panel != null)
                 {
                     hasLocalPanel = true;
@@ -496,6 +519,7 @@ namespace VRSL.EditorScripts
             }
             return hasLocalPanel;
         }
+#if !UNITY_EDITOR_LINUX
         private void OnPrintPage(object sender, PrintPageEventArgs ev)
         {   
                 pdfPageCount++;
@@ -693,6 +717,7 @@ namespace VRSL.EditorScripts
             document.Print();
             UnityEngine.Debug.Log("Sucessfully Exported PDF File"); 
         }
+#endif
         public string ToJsonFile(bool refreshEditor)
         {
             if(CheckForLocalPanel())
@@ -1630,9 +1655,13 @@ namespace VRSL.EditorScripts
                 {
                     settings.ToMVRFile();
                 }
-                if(GUILayout.Button("Export To PDF File"))
+                if(GUILayout.Button("Export To PDF File (Windows)"))
                 {
+#if !UNITY_EDITOR_LINUX
                     settings.ToPDF();
+#else
+                    EditorUtility.DisplayDialog("PDF export error", "PDF export is currently a Windows only feature", "OK", "Cancel");
+#endif
                 }
                 if(settings.data != null)
                 {
