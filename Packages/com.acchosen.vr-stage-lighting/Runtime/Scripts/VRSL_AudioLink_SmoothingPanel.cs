@@ -1,14 +1,17 @@
-﻿
-using UdonSharp;
-using UnityEngine;
-using VRC.SDKBase;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using VRC.Udon;
 
+#if UDONSHARP
+using UdonSharp;
+using VRC.SDKBase;
+using VRC.Udon;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 
 public class VRSL_AudioLink_SmoothingPanel : UdonSharpBehaviour
+#else
+public class VRSL_AudioLink_SmoothingPanel : MonoBehaviour
+#endif
 {
     public Material smoothingMaterial;
     public Slider bassSmoothingSlider, lowerMidSmoothingSlider, upperMidSmoothingSlider, trebleSmoothingSlider, colorChordSmoothingSlider;

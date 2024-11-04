@@ -1,12 +1,18 @@
-﻿
+﻿using UnityEngine;
+#if UDONSHARP
 using UdonSharp;
-using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-using UnityEditor;
 using UdonSharpEditor;
+#endif
+
+#endif
+
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+using UnityEditor;
 using System.Collections.Immutable;
 using System.Collections.Generic;
 using System;
@@ -33,11 +39,12 @@ namespace VRSL
         Low
     }
 
+#if UDONSHARP
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-
-
-
     public class VRSL_LocalUIControlPanel : UdonSharpBehaviour
+#else
+    public class VRSL_LocalUIControlPanel : MonoBehaviour
+#endif
     {
         [SerializeField, HideInInspector]
         private VRStageLighting_AudioLink_Laser[] audioLinkLasers;
@@ -1399,7 +1406,9 @@ namespace VRSL
         }
         public override void OnInspectorGUI()
         {
+#if UDONSHARP
             if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
+#endif
 
             EditorGUI.BeginChangeCheck();
             serializedObject.Update();
