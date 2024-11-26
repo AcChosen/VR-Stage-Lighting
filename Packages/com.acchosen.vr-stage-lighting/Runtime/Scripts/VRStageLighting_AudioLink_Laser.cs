@@ -539,7 +539,7 @@ namespace VRSL
                 case 2:
                     if(objRenderers[0])
                         objRenderers[0].SetPropertyBlock(props);
-                    if(objRenderers[0])
+                    if(objRenderers[1])
                         objRenderers[1].SetPropertyBlock(props);
                     break;
                 case 3:
@@ -629,7 +629,7 @@ namespace VRSL
                 case 2:
                     if(objRenderers[0])
                         objRenderers[0].SetPropertyBlock(props);
-                    if(objRenderers[0])
+                    if(objRenderers[1])
                         objRenderers[1].SetPropertyBlock(props);
                     break;
                 case 3:
