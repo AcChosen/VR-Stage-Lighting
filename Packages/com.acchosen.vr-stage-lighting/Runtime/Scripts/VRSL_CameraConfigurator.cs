@@ -1,21 +1,30 @@
-﻿
+﻿using UnityEngine;
+
+#if UDONSHARP
 using UdonSharp;
-using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
-
+#endif
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UnityEditor;
+#if UDONSHARP
 using UdonSharpEditor;
 #endif
-
+#endif
 
 
 namespace VRSL.EditorScripts
 {
+#if UDONSHARP
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
+#endif
 
-    public class VRSL_CameraConfigurator : UdonSharpBehaviour
+    public class VRSL_CameraConfigurator
+#if UDONSHARP
+        : UdonSharpBehaviour
+#else
+        : MonoBehaviour
+#endif
     {
         public Camera camObj;
         public float defaultSize = 9.6f;
@@ -64,7 +73,11 @@ namespace VRSL.EditorScripts
         public const int SEVEN20p = 1;
         public const int FOUR80p = 2;
 
-        [SerializeField, FieldChangeCallback(nameof(YPos))]
+        [SerializeField
+#if UDONSHARP
+         ,FieldChangeCallback(nameof(YPos))
+#endif
+        ]
         private float yPos = -3.79f;
         public float YPos
         {
@@ -75,7 +88,11 @@ namespace VRSL.EditorScripts
                 _UpdateCameraPosition();
             }
         }
-        [SerializeField, FieldChangeCallback(nameof(XPos))]
+        [SerializeField
+#if UDONSHARP
+         ,FieldChangeCallback(nameof(XPos))
+#endif
+        ]
         private float xPos = 0.02f;
         public float XPos
         {
@@ -87,7 +104,11 @@ namespace VRSL.EditorScripts
             }
         }
 
-        [SerializeField, FieldChangeCallback(nameof(IsHorizontal))]
+        [SerializeField
+#if UDONSHARP
+         ,FieldChangeCallback(nameof(IsHorizontal))
+#endif
+        ]
         private bool isHorizontal = true;
 
         public bool IsHorizontal{
@@ -100,7 +121,11 @@ namespace VRSL.EditorScripts
             }
         }
 
-        [SerializeField, FieldChangeCallback(nameof(Resolution))]
+        [SerializeField
+#if UDONSHARP
+         ,FieldChangeCallback(nameof(Resolution))
+#endif
+        ]
         private int resolution = 0;
 
         public int Resolution{
@@ -217,7 +242,9 @@ namespace VRSL.EditorScripts
         }
         public override void OnInspectorGUI()
         {
+#if UDONSHARP
             if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
+#endif
             serializedObject.Update();
 
             

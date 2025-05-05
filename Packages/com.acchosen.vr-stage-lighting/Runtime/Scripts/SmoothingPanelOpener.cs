@@ -1,20 +1,27 @@
-﻿
+﻿using UnityEngine;
+
+#if UDONSHARP
 using UdonSharp;
-using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
+#endif
 
-public class SmoothingPanelOpener : UdonSharpBehaviour
+public class SmoothingPanelOpener
+#if UDONSHARP
+    : UdonSharpBehaviour
+#else
+    : MonoBehaviour
+#endif
 {
     public Animator animator;
     public bool isOpen;
 
-    void Start() 
+    void Start()
     {
         isOpen = false;
-        ClosePanel();   
+        ClosePanel();
     }
 
     void OpenPanel()
@@ -27,10 +34,14 @@ public class SmoothingPanelOpener : UdonSharpBehaviour
         animator.SetBool("isOpen", false);
     }
 
-    public override void Interact()
+    public
+#if UDONSHARP
+        override
+#endif
+        void Interact()
     {
         isOpen = !isOpen;
-        if(isOpen)
+        if (isOpen)
         {
             OpenPanel();
         }

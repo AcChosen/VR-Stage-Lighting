@@ -1,18 +1,19 @@
-﻿
-
+﻿using UnityEngine;
+#if UDONSHARP
 using UdonSharp;
-using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
-
+#endif
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UnityEditor;
+#if UDONSHARP
 using UdonSharpEditor;
 //using VRC.Udon;
 using VRC.Udon.Common;
 using VRC.Udon.Common.Interfaces;
-using System.Collections.Immutable;
 #endif
+#endif
+
 namespace VRSL
 {
 
@@ -24,120 +25,166 @@ namespace VRSL
         Treble
     }
 
+#if UDONSHARP
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    public class VRStageLighting_AudioLink_Static : UdonSharpBehaviour
+#endif
+    public class VRStageLighting_AudioLink_Static
+#if UDONSHARP
+        : UdonSharpBehaviour
+#else
+        : MonoBehaviour
+#endif
     {
         //////////////////Public Variables////////////////////
 
         [Header("Audio Link Settings")]
-        [Tooltip("Enable or disable Audio Link Reaction for this fixture.")]
-        [FieldChangeCallback(nameof(EnableAudioLink))]
-        [SerializeField]
+        [SerializeField,
+         Tooltip("Enable or disable Audio Link Reaction for this fixture.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(EnableAudioLink))
+#endif
+        ]
         private bool enableAudioLink;
 
 
         //[Tooltip("The Audio Link Script to react to.")]
         //public AudioLink audioLink;
 
-        //[Range(0, 3)]
-        [Tooltip("The frequency band of the spectrum to react to.")]
-        [FieldChangeCallback(nameof(Band))]
-        [SerializeField]
+        [SerializeField, //Range(0, 3)
+         Tooltip("The frequency band of the spectrum to react to.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(Band))
+#endif
+        ]
         private AudioLinkBandState band;
 
 
-        [Range(0, 127)]
-        [Tooltip("The level of delay to add to the reaction.")]
-        [FieldChangeCallback(nameof(Delay))]
-        [SerializeField]
+        [SerializeField, Range(0, 127),
+         Tooltip("The level of delay to add to the reaction.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(Delay))
+#endif
+        ]
         private int delay;
 
 
-        [Tooltip("Multiplier for the sensativity of the reaction.")]
-        [Range(1.0f, 15.0f)]
-        [FieldChangeCallback(nameof(BandMultiplier))]
-        [SerializeField]
+        [SerializeField, Range(1.0f, 15.0f), Tooltip("Multiplier for the sensativity of the reaction.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(BandMultiplier))
+#endif
+        ]
         private float bandMultiplier = 1.0f;
 
 
-        [Tooltip ("Enable Color Chord tinting of the light emission.")]
-        [FieldChangeCallback(nameof(ColorChord))]
-        [SerializeField]
+        [SerializeField,
+         Tooltip("Enable Color Chord tinting of the light emission.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(ColorChord))
+#endif
+        ]
         private bool enableColorChord;
         
 
         [Header("General Settings")]
 
-
-
-        [Range(0,1)]
-        [FieldChangeCallback(nameof(GlobalIntensity))]
-        [SerializeField]
-        [Tooltip ("Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity.")]
+        [SerializeField, Range(0, 1),
+         Tooltip("Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(GlobalIntensity))
+#endif
+        ]
         private float globalIntensity = 1; 
 
 
-        [Range(0,1)]
-        [FieldChangeCallback(nameof(FinalIntensity))]
-        [SerializeField]
-        [HideInInspector]
-        [Tooltip ("Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI.")]
+        [SerializeField, HideInInspector, Range(0, 1),
+         Tooltip("Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(FinalIntensity))
+#endif
+        ]
         public float finalIntensity = 1;
-        [Tooltip ("Choose between setting the Final Intensity for all meshes, or individual meshes")]
-        [FieldChangeCallback(nameof(FinalIntensityComponentMode))]
-        [HideInInspector]
+
+        [HideInInspector,
+         Tooltip("Choose between setting the Final Intensity for all meshes, or individual meshes")
+#if UDONSHARP
+        ,FieldChangeCallback(nameof(FinalIntensityComponentMode))
+#endif
+        ]
         public bool finalIntensityComponentMode = false;
-        [Range(0,1)]
-        [Tooltip ("Sets the maximum brightness value of Global Intensity For Volumetric Meshes Only. Good for personalized settings of the max brightness of the shader by other users via UI.")]
-        [FieldChangeCallback(nameof(FinalIntensityVolumetric))]
-        [HideInInspector]
+
+        [HideInInspector, Range(0, 1),
+         Tooltip("Sets the maximum brightness value of Global Intensity For Volumetric Meshes Only. Good for personalized settings of the max brightness of the shader by other users via UI.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(FinalIntensityVolumetric))
+#endif
+        ]
         public float finalIntensityVolumetric = 1;
-        [Range(0,1)]
-        [Tooltip ("Sets the maximum brightness value of Global Intensity For Projection Meshes Only. Good for personalized settings of the max brightness of the shader by other users via UI.")]
-        [FieldChangeCallback(nameof(FinalIntensityProjection))]
-        [HideInInspector]
+
+        [HideInInspector, Range(0, 1),
+         Tooltip("Sets the maximum brightness value of Global Intensity For Projection Meshes Only. Good for personalized settings of the max brightness of the shader by other users via UI.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(FinalIntensityProjection))
+#endif
+        ]
         public float finalIntensityProjection = 1;
-        [Range(0,1)]
-        [Tooltip ("Sets the maximum brightness value of Global Intensity For Fixture Meshes Only. Good for personalized settings of the max brightness of the shader by other users via UI.")]
-        [FieldChangeCallback(nameof(FinalIntensityFixture))]
-        [HideInInspector]
+
+        [HideInInspector, Range(0, 1),
+         Tooltip("Sets the maximum brightness value of Global Intensity For Fixture Meshes Only. Good for personalized settings of the max brightness of the shader by other users via UI.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(FinalIntensityFixture))
+#endif
+        ]
         public float finalIntensityFixture = 1;
 
-        [Tooltip ("The main color of the light.")]
-        [ColorUsage(false,true)]
-        [FieldChangeCallback(nameof(LightColorTint))]
-        [SerializeField]
+        [SerializeField, ColorUsage(false, true),
+         Tooltip("The main color of the light.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(LightColorTint))
+#endif
+        ]
         private Color lightColorTint = Color.white * 2.0f;
 
 
-        [Tooltip ("Check this box if you wish to sample seperate texture for the color. The color will be influenced by the intensity of the original emission color! The texture is set in the shader itself.")]
-        [FieldChangeCallback(nameof(ColorTextureSampling))]
-        [SerializeField]
+        [SerializeField,
+         Tooltip("Check this box if you wish to sample seperate texture for the color. The color will be influenced by the intensity of the original emission color! The texture is set in the shader itself.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(ColorTextureSampling))
+#endif
+        ]
         private bool enableColorTextureSampling;
 
-        [Tooltip ("Check this box if you wish to use traditional color sampling instead of white to black conversion")]
-        [FieldChangeCallback(nameof(TraditionalColorTextureSampling))]
-        [SerializeField]
+        [SerializeField,
+         Tooltip("Check this box if you wish to use traditional color sampling instead of white to black conversion")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(TraditionalColorTextureSampling))
+#endif
+        ]
         private bool traditionalColorTextureSampling;
 
 
-        [Tooltip ("The UV coordinates to sample the color from on the texture.")]
-        [FieldChangeCallback(nameof(TextureSamplingCoordinates))]
-        [SerializeField]
+        [SerializeField,
+         Tooltip("The UV coordinates to sample the color from on the texture.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(TextureSamplingCoordinates))
+#endif
+        ]
         private Vector2 textureSamplingCoordinates = new Vector2(0.5f, 0.5f);
 
-        [Tooltip ("Check this box if you wish to enable AudioLink Theme colors.")]
-        [FieldChangeCallback(nameof(ThemeColorSampling))]
-        [SerializeField]
+        [SerializeField,
+         Tooltip("Check this box if you wish to enable AudioLink Theme colors.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(ThemeColorSampling))
+#endif
+        ]
         private bool enableThemeColorSampling;
 
-
-        [Range(1, 4)]
-        [Tooltip ("Theme Color to Sample from.")]
-        [FieldChangeCallback(nameof(ThemeColorTarget))]
-        [SerializeField]
+        [SerializeField, Range(1, 4),
+         Tooltip("Theme Color to Sample from.")
+#if UDONSHARP
+        ,FieldChangeCallback(nameof(ThemeColorTarget))
+#endif
+        ]
         private int themeColorTarget = 1;
-        
 
 
         [Space(5)]
@@ -179,25 +226,30 @@ namespace VRSL
         [Space(5)]
         [Header("Fixture Settings")]
 
-        [Tooltip ("Projection Spin Speed (Udon Override Only).")]
-        [FieldChangeCallback(nameof(SpinSpeed))]
-        [SerializeField]
-        [Range(-10,10)]
+        [SerializeField, Range(-10, 10),
+         Tooltip("Projection Spin Speed (Udon Override Only).")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(SpinSpeed))
+#endif
+        ]
         private float spinSpeed = 4.0f;
 
 
 
-    /////////////////////////////////////////////////////////////////////
-        [Tooltip ("Enable projection spinning (Udon Override Only).")]
-        [FieldChangeCallback(nameof(ProjectionSpin))]
-        [SerializeField]
+        /////////////////////////////////////////////////////////////////////
+        [SerializeField,
+         Tooltip("Enable projection spinning (Udon Override Only).")
+#if UDONSHARP
+                ,FieldChangeCallback(nameof(ProjectionSpin))
+#endif
+        ]
         private bool enableAutoSpin;
 
 
 
 
 
-    /////////////////////////////////
+        /////////////////////////////////
         // [Range(0,360.0f)]
         // [Tooltip ("Tilt (Up/Down) offset/movement. Directly controls tilt when in Udon Mode.")]
         // [FieldChangeCallback(nameof(Tilt))]
@@ -211,42 +263,50 @@ namespace VRSL
         // [SerializeField]
         // public float panOffsetBlueGreen = 0.0f;
         // float startPanOffset;
-    ////////////////////////////////////
+        ////////////////////////////////////
 
 
 
-        [Range(1,8)]
-        [FieldChangeCallback(nameof(SelectGOBO))]
-        [SerializeField]
-        [Tooltip ("Use this to change what projection is selected")]
+        [SerializeField, Range(1, 8),
+         Tooltip("Use this to change what projection is selected")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(SelectGOBO))
+#endif
+        ]
         private int selectGOBO = 1;
 
 
         [Header("Mesh Settings")]
+        ////
         [Tooltip ("The meshes used to make up the light. You need atleast 1 mesh in this group for the script to work properly.")]
         public MeshRenderer[] objRenderers;
 
 
-        [Tooltip ("Controls the radius of a mover/spot light.")]
-        [Range(0, 5.5f)]
-        [FieldChangeCallback(nameof(ConeWidth))]
-        [SerializeField]
+        [SerializeField, Range(0, 5.5f),
+         Tooltip("Controls the radius of a mover/spot light.")
+#if UDONSHARP
+        ,FieldChangeCallback(nameof(ConeWidth))
+#endif
+        ]
         private float coneWidth = 2.5f;
 
 
-        [Range(0.001f,10.0f)]
-        [FieldChangeCallback(nameof(ConeLength))]
-        [SerializeField]
-        [Tooltip ("Controls the length of the cone of a mover/spot light.")]
+        [SerializeField, Range(0.001f, 10.0f),
+         Tooltip("Controls the length of the cone of a mover/spot light.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(ConeLength))
+#endif
+        ]
         private float coneLength = 1.0f; 
         
 
-        [Range(0.275f,10.0f)]
-        [Tooltip ("Controls the mesh length of the cone of a mover/spot light")]
-        [FieldChangeCallback(nameof(MaxConeLength))]
-        [SerializeField]
+        [SerializeField, Range(0.275f, 10.0f),
+         Tooltip("Controls the mesh length of the cone of a mover/spot light")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(MaxConeLength))
+#endif
+        ]
         private float maxConeLength = 8.5f; 
-        [ColorUsage(true, true)]
         
 
         /////////////////Private Variables//////////////////
@@ -935,9 +995,11 @@ namespace VRSL
 
             private void OnDrawGizmos()
             {
+#if UDONSHARP
                 #pragma warning disable 0618 //suppressing obsoletion warnings
                 this.UpdateProxy(ProxySerializationPolicy.RootOnly);
                 #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
                 Gizmos.color = lightColorTint;
                 if(targetToFollow != null)
                 {
