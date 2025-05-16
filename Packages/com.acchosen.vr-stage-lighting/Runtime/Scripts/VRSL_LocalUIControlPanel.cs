@@ -165,12 +165,17 @@ namespace VRSL
 
         public bool VolumetricNoise
         {
+#if UNITY_ANDROID
+    set { _volumetricNoise = false; }
+    get => false;
+#else
             set
             {
                 _volumetricNoise = value;
                 _CheckDepthLightStatus();
             }
             get => _volumetricNoise;
+#endif
         }
 
         [FieldChangeCallback(nameof(RequireDepthLight)), SerializeField]
@@ -178,6 +183,10 @@ namespace VRSL
 
         public bool RequireDepthLight
         {
+#if UNITY_ANDROID
+    set { _requireDepthLight = false; }
+    get => false;
+#else
             set
             {
                 _requireDepthLight = value;
@@ -185,6 +194,7 @@ namespace VRSL
                 _DepthLightStatusReport();
             }
             get => _requireDepthLight;
+#endif
         }
 
         [FieldChangeCallback(nameof(GlobalDisableStrobe)), SerializeField]
