@@ -160,7 +160,11 @@ namespace VRSL
         public bool useDMXGI = false;
 
         [FieldChangeCallback(nameof(VolumetricNoise)), SerializeField]
+#if UNITY_ANDROID
+        private bool _volumetricNoise = false;
+#else
         private bool _volumetricNoise = true;
+#endif
         int _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridSpinTimer, _Udon_DMXGridStrobeTimer, _Udon_DMXGridStrobeOutput;
 
         public bool VolumetricNoise
@@ -179,7 +183,11 @@ namespace VRSL
         }
 
         [FieldChangeCallback(nameof(RequireDepthLight)), SerializeField]
+#if UNITY_ANDROID
+        private bool _requireDepthLight = false;
+#else
         private bool _requireDepthLight = true;
+#endif
 
         public bool RequireDepthLight
         {
