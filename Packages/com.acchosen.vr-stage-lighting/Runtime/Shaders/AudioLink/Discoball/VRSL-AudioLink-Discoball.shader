@@ -79,6 +79,7 @@
                  float4 vertex : POSITION;
                  float2 uv : TEXCOORD0;
                  float3 texcoord : TEXCOORD1;
+                 UNITY_VERTEX_INPUT_INSTANCE_ID
              };
 
              struct v2f
@@ -130,9 +131,9 @@
              v2f vert(appdata v)
              {
                  v2f o;
+                 UNITY_SETUP_INSTANCE_ID(v);
                  UNITY_INITIALIZE_OUTPUT(v2f, o); //DON'T INITIALIZE OR IT WILL BREAK PROJECTION
                  UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-                 //UNITY_TRANSFER_INSTANCE_ID(v, o);
 
                  o.vertex = UnityObjectToClipPos(v.vertex);
                  o.ray = UnityObjectToViewPos(v.vertex).xyz;
@@ -151,6 +152,7 @@
 
              fixed4 frag(v2f i) : SV_Target
              {
+                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
                  float globalintensity = getGlobalIntensity();
                  float finalintensity = getFinalIntensity();
 
@@ -172,8 +174,9 @@
                  float sceneZ = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.screenPos.xy / i.screenPos.w);
 
                  #if UNITY_REVERSED_Z
-                 if (sceneZ == 0) return half4(0, 0, 0, 0);
+                    if (sceneZ == 0) return half4(0, 0, 0, 0);
                  #else
+                    sceneZ = lerp(UNITY_NEAR_CLIP_VALUE, 1, sceneZ);
                     if (sceneZ == 1) return half4(0,0,0,0);
                  #endif
 

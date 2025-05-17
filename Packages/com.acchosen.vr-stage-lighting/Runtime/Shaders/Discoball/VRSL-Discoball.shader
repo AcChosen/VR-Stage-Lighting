@@ -65,6 +65,7 @@
                  float4 vertex : POSITION;
                  float2 uv : TEXCOORD0;
                  float3 texcoord : TEXCOORD1;
+                 UNITY_VERTEX_INPUT_INSTANCE_ID
              };
              struct v2f
              {
@@ -109,34 +110,36 @@
 
              v2f vert(appdata v)
              {
-                v2f o;
-                UNITY_INITIALIZE_OUTPUT(v2f, o); //DON'T INITIALIZE OR IT WILL BREAK PROJECTION
-                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-               // UNITY_TRANSFER_INSTANCE_ID(v, o);
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.ray = UnityObjectToViewPos(v.vertex).xyz;
-                o.ray = o.ray.xyz * float3(-1,-1,1);
-                o.ray = lerp(o.ray, v.texcoord, v.texcoord.z != 0);
-                o.worldPos = mul(unity_ObjectToWorld, v.vertex);
-                o.screenPos = ComputeScreenPos(o.vertex);
-                o.worldDirection.xyz = o.worldPos.xyz - _WorldSpaceCameraPos;
-                // pack correction factor into direction w component to save space
-                o.worldDirection.w = dot(o.vertex, CalculateFrustumCorrection());
-                uint dmx = getDMXChannel();
-                o.dmxIntensity = IF(_EnableCompatibilityMode == 1, float2(dmx, getValueAtCoords(dmx, _Udon_DMXGridRenderTexture)), float2(dmx, getValueAtCoords(dmx, _Udon_DMXGridRenderTexture)));
-                if(o.dmxIntensity.y <= 0.05 && _EnableDMX == 1)
-                {
-                    v.vertex = float4(0,0,0,0);
-                    o.vertex = UnityObjectToClipPos(v.vertex);
+                 v2f o;
+                 UNITY_SETUP_INSTANCE_ID(v);
+                 UNITY_INITIALIZE_OUTPUT(v2f, o); //DON'T INITIALIZE OR IT WILL BREAK PROJECTION
+                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+                 // UNITY_TRANSFER_INSTANCE_ID(v, o);
+                 o.vertex = UnityObjectToClipPos(v.vertex);
+                 o.ray = UnityObjectToViewPos(v.vertex).xyz;
+                 o.ray = o.ray.xyz * float3(-1,-1,1);
+                 o.ray = lerp(o.ray, v.texcoord, v.texcoord.z != 0);
+                 o.worldPos = mul(unity_ObjectToWorld, v.vertex);
+                 o.screenPos = ComputeScreenPos(o.vertex);
+                 o.worldDirection.xyz = o.worldPos.xyz - _WorldSpaceCameraPos;
+                 // pack correction factor into direction w component to save space
+                 o.worldDirection.w = dot(o.vertex, CalculateFrustumCorrection());
+                 uint dmx = getDMXChannel();
+                 o.dmxIntensity = IF(_EnableCompatibilityMode == 1, float2(dmx, getValueAtCoords(dmx, _Udon_DMXGridRenderTexture)), float2(dmx, getValueAtCoords(dmx, _Udon_DMXGridRenderTexture)));
+                 if(o.dmxIntensity.y <= 0.05 && _EnableDMX == 1)
+                 {
+                     v.vertex = float4(0,0,0,0);
+                     o.vertex = UnityObjectToClipPos(v.vertex);
 
-                }
-                return o;
+                 }
+                 return o;
              }
 
              #define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
 
              fixed4 frag(v2f i) : SV_Target
              {
+                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
                  if(i.dmxIntensity.y <= 0.05 && _EnableDMX == 1)
                  {
                      return half4(0,0,0,0);
@@ -156,11 +159,11 @@
                  float4 depthdirect = i.worldDirection * (1.0f / i.vertex.w);
                  float sceneZ = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.screenPos.xy / i.screenPos.w);
                  #if UNITY_REVERSED_Z
-                     if (sceneZ == 0)
+                     if (sceneZ == 0) return half4(0,0,0,0);
                  #else
-                     if (sceneZ == 1)
+                     sceneZ = lerp(UNITY_NEAR_CLIP_VALUE, 1, sceneZ);
+                     if (sceneZ == 1) return half4(0,0,0,0);
                  #endif
-                         return half4(0,0,0,0);
 
                  float depth = CorrectedLinearEyeDepth(sceneZ, depthdirect.w);
                  i.ray = i.ray * (_ProjectionParams.z / i.ray.z);
