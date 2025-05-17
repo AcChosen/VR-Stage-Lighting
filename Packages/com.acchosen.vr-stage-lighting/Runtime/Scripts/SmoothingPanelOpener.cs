@@ -6,13 +6,9 @@ using VRC.SDKBase;
 using VRC.Udon;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-#endif
-
-public class SmoothingPanelOpener
-#if UDONSHARP
-    : UdonSharpBehaviour
+public class SmoothingPanelOpener : UdonSharpBehaviour
 #else
-    : MonoBehaviour
+public class SmoothingPanelOpener : MonoBehaviour
 #endif
 {
     public Animator animator;
@@ -34,11 +30,11 @@ public class SmoothingPanelOpener
         animator.SetBool("isOpen", false);
     }
 
-    public
 #if UDONSHARP
-        override
+    public override void Interact()
+#else
+    public void Interact()
 #endif
-        void Interact()
     {
         isOpen = !isOpen;
         if (isOpen)

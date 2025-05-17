@@ -5,16 +5,11 @@ using UnityEngine.UI;
 using UdonSharp;
 using VRC.SDKBase;
 using VRC.Udon;
-#endif
 
-#if UDONSHARP
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-#endif
-public class VRSL_AudioLink_SmoothingPanel
-#if UDONSHARP
-    : UdonSharpBehaviour
+public class VRSL_AudioLink_SmoothingPanel : UdonSharpBehaviour
 #else
-    : MonoBehaviour
+public class VRSL_AudioLink_SmoothingPanel : MonoBehaviour
 #endif
 {
     public Material smoothingMaterial;

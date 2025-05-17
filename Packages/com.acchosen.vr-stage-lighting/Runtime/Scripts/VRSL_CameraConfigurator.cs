@@ -5,25 +5,22 @@ using UdonSharp;
 using VRC.SDKBase;
 using VRC.Udon;
 #endif
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
+
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
 using UnityEditor;
+
 #if UDONSHARP
 using UdonSharpEditor;
 #endif
 #endif
 
-
 namespace VRSL.EditorScripts
 {
 #if UDONSHARP
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-#endif
-
-    public class VRSL_CameraConfigurator
-#if UDONSHARP
-        : UdonSharpBehaviour
+    public class VRSL_CameraConfigurator : UdonSharpBehaviour
 #else
-        : MonoBehaviour
+    public class VRSL_CameraConfigurator : MonoBehaviour
 #endif
     {
         public Camera camObj;
@@ -73,11 +70,7 @@ namespace VRSL.EditorScripts
         public const int SEVEN20p = 1;
         public const int FOUR80p = 2;
 
-        [SerializeField
-#if UDONSHARP
-         ,FieldChangeCallback(nameof(YPos))
-#endif
-        ]
+        [SerializeField, FieldChangeCallback(nameof(YPos))]
         private float yPos = -3.79f;
         public float YPos
         {
@@ -88,11 +81,7 @@ namespace VRSL.EditorScripts
                 _UpdateCameraPosition();
             }
         }
-        [SerializeField
-#if UDONSHARP
-         ,FieldChangeCallback(nameof(XPos))
-#endif
-        ]
+        [SerializeField, FieldChangeCallback(nameof(XPos))]
         private float xPos = 0.02f;
         public float XPos
         {
@@ -104,11 +93,7 @@ namespace VRSL.EditorScripts
             }
         }
 
-        [SerializeField
-#if UDONSHARP
-         ,FieldChangeCallback(nameof(IsHorizontal))
-#endif
-        ]
+        [SerializeField, FieldChangeCallback(nameof(IsHorizontal))]
         private bool isHorizontal = true;
 
         public bool IsHorizontal{
@@ -121,11 +106,7 @@ namespace VRSL.EditorScripts
             }
         }
 
-        [SerializeField
-#if UDONSHARP
-         ,FieldChangeCallback(nameof(Resolution))
-#endif
-        ]
+        [SerializeField ,FieldChangeCallback(nameof(Resolution))]
         private int resolution = 0;
 
         public int Resolution{
@@ -198,16 +179,7 @@ namespace VRSL.EditorScripts
     }
 
 
-
-
-
-
-
-
-
-
-
-    #if !COMPILER_UDONSHARP && UNITY_EDITOR
+    #if UNITY_EDITOR && !COMPILER_UDONSHARP
     [CustomEditor(typeof(VRSL_CameraConfigurator))]
     public class VRSL_CameraConfigurator_Editor : Editor
     {

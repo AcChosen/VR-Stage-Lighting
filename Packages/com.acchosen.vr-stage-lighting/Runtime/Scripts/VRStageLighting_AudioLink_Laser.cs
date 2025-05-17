@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
 //using UnityEngine.UI;
+
 #if UDONSHARP
 using UdonSharp;
 using VRC.SDKBase;
 using VRC.Udon;
 #endif
 
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
 using UnityEditor;
+
 #if UDONSHARP
 using UdonSharpEditor;
-//using VRC.Udon;
 using VRC.Udon.Common;
 using VRC.Udon.Common.Interfaces;
 #endif
@@ -20,12 +21,9 @@ namespace VRSL
 {
 #if UDONSHARP
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-#endif
-    public class VRStageLighting_AudioLink_Laser
-#if UDONSHARP
-        : UdonSharpBehaviour
+    public class VRStageLighting_AudioLink_Laser : UdonSharpBehaviour
 #else
-        : MonoBehaviour
+    public class VRStageLighting_AudioLink_Laser : MonoBehaviour
 #endif
     {
 

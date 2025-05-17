@@ -1,33 +1,29 @@
 ﻿using UnityEngine;
 using System.Numerics;
-//using UnityEngine.UI;
+
 #if UDONSHARP
 using UdonSharp;
 using VRC.SDKBase;
 using VRC.Udon;
 #endif
 
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
 using UnityEditor;
+
 #if UDONSHARP
 using UdonSharpEditor;
-//using VRC.Udon;
 using VRC.Udon.Common;
 using VRC.Udon.Common.Interfaces;
 #endif
-
 #endif
 
 namespace VRSL
 {
 #if UDONSHARP
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-#endif
-    public class VRStageLighting_DMX_Static
-#if UDONSHARP
-        : UdonSharpBehaviour
+    public class VRStageLighting_DMX_Static : UdonSharpBehaviour
 #else
-        : MonoBehaviour
+    public class VRStageLighting_DMX_Static : MonoBehaviour
 #endif
     {
         //////////////////Public Variables////////////////////
@@ -721,7 +717,7 @@ namespace VRSL
         }
     /////////////////////////////////////////////////////////////////////////END PROPERTIES///////////////////////////////////////////////////////////////////////////////////////////////
 
-    #if !COMPILER_UDONSHARP && UNITY_EDITOR
+    #if UNITY_EDITOR && !COMPILER_UDONSHARP
         void OnValidate()
         {
             Event e = Event.current;

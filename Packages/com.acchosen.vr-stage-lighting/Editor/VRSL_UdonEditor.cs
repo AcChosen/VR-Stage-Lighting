@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Threading;
+
 #if UDONSHARP
 using UdonSharp;
 using VRC.SDKBase;
@@ -8,15 +9,15 @@ using VRC.Udon;
 using VRC.SDKBase.Midi;
 #endif
 
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
 using UnityEditor;
 using UnityEngine.SceneManagement;
 using System;
 using System.IO;
 using System.Collections.Generic;
+
 #if UDONSHARP
 using UdonSharpEditor;
-//using VRC.Udon;
 using VRC.Udon.Common;
 using VRC.Udon.Common.Interfaces;
 #endif
@@ -26,7 +27,7 @@ using VRC.Udon.Common.Interfaces;
 
 namespace VRSL.EditorScripts
 {
-    #if !COMPILER_UDONSHARP && UNITY_EDITOR
+    #if UNITY_EDITOR && !COMPILER_UDONSHARP
     [CanEditMultipleObjects]
     public class VRSL_UdonEditor : Editor
     {

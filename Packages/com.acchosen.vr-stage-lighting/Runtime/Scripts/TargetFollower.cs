@@ -5,33 +5,32 @@ using UdonSharp;
 using VRC.SDKBase;
 using VRC.Udon;
 
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
+#if UNITY_EDITOR && !COMPILER_UDONSHARP 
 using UdonSharpEditor;
 #endif
 #endif
 
 namespace VRSL
 {
-    public class TargetFollower
 #if UDONSHARP
-        : UdonSharpBehaviour
+    public class TargetFollower : UdonSharpBehaviour
 #else
-        : MonoBehaviour
+    public class TargetFollower : MonoBehaviour
 #endif
     {
         [Tooltip ("Enable this to follow whoever owns this object. Change the owner of this object to change who this object follows.")]
         public bool followOwner;
 
+#if UDONSHARP
         void Update() 
         {
-#if UDONSHARP
             if (Networking.GetOwner(this.gameObject) != null && followOwner)
             {
                 this.transform.position = Networking.GetOwner(this.gameObject).GetPosition();
             }
-#endif
         }
-        #if !COMPILER_UDONSHARP && UNITY_EDITOR
+#endif
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
             private void OnDrawGizmos()
             {
 #if UDONSHARP
@@ -42,7 +41,7 @@ namespace VRSL
                 Gizmos.color = Color.white;
                 Gizmos.DrawWireSphere(transform.position, 0.25f);
             }
-        #endif
+#endif
     }
 }
 
