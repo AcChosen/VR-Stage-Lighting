@@ -53,6 +53,285 @@
 		_DecorativeEmissiveMapStrength("Decorative Emissive Map Strength", Range(0,1)) = 0
 
 	}
+    SubShader
+    {
+        Tags
+        {
+            "Queue" = "AlphaTest+1" "RenderType" = "Opaque" "RenderingPipeline" = "UniversalPipeline"
+        }
+
+        Pass
+        {
+            Name "UniversalForward"
+            Tags
+            {
+                "LightMode" = "UniversalForward"
+            }
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_fwdbase
+            #pragma multi_compile_instancing
+            #pragma shader_feature_local _LIGHTING_MODEL
+            //REMOVE THIS WHEN FINISHED DEBUGGING
+            //#pragma target 4.5
+
+            #define GEOMETRY
+
+            #ifndef UNITY_PASS_FORWARDBASE
+            #define UNITY_PASS_FORWARDBASE
+            #endif
+
+            #define FIXTURE_EMIT
+            #define VRSL_DMX
+            #define WASH
+            //DEBUGGING BUFFER
+
+            #include "UnityCG.cginc"
+            #include "Lighting.cginc"
+            #include "AutoLight.cginc"
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+                float2 uv1 : TEXCOORD1;
+                float2 uv2 : TEXCOORD2;
+                float3 normal : NORMAL;
+                float3 tangent : TANGENT;
+                float4 color : COLOR;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            struct v2f
+            {
+                float4 pos : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                float2 uv1 : TEXCOORD1;
+                float2 uv2 : TEXCOORD2;
+                float3 btn[3] : TEXCOORD3; //TEXCOORD2, TEXCOORD3 | bitangent, tangent, worldNormal
+                float3 worldPos : TEXCOORD6;
+                #ifdef _LIGHTING_MODEL
+			        UNITY_LIGHTING_COORDS(7,8)
+			        float4 eyeVec : TEXCOORD12;
+			        half4 ambientOrLightmapUV : TEXCOORD13;
+                #else
+                float3 objPos : TEXCOORD7;
+                float3 objNormal : TEXCOORD8;
+                float4 _ShadowCoord : TEXCOORD11;
+                #endif
+                float4 color : COLOR;
+                float2 intensityStrobe : TEXCOORD9;
+                float4 rgbColor : TEXCOORD10;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            #include "../Shared/VRSL-Defines.cginc"
+            #include "../Shared/VRSL-DMXFunctions.cginc"
+            #include "../Shared/VRSL-LightingFunctions.cginc"
+            #include "../Shared/VRSL-StandardLighting.cginc"
+            #include "VRSL-StandardMover-Vertex.cginc"
+            ENDCG
+        }
+
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags
+            {
+                "LightMode"="ShadowCaster"
+            }
+
+            CGPROGRAM
+            #define FIXTURE_SHADOWCAST
+            #define VRSL_DMX
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_shadowcaster
+            #pragma multi_compile_instancing
+            #include "UnityCG.cginc"
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+                float2 uv1 : TEXCOORD1;
+                float2 uv2 : TEXCOORD2;
+                float3 normal : NORMAL;
+                float3 tangent : TANGENT;
+                float4 color : COLOR;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            struct v2f
+            {
+                float4 pos : SV_POSITION;
+                float3 normal: TEXCOORD0;
+                float4 color: COLOR;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            #include "../Shared/VRSL-Defines.cginc"
+            #include "../Shared/VRSL-DMXFunctions.cginc"
+            #include "VRSL-StandardMover-Vertex.cginc"
+            ENDCG
+        }
+
+        // DepthOnly and DepthNormals MUST utilize exact same rotations as the forward pass for vertex rotation to have rendering continuity
+
+        Pass
+        {
+            Name "DepthOnly"
+            Tags
+            {
+                "LightMode" = "DepthOnly"
+            }
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_fwdbase
+            #pragma multi_compile_instancing
+            #pragma shader_feature_local _LIGHTING_MODEL
+            //REMOVE THIS WHEN FINISHED DEBUGGING
+            //#pragma target 4.5
+
+            #define GEOMETRY
+
+            #ifndef UNITY_PASS_FORWARDBASE
+            #define UNITY_PASS_FORWARDBASE
+            #endif
+
+            #define FIXTURE_EMIT
+            #define VRSL_DMX
+            #define WASH
+
+            #include "UnityCG.cginc"
+            #include "Lighting.cginc"
+            #include "AutoLight.cginc"
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+                float2 uv1 : TEXCOORD1;
+                float2 uv2 : TEXCOORD2;
+                float3 normal : NORMAL;
+                float3 tangent : TANGENT;
+                float4 color : COLOR;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            struct v2f
+            {
+                float4 pos : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                float2 uv1 : TEXCOORD1;
+                float2 uv2 : TEXCOORD2;
+                float3 btn[3] : TEXCOORD3; //TEXCOORD2, TEXCOORD3 | bitangent, tangent, worldNormal
+                float3 worldPos : TEXCOORD6;
+                #ifdef _LIGHTING_MODEL
+			        UNITY_LIGHTING_COORDS(7,8)
+			        float4 eyeVec : TEXCOORD12;
+			        half4 ambientOrLightmapUV : TEXCOORD13;
+                #else
+                float3 objPos : TEXCOORD7;
+                float3 objNormal : TEXCOORD8;
+                float4 _ShadowCoord : TEXCOORD11;
+                #endif
+                float4 color : COLOR;
+                float2 intensityStrobe : TEXCOORD9;
+                float4 rgbColor : TEXCOORD10;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            #include "../Shared/VRSL-Defines.cginc"
+            #include "../Shared/VRSL-DMXFunctions.cginc"
+            #include "../Shared/VRSL-LightingFunctions.cginc"
+            #include "../Shared/VRSL-StandardLighting.cginc"
+            #include "VRSL-StandardMover-Vertex.cginc"
+            ENDCG
+        }
+
+        Pass
+        {
+            Name "DepthNormals"
+            Tags
+            {
+                "LightMode" = "DepthNormals"
+            }
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_fwdbase
+            #pragma multi_compile_instancing
+            #pragma shader_feature_local _LIGHTING_MODEL
+            //REMOVE THIS WHEN FINISHED DEBUGGING
+            //#pragma target 4.5
+
+            #define GEOMETRY
+
+            #ifndef UNITY_PASS_FORWARDBASE
+            #define UNITY_PASS_FORWARDBASE
+            #endif
+
+            #define FIXTURE_EMIT
+            #define VRSL_DMX
+            #define WASH
+            //DEBUGGING BUFFER
+
+            #include "UnityCG.cginc"
+            #include "Lighting.cginc"
+            #include "AutoLight.cginc"
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+                float2 uv1 : TEXCOORD1;
+                float2 uv2 : TEXCOORD2;
+                float3 normal : NORMAL;
+                float3 tangent : TANGENT;
+                float4 color : COLOR;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            struct v2f
+            {
+                float4 pos : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                float2 uv1 : TEXCOORD1;
+                float2 uv2 : TEXCOORD2;
+                float3 btn[3] : TEXCOORD3; //TEXCOORD2, TEXCOORD3 | bitangent, tangent, worldNormal
+                float3 worldPos : TEXCOORD6;
+                #ifdef _LIGHTING_MODEL
+			        UNITY_LIGHTING_COORDS(7,8)
+			        float4 eyeVec : TEXCOORD12;
+			        half4 ambientOrLightmapUV : TEXCOORD13;
+                #else
+                float3 objPos : TEXCOORD7;
+                float3 objNormal : TEXCOORD8;
+                float4 _ShadowCoord : TEXCOORD11;
+                #endif
+                float4 color : COLOR;
+                float2 intensityStrobe : TEXCOORD9;
+                float4 rgbColor : TEXCOORD10;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            #include "../Shared/VRSL-Defines.cginc"
+            #include "../Shared/VRSL-DMXFunctions.cginc"
+            #include "../Shared/VRSL-LightingFunctions.cginc"
+            #include "../Shared/VRSL-StandardLighting.cginc"
+            #include "VRSL-StandardMover-Vertex.cginc"
+            ENDCG
+        }
+
+    }
+	
 		SubShader
 	{
 		
@@ -114,7 +393,7 @@ RWStructuredBuffer<float4> buffer4 : register(u2);
 		#else
 			float3 objPos : TEXCOORD7;
 			float3 objNormal : TEXCOORD8;
-			SHADOW_COORDS(11)
+	        float4 _ShadowCoord : TEXCOORD11;
 		#endif
 		float4 color : COLOR;
 		float2 intensityStrobe : TEXCOORD9;
@@ -163,6 +442,7 @@ RWStructuredBuffer<float4> buffer4 : register(u2);
 		{
 			float4 pos : SV_POSITION;
 			float3 normal: TEXCOORD0;
+		    float4 color : COLOR;
 			UNITY_VERTEX_INPUT_INSTANCE_ID
 			UNITY_VERTEX_OUTPUT_STEREO
 			//SHADOW_COORDS(11)

@@ -39,6 +39,342 @@
 
 
     }
+
+    SubShader
+    {
+        Tags
+        {
+            "RenderType" = "Opaque"
+            "RenderPipeline" = "UniversalPipeline"
+        }
+        LOD 100
+
+        // Forward Pass
+        Pass
+        {
+            Name "ForwardLit"
+            Tags { "LightMode" = "UniversalForward" }
+
+            HLSLPROGRAM
+            #pragma shader_feature UNIVERSAL_RENDER_PIPELINE
+            #pragma vertex vert
+            #pragma fragment frag
+
+            #define VRSL_DMX
+            #define VRSL_SURFACE
+            #pragma shader_feature_local _CHANNEL_MODE
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
+            #pragma multi_compile _ _SHADOWS_SOFT
+
+            #if defined(UNIVERSAL_RENDER_PIPELINE)
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #endif
+
+            struct Attributes
+            {
+                float4 positionOS : POSITION;
+                float3 normalOS : NORMAL;
+                float4 tangentOS : TANGENT;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct Varyings
+            {
+                float4 positionHCS : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                float3 normalWS : TEXCOORD1;
+                float3 positionWS : TEXCOORD2;
+                float4 tangentWS : TEXCOORD3;
+            };
+
+            #if defined(UNIVERSAL_RENDER_PIPELINE)
+            #include "../Shared/VRSL-Defines-URP.hlsl"
+
+            #include "../Shared/VRSL-DMXFunctions-URP.hlsl"
+            #include "VRSL-StandardSurface-Functions-URP.hlsl"
+            #endif
+
+            #if !defined(UNIVERSAL_RENDER_PIPELINE)
+            #define half4 float4
+            #endif
+
+            Varyings vert(Attributes input)
+            {
+                Varyings output = (Varyings)0;
+
+                #if defined(UNIVERSAL_RENDER_PIPELINE)
+                // Positions
+                VertexPositionInputs posInputs = GetVertexPositionInputs(input.positionOS.xyz);
+                output.positionHCS = posInputs.positionCS;
+                output.positionWS = posInputs.positionWS;
+
+                // Normals and tangents
+                VertexNormalInputs normalInputs = GetVertexNormalInputs(input.normalOS, input.tangentOS);
+                output.normalWS = normalInputs.normalWS;
+
+                // Calculate tangent for normal mapping
+                real sign = input.tangentOS.w * GetOddNegativeScale();
+                output.tangentWS = float4(normalInputs.tangentWS.xyz, sign);
+
+                // UVs
+                output.uv = TRANSFORM_TEX(input.uv, _MainTex);
+                #endif
+
+                return output;
+            }
+
+            half4 frag(Varyings input) : SV_Target
+            {
+                #if defined(UNIVERSAL_RENDER_PIPELINE)
+                // Sample textures
+                half4 baseMap = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
+                half4 metallicSmoothness = SAMPLE_TEXTURE2D(_MetallicSmoothness, sampler_MetallicSmoothness, input.uv);
+                half4 emissionMask = SAMPLE_TEXTURE2D(_EmissionMask, sampler_EmissionMask, input.uv);
+                half4 color = baseMap * _Color;
+
+                // Calculate tangent space to world space matrix
+                float3 normalTS = UnpackNormal(SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, input.uv));
+
+                float3 normalWS;
+                float3 tangentWS = normalize(input.tangentWS.xyz);
+                float3 bitangentWS = normalize(cross(input.normalWS, tangentWS) * input.tangentWS.w);
+
+                // Transform normal from tangent to world space
+                float3x3 tangentToWorld = float3x3(tangentWS, bitangentWS, input.normalWS);
+                normalWS = normalize(mul(normalTS, tangentToWorld));
+
+                // Surface data
+                InputData lightingInput = (InputData)0;
+                lightingInput.normalWS = normalWS;
+                lightingInput.positionWS = input.positionWS;
+                lightingInput.viewDirectionWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
+                lightingInput.shadowCoord = TransformWorldToShadowCoord(input.positionWS);
+
+                SurfaceData surfaceData = (SurfaceData)0;
+                surfaceData.albedo = color.rgb;
+                surfaceData.alpha = color.a;
+
+                // Metallic in R channel, Smoothness in A channel (standard convention)
+                surfaceData.metallic = metallicSmoothness.r * _Metallic;
+                surfaceData.smoothness = metallicSmoothness.r * _Glossiness;
+
+                // Albedo comes from a texture tinted by color
+                float2 emUV = TRANSFORM_TEX(input.uv, _EmissionMask);
+                surfaceData.emission = GetDMXEmission12Ch(emUV) * _CurveMod;
+
+                surfaceData.normalTS = normalTS;
+
+                // Apply lighting
+                return UniversalFragmentPBR(lightingInput, surfaceData);
+                #else
+                return (0).xxxx;
+                #endif
+            }
+            ENDHLSL
+        }
+
+        // ShadowCaster Pass
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags { "LightMode" = "ShadowCaster" }
+
+            ZWrite On
+            ZTest LEqual
+            ColorMask 0
+
+            HLSLPROGRAM
+            #pragma shader_feature UNIVERSAL_RENDER_PIPELINE
+            #pragma vertex ShadowPassVertex
+            #pragma fragment ShadowPassFragment
+
+            #if defined(UNIVERSAL_RENDER_PIPELINE)
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl"
+
+            #include "../Shared/VRSL-Defines-URP.hlsl"
+            #endif
+
+            struct Attributes
+            {
+                float4 positionOS : POSITION;
+                float3 normalOS : NORMAL;
+                float2 texcoord : TEXCOORD0;
+            };
+
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+            };
+
+            float3 _LightDirection;
+
+            #if defined(UNIVERSAL_RENDER_PIPELINE)
+            float4 GetShadowPositionHClip(Attributes input)
+            {
+                float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
+
+                float4 positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, _LightDirection));
+
+                #if UNITY_REVERSED_Z
+                    positionCS.z = min(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
+                #else
+                    positionCS.z = max(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
+                #endif
+
+                return positionCS;
+            }
+            #endif
+
+            Varyings ShadowPassVertex(Attributes input)
+            {
+                Varyings output = (Varyings)0;
+                #if defined(UNIVERSAL_RENDER_PIPELINE)
+                output.positionCS = GetShadowPositionHClip(input);
+                #endif
+                return output;
+            }
+
+            half4 ShadowPassFragment(Varyings input) : SV_TARGET
+            {
+                return 0;
+            }
+            ENDHLSL
+        }
+
+        // DepthOnly Pass
+        Pass
+        {
+            Name "DepthOnly"
+            Tags { "LightMode" = "DepthOnly" }
+
+            ZWrite On
+            ColorMask 0
+
+            HLSLPROGRAM
+            #pragma shader_feature UNIVERSAL_RENDER_PIPELINE
+            #pragma vertex DepthOnlyVertex
+            #pragma fragment DepthOnlyFragment
+
+            #if defined(UNIVERSAL_RENDER_PIPELINE)
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+            #include "../Shared/VRSL-Defines-URP.hlsl"
+            #endif
+
+            struct Attributes
+            {
+                float4 position : POSITION;
+                float2 texcoord : TEXCOORD0;
+            };
+
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+            };
+
+            Varyings DepthOnlyVertex(Attributes input)
+            {
+                Varyings output = (Varyings)0;
+                #if defined(UNIVERSAL_RENDER_PIPELINE)
+                output.positionCS = TransformObjectToHClip(input.position.xyz);
+                #endif
+                return output;
+            }
+
+            half4 DepthOnlyFragment(Varyings input) : SV_TARGET
+            {
+                return 0;
+            }
+            ENDHLSL
+        }
+
+        // DepthNormals Pass
+        Pass
+        {
+            Name "DepthNormals"
+            Tags { "LightMode" = "DepthNormals" }
+
+            ZWrite On
+
+            HLSLPROGRAM
+            #pragma shader_feature UNIVERSAL_RENDER_PIPELINE
+            #pragma vertex DepthNormalsVertex
+            #pragma fragment DepthNormalsFragment
+
+            #if defined(UNIVERSAL_RENDER_PIPELINE)
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+            #include "../Shared/VRSL-Defines-URP.hlsl"
+
+            TEXTURE2D(_NormalMap);
+            SAMPLER(sampler_NormalMap);
+            #endif
+
+            struct Attributes
+            {
+                float4 positionOS : POSITION;
+                float3 normalOS : NORMAL;
+                float4 tangentOS : TANGENT;
+                float2 texcoord : TEXCOORD0;
+            };
+
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                float3 normalWS : TEXCOORD1;
+                float4 tangentWS : TEXCOORD2;
+            };
+
+            Varyings DepthNormalsVertex(Attributes input)
+            {
+                Varyings output = (Varyings)0;
+
+                #if defined(UNIVERSAL_RENDER_PIPELINE)
+                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
+                output.uv = TRANSFORM_TEX(input.texcoord, _MainTex);
+
+                VertexNormalInputs normalInput = GetVertexNormalInputs(input.normalOS, input.tangentOS);
+                output.normalWS = normalInput.normalWS;
+
+                real sign = input.tangentOS.w * GetOddNegativeScale();
+                output.tangentWS = float4(normalInput.tangentWS.xyz, sign);
+                #endif
+
+                return output;
+            }
+
+            half4 DepthNormalsFragment(Varyings input) : SV_TARGET
+            {
+                #if defined(UNIVERSAL_RENDER_PIPELINE)
+                // Read normal map
+                float3 normalTS = UnpackNormal(SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, input.uv));
+
+                // Calculate tangent space to world space matrix
+                float3 tangentWS = normalize(input.tangentWS.xyz);
+                float3 bitangentWS = normalize(cross(input.normalWS, tangentWS) * input.tangentWS.w);
+
+                // Transform normal from tangent to world space
+                float3x3 tangentToWorld = float3x3(tangentWS, bitangentWS, input.normalWS);
+                float3 normalWS = normalize(mul(normalTS, tangentToWorld));
+
+                // Convert normal from [-1,1] to [0,1] range
+                float3 normalViewSpace = TransformWorldToViewDir(normalWS) * 0.5 + 0.5;
+
+                return half4(normalViewSpace, 0);
+                #else
+                return (0).xxxx;
+                #endif
+            }
+            ENDHLSL
+        }
+    }
+
     SubShader
     {
 
