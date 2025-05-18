@@ -78,6 +78,9 @@
                 float3 normalOS : NORMAL;
                 float4 tangentOS : TANGENT;
                 float2 uv : TEXCOORD0;
+                #if UNIVERSAL_RENDER_PIPELINE
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                #endif
             };
 
             struct Varyings
@@ -87,6 +90,10 @@
                 float3 normalWS : TEXCOORD1;
                 float3 positionWS : TEXCOORD2;
                 float4 tangentWS : TEXCOORD3;
+                #if UNIVERSAL_RENDER_PIPELINE
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+                #endif
             };
 
             #if defined(UNIVERSAL_RENDER_PIPELINE)
@@ -105,6 +112,9 @@
                 Varyings output = (Varyings)0;
 
                 #if defined(UNIVERSAL_RENDER_PIPELINE)
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+                UNITY_TRANSFER_INSTANCE_ID(input, output);
                 // Positions
                 VertexPositionInputs posInputs = GetVertexPositionInputs(input.positionOS.xyz);
                 output.positionHCS = posInputs.positionCS;
@@ -128,6 +138,8 @@
             half4 frag(Varyings input) : SV_Target
             {
                 #if defined(UNIVERSAL_RENDER_PIPELINE)
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(iinput);
                 // Sample textures
                 half4 baseMap = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
                 half4 metallicSmoothness = SAMPLE_TEXTURE2D(_MetallicSmoothness, sampler_MetallicSmoothness, input.uv);

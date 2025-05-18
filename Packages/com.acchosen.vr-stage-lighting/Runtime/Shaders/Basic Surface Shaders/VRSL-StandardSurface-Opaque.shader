@@ -106,6 +106,9 @@
             {
                 Varyings output = (Varyings)0;
                 #if defined(UNIVERSAL_RENDER_PIPELINE)
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+                UNITY_TRANSFER_INSTANCE_ID(input, output);
                 // Positions
                 VertexPositionInputs posInputs = GetVertexPositionInputs(input.positionOS.xyz);
                 output.positionHCS = posInputs.positionCS;
@@ -128,6 +131,8 @@
             half4 frag(Varyings input) : SV_Target
             {
                 #if defined(UNIVERSAL_RENDER_PIPELINE)
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
                 // Sample textures
                 half4 baseMap = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
                 half4 metallicSmoothness = SAMPLE_TEXTURE2D(_MetallicSmoothness, sampler_MetallicSmoothness, input.uv);
