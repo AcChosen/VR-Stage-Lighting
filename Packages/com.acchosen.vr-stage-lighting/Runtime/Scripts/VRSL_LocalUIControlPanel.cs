@@ -160,18 +160,17 @@ namespace VRSL
         public bool useDMXGI = false;
 
         [FieldChangeCallback(nameof(VolumetricNoise)), SerializeField]
-#if UNITY_ANDROID
-        private bool _volumetricNoise = false;
-#else
         private bool _volumetricNoise = true;
-#endif
         int _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridSpinTimer, _Udon_DMXGridStrobeTimer, _Udon_DMXGridStrobeOutput;
 
         public bool VolumetricNoise
         {
 #if UNITY_ANDROID
-    set { _volumetricNoise = false; }
-    get => false;
+            set {
+                _volumetricNoise = false;
+                _CheckDepthLightStatus();
+            }
+            get => false;
 #else
             set
             {
@@ -183,17 +182,17 @@ namespace VRSL
         }
 
         [FieldChangeCallback(nameof(RequireDepthLight)), SerializeField]
-#if UNITY_ANDROID
-        private bool _requireDepthLight = false;
-#else
         private bool _requireDepthLight = true;
-#endif
 
         public bool RequireDepthLight
         {
 #if UNITY_ANDROID
-    set { _requireDepthLight = false; }
-    get => false;
+            set {
+                _requireDepthLight = false;
+                _CheckDepthLightStatus();
+                _DepthLightStatusReport();
+            }
+            get => false;
 #else
             set
             {
@@ -646,8 +645,8 @@ namespace VRSL
 
             foreach(Material mat in volumetricMaterials)
             {
-                mat.SetInt("_PotatoMode", _volumetricNoise ? 0 : 1);
-                mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
+                mat.SetInt("_PotatoMode", VolumetricNoise ? 0 : 1);
+                mat.SetInt("_UseDepthLight", RequireDepthLight ? 1 : 0);
                 if(mat.HasProperty("_UseDepthLight")){
                 SetKeyword(mat, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(mat.GetInt("_UseDepthLight"))) == 1 ? true : false);}
                 if(mat.HasProperty("_MAGIC_NOISE_ON_MED")){
@@ -659,7 +658,7 @@ namespace VRSL
             }
             foreach(Material mat in projectionMaterials)
             {
-                mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
+                mat.SetInt("_UseDepthLight", RequireDepthLight ? 1 : 0);
             }
             if(fixtureMaterials != null)
             {
@@ -667,7 +666,7 @@ namespace VRSL
                 {
                     if(mat != null)
                     {
-                        mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
+                        mat.SetInt("_UseDepthLight", RequireDepthLight ? 1 : 0);
                         if(mat.HasProperty("_UseDepthLight")){
                         SetKeyword(mat, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(mat.GetInt("_UseDepthLight"))) == 1 ? true : false);}
                     }
