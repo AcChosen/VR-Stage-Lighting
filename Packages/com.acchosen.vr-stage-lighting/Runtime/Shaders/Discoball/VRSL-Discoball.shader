@@ -145,7 +145,7 @@
                 {
                     return half4(0,0,0,0);
                 }
-                #if _ALPHATEST_ON
+                #if _ALPHATEST_ON && !SHADER_API_GLES3
                     float2 pos = i.screenPos.xy / i.screenPos.w;
                     pos *= _ScreenParams.xy;
                     float DITHER_THRESHOLDS[16] =
@@ -185,7 +185,7 @@
                 col = col * _UniversalIntensity;
 
                 
-                #ifdef _ALPHATEST_ON
+                #if defined(_ALPHATEST_ON) && !SHADER_API_GLES3
                     clip(col.a - DITHER_THRESHOLDS[index]);
                     clip((((col.r + col.g + col.b)/3) * (_ClippingThreshold)) - DITHER_THRESHOLDS[index]);
                     return col;

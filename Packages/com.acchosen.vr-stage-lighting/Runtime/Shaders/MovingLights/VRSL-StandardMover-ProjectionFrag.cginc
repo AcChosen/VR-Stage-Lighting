@@ -192,7 +192,7 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 #endif
 
 
-                #if _ALPHATEST_ON
+                #if _ALPHATEST_ON && !SHADER_API_GLES3
                     float2 pos = i.screenPos.xy / i.screenPos.w;
                     pos *= _ScreenParams.xy;
                     half DITHER_THRESHOLDS[16] =
@@ -346,7 +346,7 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 float projectionDistance = abs(distance(i.projectionorigin.xyz, projPos.xyz));
 
                 //Projection Fade
-                #ifdef _ALPHATEST_ON
+                #if defined(_ALPHATEST_ON) && !SHADER_API_GLES3
                     col = lerp(col, half4(0,0,0,0), clamp(pow(distFromUVOrigin * (_ProjectionFade-1.0),_ProjectionFadeCurve),0.0,1.0));
                 #else
                     col = lerp(col, half4(0,0,0,0), clamp(pow(distFromUVOrigin * _ProjectionFade,_ProjectionFadeCurve),0.0,1.0));
@@ -369,7 +369,7 @@ inline float CorrectedLinearEyeDepth(float z, float B)
 
                 // project plane on to the world normals in object space in the z direction of the object origin.
                 half projectionIntesnity = _ProjectionIntensity;
-                #ifdef _ALPHATEST_ON
+                #if defined(_ALPHATEST_ON) && !SHADER_API_GLES3
                     projectionIntesnity +=4.0;
                 #endif
                 col = ((col * emissionTint * UVscale * projectionIntesnity)) * strobe; 
@@ -383,7 +383,7 @@ inline float CorrectedLinearEyeDepth(float z, float B)
                 //col = IF(_EnableStaticEmissionColor == 1, lerp(half4(0,0,0,0), col, saturation), col);
                 col = IF( _EnableStaticEmissionColor == 1, half4(col.r * _RedMultiplier, col.g * _GreenMultiplier, col.b * _BlueMultiplier, col.a), col);
                 col *= _UniversalIntensity;
-                #ifdef _ALPHATEST_ON
+                #if defined(_ALPHATEST_ON) && !SHADER_API_GLES3
                     clip(col.a - DITHER_THRESHOLDS[index]);
                     clip((((col.r + col.g + col.b)/3) * (_ClippingThreshold)) - DITHER_THRESHOLDS[index]);
                     return col;

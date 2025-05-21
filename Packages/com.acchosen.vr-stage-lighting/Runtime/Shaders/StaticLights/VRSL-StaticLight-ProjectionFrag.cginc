@@ -56,7 +56,7 @@
                 }
             #endif
 
-            #if _ALPHATEST_ON
+            #if _ALPHATEST_ON && !SHADER_API_GLES3
                 float2 pos = i.screenPos.xy / i.screenPos.w;
                 pos *= _ScreenParams.xy;
                 float DITHER_THRESHOLDS[16] =
@@ -117,7 +117,7 @@
                 float distanceFromOrigin = length(objectOrigin - wpos);
                 float attenuationDist = length(objectOrigin - wpos);
                 float f = _Fade;
-                #if _ALPHATEST_ON
+                #if _ALPHATEST_ON && !SHADER_API_GLES3
                     f += 1.0;
                 #endif
                 float attenuation = 1.0 / (_ProjectionDistanceFallOff + f * attenuationDist + _FeatherOffset * (attenuationDist * attenuationDist));
@@ -170,7 +170,7 @@
                 float fadeRange = (saturate(1-(pow(10, distanceFromOrigin - 2))));
                 col = (((lerp(result,float4(0,0,0,0), smoothstep(distanceFromOrigin, 0, f))) * gi) * fi) * _UniversalIntensity;
                 
-                #ifdef _ALPHATEST_ON
+                #if defined(_ALPHATEST_ON) && !SHADER_API_GLES3
                     col *= _AlphaProjectionIntensity;
                     clip(col.a - DITHER_THRESHOLDS[index]);
                     clip((((col.r + col.g + col.b)/3) * (_ClippingThreshold)) - DITHER_THRESHOLDS[index]);
