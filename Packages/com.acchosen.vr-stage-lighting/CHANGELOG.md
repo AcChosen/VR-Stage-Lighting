@@ -1,5 +1,15 @@
 # VR Stage Lighting - Changelog
 
+## 2.8.0 Change Log - May 21, 2024
+
+- Applied a bunch of community PRs! Here's a list of them:
+
+- Adjustments for OpenGL and SPS-I configured devices - fundale
+- Fixed wrong hard-coded index in unrolled array on VRStageLighting_AudioLink_Laser.cs - KitKat4191
+- Update C# scripts to support compiling outside of the UdonSharp context. - techanon & fundale
+- Force RequireDepthLight and VolumetricNoise off on Android -  CompuGenius-Programs
+- Added URP Shader Support - techanon
+
 ## 2.7.0 Change Log - June 2nd, 2024
 - Packaged important add-ons such as video players, gpu readback, and screen space shaders into unitypackages along with main VR Stage Light package to reduce confusion and keep things organized.
 - Converted shaders and video players to all run on native linear input. This removes many issues and inconsistencies with smoothing and general movement.
