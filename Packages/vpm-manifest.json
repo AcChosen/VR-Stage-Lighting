@@ -20,6 +20,9 @@
     },
     "com.acchosen.vr-stage-lighting": {
       "version": "2.7.0"
+    },
+    "com.llealloo.audiolink": {
+      "version": "2.1.0"
     }
   },
   "locked": {
@@ -35,10 +38,6 @@
     },
     "com.vrchat.core.vpm-resolver": {
       "version": "0.1.29",
-      "dependencies": {}
-    },
-    "com.llealloo.audiolink": {
-      "version": "1.4.0",
       "dependencies": {}
     },
     "dev.architech.videoplayershim": {
@@ -75,6 +74,10 @@
       "dependencies": {
         "com.llealloo.audiolink": ">=0.3.1"
       }
+    },
+    "com.llealloo.audiolink": {
+      "version": "2.1.0",
+      "dependencies": {}
     }
   }
 }

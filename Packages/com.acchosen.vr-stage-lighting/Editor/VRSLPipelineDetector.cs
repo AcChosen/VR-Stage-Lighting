@@ -37,7 +37,7 @@ public static class VRSLPipelineDetector
         var listRequest = UnityEditor.PackageManager.Client.List(true);
         while (!listRequest.IsCompleted) { }
 
-        bool found;
+        //bool found;
         if (listRequest.Status == UnityEditor.PackageManager.StatusCode.Success)
         {
             return listRequest.Result.Any(package => package.name == packageName);

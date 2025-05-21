@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: VRSL_LocalUIControlPanel
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: ed0b5c56a62ee4c4a9b7098f989a7990,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 22e316583460f1841815b2f0855900d0,
     type: 2}
   udonAssembly: 
   assemblyError: 
@@ -4913,13 +4913,13 @@ MonoBehaviour:
       Data: 2
     - Name: 
       Entry: 7
-      Data: 238|UdonSharp.FieldChangeCallbackAttribute, UdonSharp.Runtime
+      Data: 238|UnityEngine.SerializeField, UnityEngine.CoreModule
     - Name: 
       Entry: 8
       Data: 
     - Name: 
       Entry: 7
-      Data: 239|UnityEngine.SerializeField, UnityEngine.CoreModule
+      Data: 239|UdonSharp.FieldChangeCallbackAttribute, UdonSharp.Runtime
     - Name: 
       Entry: 8
       Data: 
@@ -5219,13 +5219,13 @@ MonoBehaviour:
       Data: 2
     - Name: 
       Entry: 7
-      Data: 252|UdonSharp.FieldChangeCallbackAttribute, UdonSharp.Runtime
+      Data: 252|UnityEngine.SerializeField, UnityEngine.CoreModule
     - Name: 
       Entry: 8
       Data: 
     - Name: 
       Entry: 7
-      Data: 253|UnityEngine.SerializeField, UnityEngine.CoreModule
+      Data: 253|UdonSharp.FieldChangeCallbackAttribute, UdonSharp.Runtime
     - Name: 
       Entry: 8
       Data: 
@@ -5280,13 +5280,13 @@ MonoBehaviour:
       Data: 2
     - Name: 
       Entry: 7
-      Data: 256|UdonSharp.FieldChangeCallbackAttribute, UdonSharp.Runtime
+      Data: 256|UnityEngine.SerializeField, UnityEngine.CoreModule
     - Name: 
       Entry: 8
       Data: 
     - Name: 
       Entry: 7
-      Data: 257|UnityEngine.SerializeField, UnityEngine.CoreModule
+      Data: 257|UdonSharp.FieldChangeCallbackAttribute, UdonSharp.Runtime
     - Name: 
       Entry: 8
       Data: 
