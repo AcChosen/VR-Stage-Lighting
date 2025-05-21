@@ -216,7 +216,7 @@
 
                 half4 e = getEmissionColor();
                 e = clamp(e, half4(0,0,0,1), half4(_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,_FixtureMaxIntensity*2,1));
-                #ifdef _ALPHATEST_ON
+                #if defined(_ALPHATEST_ON) && !SHADER_API_GLES3
                     e*= (_FixutreIntensityMultiplier*0.25);
                 #else
                     e*= _FixutreIntensityMultiplier;    
@@ -286,6 +286,9 @@
                                 //we don't have tex2D() in vertex shader, because rasterization is not done by GPU, so we use tex2Dlod() with mip0 instead
                                 float4 ssd = SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(screenUV, 0.0, 0.0));//(uv.x,uv.y,0,mipLevel)
                                 float sampledSceneDepth = ssd.x;
+                                #if !UNITY_REVERSED_Z
+                                sampledSceneDepth = lerp(UNITY_NEAR_CLIP_VALUE, 1, sampledSceneDepth);
+                                #endif
                                 float linearEyeDepthFromSceneDepthTexture = LinearEyeDepth(sampledSceneDepth);
                                 float linearEyeDepthFromSelfALU = PivotPosCS.w; //clip space .w is view space z, = linear eye depth
 
@@ -339,7 +342,7 @@
                 float satMask = lerp(1, 0, pow(distance(half2(0.5, 0.5), o.uv), _ColorSat));
                 o.color = lerp(o.color, e2, satMask);
 
-                #if _ALPHATEST_ON
+                #if _ALPHATEST_ON && !SHADER_API_GLES3
                     o.screenPos = ComputeScreenPos(o.vertex);
                 #endif
                 
@@ -350,7 +353,7 @@
             fixed4 frag (v2f i) : SV_Target
             {
 
-                #if _ALPHATEST_ON
+                #if _ALPHATEST_ON && !SHADER_API_GLES3
                     float2 pos = i.screenPos.xy / i.screenPos.w;
                     pos *= _ScreenParams.xy;
                     float DITHER_THRESHOLDS[16] =

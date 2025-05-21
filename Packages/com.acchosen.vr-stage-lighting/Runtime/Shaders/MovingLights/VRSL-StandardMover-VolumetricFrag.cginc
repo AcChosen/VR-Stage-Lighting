@@ -77,7 +77,7 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 
 
 
-		#if _ALPHATEST_ON
+		#if _ALPHATEST_ON && !SHADER_API_GLES3
 		    float2 pos = i.screenPos.xy / i.screenPos.w;
             pos *= _ScreenParams.xy;
 			half DITHER_THRESHOLDS[16] =
@@ -143,6 +143,9 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 			float2 screenUV = i.screenPos.xy / i.screenPos.w;
 			//Sampling Depth
 			float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenUV);
+			#if !UNITY_REVERSED_Z
+			depth = lerp(UNITY_NEAR_CLIP_VALUE, 1, depth);
+			#endif
 			//Correct for mirrors as Eye Depth
 			depth = CorrectedLinearEyeDepth(depth, direction.w);
 			//Convert to Raw Depth
@@ -171,7 +174,7 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		cameraFade = lerp(1.0, cameraFade, saturate(pow(i.uv.x, 0.1)));
 
 		//Set uv map properly and adjust for the length of the cone.
-		#if _ALPHATEST_ON
+		#if _ALPHATEST_ON && !SHADER_API_GLES3
 			#ifdef WASH
 				uvMap = half2(saturate(i.uv.x * (getConeLength() -3.5)), i.uv.y);
 			#else
@@ -191,7 +194,7 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		#endif
 
 		//Generate gradient for cone.
-		#ifndef _ALPHATEST_ON
+		#if !defined(_ALPHATEST_ON) || SHADER_API_GLES3
 			#ifndef _POTATO_MODE_ON
 				half grad = gobo > 1 ? _GradientModGOBO * 0.6f : _GradientMod * 0.8f;
 			#else
@@ -217,7 +220,7 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		if(facePos > 0)
 		{
 			
-			#if _ALPHATEST_ON
+			#if _ALPHATEST_ON && !SHADER_API_GLES3
 				#ifdef WASH
 					half fadeSTR = 0.1 * (_InnerFadeStrength+2);
 				#else
@@ -234,7 +237,7 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 
 			//Reduce fade strength if closer to source of light
 			
-			#if _ALPHATEST_ON
+			#if _ALPHATEST_ON && !SHADER_API_GLES3
 				half fadeSTR = (lerp(1.0, _FadeStrength + (lerp(5.0, 1.0, widthNormalized)), saturate(pow(i.uv.x, 0.1) + 0.05))) * 0.5;
 			#else
 				half fadeSTR = lerp(1.0, _FadeStrength + (lerp(5.0, 1.0, widthNormalized)), saturate(pow(i.uv.x, 0.1) + 0.05));
@@ -263,7 +266,7 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		#ifdef VRSL_AUDIOLINK
 			half strobe = 1.0;
 		#endif
-		#ifndef _ALPHATEST_ON
+		#if !defined(_ALPHATEST_ON) || SHADER_API_GLES3
 			#ifndef _POTATO_MODE_ON
 				//Generate 2D noise texture, add scroll effect, and map to cone.
 				#ifdef _2D_NOISE_ON
@@ -392,7 +395,7 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		// col *= tex;
 		// col *= splitter;
 		// col *= threeDNoise;
-		#ifndef _ALPHATEST_ON
+		#if !defined(_ALPHATEST_ON) || SHADER_API_GLES3
 			#ifndef _POTATO_MODE_ON
 				col *= tex * splitter * threeDNoise;
 			#else
@@ -405,7 +408,7 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		//Add more power to Inner side of cone
 		half4 result = col;
 		#if !defined(WASH)
-		#if _ALPHATEST_ON
+		#if _ALPHATEST_ON && !SHADER_API_GLES3
 			result = lerp(col,col * 25, saturate(pow(gradientTexture, (_InnerIntensityCurve+20))));
 		#else
 			result = lerp(col,col * 25, saturate(pow(gradientTexture, _InnerIntensityCurve)));
@@ -413,7 +416,7 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		#endif
 		//#ifndef _ALPHATEST_ON
 			//Mix in Frensel Edge Fade
-			#if _ALPHATEST_ON
+			#if _ALPHATEST_ON && !SHADER_API_GLES3
 				
 				result *= lerp(1.0, edgeFade, pow(gradientTexture.r, 0.25));
 				
@@ -443,7 +446,7 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 			//#ifdef VRSL_AUDIOLINK
 				blinding = lerp(1.0, blinding, _BlindingStrength);
 			//#endif
-			#ifdef _ALPHATEST_ON
+			#if defined(_ALPHATEST_ON) && !SHADER_API_GLES3
 				result = lerp(result, result*blinding * 20, gradientTexture);
 				#ifdef WASH
 					maxIntensity +=0.25;
@@ -488,7 +491,7 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		half satMod = 5.0;
 
 		//Create fake white power effect at source of cone and use Saturation and Saturation Length to blend that effect
-		#ifndef _ALPHATEST_ON
+		#if !defined(_ALPHATEST_ON) || SHADER_API_GLES3
 			#ifndef _POTATO_MODE_ON
 				newCol.xyz = lerp(result.xyz,newCol * 10, saturate((pow(saturate(gradientTexture - 0.25), _SaturationLength - satMod)) * tex.r) +0.005);
 			#else
@@ -502,7 +505,7 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 		result = facePos > 0 ? lerp(result * camAngle, result, cameraFade) : result * 3;
 		half lastGrad = saturate((1-i.uv.x)*+1);
 		half distfade = _DistFade;
-		#ifdef _ALPHATEST_ON
+		#if defined(_ALPHATEST_ON) && !SHADER_API_GLES3
 		distfade -= 0.4;
 		#endif
 		lastGrad = lerp(1, lastGrad, distfade);
@@ -513,7 +516,7 @@ half4 VolumetricLightingBRDF(v2f i, fixed facePos)
 			result = lerp(half4(0,0,0,result.w), result, audioReact * audioReact);
 		#endif
 
-		#ifdef _ALPHATEST_ON
+		#if defined(_ALPHATEST_ON) && !SHADER_API_GLES3
 			result = result * lastGrad * gifi * 0.25;
 			clip(result.a - DITHER_THRESHOLDS[index]);
 			clip((((result.r + result.g + result.b)/3)) - DITHER_THRESHOLDS[index]);
