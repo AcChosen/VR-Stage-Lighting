@@ -1,29 +1,34 @@
-using UdonSharp;
 using UnityEngine;
-using VRC.SDKBase;
-using VRC.Udon;
 using UnityEngine.UI;
 using System.Threading;
 using VRSL;
 
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
+#if UDONSHARP
+using UdonSharp;
+using VRC.SDKBase;
+using VRC.Udon;
+#endif
+
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
 using UnityEditor;
-using UdonSharpEditor;
 using UnityEngine.SceneManagement;
-//using VRC.Udon;
-using VRC.Udon.Common;
-using VRC.Udon.Common.Interfaces;
-using System.Collections.Immutable;
 using System.Collections.Generic;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using UnityEngine.UIElements;
 using System.IO;
+
+#if UDONSHARP
+using UdonSharpEditor;
+using VRC.Udon.Common;
+using VRC.Udon.Common.Interfaces;
 #endif
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
+
+#endif
 
 
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
 namespace VRSL.EditorScripts
 {
 
@@ -163,9 +168,11 @@ public class DMXListItem
         {
             e.GetType();
         }
+#if UDONSHARP
         #pragma warning disable 0618 //suppressing obsoletion warnings
         light.UpdateProxy();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
         light.enableDMXChannels = P_enableDMXChannels = Z_enableDMXChannels;
         light.fixtureID = P_fixtureID = Z_fixtureID;
         light.dmxChannel = P_dmxChannel = Z_dmxChannel;
@@ -193,9 +200,11 @@ public class DMXListItem
         light.maxMinPan = P_maxMinPan = Z_maxMinPan;
         light.maxMinTilt = P_maxMinTilt = Z_maxMinTilt; 
         light.foldout = false;
+#if UDONSHARP
         #pragma warning disable 0618 //suppressing obsoletion warnings
         light.ApplyProxyModifications();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
     }
     public void ApplyChanges()
     {
@@ -231,9 +240,11 @@ public class DMXListItem
         so.FindProperty("foldout").boolValue = foldout;
         so.ApplyModifiedProperties();
         
+#if UDONSHARP
         #pragma warning disable 0618 //suppressing obsoletion warnings
         light.UpdateProxy();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
         light.enableDMXChannels = Z_enableDMXChannels = P_enableDMXChannels;
         light.fixtureID = Z_fixtureID = P_fixtureID;
         light.dmxChannel = Z_dmxChannel = P_dmxChannel;
@@ -261,9 +272,11 @@ public class DMXListItem
         light.maxMinPan = Z_maxMinPan = P_maxMinPan;
         light.maxMinTilt = Z_maxMinTilt = P_maxMinTilt; 
         light.foldout = foldout;
+#if UDONSHARP
         #pragma warning disable 0618 //suppressing obsoletion warnings
         light.ApplyProxyModifications();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
         if(PrefabUtility.IsPartOfAnyPrefab(light))
         {
             PrefabUtility.RecordPrefabInstancePropertyModifications(light);
@@ -380,9 +393,11 @@ public class AudioLinkListItem
             e.GetType();
         }
 
+#if UDONSHARP
         #pragma warning disable 0618 //suppressing obsoletion warnings
         light.UpdateProxy();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
         light.EnableAudioLink = P_enableAudioLink = Z_enableAudioLink;
         light.Band = P_band = Z_band;
         light.Delay = P_delay = Z_delay;
@@ -403,9 +418,11 @@ public class AudioLinkListItem
         light.ConeLength = P_coneLength = Z_coneLength;
         light.MaxConeLength = P_maxConeLength = Z_maxConeLength;
         light.foldout = false;
+#if UDONSHARP
         #pragma warning disable 0618 //suppressing obsoletion warnings
         light.ApplyProxyModifications();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
     }
     public void ResetChanges(VRStageLighting_AudioLink_Laser li , bool closeMenus)
     {
@@ -422,9 +439,11 @@ public class AudioLinkListItem
         {
             e.GetType();
         }
+#if UDONSHARP
         #pragma warning disable 0618 //suppressing obsoletion warnings
         laser.UpdateProxy();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
         laser.EnableAudioLink = P_enableAudioLink = Z_enableAudioLink;
         laser.Band = P_band = Z_band;
         laser.Delay = P_delay = Z_delay;
@@ -445,9 +464,11 @@ public class AudioLinkListItem
         laser.ConeLength = P_coneLength = Z_coneLength;
         laser.LaserScroll = P_laserScroll = Z_laserScroll;
         laser.foldout = false;
+#if UDONSHARP
         #pragma warning disable 0618 //suppressing obsoletion warnings
         laser.ApplyProxyModifications();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
     }
 
     public void ApplyChanges(VRStageLighting_AudioLink_Static li)
@@ -481,9 +502,11 @@ public class AudioLinkListItem
         //var soTarget = new SerializedObject(light.targetToFollow.gameObject);
 
     
+#if UDONSHARP
         #pragma warning disable 0618 //suppressing obsoletion warnings
         light.UpdateProxy();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
         light.EnableAudioLink = Z_enableAudioLink = P_enableAudioLink;
         light.Band = Z_band = P_band;
         light.Delay = Z_delay = P_delay;
@@ -504,9 +527,11 @@ public class AudioLinkListItem
         light.ConeLength = Z_coneLength = P_coneLength;
         light.MaxConeLength = Z_maxConeLength = P_maxConeLength;
         light.foldout = foldout;
+#if UDONSHARP
         #pragma warning disable 0618 //suppressing obsoletion warnings
         light.ApplyProxyModifications();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
         if(PrefabUtility.IsPartOfAnyPrefab(light))
         {
             PrefabUtility.RecordPrefabInstancePropertyModifications(light);
@@ -547,9 +572,11 @@ public class AudioLinkListItem
         //var soTarget = new SerializedObject(light.targetToFollow.gameObject);
 
     
+#if UDONSHARP
         #pragma warning disable 0618 //suppressing obsoletion warnings
         laser.UpdateProxy();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
         laser.EnableAudioLink = Z_enableAudioLink = P_enableAudioLink;
         laser.Band = Z_band = P_band;
         laser.Delay = Z_delay = P_delay;
@@ -573,9 +600,11 @@ public class AudioLinkListItem
         laser.LaserScroll = Z_laserScroll = P_laserScroll;
         laser.LaserThickness = Z_laserThickness = P_laserThickness;
         laser.foldout = foldout;
+#if UDONSHARP
         #pragma warning disable 0618 //suppressing obsoletion warnings
         laser.ApplyProxyModifications();
         #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
 
         if(PrefabUtility.IsPartOfAnyPrefab(laser))
         {
@@ -922,9 +951,13 @@ public class VRSL_ManagerWindow : EditorWindow {
         colorLabel.text = "Emission Color";
         foreach (GameObject go in sceneObjects)
         {
-           #pragma warning disable 0618 //suppressing obsoletion warnings
-           panel =  go.GetUdonSharpComponent<VRSL_LocalUIControlPanel>();
-           #pragma warning restore 0618
+#if UDONSHARP
+            #pragma warning disable 0618 //suppressing obsoletion warnings
+            panel = go.GetUdonSharpComponent<VRSL_LocalUIControlPanel>();
+            #pragma warning restore 0618
+#else
+            panel = go.GetComponent<VRSL_LocalUIControlPanel>();
+#endif
            if(panel != null)
            {
                hasLocalPanel = true;
@@ -966,9 +999,13 @@ public class VRSL_ManagerWindow : EditorWindow {
             dmxLights.Clear();
             foreach(GameObject go in sceneObjects)
             {
+#if UDONSHARP
                 #pragma warning disable 0618 //suppressing obsoletion warnings
-                VRStageLighting_DMX_Static lightScript = go.GetUdonSharpComponent<VRStageLighting_DMX_Static>();
+                var lightScript = go.GetUdonSharpComponent<VRStageLighting_DMX_Static>();
                 #pragma warning restore 0618 //suppressing obsoletion warnings
+#else
+                var lightScript = go.GetComponent<VRStageLighting_DMX_Static>();
+#endif
                 if(lightScript != null)
                 {
                     dmxLights.Add(
@@ -1012,9 +1049,13 @@ public class VRSL_ManagerWindow : EditorWindow {
             audioLinkLights.Clear();
             foreach(GameObject go in sceneObjects)
             {
+#if UDONSHARP
                 #pragma warning disable 0618 //suppressing obsoletion warnings
-                VRStageLighting_AudioLink_Static audioScript = go.GetUdonSharpComponent<VRStageLighting_AudioLink_Static>();
+                var audioScript = go.GetUdonSharpComponent<VRStageLighting_AudioLink_Static>();
                 #pragma warning restore 0618 //suppressing obsoletion warnings
+#else
+                var audioScript = go.GetComponent<VRStageLighting_AudioLink_Static>();
+#endif
                 if(audioScript != null)
                 {
                     audioLinkLights.Add(
@@ -1022,9 +1063,13 @@ public class VRSL_ManagerWindow : EditorWindow {
                     );
                     continue;
                 }
+#if UDONSHARP
                 #pragma warning disable 0618 //suppressing obsoletion warnings
-                VRStageLighting_AudioLink_Laser laserScript = go.GetUdonSharpComponent<VRStageLighting_AudioLink_Laser>();
+                var laserScript = go.GetUdonSharpComponent<VRStageLighting_AudioLink_Laser>();
                 #pragma warning restore 0618 //suppressing obsoletion warnings
+#else
+                var laserScript = go.GetComponent<VRStageLighting_AudioLink_Laser>();
+#endif
                 if(laserScript != null)
                 {
                     audioLinkLights.Add(
@@ -2548,11 +2593,18 @@ public class VRSL_ManagerWindow : EditorWindow {
             so.ApplyModifiedProperties();
             if((so.FindProperty("_requireDepthLight").boolValue != lastDepthLightRequirement) || (so.FindProperty("_volumetricNoise").boolValue != lastVolumetricNoiseToggle))
             {
+#if UDONSHARP
                 #pragma warning disable 0618 //suppressing obsoletion warnings
                 panel.UpdateProxy();
+                #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
                 panel.RequireDepthLight = so.FindProperty("_requireDepthLight").boolValue;
                 panel.VolumetricNoise = so.FindProperty("_volumetricNoise").boolValue;
+#if UDONSHARP
+                #pragma warning disable 0618 //suppressing obsoletion warnings
                 panel.ApplyProxyModifications();
+                #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
                 #pragma warning restore 0618 //suppressing obsoletion warnings
                 lastDepthLightRequirement = panel.RequireDepthLight;
                 lastVolumetricNoiseToggle = panel.VolumetricNoise;
@@ -2617,15 +2669,19 @@ public class VRSL_ManagerWindow : EditorWindow {
             string o = mainOptionsFoldout ? "Hide Options" : "Show Options";
             mainOptionsFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(mainOptionsFoldout,Label(o, "Show/Hide Global VRSL Settings and Prefab Spawners."));
             EditorGUILayout.EndFoldoutHeaderGroup();
+#if UDONSHARP
             #pragma warning disable 0618 //suppressing obsoletion warnings
             panel.UpdateProxy();
             #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
             panel.DMXMode = so.FindProperty("DMXMode").intValue;
             panel.fixtureGizmos = so.FindProperty("fixtureGizmos").intValue;
             panel.useExtendedUniverses = so.FindProperty("useExtendedUniverses").boolValue;
+#if UDONSHARP
             #pragma warning disable 0618 //suppressing obsoletion warnings
             panel.ApplyProxyModifications();
             #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
 
 
             if((panel.useExtendedUniverses != last9UniverseStatus) && (EditorApplication.isPlayingOrWillChangePlaymode == false))
@@ -2726,13 +2782,17 @@ public class VRSL_ManagerWindow : EditorWindow {
                 so.FindProperty("fixtureDefGUID").stringValue = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(fixDefAsset));
 
                 so.ApplyModifiedProperties();
+#if UDONSHARP
                 #pragma warning disable 0618 //suppressing obsoletion warnings
                 panel.UpdateProxy();
                 #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
                 panel.fixtureDefGUID = so.FindProperty("fixtureDefGUID").stringValue;
+#if UDONSHARP
                 #pragma warning disable 0618 //suppressing obsoletion warnings
                 panel.ApplyProxyModifications();
                 #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
                 EditorGUI.EndDisabledGroup();
                 EditorGUILayout.EndVertical();
 
@@ -3653,16 +3713,20 @@ public class VRSL_ManagerWindow : EditorWindow {
 
                 //EditorGUILayout
                 soptr.ApplyModifiedProperties();
+#if UDONSHARP
                 #pragma warning disable 0618 //suppressing obsoletion warnings
                 panel.UpdateProxy();
                 #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
                 panel.panRangeTarget = soptr.FindProperty("panRangeTarget").floatValue;
                 panel.tiltRangeTarget = soptr.FindProperty("tiltRangeTarget").floatValue;
                 panel.useLegacyStaticLights = soptr.FindProperty("useLegacyStaticLights").boolValue;
                 panel.videoSampleTargetTexture = (Texture)soptr.FindProperty("videoSampleTargetTexture").objectReferenceValue;
+#if UDONSHARP
                 #pragma warning disable 0618 //suppressing obsoletion warnings
                 panel.ApplyProxyModifications(); 
                 #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
                 
             }
             GuiLine();
@@ -3731,14 +3795,18 @@ public class VRSL_ManagerWindow : EditorWindow {
 
 
             so.ApplyModifiedProperties();
+#if UDONSHARP
             #pragma warning disable 0618 //suppressing obsoletion warnings
             panel.UpdateProxy();
             #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
             panel.isUsingDMX = so.FindProperty("isUsingDMX").boolValue;
             panel.isUsingAudioLink = so.FindProperty("isUsingAudioLink").boolValue;
+#if UDONSHARP
             #pragma warning disable 0618 //suppressing obsoletion warnings
             panel.ApplyProxyModifications();
             #pragma warning restore 0618 //suppressing obsoletion warnings
+#endif
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             float sectionWidth = position.width /2;

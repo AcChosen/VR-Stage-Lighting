@@ -1,24 +1,26 @@
 ﻿
-using UdonSharp;
 using UnityEngine;
+#if UDONSHARP
+using UdonSharp;
 using VRC.SDKBase;
 using VRC.Udon;
+using static VRC.SDKBase.VRCShader;
+#else
+using static UnityEngine.Shader;
+using UnityEngine.Rendering;
+#endif
 
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
 using UnityEditor;
-using UdonSharpEditor;
-using System.Collections.Immutable;
 using System.Collections.Generic;
 using System;
 using System.IO;
-#endif
 
 #if UDONSHARP
-using static VRC.SDKBase.VRCShader;
-#else
-    using static UnityEngine.Shader;
-    using UnityEngine.Rendering;
+using UdonSharpEditor;
 #endif
+#endif
+
 namespace VRSL
 {    
     public enum VolumetricQualityModes
@@ -33,11 +35,12 @@ namespace VRSL
         Low
     }
 
+#if UDONSHARP
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-
-
-
     public class VRSL_LocalUIControlPanel : UdonSharpBehaviour
+#else
+    public class VRSL_LocalUIControlPanel : MonoBehaviour
+#endif
     {
         [SerializeField, HideInInspector]
         private VRStageLighting_AudioLink_Laser[] audioLinkLasers;
@@ -155,11 +158,10 @@ namespace VRSL
         [HideInInspector]
         public string fixtureSaveFile = "NONE";
 
-
         [HideInInspector]
         public bool useDMXGI = false;
 
-        [FieldChangeCallback(nameof(VolumetricNoise)), SerializeField]
+        [SerializeField, FieldChangeCallback(nameof(VolumetricNoise))]
         private bool _volumetricNoise = true;
         int _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridSpinTimer, _Udon_DMXGridStrobeTimer, _Udon_DMXGridStrobeOutput;
 
@@ -173,7 +175,7 @@ namespace VRSL
             get => _volumetricNoise;
         }
 
-        [FieldChangeCallback(nameof(RequireDepthLight)), SerializeField]
+        [SerializeField, FieldChangeCallback(nameof(RequireDepthLight))]
         private bool _requireDepthLight = true;
 
         public bool RequireDepthLight
@@ -187,7 +189,7 @@ namespace VRSL
             get => _requireDepthLight;
         }
 
-        [FieldChangeCallback(nameof(GlobalDisableStrobe)), SerializeField]
+        [SerializeField, FieldChangeCallback(nameof(GlobalDisableStrobe))]
         private bool _globalDisableStrobe = false;
 
         public bool GlobalDisableStrobe
@@ -302,7 +304,7 @@ namespace VRSL
                 defaultColorBlock = volumetricHighButton.colors;
                 cbOn = defaultColorBlock;
                 cbOn.normalColor = new Color(cbOn.normalColor.r + 0.35f, cbOn.normalColor.r + 0.35f, cbOn.normalColor.g + 0.35f, 1.0f);
-                }
+            }
             if(bloomAnimator == null)
             {
                 GameObject anim = GameObject.Find("PostProcessingExample-Bloom");
@@ -1399,8 +1401,9 @@ namespace VRSL
         }
         public override void OnInspectorGUI()
         {
+#if UDONSHARP
             if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
-
+#endif
             EditorGUI.BeginChangeCheck();
             serializedObject.Update();
             DrawLogo();
