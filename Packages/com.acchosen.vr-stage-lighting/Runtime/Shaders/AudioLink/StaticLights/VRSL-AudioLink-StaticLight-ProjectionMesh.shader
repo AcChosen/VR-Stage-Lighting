@@ -5,9 +5,7 @@
 	{
 		
 		//[Header (INSTANCED PROPERITES)]
-		 [Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Source Blend mode", Float) = 2
 		 //[Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Destination Blend mode", Float) = 1
-		 [Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
 		// _BlockLengthX("OSC Block Base Distance X", Float) = 0.019231
 		// _BlockLengthY("OSC Block Base Distance Y", Float) = 0
 
@@ -103,6 +101,7 @@
 		[Enum(Transparent,1,AlphaToCoverage,2)] _RenderMode ("Render Mode", Int) = 1
         [Enum(Off,0,On,1)] _ZWrite ("Z Write", Int) = 0
 		[Enum(Off,0,On,1)] _AlphaToCoverage ("Alpha To Coverage", Int) = 0
+        [Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Source Blend mode", Float) = 2
         [Enum(Off,0,One,1)] _BlendDst ("Destination Blend mode", Float) = 1
 		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp ("Blend Operation", Float) = 0
         _ClippingThreshold ("Clipping Threshold", Range (0,1)) = 0.5
@@ -111,10 +110,159 @@
 
 		[Enum(Off,0,On,1)] _MultiSampleDepth ("Multi Sample Depth", Int) = 1
 
-
-
-
 	}
+    SubShader
+    {
+        Tags
+        {
+            "Queue" = "Transparent+1" "IgnoreProjector"="True" "RenderType" = "Transparent" "RenderingPipeline" = "UniversalPipeline"
+        }
+        Pass
+        {
+
+            Tags
+            {
+                "ForceNoShadowCasting"="True" "IgnoreProjector"="True" "LightMode" = "UniversalForward"
+            }
+            Cull Front
+            Ztest GEqual
+            ZWrite Off
+            Blend [_BlendSrc] [_BlendDst]
+            BlendOp [_BlendOp]
+            Lighting Off
+            //SeparateSpecular Off
+
+            Stencil
+            {
+                Ref 142
+                Comp NotEqual
+            }
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_fog
+            #pragma multi_compile_instancing
+            #pragma multi_compile_local _ _ALPHATEST_ON
+            #pragma shader_feature_local _MULTISAMPLEDEPTH
+            #define PROJECTION_YES
+            #define VRSL_AUDIOLINK
+
+            #include "UnityCG.cginc"
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+                float3 texcoord : TEXCOORD1;
+                float4 color : COLOR;
+                float3 normal : TEXCOORD3;
+                float3 tangent : TANGENT;
+                float4 projectionorigin : TEXCOORD2;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            struct v2f
+            {
+                float4 pos : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                float3 ray : TEXCOORD2;
+                float4 screenPos : TEXCOORD4;
+                float4 color : COLOR;
+                float3 normal : TEXCOORD3;
+                float4 projectionorigin : TEXCOORD5;
+                float4 worldDirection : TEXCOORD6;
+                float4 worldPos : TEXCOORD7;
+                float4 emissionColor : TEXCOORD8;
+                float3 audioGlobalFinalIntensity: TEXCOORD1;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            #include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-Defines.cginc"
+            #include "../Shared/VRSL-AudioLink-Functions.cginc"
+            #include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/StaticLights/VRSL-StaticLight-ProjectionFrag.cginc"
+
+            #define IF(a, b, c) lerp(b, c, step((fixed) (a), 0));
+
+            float4 CalculateProjectionScaleRange(appdata v, float4 input, float scalar)
+            {
+                float4 oldinput = input;
+                float4x4 scaleMatrix = float4x4(scalar, 0, 0, 0,
+                                               0, scalar, 0, 0,
+                                               0, 0, scalar, 0,
+                                               0, 0, 0, 1.0);
+                float4 newOrigin = input.w * _ProjectionRangeOrigin;
+                input.xyz = input.xyz - newOrigin;
+                //Do stretch
+                float4 newProjectionScale = mul(scaleMatrix, input);
+                input.xyz = newProjectionScale;
+                input.xyz = input.xyz + newOrigin;
+                input.xyz = IF(v.color.g != 0, input.xyz, oldinput);
+                return input;
+            }
+
+            inline float4 CalculateFrustumCorrection()
+            {
+                float x1 = -UNITY_MATRIX_P._31 / (UNITY_MATRIX_P._11 * UNITY_MATRIX_P._34);
+                float x2 = -UNITY_MATRIX_P._32 / (UNITY_MATRIX_P._22 * UNITY_MATRIX_P._34);
+                return float4(
+                    x1, x2, 0,
+                    UNITY_MATRIX_P._33 / UNITY_MATRIX_P._34 + x1 * UNITY_MATRIX_P._13 + x2 * UNITY_MATRIX_P._23);
+            }
+
+            //VERTEX SHADER
+            v2f vert(appdata v)
+            {
+                v2f o;
+                UNITY_INITIALIZE_OUTPUT(v2f, o);
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+                UNITY_TRANSFER_INSTANCE_ID(v, o);
+                o.audioGlobalFinalIntensity.x = GetAudioReactAmplitude();
+                o.audioGlobalFinalIntensity.y = getGlobalIntensity();
+                o.audioGlobalFinalIntensity.z = getFinalIntensity();
+                o.emissionColor = getEmissionColor();
+                v.vertex = CalculateProjectionScaleRange(v, v.vertex, _ProjectionRange);
+                o.projectionorigin = CalculateProjectionScaleRange(v, _ProjectionRangeOrigin, _ProjectionRange);
+                //move verts to clip space
+                o.pos = UnityObjectToClipPos(v.vertex);
+
+                //get screen space position of verts
+                o.screenPos = ComputeScreenPos(o.pos);
+                //Putting in the vertex position before the transformation seems to somewhat move the projection correctly, but is still incorrect...?
+                o.ray = UnityObjectToViewPos(v.vertex).xyz;
+                //invert z axis so that it projects from camera properly
+                o.ray *= float3(1, 1, -1);
+                //saving vertex color incase needing to perform rotation calculation in fragment shader
+                o.color = v.color;
+                o.worldPos = mul(unity_ObjectToWorld, v.vertex);
+                //For Mirror Depth Correction
+                o.worldDirection.xyz = o.worldPos.xyz - _WorldSpaceCameraPos;
+                // pack correction factor into direction w component to save space
+                o.worldDirection.w = dot(o.pos, CalculateFrustumCorrection());
+                if (o.audioGlobalFinalIntensity.x <= 0.005 || o.audioGlobalFinalIntensity.y <= 0.005 || o.
+                    audioGlobalFinalIntensity.z <= 0.005 ||
+                    all(o.emissionColor.xyz <= float4(0.005, 0.005, 0.005, 1.0)))
+                {
+                    v.vertex = float4(0, 0, 0, 0);
+                    o.pos = UnityObjectToClipPos(v.vertex);
+                }
+                return o;
+            }
+
+            fixed4 frag(v2f i) : SV_Target
+            {
+                //UNITY_SETUP_INSTANCE_ID(i);
+                return ProjectionFrag(i);
+            }
+            ENDCG
+
+        }
+
+        // Used for handling Depth Buffer (DBuffer) and Depth Priming
+        UsePass "Universal Render Pipeline/Lit/DepthOnly"
+        UsePass "Universal Render Pipeline/Lit/DepthNormals"
+    }
 		SubShader
 	{
 		//UNITY_REQUIRE_ADVANDED_BLEND(all_equations)

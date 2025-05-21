@@ -142,6 +142,96 @@
 		//[KeywordEnum(None, UseDNTexture)] _DNEnabler ("Enable Depth Normal Texture", Float) = 0
 
 	}
+    SubShader
+    {
+
+        Tags
+        {
+            "Queue" = "Transparent+2" "IgnoreProjector"="True" "RenderType" = "Transparent""RenderingPipeline" = "UniversalPipeline"
+        }
+        //Volumetric Pass
+
+        Pass
+        {
+            AlphaToMask [_AlphaToCoverage]
+            Blend One [_BlendDst]
+            Cull Off
+            ZWrite Off
+            Lighting Off
+            Tags
+            {
+                "LightMode" = "UniversalForward"
+            }
+            Stencil
+            {
+                Ref 142
+                Comp NotEqual
+                Pass Keep
+            }
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            //#pragma multi_compile_fog
+            #pragma multi_compile_instancing
+            #pragma instancing_options assumeuniformscaling
+            #pragma multi_compile_local _ _MAGIC_NOISE_ON_HIGH
+            #pragma multi_compile_local _ _MAGIC_NOISE_ON_MED
+            #pragma multi_compile_local _ _USE_DEPTH_LIGHT
+            #pragma multi_compile_local _ _POTATO_MODE_ON
+            #pragma multi_compile_local _ _HQ_MODE
+            #pragma multi_compile_local _ _2D_NOISE_ON
+            #pragma multi_compile_local _ _ALPHATEST_ON
+            #define VOLUMETRIC_YES //To identify the pass in the vert/frag
+            #define VRSL_DMX
+
+            #include "UnityCG.cginc"
+            #include "../Shared/VRSL-Defines.cginc" //Property Defines are here
+            #include "../Shared/VRSL-DMXFunctions.cginc" //Custom Functions
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+                float4 color : COLOR;
+                float3 normal : NORMAL;
+                float3 tangent : TANGENT;
+                float2 uv2 : TEXCOORD3;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            struct v2f
+            {
+                centroid float2 uv : TEXCOORD0;
+                float blindingEffect : TEXCOORD1;
+                float4 worldPos : TEXCOORD2;
+                float3 currentForward : TEXCOORD3;
+                float2 camAngleCamfade : TEXCOORD5;
+                float4 screenPos : TEXCOORD6;
+                float4 pos : SV_POSITION;
+                //float3 objPos : TEXCOORD7;
+                centroid float3 objNormal : TEXCOORD8;
+                float2 stripeInfo : TEXCOORD9;
+                float coneWidth : TEXCOORD10;
+                //float2 uvClone : TEXCOORD10;
+                //float3 norm : TEXCOORD11;
+                float2 uv2 : TEXCOORD13;
+                float4 worldDirection : TEXCOORD14;
+                float4 intensityStrobeGOBOSpinSpeed : TEXCOORD15;
+                float4 rgbColor : TEXCOORD16;
+
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            #include "VRSL-StandardMover-VolumetricFrag.cginc" //Fragment Shader is here
+            #include "VRSL-StandardMover-Vertex.cginc" //Vertex Shader is here
+            ENDCG
+        }
+        // Used for handling Depth Buffer (DBuffer) and Depth Priming
+        UsePass "Universal Render Pipeline/Lit/DepthOnly"
+        UsePass "Universal Render Pipeline/Lit/DepthNormals"
+    }
+
 		SubShader
 	{
 		
