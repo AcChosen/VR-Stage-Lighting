@@ -1,3 +1,4 @@
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using System;
@@ -6,7 +7,7 @@ using UnityEngine.Rendering;
 
 namespace VRSL.Shaders
 {
-// Create a custom shader GUI that switches between Standard and URP Lit inspector
+    // Create a custom shader GUI that switches between Standard and URP Lit inspector
     public class VRSLStandardInspector : ShaderGUI
     {
         // References to keep track of our reflected editor instances
@@ -92,3 +93,4 @@ namespace VRSL.Shaders
         }
     }
 }
+#endif

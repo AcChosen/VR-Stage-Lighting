@@ -1,3 +1,4 @@
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
@@ -49,3 +50,4 @@ public static class VRSLPipelineDetector
         return System.IO.Directory.Exists(packagePath);
     }
 }
+#endif
