@@ -782,7 +782,7 @@ namespace VRSL
                 case 2:
                     if(objRenderers[0])
                         objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
-                    if(objRenderers[0])
+                    if(objRenderers[1])
                         objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
                     break;
                 case 3:
