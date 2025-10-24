@@ -1,30 +1,41 @@
-﻿
-using UdonSharp;
-using UnityEngine;
-using VRC.SDKBase;
-using VRC.Udon;
+﻿using UnityEngine;
 //using UnityEngine.UI;
 
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
+#if UDONSHARP
+using UdonSharp;
+using VRC.SDKBase;
+using VRC.Udon;
+#endif
+
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
 using UnityEditor;
+
+#if UDONSHARP
 using UdonSharpEditor;
-//using VRC.Udon;
 using VRC.Udon.Common;
 using VRC.Udon.Common.Interfaces;
-using System.Collections.Immutable;
+#endif
+
 #endif
 namespace VRSL
 {
+#if UDONSHARP
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class VRStageLighting_AudioLink_Laser : UdonSharpBehaviour
+#else
+    public class VRStageLighting_AudioLink_Laser : MonoBehaviour
+#endif
     {
 
         //////////////////Public Variables////////////////////
 
         [Header("Audio Link Settings")]
-        [Tooltip("Enable or disable Audio Link Reaction for this fixture.")]
-        [FieldChangeCallback(nameof(EnableAudioLink))]
-        [SerializeField]
+        [SerializeField,
+         Tooltip("Enable or disable Audio Link Reaction for this fixture.")
+#if UDONSHARP
+        ,FieldChangeCallback(nameof(EnableAudioLink))
+#endif
+        ]
         private bool enableAudioLink;
 
 
@@ -32,145 +43,186 @@ namespace VRSL
         //public AudioLink audioLink;
 
 
-        [Tooltip("The frequency band of the spectrum to react to.")]
-        [FieldChangeCallback(nameof(Band))]
-        [SerializeField]
+        [SerializeField,
+         Tooltip("The frequency band of the spectrum to react to.")
+#if UDONSHARP
+        ,FieldChangeCallback(nameof(Band))
+#endif
+        ]
         private AudioLinkBandState band;
 
 
-        [Range(0, 31)]
-        [Tooltip("The level of delay to add to the reaction.")]
-        [FieldChangeCallback(nameof(Delay))]
-        [SerializeField]
+        [SerializeField, Range(0, 31),
+         Tooltip("The level of delay to add to the reaction.")
+#if UDONSHARP
+        ,FieldChangeCallback(nameof(Delay))
+#endif
+        ]
         private int delay;
 
 
-        [Tooltip("Multiplier for the sensativity of the reaction.")]
-        [Range(1.0f, 15.0f)]
-        [FieldChangeCallback(nameof(BandMultiplier))]
-        [SerializeField]
+        [SerializeField, Range(1.0f, 15.0f),
+         Tooltip("Multiplier for the sensativity of the reaction.")
+#if UDONSHARP
+        ,FieldChangeCallback(nameof(BandMultiplier))
+#endif
+        ]
         private float bandMultiplier = 1.0f;
 
 
-        [Tooltip ("Enable Color Chord tinting of the light emission.")]
-        [FieldChangeCallback(nameof(ColorChord))]
-        [SerializeField]
+        [SerializeField,
+         Tooltip("Enable Color Chord tinting of the light emission.")
+#if UDONSHARP
+        ,FieldChangeCallback(nameof(ColorChord))
+#endif
+        ]
         private bool enableColorChord;
 
         [Header("General Settings")]
-        [Range(0,1)]
-        [Tooltip ("Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity.")]
-        [FieldChangeCallback(nameof(GlobalIntensity))]
-        [SerializeField]
+        [SerializeField, Range(0, 1),
+         Tooltip("Sets the overall intensity of the shader. Good for animating or scripting effects related to intensity. Its max value is controlled by Final Intensity.")
+#if UDONSHARP
+        ,FieldChangeCallback(nameof(GlobalIntensity))
+#endif
+        ]
         private float globalIntensity = 1; 
 
-
-        [Range(0,1)]
-        [Tooltip ("Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI.")]
-        [FieldChangeCallback(nameof(FinalIntensity))]
-        [SerializeField]
+        [SerializeField, Range(0, 1),
+         Tooltip("Sets the maximum brightness value of Global Intensity. Good for personalized settings of the max brightness of the shader by other users via UI.")
+#if UDONSHARP
+        ,FieldChangeCallback(nameof(FinalIntensity))
+#endif
+        ]
         private float finalIntensity = 1;
 
 
-        [Tooltip ("The main color of the light.")]
-        [ColorUsage(false,false)]
-        [FieldChangeCallback(nameof(LightColorTint))]
-        [SerializeField]
+        [SerializeField, ColorUsage(false, false),
+         Tooltip("The main color of the light.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(LightColorTint))
+#endif
+        ]
         private Color lightColorTint = Color.white * 2.0f;
 
 
-        [Tooltip ("Check this box if you wish to sample seperate texture for the color. The color will be influenced by the intensity of the original emission color! The texture is set in the shader itself.")]
-        [FieldChangeCallback(nameof(ColorTextureSampling))]
-        [SerializeField]
+        [SerializeField,
+         Tooltip("Check this box if you wish to sample separate texture for the color. The color will be influenced by the intensity of the original emission color! The texture is set in the shader itself.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(ColorTextureSampling))
+#endif
+        ]
         private bool enableColorTextureSampling;
 
-        [Tooltip ("Check this box if you wish to use traditional color sampling instead of white to black conversion")]
-        [FieldChangeCallback(nameof(TraditionalColorTextureSampling))]
-        [SerializeField]
+        [SerializeField,
+         Tooltip("Check this box if you wish to use traditional color sampling instead of white to black conversion")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(TraditionalColorTextureSampling))
+#endif
+        ]
         private bool traditionalColorTextureSampling;
 
-        [Tooltip ("The UV coordinates to sample the color from on the texture.")]
-        [FieldChangeCallback(nameof(TextureSamplingCoordinates))]
-        [SerializeField]
+        [SerializeField,
+         Tooltip("The UV coordinates to sample the color from on the texture.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(TextureSamplingCoordinates))
+#endif
+        ]
         private Vector2 textureSamplingCoordinates = new Vector2(0.5f, 0.5f);
 
         
-        [Tooltip ("Check this box if you wish to enable AudioLink Theme colors.")]
-        [FieldChangeCallback(nameof(ThemeColorSampling))]
-        [SerializeField]
+        [SerializeField,
+         Tooltip("Check this box if you wish to enable AudioLink Theme colors.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(ThemeColorSampling))
+#endif
+        ]
         private bool enableThemeColorSampling;
 
 
-        [Range(1, 4)]
-        [Tooltip ("Theme Color to Sample from.")]
-        [FieldChangeCallback(nameof(ThemeColorTarget))]
-        [SerializeField]
+        [SerializeField, Range(1, 4),
+         Tooltip("Theme Color to Sample from.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(ThemeColorTarget))
+#endif
+        ]
         private int themeColorTarget = 1;
 
-        [Tooltip ("Controls the radius of the laser cone.")]
-        [Range(-3.75f, 20.0f)]
-        [FieldChangeCallback(nameof(ConeWidth))]
-        [SerializeField]
+        [SerializeField, Range(-3.75f, 20.0f),
+         Tooltip("Controls the radius of the laser cone.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(ConeWidth))
+#endif
+        ]
         private float coneWidth = 2.5f;
 
-        [Range(-0.5f,5.0f)]
-        [Tooltip ("Controls the length of the laser cone")]
-        [FieldChangeCallback(nameof(ConeLength))]
-        [SerializeField]
+        [SerializeField, Range(-0.5f, 5.0f),
+         Tooltip("Controls the length of the laser cone")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(ConeLength))
+#endif
+        ]
         private float coneLength = 8.5f; 
 
-        [Range(0.0f,1.999f)]
-        [Tooltip ("Controls how flat or round the cone is.")]
-        [FieldChangeCallback(nameof(ConeFlatness))]
-        [SerializeField]
+        [SerializeField, Range(0.0f, 1.999f),
+         Tooltip("Controls how flat or round the cone is.")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(ConeFlatness))
+#endif
+        ]
         private float coneFlatness = 0.0f;
 
-        [Range(-90.0f,90.0f)]
-        [Tooltip ("X rotation coffset for cone")]
-        [FieldChangeCallback(nameof(ConeXRotation))]
-        [SerializeField]
+        [SerializeField, Range(-90.0f, 90.0f),
+         Tooltip("X rotation coffset for cone")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(ConeXRotation))
+#endif
+        ]
         private float coneXRotation = 0.0f; 
 
-        [Range(-90.0f,90.0f)]
-        [Tooltip ("Y rotation offset for cone")]
-        [FieldChangeCallback(nameof(ConeYRotation))]
-        [SerializeField]
+        [SerializeField, Range(-90.0f, 90.0f),
+         Tooltip("Y rotation offset for cone")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(ConeYRotation))
+#endif
+        ]
         private float coneYRotation = 0.0f;
 
-        [Range(-90.0f,90.0f)]
-        [Tooltip ("Z rotation offset for cone")]
-        [FieldChangeCallback(nameof(ConeZRotation))]
-        [SerializeField]
+        [SerializeField, Range(-90.0f, 90.0f),
+         Tooltip("Z rotation offset for cone")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(ConeZRotation))
+#endif
+        ]
         private float coneZRotation = 0.0f;  
 
-        [Range(4.0f,68f)]
-        [Tooltip ("Number of laser beams in cone")]
-        [FieldChangeCallback(nameof(LaserCount))]
-        [SerializeField]
+        [SerializeField, Range(4.0f, 68f),
+         Tooltip("Number of laser beams in cone")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(LaserCount))
+#endif
+        ]
         private int laserCount = 14;  
 
-        [Range(0.003f,0.25f)]
-        [Tooltip ("Controls how thick/thin the lasers are")]
-        [FieldChangeCallback(nameof(LaserThickness))]
-        [SerializeField]
+        [SerializeField, Range(0.003f, 0.25f),
+         Tooltip("Controls how thick/thin the lasers are")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(LaserThickness))
+#endif
+        ]
         private float laserThickness = 0.125f; 
 
-        [Range(-1.0f,1.0f)]
-        [Tooltip ("Controls the speed of laser scroll animation. Negative goes left, positive goes right, 0 means no scroll")]
-        [FieldChangeCallback(nameof(LaserScroll))]
-        [SerializeField]
+        [SerializeField, Range(-1.0f, 1.0f),
+         Tooltip("Controls the speed of laser scroll animation. Negative goes left, positive goes right, 0 means no scroll")
+#if UDONSHARP
+            ,FieldChangeCallback(nameof(LaserScroll))
+#endif
+        ]
         private float laserScroll = 0.0f; 
-
-
-    
-
 
 
         [Header("Mesh Settings")]
         [Tooltip ("The meshes used to make up the light. You need atleast 1 mesh in this group for the script to work properly.")]
         public MeshRenderer[] objRenderers;
-
-
 
 
         private float previousConeWidth, previousConeLength, previousGlobalIntensity, previousFinalIntensity, previousConeFlatness, previousConeXRotation, previousConeYRotation, previousConeZRotation, previousLaserThickness, previousLaserScroll;
@@ -539,7 +591,7 @@ namespace VRSL
                 case 2:
                     if(objRenderers[0])
                         objRenderers[0].SetPropertyBlock(props);
-                    if(objRenderers[0])
+                    if(objRenderers[1])
                         objRenderers[1].SetPropertyBlock(props);
                     break;
                 case 3:
@@ -629,7 +681,7 @@ namespace VRSL
                 case 2:
                     if(objRenderers[0])
                         objRenderers[0].SetPropertyBlock(props);
-                    if(objRenderers[0])
+                    if(objRenderers[1])
                         objRenderers[1].SetPropertyBlock(props);
                     break;
                 case 3:

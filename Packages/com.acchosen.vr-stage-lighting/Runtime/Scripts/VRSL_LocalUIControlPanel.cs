@@ -1,24 +1,26 @@
 ﻿
-using UdonSharp;
 using UnityEngine;
+#if UDONSHARP
+using UdonSharp;
 using VRC.SDKBase;
 using VRC.Udon;
+using static VRC.SDKBase.VRCShader;
+#else
+using static UnityEngine.Shader;
+using UnityEngine.Rendering;
+#endif
 
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
 using UnityEditor;
-using UdonSharpEditor;
-using System.Collections.Immutable;
 using System.Collections.Generic;
 using System;
 using System.IO;
-#endif
 
 #if UDONSHARP
-using static VRC.SDKBase.VRCShader;
-#else
-    using static UnityEngine.Shader;
-    using UnityEngine.Rendering;
+using UdonSharpEditor;
 #endif
+#endif
+
 namespace VRSL
 {    
     public enum VolumetricQualityModes
@@ -33,11 +35,12 @@ namespace VRSL
         Low
     }
 
+#if UDONSHARP
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-
-
-
     public class VRSL_LocalUIControlPanel : UdonSharpBehaviour
+#else
+    public class VRSL_LocalUIControlPanel : MonoBehaviour
+#endif
     {
         [SerializeField, HideInInspector]
         private VRStageLighting_AudioLink_Laser[] audioLinkLasers;
@@ -155,29 +158,44 @@ namespace VRSL
         [HideInInspector]
         public string fixtureSaveFile = "NONE";
 
-
         [HideInInspector]
         public bool useDMXGI = false;
 
-        [FieldChangeCallback(nameof(VolumetricNoise)), SerializeField]
+        [SerializeField, FieldChangeCallback(nameof(VolumetricNoise))]
         private bool _volumetricNoise = true;
         int _Udon_DMXGridRenderTexture, _Udon_DMXGridRenderTextureMovement, _Udon_DMXGridSpinTimer, _Udon_DMXGridStrobeTimer, _Udon_DMXGridStrobeOutput;
 
         public bool VolumetricNoise
         {
+#if UNITY_ANDROID
+            set {
+                _volumetricNoise = false;
+                _CheckDepthLightStatus();
+            }
+            get => false;
+#else
             set
             {
                 _volumetricNoise = value;
                 _CheckDepthLightStatus();
             }
             get => _volumetricNoise;
+#endif
         }
 
-        [FieldChangeCallback(nameof(RequireDepthLight)), SerializeField]
+        [SerializeField, FieldChangeCallback(nameof(RequireDepthLight))]
         private bool _requireDepthLight = true;
 
         public bool RequireDepthLight
         {
+#if UNITY_ANDROID
+            set {
+                _requireDepthLight = false;
+                _CheckDepthLightStatus();
+                _DepthLightStatusReport();
+            }
+            get => false;
+#else
             set
             {
                 _requireDepthLight = value;
@@ -185,9 +203,10 @@ namespace VRSL
                 _DepthLightStatusReport();
             }
             get => _requireDepthLight;
+#endif
         }
 
-        [FieldChangeCallback(nameof(GlobalDisableStrobe)), SerializeField]
+        [SerializeField, FieldChangeCallback(nameof(GlobalDisableStrobe))]
         private bool _globalDisableStrobe = false;
 
         public bool GlobalDisableStrobe
@@ -302,7 +321,7 @@ namespace VRSL
                 defaultColorBlock = volumetricHighButton.colors;
                 cbOn = defaultColorBlock;
                 cbOn.normalColor = new Color(cbOn.normalColor.r + 0.35f, cbOn.normalColor.r + 0.35f, cbOn.normalColor.g + 0.35f, 1.0f);
-                }
+            }
             if(bloomAnimator == null)
             {
                 GameObject anim = GameObject.Find("PostProcessingExample-Bloom");
@@ -628,8 +647,8 @@ namespace VRSL
 
             foreach(Material mat in volumetricMaterials)
             {
-                mat.SetInt("_PotatoMode", _volumetricNoise ? 0 : 1);
-                mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
+                mat.SetInt("_PotatoMode", VolumetricNoise ? 0 : 1);
+                mat.SetInt("_UseDepthLight", RequireDepthLight ? 1 : 0);
                 if(mat.HasProperty("_UseDepthLight")){
                 SetKeyword(mat, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(mat.GetInt("_UseDepthLight"))) == 1 ? true : false);}
                 if(mat.HasProperty("_MAGIC_NOISE_ON_MED")){
@@ -641,7 +660,7 @@ namespace VRSL
             }
             foreach(Material mat in projectionMaterials)
             {
-                mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
+                mat.SetInt("_UseDepthLight", RequireDepthLight ? 1 : 0);
             }
             if(fixtureMaterials != null)
             {
@@ -649,7 +668,7 @@ namespace VRSL
                 {
                     if(mat != null)
                     {
-                        mat.SetInt("_UseDepthLight", _requireDepthLight ? 1 : 0);
+                        mat.SetInt("_UseDepthLight", RequireDepthLight ? 1 : 0);
                         if(mat.HasProperty("_UseDepthLight")){
                         SetKeyword(mat, "_USE_DEPTH_LIGHT", (Mathf.FloorToInt(mat.GetInt("_UseDepthLight"))) == 1 ? true : false);}
                     }
@@ -1399,8 +1418,9 @@ namespace VRSL
         }
         public override void OnInspectorGUI()
         {
+#if UDONSHARP
             if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
-
+#endif
             EditorGUI.BeginChangeCheck();
             serializedObject.Update();
             DrawLogo();

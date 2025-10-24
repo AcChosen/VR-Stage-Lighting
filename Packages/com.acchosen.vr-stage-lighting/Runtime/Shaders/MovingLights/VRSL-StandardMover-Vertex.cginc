@@ -354,7 +354,7 @@ v2f vert (appdata v)
 		v.vertex = CalculateProjectionScaleRange(v, v.vertex, _ProjectionRange);
 
 		#if defined(VOLUMETRIC_YES)
-			#ifdef _ALPHATEST_ON
+			#if defined(_ALPHATEST_ON) && !SHADER_API_GLES3
 				v.vertex = ConeScale(v, v.vertex, _MinimumBeamRadius-0.25);
 			#else
 				v.vertex = ConeScale(v, v.vertex, _MinimumBeamRadius);
@@ -374,7 +374,7 @@ v2f vert (appdata v)
 			float3 objCamPos = mul(unity_WorldToObject, float4(worldCam, 1)).xyz;
 			objCamPos = InvertVolumetricRotations(float4(objCamPos,1), oscPanValue, oscTiltValue).xyz;
 			
-			#ifdef _ALPHATEST_ON
+			#if defined(_ALPHATEST_ON) && !SHADER_API_GLES3
 				half len = length(objCamPos.xy);
 				len *= (_BlindingAngleMod);
 			#else
@@ -389,7 +389,7 @@ v2f vert (appdata v)
 			//o.blindingEffect = lerp(1, o.blindingEffect * 2.5, o.camAngleCamfade.x);
 		//	 #ifndef WASH
 				
-				#ifdef _ALPHATEST_ON
+				#if defined(_ALPHATEST_ON) && !SHADER_API_GLES3
 					o.blindingEffect = clamp(0.6/len,1.0,20.0);
 					half endBlind = 1.0;
 					o.blindingEffect = lerp(endBlind, o.blindingEffect, o.camAngleCamfade.x);
@@ -584,7 +584,7 @@ v2f vert (appdata v)
 		v.vertex = CalculateProjectionScaleRange(v, v.vertex, _ProjectionRange);
 
 		#if defined(VOLUMETRIC_YES)
-			#ifdef _ALPHATEST_ON
+			#if defined(_ALPHATEST_ON) && !SHADER_API_GLES3
 				v.vertex = ConeScale(v, v.vertex, _MinimumBeamRadius-0.25);
 			#else
 				v.vertex = ConeScale(v, v.vertex, _MinimumBeamRadius);

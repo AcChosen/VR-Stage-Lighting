@@ -111,9 +111,139 @@
 
 
 	}
+    SubShader
+    {
+        Tags
+        {
+            "Queue" = "AlphaTest+1" "RenderType" = "Opaque" "RenderingPipeline" = "UniversalPipeline"
+        }
+
+        Pass
+        {
+            Tags
+            {
+                "LightMode" = "UniversalForward"
+            }
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_fwdbase
+            #pragma multi_compile_instancing
+            #pragma shader_feature_local _LIGHTING_MODEL
+            //REMOVE THIS WHEN FINISHED DEBUGGING
+            //#pragma target 4.5
+
+            #define GEOMETRY
+            #define FIXTURE_EMIT
+            #define VRSL_AUDIOLINK
+            #ifndef UNITY_PASS_FORWARDBASE
+            #define UNITY_PASS_FORWARDBASE
+            #endif
+            //DEBUGGING BUFFER
+            RWStructuredBuffer<float> buffer : register(u1);
+            RWStructuredBuffer<float4> buffer4 : register(u2);
+
+            #include "UnityCG.cginc"
+            #include "Lighting.cginc"
+            #include "AutoLight.cginc"
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+                float2 uv1 : TEXCOORD1;
+                float2 uv2 : TEXCOORD2;
+                float3 normal : NORMAL;
+                float3 tangent : TANGENT;
+                float4 color : COLOR;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            struct v2f
+            {
+                float4 pos : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                float2 uv1 : TEXCOORD1;
+                float2 uv2 : TEXCOORD2;
+                float3 btn[3] : TEXCOORD3; //TEXCOORD2, TEXCOORD3 | bitangent, tangent, worldNormal
+                float3 worldPos : TEXCOORD6;
+                #ifdef _LIGHTING_MODEL
+			        UNITY_LIGHTING_COORDS(7,8)
+			        float4 eyeVec : TEXCOORD12;
+			        half4 ambientOrLightmapUV : TEXCOORD13;
+                #else
+                float3 objPos : TEXCOORD7;
+                float3 objNormal : TEXCOORD8;
+                SHADOW_COORDS(11)
+                #endif
+                float4 color : COLOR;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                //		SHADOW_COORDS(11)
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            //#include "../Shared/VRSL-AudioLink-Defines.cginc"
+            #include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-Defines.cginc"
+            #include "../Shared/VRSL-AudioLink-Functions.cginc"
+            #include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-LightingFunctions.cginc"
+            #include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/Shared/VRSL-StandardLighting.cginc"
+            #include "Packages/com.acchosen.vr-stage-lighting/Runtime/Shaders/MovingLights/VRSL-StandardMover-Vertex.cginc"
+            ENDCG
+        }
+
+        Pass
+        {
+            Tags
+            {
+                "LightMode"="ShadowCaster"
+            }
+
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_shadowcaster
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ LOD_FADE_CROSSFADE
+            #include "UnityCG.cginc"
+
+            struct v2f
+            {
+                V2F_SHADOW_CASTER;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            v2f vert(appdata_full v)
+            {
+                v2f o;
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_INITIALIZE_OUTPUT(v2f, o); //DON'T INITIALIZE OR IT WILL BREAK PROJECTION
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+                UNITY_TRANSFER_INSTANCE_ID(v, o);
+                o.pos = ComputeScreenPos(UnityObjectToClipPos(v.vertex));
+                TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+                return o;
+            }
+
+            float4 frag(v2f i) : SV_Target
+            {
+                #ifdef LOD_FADE_CROSSFADE
+                    float2 vpos = i.pos.xy / i.pos.w * _ScreenParams.xy;
+                    UnityApplyDitherCrossFade(vpos);
+                #endif
+
+                SHADOW_CASTER_FRAGMENT(i)
+            }
+            ENDCG
+        }
+
+        // Used for handling Depth Buffer (DBuffer) and Depth Priming
+        UsePass "Universal Render Pipeline/Lit/DepthOnly"
+        UsePass "Universal Render Pipeline/Lit/DepthNormals"
+
+    }
 		SubShader
 	{
-		
 		Tags{ "Queue" = "AlphaTest+1" "RenderType" = "Opaque" }
 
 		// Stencil

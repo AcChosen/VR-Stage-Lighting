@@ -145,6 +145,97 @@
 
 
 	}
+    SubShader
+    {
+        Tags
+        {
+            "Queue" = "Transparent+1" "IgnoreProjector"="True" "RenderType" = "Transparent" "RenderingPipeline" = "UniversalPipeline"
+        }
+
+        Pass
+        {
+            AlphaToMask [_AlphaToCoverage]
+            Cull Front
+            Ztest GEqual
+            ZWrite Off
+            Blend DstColor [_BlendDst]
+            BlendOp Add
+            Offset -1, -1
+            Lighting Off
+
+            Stencil
+            {
+                Ref 142
+                Comp NotEqual
+                Pass Keep
+            }
+            Tags
+            {
+                "LightMode" = "UniversalForward"
+            }
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_local _ _ALPHATEST_ON
+            #pragma shader_feature_local _MULTISAMPLEDEPTH
+            //#pragma multi_compile_fog
+            #pragma multi_compile_instancing
+            #pragma instancing_options assumeuniformscaling
+            //#pragma multi_compile _DNENABLER_NONE _DNENABLER_USEDNTEXTURE
+            #define PROJECTION_YES //To identify the pass in the vert/frag shaders
+            #define PROJECTION_MOVER
+            #define WASH
+            #define VRSL_DMX
+
+            #include "UnityCG.cginc"
+            #include "../Shared/VRSL-Defines.cginc" //Property Defines are here
+
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+                float3 texcoord : TEXCOORD1;
+                float4 color : COLOR;
+                float3 normal : NORMAL;
+                float3 tangent : TANGENT;
+                float4 projectionorigin : TEXCOORD2;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            struct v2f
+            {
+                float4 pos : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                float3 ray : TEXCOORD2;
+                float4 screenPos : TEXCOORD4;
+                float4 color : COLOR;
+                float3 normal : TEXCOORD3;
+                float2 dmx: TEXCOORD10;
+                float4 projectionorigin : TEXCOORD5;
+                float4 worldDirection : TEXCOORD6;
+                float4 worldPos : TEXCOORD7;
+                float3 viewDir : TEXCOORD8;
+                float3 intensityStrobeWidth : TEXCOORD9;
+                float4 goboPlusSpinPanTilt : TEXCOORD11;
+                float4 rgbColor : TEXCOORD12;
+                float4 emissionColor : TEXCOORD13;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            #include "../Shared/VRSL-DMXFunctions.cginc" //Custom Functions
+            #include "VRSL-StandardMover-ProjectionFrag.cginc" //Fragment Shader is here
+            #include "VRSL-StandardMover-Vertex.cginc" //Vertex Shader is here
+            ENDCG
+
+        }
+
+        // Used for handling Depth Buffer (DBuffer) and Depth Priming
+        UsePass "Universal Render Pipeline/Lit/DepthOnly"
+        UsePass "Universal Render Pipeline/Lit/DepthNormals"
+    }
+
 		SubShader
 	{
 		
