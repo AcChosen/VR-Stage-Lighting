@@ -263,8 +263,8 @@ Shader "VRSL/DMX CRTs/Interpolation"
 
                             half3 s = half3(
                                 lerp(DampComplex(previousFrame.r, currentFrame.r, smoothing.r, unity_DeltaTime.x, dmxSmoothness.r), currentFrame.r, dmxSmoothness.r * 0.1),
-                                                lerp(DampComplex(previousFrame.g, currentFrame.g, smoothing.g, unity_DeltaTime.x, dmxSmoothness.g), currentFrame.g, dmxSmoothness.g * 0.1),
-                                                    (DampComplex(previousFrame.b, currentFrame.b, smoothing.b, unity_DeltaTime.x, dmxSmoothness.b), currentFrame.b, dmxSmoothness.b * 0.1)
+                                lerp(DampComplex(previousFrame.g, currentFrame.g, smoothing.g, unity_DeltaTime.x, dmxSmoothness.g), currentFrame.g, dmxSmoothness.g * 0.1),
+                                lerp(DampComplex(previousFrame.b, currentFrame.b, smoothing.b, unity_DeltaTime.x, dmxSmoothness.b), currentFrame.b, dmxSmoothness.b * 0.1)
                                                     );
 
                         #endif

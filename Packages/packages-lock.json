@@ -6,20 +6,29 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.acchosen.vrsl-dmx-gi": {
+      "version": "file:com.acchosen.vrsl-dmx-gi",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.llealloo.audiolink": {
       "version": "file:com.llealloo.audiolink",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
     },
-    "com.unity.ai.navigation": {
-      "version": "1.1.5",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.modules.ai": "1.0.0"
-      },
-      "url": "https://packages.unity.com"
+    "com.texelsaur.common": {
+      "version": "file:com.texelsaur.common",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.texelsaur.video": {
+      "version": "file:com.texelsaur.video",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.unity.burst": {
       "version": "1.8.12",
@@ -206,8 +215,7 @@
         "com.unity.timeline": "1.7.6",
         "com.unity.xr.management": "4.3.3",
         "com.unity.xr.oculus": "4.0.0",
-        "com.unity.postprocessing": "3.2.2",
-        "com.unity.ugui": "1.0.0"
+        "com.unity.postprocessing": "3.2.2"
       }
     },
     "com.vrchat.core.vpm-resolver": {
@@ -225,9 +233,26 @@
       "dependencies": {
         "com.unity.cinemachine": "2.9.7",
         "com.unity.textmeshpro": "3.0.6",
-        "com.unity.inputsystem": "1.2.0",
-        "com.unity.ai.navigation": "1.1.5"
+        "com.unity.inputsystem": "1.2.0"
       }
+    },
+    "dev.architech.protv": {
+      "version": "file:dev.architech.protv",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "dev.architech.sdk": {
+      "version": "file:dev.architech.sdk",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "dev.architech.videoplayershim": {
+      "version": "file:dev.architech.videoplayershim",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
