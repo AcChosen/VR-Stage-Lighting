@@ -20,7 +20,7 @@ using VRC.Udon;
 using UdonSharpEditor;
 #endif
 
-#if !UNITY_EDITOR_LINUX && !UNITY_ANDROID
+#if !UNITY_EDITOR_LINUX && !UNITY_ANDROID && !UNITY_IOS
 using System.Drawing.Printing;
 #endif
 
@@ -519,7 +519,7 @@ namespace VRSL.EditorScripts
             }
             return hasLocalPanel;
         }
-#if !UNITY_EDITOR_LINUX && !UNITY_ANDROID
+#if !UNITY_EDITOR_LINUX && !UNITY_ANDROID && !UNITY_IOS
         private void OnPrintPage(object sender, PrintPageEventArgs ev)
         {   
                 pdfPageCount++;
@@ -1657,7 +1657,7 @@ namespace VRSL.EditorScripts
                 }
                 if(GUILayout.Button("Export To PDF File (Windows)"))
                 {
-#if !UNITY_EDITOR_LINUX && !UNITY_ANDROID
+#if !UNITY_EDITOR_LINUX && !UNITY_ANDROID  && !UNITY_IOS
                     settings.ToPDF();
 #else
                     EditorUtility.DisplayDialog("PDF export error", "PDF export is currently a Windows only feature", "OK", "Cancel");
