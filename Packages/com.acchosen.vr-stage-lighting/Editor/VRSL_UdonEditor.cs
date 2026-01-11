@@ -433,7 +433,7 @@ namespace VRSL.EditorScripts
             {
                 foreach(UnityEngine.Object obj in targets)
                 {
-                    VRStageLighting_DMX_Static f = (VRStageLighting_DMX_Static)obj;
+                    VRStageLighting_AudioLink_Laser f = (VRStageLighting_AudioLink_Laser)obj;
                     UpdateSettings(f);
                 }
             }
@@ -579,7 +579,7 @@ namespace VRSL.EditorScripts
                 serializedObject.ApplyModifiedProperties();
                 foreach(UnityEngine.Object obj in targets)
                 {
-                    VRStageLighting_DMX_Static f = (VRStageLighting_DMX_Static)obj;
+                    VRStageLighting_AudioLink_Static f = (VRStageLighting_AudioLink_Static)obj;
                     UpdateSettings(f);
                 }
             //EditorGUIUtility.LookLikeControls();
