@@ -222,7 +222,7 @@ namespace VRSL.EditorScripts
             {
                 try
                 {
-#if !UNITY_EDITOR_LINUX && !UNITY_ANDROID
+#if !UNITY_EDITOR_LINUX && !UNITY_ANDROID && !UNITY_IOS
                     VRSL_DMXPatchSettings asset = (VRSL_DMXPatchSettings) AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(panel.fixtureSaveFile), typeof(VRSL_DMXPatchSettings));
                     asset.ToPDF();
 #else
