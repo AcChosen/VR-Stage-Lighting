@@ -167,7 +167,7 @@ namespace VRSL
 
         public bool VolumetricNoise
         {
-#if UNITY_ANDROID
+#if (UNITY_ANDROID || UNITY_IOS) && UDONSHARP
             set {
                 _volumetricNoise = false;
                 _CheckDepthLightStatus();
@@ -188,7 +188,7 @@ namespace VRSL
 
         public bool RequireDepthLight
         {
-#if UNITY_ANDROID
+#if (UNITY_ANDROID || UNITY_IOS) && UDONSHARP
             set {
                 _requireDepthLight = false;
                 _CheckDepthLightStatus();
