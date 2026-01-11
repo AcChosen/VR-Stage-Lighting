@@ -39,13 +39,26 @@ UNITY_INSTANCING_BUFFER_START(Props)
 UNITY_INSTANCING_BUFFER_END(Props)
 
 #ifdef _VRSL_LEGACY_TEXTURES
-    Texture2D _OSCGridRenderTexture, _OSCGridRenderTextureRAW, _OSCGridStrobeTimer, _OSCGridSpinTimer;
+
+    #if SHADER_TARGET_SURFACE_ANALYSIS
+        sampler2D _OSCGridRenderTexture, _OSCGridRenderTextureRAW, _OSCGridStrobeTimer, _OSCGridSpinTimer;
+    #else
+        Texture2D _OSCGridRenderTexture, _OSCGridRenderTextureRAW, _OSCGridStrobeTimer, _OSCGridSpinTimer;
+    #endif
+
     uniform float4 _OSCGridRenderTextureRAW_TexelSize, _OSCGridSpinTimer_TexelSize, _OSCGridRenderTexture_TexelSize;
     SamplerState VRSL_PointClampSampler;
 #else
-    Texture2D _Udon_DMXGridRenderTexture;
+
+    #if SHADER_TARGET_SURFACE_ANALYSIS
+        sampler2D _Udon_DMXGridRenderTexture;
+        sampler2D _Udon_DMXGridStrobeOutput, _Udon_DMXGridSpinTimer, _Udon_DMXGridRenderTextureMovement;
+    #else
+        Texture2D _Udon_DMXGridRenderTexture;
+        Texture2D _Udon_DMXGridStrobeOutput, _Udon_DMXGridSpinTimer, _Udon_DMXGridRenderTextureMovement;
+    #endif
+
     uniform float4 _Udon_DMXGridRenderTexture_TexelSize;
-    Texture2D _Udon_DMXGridStrobeOutput, _Udon_DMXGridSpinTimer, _Udon_DMXGridRenderTextureMovement;
     uniform float4 _Udon_DMXGridStrobeOutput_TexelSize, _Udon_DMXGridSpinTimer_TexelSize, _Udon_DMXGridRenderTextureMovement_TexelSize;
     SamplerState VRSL_PointClampSampler;
 #endif
@@ -191,82 +204,98 @@ int getTargetRGBValue(uint universe)
 
 //function for getting the value on the DMX Grid
 //Returns a value from 0 to 1
-float ReadDMX(uint DMXChannel, Texture2D _Tex)
-{
-    uint universe = ceil(((int) DMXChannel)/512.0);
-    int targetColor = getTargetRGBValue(universe);
-    
-    //DMXChannel = DMXChannel == 15.0 ? DMXChannel + 1 : DMXChannel;
-    universe-=1;
-    DMXChannel = targetColor > 0 ? DMXChannel - (((universe - (universe % 3)) * 512)) - (targetColor * 24) : DMXChannel;
-
-    uint x = DMXChannel % 13; // starts at 1 ends at 13
-    x = x == 0.0 ? 13.0 : x;
-    float y = DMXChannel / 13.0; // starts at 1 // doubles as sector
-    y = frac(y)== 0.00000 ? y - 1 : y;
-    if(x == 13.0) //for the 13th channel of each sector... Go down a sector for these DMX Channel Ranges...
+#if SHADER_TARGET_SURFACE_ANALYSIS
+    float ReadDMX(uint DMXChannel, sampler2D _Tex)
+#else
+    float ReadDMX(uint DMXChannel, Texture2D _Tex)
+#endif
     {
-    
-        //I don't know why, but we need this for some reason otherwise the 13th channel gets shifted around improperly.
-        //I"m not sure how to express these exception ranges mathematically. Doing so would be much more cleaner though.
-        y = DMXChannel >= 90 && DMXChannel <= 101 ? y - 1 : y;
-        y = DMXChannel >= 160 && DMXChannel <= 205 ? y - 1 : y;
-        y = DMXChannel >= 326 && DMXChannel <= 404 ? y - 1 : y;
-        y = DMXChannel >= 676 && DMXChannel <= 819 ? y - 1 : y;
-        y = DMXChannel >= 1339 ? y - 1 : y;
-    }
-
-    // y = (y > 6 && y < 31) && x == 13.0 ? y - 1 : y;
-    
-    float2 xyUV = _EnableCompatibilityMode == 1 ? LegacyRead(x-1.0,y) : IndustryRead(x,(y + 1.0));
+        uint universe = ceil(((int) DMXChannel)/512.0);
+        int targetColor = getTargetRGBValue(universe);
         
-    float4 uvcoords = float4(xyUV.x, xyUV.y, 0,0);
-    //float4 c = tex2Dlod(_Tex, uvcoords);
-    float4 c = _Tex.SampleLevel(VRSL_PointClampSampler, xyUV, 0);
-    float value = 0.0;
-    
-   if(getNineUniverseMode() && _EnableCompatibilityMode != 1)
-   {
-    value = c.r;
-    value = IF(targetColor > 0, c.g, value);
-    value = IF(targetColor > 1, c.b, value);
-   }
-   else
-   {
-        float3 cRGB = float3(c.r, c.g, c.b);
-        value = LinearRgbToLuminance(cRGB);
+        //DMXChannel = DMXChannel == 15.0 ? DMXChannel + 1 : DMXChannel;
+        universe-=1;
+        DMXChannel = targetColor > 0 ? DMXChannel - (((universe - (universe % 3)) * 512)) - (targetColor * 24) : DMXChannel;
+
+        uint x = DMXChannel % 13; // starts at 1 ends at 13
+        x = x == 0.0 ? 13.0 : x;
+        float y = DMXChannel / 13.0; // starts at 1 // doubles as sector
+        y = frac(y)== 0.00000 ? y - 1 : y;
+        if(x == 13.0) //for the 13th channel of each sector... Go down a sector for these DMX Channel Ranges...
+        {
+        
+            //I don't know why, but we need this for some reason otherwise the 13th channel gets shifted around improperly.
+            //I"m not sure how to express these exception ranges mathematically. Doing so would be much more cleaner though.
+            y = DMXChannel >= 90 && DMXChannel <= 101 ? y - 1 : y;
+            y = DMXChannel >= 160 && DMXChannel <= 205 ? y - 1 : y;
+            y = DMXChannel >= 326 && DMXChannel <= 404 ? y - 1 : y;
+            y = DMXChannel >= 676 && DMXChannel <= 819 ? y - 1 : y;
+            y = DMXChannel >= 1339 ? y - 1 : y;
+        }
+
+        // y = (y > 6 && y < 31) && x == 13.0 ? y - 1 : y;
+        
+        float2 xyUV = _EnableCompatibilityMode == 1 ? LegacyRead(x-1.0,y) : IndustryRead(x,(y + 1.0));
+            
+        float4 uvcoords = float4(xyUV.x, xyUV.y, 0,0);
+        //float4 c = tex2Dlod(_Tex, uvcoords);
+#if SHADER_TARGET_SURFACE_ANALYSIS
+        float4 c = tex2Dlod(_Tex, float4(xyUV, 0, 0));
+#else
+        float4 c = _Tex.SampleLevel(VRSL_PointClampSampler, xyUV, 0);
+#endif
+        float value = 0.0;
+        
+    if(getNineUniverseMode() && _EnableCompatibilityMode != 1)
+    {
+        value = c.r;
+        value = IF(targetColor > 0, c.g, value);
+        value = IF(targetColor > 1, c.b, value);
     }
-    return value;
-}
+    else
+    {
+            float3 cRGB = float3(c.r, c.g, c.b);
+            value = LinearRgbToLuminance(cRGB);
+        }
+        return value;
+    }
 
 
 //function for getting the value on the DMX Grid
 //Returns a value from 0 to 1
-float ReadDMXRaw(uint DMXChannel, Texture2D _Tex)
-{
-   // DMXChannel = DMXChannel == 15.0 ? DMXChannel + 1 : DMXChannel;
-    uint universe = ceil(((int) DMXChannel)/512.0);
-    int targetColor = getTargetRGBValue(universe);
+#if SHADER_TARGET_SURFACE_ANALYSIS
+    float ReadDMXRaw(uint DMXChannel, sampler2D _Tex)
+#else
+    float ReadDMXRaw(uint DMXChannel, Texture2D _Tex)
+#endif
+    {
+    // DMXChannel = DMXChannel == 15.0 ? DMXChannel + 1 : DMXChannel;
+        uint universe = ceil(((int) DMXChannel)/512.0);
+        int targetColor = getTargetRGBValue(universe);
 
-    universe-=1;
-    DMXChannel = targetColor > 0 ? DMXChannel - (((universe - (universe % 3)) * 512)) - (targetColor * 24) : DMXChannel;
+        universe-=1;
+        DMXChannel = targetColor > 0 ? DMXChannel - (((universe - (universe % 3)) * 512)) - (targetColor * 24) : DMXChannel;
 
 
-    uint x = DMXChannel % 13; // starts at 1 ends at 13
-    x = x == 0.0 ? 13.0 : x;
-    float y = DMXChannel / 13.0; // starts at 1 // doubles as sector
-    y = frac(y)== 0.00000 ? y - 1 : y;
-    
-    float2 xyUV = _EnableCompatibilityMode == 1 ? LegacyRead(x-1.0,y) : IndustryRead(x,(y + 1.0));
+        uint x = DMXChannel % 13; // starts at 1 ends at 13
+        x = x == 0.0 ? 13.0 : x;
+        float y = DMXChannel / 13.0; // starts at 1 // doubles as sector
+        y = frac(y)== 0.00000 ? y - 1 : y;
+        
+        float2 xyUV = _EnableCompatibilityMode == 1 ? LegacyRead(x-1.0,y) : IndustryRead(x,(y + 1.0));
 
-    float4 uvcoords = float4(xyUV.x, xyUV.y, 0,0);
-    //float4 c = tex2Dlod(_Tex, uvcoords);
-    float4 c = _Tex.SampleLevel(VRSL_PointClampSampler, xyUV, 0);
-    float value = c.r;
-    value = IF(targetColor > 0, c.g, value);
-    value = IF(targetColor > 1, c.b, value);
-	return value;
-}
+        float4 uvcoords = float4(xyUV.x, xyUV.y, 0,0);
+        //float4 c = tex2Dlod(_Tex, uvcoords);
+#if SHADER_TARGET_SURFACE_ANALYSIS
+        float4 c = tex2Dlod(_Tex, float4(xyUV, 0, 0));
+#else
+        float4 c = _Tex.SampleLevel(VRSL_PointClampSampler, xyUV, 0);
+#endif
+        float value = c.r;
+        value = IF(targetColor > 0, c.g, value);
+        value = IF(targetColor > 1, c.b, value);
+        return value;
+    }
 
 float GetStrobeOutput(uint DMXChannel)
 {
