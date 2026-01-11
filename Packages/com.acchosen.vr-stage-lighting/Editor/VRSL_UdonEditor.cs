@@ -335,7 +335,11 @@ namespace VRSL.EditorScripts
             if(EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
-                UpdateSettings(fixture);
+                foreach(UnityEngine.Object obj in targets)
+                {
+                    VRStageLighting_DMX_Static f = (VRStageLighting_DMX_Static)obj;
+                    UpdateSettings(f);
+                }
             //EditorGUIUtility.LookLikeControls();
             }
         }
@@ -427,7 +431,11 @@ namespace VRSL.EditorScripts
             base.OnInspectorGUI();
             if(EditorGUI.EndChangeCheck())
             {
-                UpdateSettings(fixture);
+                foreach(UnityEngine.Object obj in targets)
+                {
+                    VRStageLighting_DMX_Static f = (VRStageLighting_DMX_Static)obj;
+                    UpdateSettings(f);
+                }
             }
         }
     }
@@ -569,7 +577,11 @@ namespace VRSL.EditorScripts
             if(EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
-                UpdateSettings(fixture);
+                foreach(UnityEngine.Object obj in targets)
+                {
+                    VRStageLighting_DMX_Static f = (VRStageLighting_DMX_Static)obj;
+                    UpdateSettings(f);
+                }
             //EditorGUIUtility.LookLikeControls();
             }
 
