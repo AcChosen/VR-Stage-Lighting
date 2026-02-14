@@ -114,7 +114,7 @@
     {
         Tags
         {
-            "Queue" = "AlphaTest+1" "RenderType" = "Opaque" "RenderingPipeline"="UniversalPipeline"
+            "Queue" = "AlphaTest+1" "RenderType" = "Opaque" "RenderPipeline"="UniversalPipeline"
         }
 
         Pass

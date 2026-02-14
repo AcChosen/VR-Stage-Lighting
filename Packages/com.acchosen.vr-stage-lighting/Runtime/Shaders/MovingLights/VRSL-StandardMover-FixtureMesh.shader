@@ -57,7 +57,7 @@
 	// URP subshader must be first
 	SubShader
 	{
-		Tags { "Queue" = "AlphaTest+1" "RenderType" = "Opaque" "RenderingPipeline" = "UniversalPipeline" }
+		Tags { "Queue" = "AlphaTest+1" "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" }
 
 		Pass
 	    {
