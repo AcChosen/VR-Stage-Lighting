@@ -52,7 +52,7 @@
     {
         Tags
         {
-            "RenderType"="Transparent" "Queue" = "Transparent+4" "RenderingPipeline" = "UniversalPipeline"
+            "RenderType"="Transparent" "Queue" = "Transparent+4" "RenderPipeline" = "UniversalPipeline"
         }
         Cull Off
         Blend One One

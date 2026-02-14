@@ -39,7 +39,7 @@
     }
     SubShader
     {
-		Tags { "RenderType"="Transparent" "Queue" = "Transparent+1" "RenderingPipeline" = "UniversalPipeline" }
+		Tags { "RenderType"="Transparent" "Queue" = "Transparent+1" "RenderPipeline" = "UniversalPipeline" }
 		Cull Off
 		Blend One One
 		Zwrite Off

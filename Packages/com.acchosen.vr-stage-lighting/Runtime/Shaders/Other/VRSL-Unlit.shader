@@ -10,7 +10,7 @@ Shader "VRSL/Other/Unlit"
         Tags
         {
             "RenderType"="Opaque"
-            "RenderingPipeline"="UniversalPipeline"
+            "RenderPipeline"="UniversalPipeline"
         }
         LOD 100
 
