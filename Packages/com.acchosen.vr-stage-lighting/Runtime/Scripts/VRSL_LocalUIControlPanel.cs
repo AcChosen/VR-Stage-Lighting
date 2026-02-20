@@ -229,8 +229,11 @@ namespace VRSL
         void SetGlobalStrobeUI()
         {
             
-            if(globalStrobeToggleButton){globalStrobeToggleButton.colors = GlobalDisableStrobe ? cbOn : defaultColorBlock;}
-            globalStrobeToggleButton.gameObject.SetActive(isUsingDMX);
+            if(globalStrobeToggleButton){
+                globalStrobeToggleButton.colors = GlobalDisableStrobe ? cbOn : defaultColorBlock;
+                globalStrobeToggleButton.gameObject.SetActive(isUsingDMX);
+            }
+            
         }
 
         void SetStrobeTextureStatus()
