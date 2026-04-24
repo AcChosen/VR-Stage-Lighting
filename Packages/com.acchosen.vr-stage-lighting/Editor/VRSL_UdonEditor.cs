@@ -233,7 +233,7 @@ namespace VRSL.EditorScripts
 
             serializedObject.FindProperty("nineUniverseMode").boolValue = EditorGUILayout.Toggle(new GUIContent("Extended Universe Mode", 
             "Enables 9-Universe mode for this fixture. The grid will be split up by RGB channels with each section and color representing a universe." + 
-            " Only availble on the Vertical and Horizontal Grid nodes."), fixture.nineUniverseMode);
+            " Only available on the Vertical and Horizontal Grid nodes."), fixture.nineUniverseMode);
 
             serializedObject.FindProperty("enableFineChannels").boolValue = EditorGUILayout.Toggle(new GUIContent("Enable Fine Channels (For Pan/Tilt)",
             "Enables the computation of fine channels for pan and tilt. This allows for smoother movement of movers when using DMX control if your stream is stable enough to support it"), fixture.enableFineChannels);

@@ -38,7 +38,7 @@ namespace VRSL
         public int dmxChannel = 1;
         [Tooltip ("The industry standard Artnet Universe. Use this to choose which universe to read the DMX Channel from.")]
         public int dmxUniverse = 1;
-        [Tooltip ("Enables 9-Universe mode for this fixture. The grid will be split up by RGB channels with each section and color representing a universe. Only availble on the Vertical and Horizontal Grid nodes.")]
+        [Tooltip ("Enables 9-Universe mode for this fixture. The grid will be split up by RGB channels with each section and color representing a universe. Only available on the Vertical and Horizontal Grid nodes.")]
         public bool nineUniverseMode;
 
         [Tooltip ("Enables the legacy 'Sector' based method of assigning DMX Channels. Keep this unchecked to use industry standard DMX Channels.")]
