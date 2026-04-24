@@ -672,55 +672,12 @@ namespace VRSL
             props.SetFloat("_FinalIntensity", finalIntensity);
             props.SetFloat("_ConeLength", Mathf.Abs(coneLength - 10.0f));
             props.SetFloat("_MaxConeLength", maxConeLength);
-            // for(int i = 0; i < objRenderers.Length; i++)
-            // {
-            //     objRenderers[i].SetPropertyBlock(props);
-            // }
-            switch(objRenderers.Length)
+            foreach(MeshRenderer r in objRenderers)
             {
-                case 1:
-                    if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
-                    break;
-                case 2:
-                    if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
-                    if(objRenderers[0])
-                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
-                    break;
-                case 3:
-                    if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
-                    if(objRenderers[1])
-                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
-                    if(objRenderers[2])
-                        objRenderers[2].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[2]));
-                    break;
-                case 4:
-                    if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
-                    if(objRenderers[1])
-                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
-                    if(objRenderers[2])
-                        objRenderers[2].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[2]));
-                    if(objRenderers[3])
-                        objRenderers[3].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[3]));
-                    break;
-                case 5:
-                    if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
-                    if(objRenderers[1])
-                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
-                    if(objRenderers[2])
-                        objRenderers[2].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[2]));
-                    if(objRenderers[3])
-                        objRenderers[3].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[3]));
-                    if(objRenderers[4])
-                        objRenderers[4].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[4]));
-                    break;
-                default:
-                    Debug.Log("Too many mesh renderers for this fixture!");
-                    break;        
+                if(r != null)
+                {
+                    r.SetPropertyBlock(_SetFinalIntensityComponents(props, r));
+                }
             }
         }
         public void _UpdateInstancedPropertiesSansAudioLink()
@@ -769,55 +726,12 @@ namespace VRSL
             props.SetFloat("_FinalIntensity", finalIntensity);
             props.SetFloat("_ConeLength", Mathf.Abs(coneLength - 10.0f));
             props.SetFloat("_MaxConeLength", maxConeLength);
-            // for(int i = 0; i < objRenderers.Length; i++)
-            // {
-            //     objRenderers[i].SetPropertyBlock(props);
-            // }
-            switch(objRenderers.Length)
+            foreach(MeshRenderer r in objRenderers)
             {
-                case 1:
-                    if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
-                    break;
-                case 2:
-                    if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
-                    if(objRenderers[1])
-                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
-                    break;
-                case 3:
-                    if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
-                    if(objRenderers[1])
-                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
-                    if(objRenderers[2])
-                        objRenderers[2].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[2]));
-                    break;
-                case 4:
-                    if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
-                    if(objRenderers[1])
-                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
-                    if(objRenderers[2])
-                        objRenderers[2].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[2]));
-                    if(objRenderers[3])
-                        objRenderers[3].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[3]));
-                    break;
-                case 5:
-                    if(objRenderers[0])
-                        objRenderers[0].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[0]));
-                    if(objRenderers[1])
-                        objRenderers[1].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[1]));
-                    if(objRenderers[2])
-                        objRenderers[2].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[2]));
-                    if(objRenderers[3])
-                        objRenderers[3].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[3]));
-                    if(objRenderers[4])
-                        objRenderers[4].SetPropertyBlock(_SetFinalIntensityComponents(props, objRenderers[4]));
-                    break;
-                default:
-                    Debug.Log("Too many mesh renderers for this fixture!");
-                    break;           
+                if(r != null)
+                {
+                    r.SetPropertyBlock(_SetFinalIntensityComponents(props, r));
+                }
             }
         }
         void Init(bool withAL)

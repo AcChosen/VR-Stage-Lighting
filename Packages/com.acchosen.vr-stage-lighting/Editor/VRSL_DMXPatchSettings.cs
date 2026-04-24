@@ -10,7 +10,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Xml;
-using System.Drawing;
 using System.Data;
 using UnityEngine.UIElements;
 using System.Linq;
@@ -20,7 +19,8 @@ using VRC.Udon;
 using UdonSharpEditor;
 #endif
 
-#if !UNITY_EDITOR_LINUX && !UNITY_ANDROID && !UNITY_IOS
+#if UNITY_EDITOR_WIN && !UNITY_6000_0_OR_NEWER
+using System.Drawing;
 using System.Drawing.Printing;
 #endif
 
@@ -519,7 +519,7 @@ namespace VRSL.EditorScripts
             }
             return hasLocalPanel;
         }
-#if !UNITY_EDITOR_LINUX && !UNITY_ANDROID && !UNITY_IOS
+#if UNITY_EDITOR_WIN && !UNITY_6000_0_OR_NEWER
         private void OnPrintPage(object sender, PrintPageEventArgs ev)
         {   
                 pdfPageCount++;
@@ -1657,7 +1657,7 @@ namespace VRSL.EditorScripts
                 }
                 if(GUILayout.Button("Export To PDF File (Windows)"))
                 {
-#if !UNITY_EDITOR_LINUX && !UNITY_ANDROID  && !UNITY_IOS
+#if UNITY_EDITOR_WIN && !UNITY_6000_0_OR_NEWER
                     settings.ToPDF();
 #else
                     EditorUtility.DisplayDialog("PDF export error", "PDF export is currently a Windows only feature", "OK", "Cancel");
